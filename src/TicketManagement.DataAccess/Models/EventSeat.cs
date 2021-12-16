@@ -28,6 +28,6 @@
         /// <summary>
         /// Gets or sets state.
         /// </summary>
-        public bool State { get; set; }
+        public int State { get; set; }
     }
 }
