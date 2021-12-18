@@ -6,6 +6,9 @@ using TicketManagement.DataAccess.Models;
 
 namespace TicketManagement.DataAccess.Repositories
 {
+    /// <summary>
+    /// Repository for venue.
+    /// </summary>
     internal class VenueRepository : IRepository<Venue>
     {
         public IEnumerable<Venue> GetAll()
@@ -64,6 +67,7 @@ namespace TicketManagement.DataAccess.Repositories
         public Venue Create(Venue obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
+            connection.Open();
             string sql = "Insert into venue (Description, Address, Phone) values (@description, @address, @phone)";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter descriptionParam = new SqlParameter("@venueId", obj.Description);
@@ -79,6 +83,7 @@ namespace TicketManagement.DataAccess.Repositories
         public Venue Update(Venue obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
+            connection.Open();
             string sql = "Update venue set Description = @description, Address = @address, Phone = @phone where Id = @id";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
@@ -96,6 +101,7 @@ namespace TicketManagement.DataAccess.Repositories
         public Venue Delete(Venue obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
+            connection.Open();
             string sql = "Delete from venue where Id = @id";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", obj.Id);

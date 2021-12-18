@@ -6,6 +6,9 @@ using TicketManagement.DataAccess.Models;
 
 namespace TicketManagement.DataAccess.Repositories
 {
+    /// <summary>
+    /// Repository for layout.
+    /// </summary>
     internal class LayoutRepository : IRepository<Layout>
     {
         public IEnumerable<Layout> GetAll()
@@ -62,6 +65,7 @@ namespace TicketManagement.DataAccess.Repositories
         public Layout Create(Layout obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
+            connection.Open();
             string sql = "Insert into layout (VenueId, Description) values (@venueId, @description)";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter venueIdParam = new SqlParameter("@venueId", obj.VenueId);
@@ -75,6 +79,7 @@ namespace TicketManagement.DataAccess.Repositories
         public Layout Update(Layout obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
+            connection.Open();
             string sql = "Update layout set VenueId = @venueId, Description = @description where Id = @id";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
@@ -90,6 +95,7 @@ namespace TicketManagement.DataAccess.Repositories
         public Layout Delete(Layout obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
+            connection.Open();
             string sql = "Delete from layout where Id = @id";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", obj.Id);

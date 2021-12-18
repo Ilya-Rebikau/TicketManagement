@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using TicketManagement.DataAccess.Interfaces;
@@ -7,108 +8,103 @@ using TicketManagement.DataAccess.Models;
 namespace TicketManagement.DataAccess.Repositories
 {
     /// <summary>
-    /// Repository for area.
+    /// Repository for event.
     /// </summary>
-    internal class AreaRepository : IRepository<Area>
+    internal class EventRepository : IRepository<Event>
     {
-        public IEnumerable<Area> GetAll()
+        public IEnumerable<Event> GetAll()
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             connection.Open();
-            IList<Area> areas = new List<Area>();
-            string sql = "Select Id, LayoutId, Description, CoordX, CoordY from area";
+            IList<Event> events = new List<Event>();
+            string sql = "Select Id, Name, Description, LayoutId from event";
             SqlCommand cmd = new SqlCommand(sql, connection);
             SqlDataReader reader = cmd.ExecuteReader();
             if (reader.HasRows)
             {
                 while (reader.Read())
                 {
-                    areas.Add(new Area
+                    events.Add(new Event
                     {
                         Id = (int)reader["Id"],
-                        LayoutId = (int)reader["LayoutId"],
+                        Name = reader["Name"].ToString(),
                         Description = reader["Description"].ToString(),
-                        CoordX = (int)reader["CoordX"],
-                        CoordY = (int)reader["CoordY"],
+                        LayoutId = (int)reader["LayoutId"],
                     });
                 }
             }
 
             reader.Close();
-            return areas.AsEnumerable();
+            return events.AsEnumerable();
         }
 
-        public Area GetById(int id)
+        public Event GetById(int id)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             connection.Open();
-            string sql = "Select Id, LayoutId, Description, CoordX, CoordY from area where Id = @id";
+            string sql = "Select Id, Name, Description, LayoutId from event where Id = @id";
             SqlCommand cmd = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", id);
             cmd.Parameters.Add(idParam);
             SqlDataReader reader = cmd.ExecuteReader();
-            Area area = new Area();
+            Event eventModel = new Event();
             if (reader.HasRows)
             {
                 while (reader.Read())
                 {
-                    area = new Area
+                    eventModel = new Event
                     {
                         Id = (int)reader["Id"],
-                        LayoutId = (int)reader["LayoutId"],
+                        Name = reader["Name"].ToString(),
                         Description = reader["Description"].ToString(),
-                        CoordX = (int)reader["CoordX"],
-                        CoordY = (int)reader["CoordY"],
+                        LayoutId = (int)reader["LayoutId"],
                     };
                 }
             }
 
-            return area;
+            return eventModel;
         }
 
-        public Area Create(Area obj)
+        public Event Create(Event obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            string sql = "Insert into area (LayoutId, Description, CoordX, CoordY) values (@layoutId, @description, @coordX, @coordY)";
             connection.Open();
+            string sql = "sp_CreateEvent";
             SqlCommand command = new SqlCommand(sql, connection);
-            SqlParameter layoutIdParam = new SqlParameter("@layoutId", obj.LayoutId);
+            command.CommandType = CommandType.StoredProcedure;
+            SqlParameter nameParam = new SqlParameter("@name", obj.Name);
             SqlParameter descriptionParam = new SqlParameter("@description", obj.Description);
-            SqlParameter coordXParam = new SqlParameter("@coordX", obj.CoordX);
-            SqlParameter coordYParam = new SqlParameter("@coordY", obj.CoordY);
-            command.Parameters.Add(layoutIdParam);
+            SqlParameter layoutIdParam = new SqlParameter("@layoutId", obj.LayoutId);
+            command.Parameters.Add(nameParam);
             command.Parameters.Add(descriptionParam);
-            command.Parameters.Add(coordXParam);
-            command.Parameters.Add(coordYParam);
+            command.Parameters.Add(layoutIdParam);
             command.ExecuteNonQuery();
             return obj;
         }
 
-        public Area Update(Area obj)
+        public Event Update(Event obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             connection.Open();
-            string sql = "Update area set LayoutId = @layoutId, Description = @description, CoordX = @coordX, CoordY = @coordY where Id = @id";
+            string sql = "sp_UpdateEvent";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
-            SqlParameter layoutIdParam = new SqlParameter("@layoutId", obj.LayoutId);
+            SqlParameter nameParam = new SqlParameter("@name", obj.Name);
             SqlParameter descriptionParam = new SqlParameter("@description", obj.Description);
-            SqlParameter coordXParam = new SqlParameter("@coordX", obj.CoordX);
-            SqlParameter coordYParam = new SqlParameter("@coordY", obj.CoordY);
+            SqlParameter layoutIdParam = new SqlParameter("@layoutId", obj.LayoutId);
             command.Parameters.Add(idParam);
-            command.Parameters.Add(layoutIdParam);
+            command.Parameters.Add(nameParam);
             command.Parameters.Add(descriptionParam);
-            command.Parameters.Add(coordXParam);
-            command.Parameters.Add(coordYParam);
+            command.Parameters.Add(layoutIdParam);
             command.ExecuteNonQuery();
             return obj;
         }
 
-        public Area Delete(Area obj)
+        public Event Delete(Event obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             connection.Open();
-            string sql = "Delete from area where Id = @id";
+            string sql = "sp_DeleteEvent";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
             command.Parameters.Add(idParam);
