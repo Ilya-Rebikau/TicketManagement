@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace TicketManagement.DataAccess.Repositories
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             connection.Open();
             IList<Event> events = new List<Event>();
-            string sql = "Select Id, Name, Description, LayoutId from event";
+            string sql = "Select Id, Name, Description, LayoutId, TimeStart, TimeEnd from event";
             SqlCommand cmd = new SqlCommand(sql, connection);
             SqlDataReader reader = cmd.ExecuteReader();
             if (reader.HasRows)
@@ -30,6 +31,8 @@ namespace TicketManagement.DataAccess.Repositories
                         Name = reader["Name"].ToString(),
                         Description = reader["Description"].ToString(),
                         LayoutId = (int)reader["LayoutId"],
+                        TimeStart = DateTime.Parse(reader["TimeStart"].ToString()),
+                        TimeEnd = DateTime.Parse(reader["TimeEnd"].ToString()),
                     });
                 }
             }
@@ -42,7 +45,7 @@ namespace TicketManagement.DataAccess.Repositories
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             connection.Open();
-            string sql = "Select Id, Name, Description, LayoutId from event where Id = @id";
+            string sql = "Select Id, Name, Description, LayoutId, TimeStart, TimeEnd from event where Id = @id";
             SqlCommand cmd = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", id);
             cmd.Parameters.Add(idParam);
@@ -58,6 +61,8 @@ namespace TicketManagement.DataAccess.Repositories
                         Name = reader["Name"].ToString(),
                         Description = reader["Description"].ToString(),
                         LayoutId = (int)reader["LayoutId"],
+                        TimeStart = DateTime.Parse(reader["TimeStart"].ToString()),
+                        TimeEnd = DateTime.Parse(reader["TimeEnd"].ToString()),
                     };
                 }
             }
@@ -75,9 +80,13 @@ namespace TicketManagement.DataAccess.Repositories
             SqlParameter nameParam = new SqlParameter("@name", obj.Name);
             SqlParameter descriptionParam = new SqlParameter("@description", obj.Description);
             SqlParameter layoutIdParam = new SqlParameter("@layoutId", obj.LayoutId);
+            SqlParameter timeStartParam = new SqlParameter("@timeStart", obj.TimeStart);
+            SqlParameter timeEndParam = new SqlParameter("@timeEnd", obj.TimeEnd);
             command.Parameters.Add(nameParam);
             command.Parameters.Add(descriptionParam);
             command.Parameters.Add(layoutIdParam);
+            command.Parameters.Add(timeStartParam);
+            command.Parameters.Add(timeEndParam);
             command.ExecuteNonQuery();
             return obj;
         }
@@ -92,10 +101,14 @@ namespace TicketManagement.DataAccess.Repositories
             SqlParameter nameParam = new SqlParameter("@name", obj.Name);
             SqlParameter descriptionParam = new SqlParameter("@description", obj.Description);
             SqlParameter layoutIdParam = new SqlParameter("@layoutId", obj.LayoutId);
+            SqlParameter timeStartParam = new SqlParameter("@timeStart", obj.TimeStart);
+            SqlParameter timeEndParam = new SqlParameter("@timeEnd", obj.TimeEnd);
             command.Parameters.Add(idParam);
             command.Parameters.Add(nameParam);
             command.Parameters.Add(descriptionParam);
             command.Parameters.Add(layoutIdParam);
+            command.Parameters.Add(timeStartParam);
+            command.Parameters.Add(timeEndParam);
             command.ExecuteNonQuery();
             return obj;
         }

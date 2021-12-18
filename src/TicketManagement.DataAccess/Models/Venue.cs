@@ -24,5 +24,10 @@
         /// Gets or sets phone.
         /// </summary>
         public string Phone { get; set; }
+
+        /// <summary>
+        /// Gets or sets name.
+        /// </summary>
+        public string Name { get; set; }
     }
 }

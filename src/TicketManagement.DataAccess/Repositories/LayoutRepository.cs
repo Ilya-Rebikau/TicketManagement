@@ -16,7 +16,7 @@ namespace TicketManagement.DataAccess.Repositories
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             connection.Open();
             IList<Layout> layouts = new List<Layout>();
-            string sql = "Select Id, VenueId, Description from layout";
+            string sql = "Select Id, VenueId, Description, Name from layout";
             SqlCommand cmd = new SqlCommand(sql, connection);
             SqlDataReader reader = cmd.ExecuteReader();
             if (reader.HasRows)
@@ -28,6 +28,7 @@ namespace TicketManagement.DataAccess.Repositories
                         Id = (int)reader["Id"],
                         VenueId = (int)reader["VenueId"],
                         Description = reader["Description"].ToString(),
+                        Name = reader["Name"].ToString(),
                     });
                 }
             }
@@ -40,7 +41,7 @@ namespace TicketManagement.DataAccess.Repositories
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             connection.Open();
-            string sql = "Select Id, VenueId, Description from layout where Id = @id";
+            string sql = "Select Id, VenueId, Description, Name from layout where Id = @id";
             SqlCommand cmd = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", id);
             cmd.Parameters.Add(idParam);
@@ -55,6 +56,7 @@ namespace TicketManagement.DataAccess.Repositories
                         Id = (int)reader["Id"],
                         VenueId = (int)reader["VenueId"],
                         Description = reader["Description"].ToString(),
+                        Name = reader["Name"].ToString(),
                     };
                 }
             }
@@ -66,12 +68,14 @@ namespace TicketManagement.DataAccess.Repositories
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             connection.Open();
-            string sql = "Insert into layout (VenueId, Description) values (@venueId, @description)";
+            string sql = "Insert into layout (VenueId, Description, Name) values (@venueId, @description, @name)";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter venueIdParam = new SqlParameter("@venueId", obj.VenueId);
             SqlParameter descriptionParam = new SqlParameter("@description", obj.Description);
+            SqlParameter nameParam = new SqlParameter("@name", obj.Name);
             command.Parameters.Add(venueIdParam);
             command.Parameters.Add(descriptionParam);
+            command.Parameters.Add(nameParam);
             command.ExecuteNonQuery();
             return obj;
         }
@@ -80,14 +84,16 @@ namespace TicketManagement.DataAccess.Repositories
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             connection.Open();
-            string sql = "Update layout set VenueId = @venueId, Description = @description where Id = @id";
+            string sql = "Update layout set VenueId = @venueId, Description = @description, Name = @name where Id = @id";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
             SqlParameter venueIdParam = new SqlParameter("@venueId", obj.VenueId);
             SqlParameter descriptionParam = new SqlParameter("@description", obj.Description);
+            SqlParameter nameParam = new SqlParameter("@name", obj.Name);
             command.Parameters.Add(idParam);
             command.Parameters.Add(venueIdParam);
             command.Parameters.Add(descriptionParam);
+            command.Parameters.Add(nameParam);
             command.ExecuteNonQuery();
             return obj;
         }

@@ -16,7 +16,7 @@ namespace TicketManagement.DataAccess.Repositories
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             connection.Open();
             IList<Venue> venues = new List<Venue>();
-            string sql = "Select Id, Description, Address, Phone from venue";
+            string sql = "Select Id, Description, Address, Phone, Name from venue";
             SqlCommand cmd = new SqlCommand(sql, connection);
             SqlDataReader reader = cmd.ExecuteReader();
             if (reader.HasRows)
@@ -29,6 +29,7 @@ namespace TicketManagement.DataAccess.Repositories
                         Description = reader["Description"].ToString(),
                         Address = reader["Address"].ToString(),
                         Phone = reader["Phone"].ToString(),
+                        Name = reader["Name"].ToString(),
                     });
                 }
             }
@@ -41,7 +42,7 @@ namespace TicketManagement.DataAccess.Repositories
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             connection.Open();
-            string sql = "Select Id, Description, Address, Phone from venue where Id = @id";
+            string sql = "Select Id, Description, Address, Phone, Name from venue where Id = @id";
             SqlCommand cmd = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", id);
             cmd.Parameters.Add(idParam);
@@ -57,6 +58,7 @@ namespace TicketManagement.DataAccess.Repositories
                         Description = reader["Description"].ToString(),
                         Address = reader["Address"].ToString(),
                         Phone = reader["Phone"].ToString(),
+                        Name = reader["Name"].ToString(),
                     };
                 }
             }
@@ -68,14 +70,16 @@ namespace TicketManagement.DataAccess.Repositories
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             connection.Open();
-            string sql = "Insert into venue (Description, Address, Phone) values (@description, @address, @phone)";
+            string sql = "Insert into venue (Description, Address, Phone, Name) values (@description, @address, @phone, @name)";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter descriptionParam = new SqlParameter("@venueId", obj.Description);
             SqlParameter addressParam = new SqlParameter("@address", obj.Address);
             SqlParameter phoneParam = new SqlParameter("@phone", obj.Phone);
+            SqlParameter nameParam = new SqlParameter("@name", obj.Name);
             command.Parameters.Add(descriptionParam);
             command.Parameters.Add(addressParam);
             command.Parameters.Add(phoneParam);
+            command.Parameters.Add(nameParam);
             command.ExecuteNonQuery();
             return obj;
         }
@@ -84,16 +88,18 @@ namespace TicketManagement.DataAccess.Repositories
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             connection.Open();
-            string sql = "Update venue set Description = @description, Address = @address, Phone = @phone where Id = @id";
+            string sql = "Update venue set Description = @description, Address = @address, Phone = @phone, Name = @name where Id = @id";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
             SqlParameter descriptionParam = new SqlParameter("@venueId", obj.Description);
             SqlParameter addressParam = new SqlParameter("@address", obj.Address);
             SqlParameter phoneParam = new SqlParameter("@phone", obj.Phone);
+            SqlParameter nameParam = new SqlParameter("@name", obj.Name);
             command.Parameters.Add(idParam);
             command.Parameters.Add(descriptionParam);
             command.Parameters.Add(addressParam);
             command.Parameters.Add(phoneParam);
+            command.Parameters.Add(nameParam);
             command.ExecuteNonQuery();
             return obj;
         }
