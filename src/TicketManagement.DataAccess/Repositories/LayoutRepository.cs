@@ -34,7 +34,7 @@ namespace TicketManagement.DataAccess.Repositories
             }
 
             reader.Close();
-            return layouts.AsEnumerable();
+            return layouts;
         }
 
         public Layout GetById(int id)

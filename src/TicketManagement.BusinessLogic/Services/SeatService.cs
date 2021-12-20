@@ -1,4 +1,7 @@
-﻿using TicketManagement.BusinessLogic.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
 
@@ -18,14 +21,31 @@ namespace TicketManagement.BusinessLogic.Services
         {
         }
 
-        public new Seat Create(Seat obj)
+        public override Seat Create(Seat obj)
         {
+            CheckForUniqueRowAndNumber(obj);
             return Repository.Create(obj);
         }
 
-        public new Seat Update(Seat obj)
+        public override Seat Update(Seat obj)
         {
+            CheckForUniqueRowAndNumber(obj);
             return Repository.Update(obj);
+        }
+
+        /// <summary>
+        /// Checking that all seats in area have unique row and number.
+        /// </summary>
+        /// <param name="obj">Adding or updating seat.</param>
+        /// <exception cref="ArgumentException">Generates exception in case row and number are not unique.</exception>
+        private void CheckForUniqueRowAndNumber(Seat obj)
+        {
+            IEnumerable<Seat> seats = Repository.GetAll();
+            IEnumerable<Seat> seatsInArea = seats.Where(seat => seat.AreaId == obj.AreaId && seat.Row == obj.Row && seat.Number == obj.Number);
+            if (seatsInArea.Any())
+            {
+                throw new ArgumentException("One of seats in this area already has such row and number!");
+            }
         }
     }
 }

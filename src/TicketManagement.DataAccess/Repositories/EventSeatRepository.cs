@@ -35,7 +35,7 @@ namespace TicketManagement.DataAccess.Repositories
             }
 
             reader.Close();
-            return eventSeats.AsEnumerable();
+            return eventSeats;
         }
 
         public EventSeat GetById(int id)

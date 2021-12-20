@@ -17,15 +17,5 @@ namespace TicketManagement.BusinessLogic.Services
             : base(repository)
         {
         }
-
-        public new Venue Create(Venue obj)
-        {
-            return Repository.Create(obj);
-        }
-
-        public new Venue Update(Venue obj)
-        {
-            return Repository.Update(obj);
-        }
     }
 }

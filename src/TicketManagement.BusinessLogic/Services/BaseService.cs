@@ -11,17 +11,12 @@ namespace TicketManagement.BusinessLogic.Services
     internal class BaseService<T> : IService<T>
     {
         /// <summary>
-        /// IRepository object for CRUD operations in database.
-        /// </summary>
-        private readonly IRepository<T> _repository;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="BaseService{T}"/> class.
         /// </summary>
         /// <param name="repository">IRepository object with CRUD operations.</param>
         protected BaseService(IRepository<T> repository)
         {
-            _repository = repository;
+            Repository = repository;
         }
 
         /// <summary>
@@ -29,29 +24,29 @@ namespace TicketManagement.BusinessLogic.Services
         /// </summary>
         protected IRepository<T> Repository { get; private set; }
 
-        public IEnumerable<T> GetAll()
+        public virtual IEnumerable<T> GetAll()
         {
-            return _repository.GetAll();
+            return Repository.GetAll();
         }
 
-        public T GetById(int id)
+        public virtual T GetById(int id)
         {
-            return _repository.GetById(id);
+            return Repository.GetById(id);
         }
 
-        public T Create(T obj)
+        public virtual T Create(T obj)
         {
-            return _repository.Create(obj);
+            return Repository.Create(obj);
         }
 
-        public T Update(T obj)
+        public virtual T Update(T obj)
         {
-            return _repository.Update(obj);
+            return Repository.Update(obj);
         }
 
-        public T Delete(T obj)
+        public virtual T Delete(T obj)
         {
-            return _repository.Delete(obj);
+            return Repository.Delete(obj);
         }
     }
 }

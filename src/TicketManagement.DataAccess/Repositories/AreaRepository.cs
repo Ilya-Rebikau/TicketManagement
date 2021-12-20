@@ -35,7 +35,7 @@ namespace TicketManagement.DataAccess.Repositories
             }
 
             reader.Close();
-            return areas.AsEnumerable();
+            return areas;
         }
 
         public Area GetById(int id)

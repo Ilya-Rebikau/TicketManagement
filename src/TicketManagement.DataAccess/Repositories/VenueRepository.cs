@@ -35,7 +35,7 @@ namespace TicketManagement.DataAccess.Repositories
             }
 
             reader.Close();
-            return venues.AsEnumerable();
+            return venues;
         }
 
         public Venue GetById(int id)
