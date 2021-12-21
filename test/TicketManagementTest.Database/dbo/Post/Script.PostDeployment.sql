@@ -34,3 +34,27 @@ values
 (3, 2, 1),
 (3, 2, 2),
 (3, 2, 3)
+
+--- Event
+DECLARE @timeStart smalldatetime
+DECLARE @timeEnd smalldatetime
+SET @timeStart = CONVERT(smalldatetime, '2021-12-21 15:00:00', 20)
+SET @timeEnd = CONVERT(smalldatetime, '2021-12-21 17:00:00', 20)
+Exec sp_CreateEvent 'First event name', 'First event description', 1, @timeStart, @timeEnd
+
+---EventArea
+
+insert into dbo.EventArea
+values 
+(1, 'First event area description', 1, 1, 11),
+(1, 'Second event area description', 1, 2, 12)
+
+---EventSeat
+insert into dbo.EventSeat
+values
+(1, 1, 1, 0),
+(1, 1, 2, 1),
+(1, 2, 1, 1),
+(2, 1, 1, 0),
+(2, 1, 2, 1),
+(2, 2, 1, 0)
