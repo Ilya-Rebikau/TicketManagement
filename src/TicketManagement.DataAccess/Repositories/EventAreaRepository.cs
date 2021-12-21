@@ -30,7 +30,7 @@ namespace TicketManagement.DataAccess.Repositories
                         Description = reader["Description"].ToString(),
                         CoordX = (int)reader["CoordX"],
                         CoordY = (int)reader["CoordY"],
-                        Price = (double)reader["Price"],
+                        Price = double.Parse(reader["Price"].ToString()),
                     });
                 }
             }
@@ -60,7 +60,7 @@ namespace TicketManagement.DataAccess.Repositories
                         Description = reader["Description"].ToString(),
                         CoordX = (int)reader["CoordX"],
                         CoordY = (int)reader["CoordY"],
-                        Price = (double)reader["Price"],
+                        Price = double.Parse(reader["Price"].ToString()),
                     };
                 }
             }
