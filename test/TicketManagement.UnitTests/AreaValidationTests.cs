@@ -26,7 +26,7 @@ namespace TicketManagement.UnitTests
             Area area = new ()
             {
                 LayoutId = 1,
-                Description = "qweryuiopsadfgxflmgwekefmwad",
+                Description = "Description",
                 CoordX = -1,
                 CoordY = 0,
             };
@@ -46,7 +46,7 @@ namespace TicketManagement.UnitTests
             {
                 Id = 1,
                 LayoutId = 1,
-                Description = "qweryuiopsadfgxflmgwekefmwad",
+                Description = "Description",
                 CoordX = -1,
                 CoordY = 0,
             };

@@ -41,7 +41,7 @@ namespace TicketManagement.BusinessLogic.Services
         private void CheckForUniqueNameInVenue(Layout obj)
         {
             IEnumerable<Layout> layouts = Repository.GetAll();
-            IEnumerable<Layout> layoutsInVenue = layouts.Where(layout => layout.Name == obj.Name && layout.VenueId == obj.VenueId);
+            IEnumerable<Layout> layoutsInVenue = layouts.Where(layout => layout.Name == obj.Name && layout.VenueId == obj.VenueId && layout.Id != obj.Id);
             if (layoutsInVenue.Any())
             {
                 throw new ArgumentException("One of layouts in this venue already has such name!");

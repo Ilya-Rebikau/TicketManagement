@@ -29,7 +29,7 @@ namespace TicketManagement.IntegrationTests
             Area area = new ()
             {
                 LayoutId = 0,
-                Description = "qweryuiopsadfgxflmgwekefmwad",
+                Description = "Description",
                 CoordX = 1,
                 CoordY = 1,
             };
@@ -90,7 +90,7 @@ namespace TicketManagement.IntegrationTests
             {
                 Id = 1,
                 LayoutId = 0,
-                Description = "qweryuiopsadfgxflmgwekefmwad",
+                Description = "Description",
                 CoordX = 1,
                 CoordY = 1,
             };
@@ -130,7 +130,7 @@ namespace TicketManagement.IntegrationTests
             {
                 Id = 0,
                 LayoutId = 1,
-                Description = "qweryuiopsadfgxflmgwekefmwad",
+                Description = "Description",
                 CoordX = 1123124124,
                 CoordY = 2123123123,
             };
@@ -218,7 +218,7 @@ namespace TicketManagement.IntegrationTests
             Area area = new ()
             {
                 LayoutId = 1,
-                Description = "qweryuiopsadfgxflmgwekefmwad",
+                Description = "Description",
                 CoordX = 1,
                 CoordY = 1,
             };
@@ -258,7 +258,7 @@ namespace TicketManagement.IntegrationTests
             {
                 Id = 1,
                 LayoutId = 1,
-                Description = "qweryuiopsadfgxflmgwekefmwad",
+                Description = "Description",
                 CoordX = 1,
                 CoordY = 2,
             };
