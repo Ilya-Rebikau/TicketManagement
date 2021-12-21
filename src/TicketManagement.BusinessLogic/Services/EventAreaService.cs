@@ -22,12 +22,14 @@ namespace TicketManagement.BusinessLogic.Services
         public override EventArea Create(EventArea obj)
         {
             CheckForPositiveCoords(obj);
+            CheckForPositivePrice(obj);
             return Repository.Create(obj);
         }
 
         public override EventArea Update(EventArea obj)
         {
             CheckForPositiveCoords(obj);
+            CheckForPositivePrice(obj);
             return Repository.Update(obj);
         }
 
@@ -41,6 +43,18 @@ namespace TicketManagement.BusinessLogic.Services
             if (obj.CoordX <= 0 || obj.CoordY <= 0)
             {
                 throw new ArgumentException("Coords can be only positive numbers!");
+            }
+        }
+
+        /// <summary>
+        /// Checking that event area has positive price.
+        /// </summary>
+        /// <param name="obj">Adding or updating event area.</param>
+        private void CheckForPositivePrice(EventArea obj)
+        {
+            if (obj.Price <= 0)
+            {
+                throw new ArgumentException("Price can be only positive number!");
             }
         }
     }
