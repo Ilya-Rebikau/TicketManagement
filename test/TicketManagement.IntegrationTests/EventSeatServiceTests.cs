@@ -40,25 +40,6 @@ namespace TicketManagement.IntegrationTests
         }
 
         [Test]
-        public void CreateEventSeat_WhenRowAndNumberArentUnique_ShouldReturnArgumentException()
-        {
-            // Arrange
-            EventSeat eventSeat = new ()
-            {
-                EventAreaId = 1,
-                Row = 1,
-                Number = 1,
-                State = 1,
-            };
-
-            // Act
-            TestDelegate testAction = () => _service.Create(eventSeat);
-
-            // Assert
-            Assert.Throws<ArgumentException>(testAction);
-        }
-
-        [Test]
         public void CreateEventSeat__ShouldReturnAddedEventSeat()
         {
             // Arrange
@@ -142,25 +123,6 @@ namespace TicketManagement.IntegrationTests
             // Back to old
             updatedEventSeat.Row = 1;
             _service.Update(updatedEventSeat);
-        }
-
-        [Test]
-        public void UpdateEventSeat_WhenRowAndNumberArentUnique_ShouldReturnArgumentException()
-        {
-            // Arrange
-            EventSeat eventSeat = new ()
-            {
-                EventAreaId = 1,
-                Row = 1,
-                Number = 1,
-                State = 1,
-            };
-
-            // Act
-            TestDelegate testAction = () => _service.Update(eventSeat);
-
-            // Assert
-            Assert.Throws<ArgumentException>(testAction);
         }
 
         [Test]

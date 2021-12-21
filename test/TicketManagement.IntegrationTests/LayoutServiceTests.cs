@@ -222,43 +222,6 @@ namespace TicketManagement.IntegrationTests
         }
 
         [Test]
-        public void CreateLayout_WhenNameIsntUnique_ShouldReturnArgumentException()
-        {
-            // Arrange
-            Layout layout = new ()
-            {
-                VenueId = 1,
-                Description = "Description",
-                Name = "First layout",
-            };
-
-            // Act
-            TestDelegate testAction = () => _service.Create(layout);
-
-            // Assert
-            Assert.Throws<ArgumentException>(testAction);
-        }
-
-        [Test]
-        public void UpdateLayout_WhenNameIsntUnique_ShouldReturnArgumentException()
-        {
-            // Arrange
-            Layout layout = new ()
-            {
-                Id = 2,
-                VenueId = 1,
-                Description = "Description",
-                Name = "First layout",
-            };
-
-            // Act
-            TestDelegate testAction = () => _service.Update(layout);
-
-            // Assert
-            Assert.Throws<ArgumentException>(testAction);
-        }
-
-        [Test]
         public void DeleteLayout_WhenThereAreAreasInIt_ShouldReturnSqlException()
         {
             // Arrange

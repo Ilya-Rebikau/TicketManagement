@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Interfaces;
@@ -17,7 +18,18 @@ namespace TicketManagement.UnitTests
         public void Setup()
         {
             var eventAreaRepositoryMock = new Mock<IRepository<EventArea>>();
+            eventAreaRepositoryMock.Setup(rep => rep.GetAll()).Returns(GetTestEventAreas());
             _service = new EventAreaService(eventAreaRepositoryMock.Object);
+        }
+
+        private IEnumerable<EventArea> GetTestEventAreas()
+        {
+            IEnumerable<EventArea> eventAreas = new List<EventArea>
+            {
+                new EventArea { Id = 1, EventId = 1, Description = "First event area description", CoordX = 1, CoordY = 1, Price = 11 },
+                new EventArea { Id = 2, EventId = 1, Description = "Second event area description", CoordX = 1, CoordY = 2, Price = 12 },
+            };
+            return eventAreas;
         }
 
         [Test]

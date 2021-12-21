@@ -25,26 +25,6 @@ namespace TicketManagement.IntegrationTests
         }
 
         [Test]
-        public void CreateEvent_WhenTimeIsBusy_ShouldReturnArgumentException()
-        {
-            // Arrange
-            Event eventModel = new ()
-            {
-                Name = "Name",
-                Description = "Description",
-                LayoutId = 1,
-                TimeStart = new DateTime(2030, 12, 21, 15, 10, 0),
-                TimeEnd = new DateTime(2030, 12, 21, 16, 40, 0),
-            };
-
-            // Act
-            TestDelegate testAction = () => _service.Create(eventModel);
-
-            // Assert
-            Assert.Throws<ArgumentException>(testAction);
-        }
-
-        [Test]
         public void CreateEvent_WhenNameIsNull_ShouldReturnSqlException()
         {
             // Arrange
