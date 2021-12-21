@@ -23,12 +23,14 @@ namespace TicketManagement.BusinessLogic.Services
 
         public override Seat Create(Seat obj)
         {
+            CheckForPositiveRowAndNumber(obj);
             CheckForUniqueRowAndNumber(obj);
             return Repository.Create(obj);
         }
 
         public override Seat Update(Seat obj)
         {
+            CheckForPositiveRowAndNumber(obj);
             CheckForUniqueRowAndNumber(obj);
             return Repository.Update(obj);
         }
@@ -41,10 +43,18 @@ namespace TicketManagement.BusinessLogic.Services
         private void CheckForUniqueRowAndNumber(Seat obj)
         {
             IEnumerable<Seat> seats = Repository.GetAll();
-            IEnumerable<Seat> seatsInArea = seats.Where(seat => seat.AreaId == obj.AreaId && seat.Row == obj.Row && seat.Number == obj.Number);
+            IEnumerable<Seat> seatsInArea = seats.Where(seat => seat.AreaId == obj.AreaId && seat.Row == obj.Row && seat.Number == obj.Number && seat.Id != obj.Id);
             if (seatsInArea.Any())
             {
                 throw new ArgumentException("One of seats in this area already has such row and number!");
+            }
+        }
+
+        private void CheckForPositiveRowAndNumber(Seat obj)
+        {
+            if (obj.Row <= 0 || obj.Number <= 0)
+            {
+                throw new ArgumentException("Row and number must be positive!");
             }
         }
     }

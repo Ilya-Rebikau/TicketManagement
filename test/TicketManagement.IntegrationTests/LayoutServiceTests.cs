@@ -17,8 +17,8 @@ namespace TicketManagement.IntegrationTests
         [SetUp]
         public void Setup()
         {
-            var areaRepository = new LayoutRepository();
-            _service = new LayoutService(areaRepository);
+            var layoutRepository = new LayoutRepository();
+            _service = new LayoutService(layoutRepository);
         }
 
         [Test]
@@ -97,7 +97,7 @@ namespace TicketManagement.IntegrationTests
         }
 
         [Test]
-        public void UpdateArea_WhenVenueIdDoesntExist_ShouldReturnSqlException()
+        public void UpdateLayout_WhenVenueIdDoesntExist_ShouldReturnSqlException()
         {
             // Arrange
             Layout layout = new ()
@@ -196,7 +196,7 @@ namespace TicketManagement.IntegrationTests
         }
 
         [Test]
-        public void GetLayoutById_ShouldReturnFoundArea()
+        public void GetLayoutById_ShouldReturnFoundLayout()
         {
             // Arrange
             int id = 1;
@@ -209,7 +209,7 @@ namespace TicketManagement.IntegrationTests
         }
 
         [Test]
-        public void GetAreaById_WhenAreaDoesntExist_ShouldReturnEmptyArea()
+        public void GetLayoutById_WhenLayoutDoesntExist_ShouldReturnEmptyLayout()
         {
             // Arrange
             int id = -1;

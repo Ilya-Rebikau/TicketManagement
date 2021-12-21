@@ -72,7 +72,7 @@ namespace TicketManagement.DataAccess.Repositories
             connection.Open();
             string sql = "Insert into venue (Description, Address, Phone, Name) values (@description, @address, @phone, @name)";
             SqlCommand command = new SqlCommand(sql, connection);
-            SqlParameter descriptionParam = new SqlParameter("@venueId", obj.Description);
+            SqlParameter descriptionParam = new SqlParameter("@description", obj.Description);
             SqlParameter addressParam = new SqlParameter("@address", obj.Address);
             SqlParameter phoneParam = new SqlParameter("@phone", obj.Phone);
             SqlParameter nameParam = new SqlParameter("@name", obj.Name);
@@ -91,7 +91,7 @@ namespace TicketManagement.DataAccess.Repositories
             string sql = "Update venue set Description = @description, Address = @address, Phone = @phone, Name = @name where Id = @id";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
-            SqlParameter descriptionParam = new SqlParameter("@venueId", obj.Description);
+            SqlParameter descriptionParam = new SqlParameter("@description", obj.Description);
             SqlParameter addressParam = new SqlParameter("@address", obj.Address);
             SqlParameter phoneParam = new SqlParameter("@phone", obj.Phone);
             SqlParameter nameParam = new SqlParameter("@name", obj.Name);
