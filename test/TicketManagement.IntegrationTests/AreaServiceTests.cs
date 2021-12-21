@@ -269,5 +269,21 @@ namespace TicketManagement.IntegrationTests
             // Assert
             Assert.Throws<ArgumentException>(testAction);
         }
+
+        [Test]
+        public void DeleteArea_WhenThereAreSeatsInIt_ShouldReturnSqlException()
+        {
+            // Arrange
+            Area area = new ()
+            {
+                Id = 1,
+            };
+
+            // Act
+            TestDelegate testAction = () => _service.Delete(area);
+
+            // Assert
+            Assert.Throws<SqlException>(testAction);
+        }
     }
 }
