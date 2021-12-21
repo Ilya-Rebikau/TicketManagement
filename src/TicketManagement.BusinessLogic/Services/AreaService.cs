@@ -45,7 +45,7 @@ namespace TicketManagement.BusinessLogic.Services
         private void CheckForUniqueDescription(Area obj)
         {
             IEnumerable<Area> areas = Repository.GetAll();
-            IEnumerable<Area> areasInLayout = areas.Where(area => area.Description == obj.Description && area.LayoutId == obj.LayoutId);
+            IEnumerable<Area> areasInLayout = areas.Where(area => area.Description == obj.Description && area.LayoutId == obj.LayoutId && area.Id != obj.Id);
             if (areasInLayout.Any())
             {
                 throw new ArgumentException("One of areas in this layout already has such description!");
