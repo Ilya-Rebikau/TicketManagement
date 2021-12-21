@@ -23,13 +23,17 @@ namespace TicketManagement.BusinessLogic.Services
 
         public override Area Create(Area obj)
         {
+            CheckForPositiveCoords(obj);
             CheckForUniqueDescription(obj);
+            CheckForUniqueCoordsInLayout(obj);
             return Repository.Create(obj);
         }
 
         public override Area Update(Area obj)
         {
+            CheckForPositiveCoords(obj);
             CheckForUniqueDescription(obj);
+            CheckForUniqueCoordsInLayout(obj);
             return Repository.Update(obj);
         }
 
@@ -45,6 +49,34 @@ namespace TicketManagement.BusinessLogic.Services
             if (areasInLayout.Any())
             {
                 throw new ArgumentException("One of areas in this layout already has such description!");
+            }
+        }
+
+        /// <summary>
+        /// Checking that area has positive coords.
+        /// </summary>
+        /// <param name="obj">Adding or updating area.</param>
+        /// <exception cref="ArgumentException">Generates exception in case coords aren't positive.</exception>
+        private void CheckForPositiveCoords(Area obj)
+        {
+            if (obj.CoordX <= 0 || obj.CoordY <= 0)
+            {
+                throw new ArgumentException("Coords can be only positive numbers!");
+            }
+        }
+
+        /// <summary>
+        /// Checking that area has unique coords in layout.
+        /// </summary>
+        /// <param name="obj">Adding or updating area.</param>
+        /// <exception cref="ArgumentException">Generates exception in case coords aren't unique for layout.</exception>
+        private void CheckForUniqueCoordsInLayout(Area obj)
+        {
+            IEnumerable<Area> areas = Repository.GetAll();
+            IEnumerable<Area> areasInLayout = areas.Where(area => area.LayoutId == obj.LayoutId && area.CoordX == obj.CoordX && area.CoordY == obj.CoordY && area.Id != obj.Id);
+            if (areasInLayout.Any())
+            {
+                throw new ArgumentException("CoordX and CoordY must be unique for areas in one layout!");
             }
         }
     }

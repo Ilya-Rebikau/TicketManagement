@@ -5,7 +5,7 @@ namespace TicketManagement.DataAccess
     /// <summary>
     /// Provides with string connection to MS SQL database.
     /// </summary>
-    public static class DbConnection
+    internal static class DbConnection
     {
         /// <summary>
         /// Get connection string for access to database.

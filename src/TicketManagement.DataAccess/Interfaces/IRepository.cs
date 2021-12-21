@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("TicketManagement.IntegrationTests")]
 
 namespace TicketManagement.DataAccess.Interfaces
 {
