@@ -3,7 +3,11 @@
     @name NVARCHAR(120),
     @description NVARCHAR(MAX),
     @layoutId INT,
-    @timeStart SMALLDATETIME,
-    @timeEnd SMALLDATETIME
+    @timeStart NVARCHAR(30),
+    @timeEnd NVARCHAR(30)
 AS
-UPDATE Event set Name = @name, Description = @description, LayoutId = @layoutId, TimeStart = @timeStart, TimeEnd = @timeEnd where Id = @id
+DECLARE @timeStartDT smalldatetime
+DECLARE @timeEndDT smalldatetime
+SET @timeStartDT = CONVERT(smalldatetime, @timeStart, 20)
+SET @timeEndDT = CONVERT(smalldatetime, @timeEnd, 20)
+UPDATE Event set Name = @name, Description = @description, LayoutId = @layoutId, TimeStart = @timeStartDT, TimeEnd = @timeEndDT where Id = @id

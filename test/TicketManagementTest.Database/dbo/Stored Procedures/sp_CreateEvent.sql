@@ -2,7 +2,11 @@
     @name NVARCHAR(120),
     @description NVARCHAR(MAX),
     @layoutId INT,
-    @timeStart SMALLDATETIME,
-    @timeEnd SMALLDATETIME
+    @timeStart NVARCHAR(30),
+    @timeEnd NVARCHAR(30)
 AS
-INSERT INTO Event(Name, Description, LayoutId, TimeStart, TimeEnd) VALUES(@name, @description, @layoutId, @timeStart, @timeEnd)
+DECLARE @timeStartDT smalldatetime
+DECLARE @timeEndDT smalldatetime
+SET @timeStartDT = CONVERT(smalldatetime, @timeStart, 20)
+SET @timeEndDT = CONVERT(smalldatetime, @timeEnd, 20)
+INSERT INTO Event(Name, Description, LayoutId, TimeStart, TimeEnd) VALUES(@name, @description, @layoutId, @timeStartDT, @timeEndDT)

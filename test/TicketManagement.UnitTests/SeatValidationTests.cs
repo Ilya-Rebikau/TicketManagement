@@ -8,6 +8,7 @@ using TicketManagement.DataAccess.Models;
 
 namespace TicketManagement.UnitTests
 {
+    [TestFixture]
     internal class SeatValidationTests
     {
         private IService<Seat> _service;

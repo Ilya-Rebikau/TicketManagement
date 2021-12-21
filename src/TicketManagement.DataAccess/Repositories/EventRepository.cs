@@ -80,8 +80,8 @@ namespace TicketManagement.DataAccess.Repositories
             SqlParameter nameParam = new SqlParameter("@name", obj.Name);
             SqlParameter descriptionParam = new SqlParameter("@description", obj.Description);
             SqlParameter layoutIdParam = new SqlParameter("@layoutId", obj.LayoutId);
-            SqlParameter timeStartParam = new SqlParameter("@timeStart", obj.TimeStart);
-            SqlParameter timeEndParam = new SqlParameter("@timeEnd", obj.TimeEnd);
+            SqlParameter timeStartParam = new SqlParameter("@timeStart", obj.TimeStart.ToString());
+            SqlParameter timeEndParam = new SqlParameter("@timeEnd", obj.TimeEnd.ToString());
             command.Parameters.Add(nameParam);
             command.Parameters.Add(descriptionParam);
             command.Parameters.Add(layoutIdParam);
@@ -97,12 +97,13 @@ namespace TicketManagement.DataAccess.Repositories
             connection.Open();
             string sql = "sp_UpdateEvent";
             SqlCommand command = new SqlCommand(sql, connection);
+            command.CommandType = CommandType.StoredProcedure;
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
             SqlParameter nameParam = new SqlParameter("@name", obj.Name);
             SqlParameter descriptionParam = new SqlParameter("@description", obj.Description);
             SqlParameter layoutIdParam = new SqlParameter("@layoutId", obj.LayoutId);
-            SqlParameter timeStartParam = new SqlParameter("@timeStart", obj.TimeStart);
-            SqlParameter timeEndParam = new SqlParameter("@timeEnd", obj.TimeEnd);
+            SqlParameter timeStartParam = new SqlParameter("@timeStart", obj.TimeStart.ToString());
+            SqlParameter timeEndParam = new SqlParameter("@timeEnd", obj.TimeEnd.ToString());
             command.Parameters.Add(idParam);
             command.Parameters.Add(nameParam);
             command.Parameters.Add(descriptionParam);
@@ -119,6 +120,7 @@ namespace TicketManagement.DataAccess.Repositories
             connection.Open();
             string sql = "sp_DeleteEvent";
             SqlCommand command = new SqlCommand(sql, connection);
+            command.CommandType = CommandType.StoredProcedure;
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
             command.Parameters.Add(idParam);
             command.ExecuteNonQuery();

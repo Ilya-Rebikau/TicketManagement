@@ -80,7 +80,7 @@ namespace TicketManagement.BusinessLogic.Services
         /// <exception cref="ArgumentException">Generates exception in case TimeStart after TimeEnd.</exception>
         private void CheckForTimeBorders(Event obj)
         {
-            if (obj.TimeStart <= obj.TimeEnd)
+            if (obj.TimeStart >= obj.TimeEnd)
             {
                 throw new ArgumentException("Time of start event can't be after event's time of end");
             }
@@ -94,12 +94,10 @@ namespace TicketManagement.BusinessLogic.Services
         private void CheckForSameLayoutInOneTime(Event obj)
         {
             IEnumerable<Event> events = Repository.GetAll();
-            foreach (Event ev in events)
+            IEnumerable<Event> eventsInLayout = events.Where(ev => ev.LayoutId == obj.LayoutId && obj.TimeStart >= ev.TimeStart && obj.TimeEnd <= ev.TimeEnd && ev.Id != obj.Id);
+            if (eventsInLayout.Any())
             {
-                if (ev.LayoutId == obj.LayoutId && obj.TimeStart >= ev.TimeStart && obj.TimeEnd <= ev.TimeEnd)
-                {
-                    throw new ArgumentException("You can't create event in one time in one layout!");
-                }
+                throw new ArgumentException("You can't create event in one time in one layout!");
             }
         }
 
@@ -116,11 +114,17 @@ namespace TicketManagement.BusinessLogic.Services
             Layout layout = layouts.SingleOrDefault(layout => layout.Id == obj.LayoutId);
             if (layout != null)
             {
-                Area area = areas.SingleOrDefault(area => area.LayoutId == layout.Id);
-                if (area != null)
+                IEnumerable<Area> areasInLayout = areas.Where(area => area.LayoutId == layout.Id);
+                if (areasInLayout.Any())
                 {
-                    IEnumerable<Seat> seatsInArea = seats.Where(seat => area.Id == seat.AreaId);
-                    if (seatsInArea.Any())
+                    IEnumerable<Seat> totalSeats = new List<Seat>();
+                    foreach (Area a in areasInLayout)
+                    {
+                        IEnumerable<Seat> seatsInArea = seats.Where(seat => a.Id == seat.AreaId);
+                        totalSeats.Concat(seatsInArea);
+                    }
+
+                    if (totalSeats.Any())
                     {
                         throw new ArgumentException("There are no seats in layout.");
                     }
