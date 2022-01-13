@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.DataAccess.Interfaces;
 
@@ -24,29 +25,29 @@ namespace TicketManagement.BusinessLogic.Services
         /// </summary>
         protected IRepository<T> Repository { get; private set; }
 
-        public virtual IEnumerable<T> GetAll()
+        public async virtual Task<IEnumerable<T>> GetAllAsync()
         {
-            return Repository.GetAll();
+            return await Repository.GetAllAsync();
         }
 
-        public virtual T GetById(int id)
+        public async virtual Task<T> GetByIdAsync(int id)
         {
-            return Repository.GetById(id);
+            return await Repository.GetByIdAsync(id);
         }
 
-        public virtual T Create(T obj)
+        public async virtual Task<T> CreateAsync(T obj)
         {
-            return Repository.Create(obj);
+            return await Repository.CreateAsync(obj);
         }
 
-        public virtual T Update(T obj)
+        public async virtual Task<T> UpdateAsync(T obj)
         {
-            return Repository.Update(obj);
+            return await Repository.UpdateAsync(obj);
         }
 
-        public virtual T Delete(T obj)
+        public async virtual Task<T> DeleteAsync(T obj)
         {
-            return Repository.Delete(obj);
+            return await Repository.DeleteAsync(obj);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
@@ -42,22 +43,22 @@ namespace TicketManagement.BusinessLogic.Services
             _layoutRepository = layoutRepository;
         }
 
-        public override Event Create(Event obj)
+        public async override Task<Event> CreateAsync(Event obj)
         {
             CheckEventForPastTime(obj);
             CheckForTimeBorders(obj);
-            CheckForSameLayoutInOneTime(obj);
-            CheckForSeats(obj);
-            return Repository.Create(obj);
+            await CheckForSameLayoutInOneTime(obj);
+            await CheckForSeats(obj);
+            return await Repository.CreateAsync(obj);
         }
 
-        public override Event Update(Event obj)
+        public async override Task<Event> UpdateAsync(Event obj)
         {
             CheckEventForPastTime(obj);
             CheckForTimeBorders(obj);
-            CheckForSameLayoutInOneTime(obj);
-            CheckForSeats(obj);
-            return Repository.Update(obj);
+            await CheckForSameLayoutInOneTime(obj);
+            await CheckForSeats(obj);
+            return await Repository.UpdateAsync(obj);
         }
 
         /// <summary>
@@ -91,9 +92,9 @@ namespace TicketManagement.BusinessLogic.Services
         /// </summary>
         /// <param name="obj">Adding or updating event.</param>
         /// <exception cref="ArgumentException">Generates exception in case event in this layout and time already exists.</exception>
-        private void CheckForSameLayoutInOneTime(Event obj)
+        private async Task CheckForSameLayoutInOneTime(Event obj)
         {
-            IEnumerable<Event> events = Repository.GetAll();
+            IEnumerable<Event> events = await Repository.GetAllAsync();
             IEnumerable<Event> eventsInLayout = events.Where(ev => ev.LayoutId == obj.LayoutId && obj.TimeStart >= ev.TimeStart && obj.TimeEnd <= ev.TimeEnd && ev.Id != obj.Id);
             if (eventsInLayout.Any())
             {
@@ -106,11 +107,11 @@ namespace TicketManagement.BusinessLogic.Services
         /// </summary>
         /// <param name="obj">Adding or updating event.</param>
         /// <exception cref="ArgumentException">Generates exception in case there are no seats in layout.</exception>
-        private void CheckForSeats(Event obj)
+        private async Task CheckForSeats(Event obj)
         {
-            IEnumerable<Layout> layouts = _layoutRepository.GetAll();
-            IEnumerable<Area> areas = _areaRepository.GetAll();
-            IEnumerable<Seat> seats = _seatRepository.GetAll();
+            IEnumerable<Layout> layouts = await _layoutRepository.GetAllAsync();
+            IEnumerable<Area> areas = await _areaRepository.GetAllAsync();
+            IEnumerable<Seat> seats = await _seatRepository.GetAllAsync();
             Layout layout = layouts.SingleOrDefault(layout => layout.Id == obj.LayoutId);
             if (layout != null)
             {

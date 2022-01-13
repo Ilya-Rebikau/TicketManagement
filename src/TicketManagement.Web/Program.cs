@@ -1,11 +1,6 @@
-using Microsoft.EntityFrameworkCore;
-using TicketManagement.DataAccess;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-string connection = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<TicketManagementContext>(options => options.UseSqlServer(connection));
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();

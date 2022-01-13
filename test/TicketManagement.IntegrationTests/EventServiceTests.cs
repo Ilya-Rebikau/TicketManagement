@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Services;
@@ -38,10 +39,10 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(eventModel);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventModel);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
 
         [Test]
@@ -58,10 +59,10 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(eventModel);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventModel);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
 
         [Test]
@@ -78,14 +79,14 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(eventModel);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventModel);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
 
         [Test]
-        public void CreateEvent__ShouldReturnAddedEvent()
+        public async Task CreateEvent__ShouldReturnAddedEvent()
         {
             // Arrange
             Event eventModel = new ()
@@ -98,13 +99,14 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            Event addedEvent = _service.Create(eventModel);
+            Event addedEvent = await _service.CreateAsync(eventModel);
 
             // Assert
             Assert.AreEqual(eventModel, addedEvent);
 
-            // Delete added event
-            _service.Delete(_service.GetAll().Last());
+            // DeleteAsync added event
+            var events = await _service.GetAllAsync();
+            await _service.DeleteAsync(events.Last());
         }
 
         [Test]
@@ -122,10 +124,10 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Update(eventModel);
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventModel);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
 
         [Test]
@@ -143,10 +145,10 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Update(eventModel);
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventModel);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
 
         [Test]
@@ -164,14 +166,14 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Update(eventModel);
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventModel);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
 
         [Test]
-        public void UpdateEvent_ShouldReturnUpdatedEvent()
+        public async Task UpdateEvent_ShouldReturnUpdatedEvent()
         {
             // Arrange
             Event eventModel = new ()
@@ -185,37 +187,37 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            Event updatedEvent = _service.Update(eventModel);
+            Event updatedEvent = await _service.UpdateAsync(eventModel);
 
             // Assert
             Assert.AreEqual(eventModel, updatedEvent);
 
             // Back to old
             updatedEvent.Name = "First event name";
-            _service.Update(updatedEvent);
+            await _service.UpdateAsync(updatedEvent);
         }
 
         [Test]
-        public void GetEventById_ShouldReturnFoundEvent()
+        public async Task GetEventById_ShouldReturnFoundEvent()
         {
             // Arrange
             int id = 1;
 
             // Act
-            Event foundEvent = _service.GetById(id);
+            Event foundEvent = await _service.GetByIdAsync(id);
 
             // Assert
             Assert.AreEqual(id, foundEvent.Id);
         }
 
         [Test]
-        public void GetAreaById_WhenAreaDoesntExist_ShouldReturnEmptyArea()
+        public async Task GetAreaById_WhenAreaDoesntExist_ShouldReturnEmptyArea()
         {
             // Arrange
             int id = -1;
 
             // Act
-            Event foundEvent = _service.GetById(id);
+            Event foundEvent = await _service.GetByIdAsync(id);
 
             // Assert
             Assert.AreEqual(0, foundEvent.Id);
@@ -231,10 +233,10 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Delete(eventModel);
+            AsyncTestDelegate testAction = async () => await _service.DeleteAsync(eventModel);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
     }
 }

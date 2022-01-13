@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
@@ -21,18 +22,18 @@ namespace TicketManagement.BusinessLogic.Services
         {
         }
 
-        public override EventSeat Create(EventSeat obj)
+        public async override Task<EventSeat> CreateAsync(EventSeat obj)
         {
-            CheckForUniqueRowAndNumber(obj);
+            await CheckForUniqueRowAndNumber(obj);
             CheckForPositiveRowAndNumber(obj);
-            return Repository.Create(obj);
+            return await Repository.CreateAsync(obj);
         }
 
-        public override EventSeat Update(EventSeat obj)
+        public async override Task<EventSeat> UpdateAsync(EventSeat obj)
         {
-            CheckForUniqueRowAndNumber(obj);
+            await CheckForUniqueRowAndNumber(obj);
             CheckForPositiveRowAndNumber(obj);
-            return Repository.Update(obj);
+            return await Repository.UpdateAsync(obj);
         }
 
         /// <summary>
@@ -40,9 +41,9 @@ namespace TicketManagement.BusinessLogic.Services
         /// </summary>
         /// <param name="obj">Adding or updating seat.</param>
         /// <exception cref="ArgumentException">Generates exception in case row and number are not unique.</exception>
-        private void CheckForUniqueRowAndNumber(EventSeat obj)
+        private async Task CheckForUniqueRowAndNumber(EventSeat obj)
         {
-            IEnumerable<EventSeat> eventSeats = Repository.GetAll();
+            IEnumerable<EventSeat> eventSeats = await Repository.GetAllAsync();
             IEnumerable<EventSeat> eventSeatsInArea = eventSeats.Where(seat => seat.EventAreaId == obj.EventAreaId && seat.Row == obj.Row && seat.Number == obj.Number && seat.Id != obj.Id);
             if (eventSeatsInArea.Any())
             {

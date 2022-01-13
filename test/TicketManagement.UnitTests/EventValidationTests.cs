@@ -21,10 +21,10 @@ namespace TicketManagement.UnitTests
             var seatRepositoryMock = new Mock<IRepository<Seat>>();
             var areaRepositoryMock = new Mock<IRepository<Area>>();
             var layoutRepositoryMock = new Mock<IRepository<Layout>>();
-            eventRepositoryMock.Setup(rep => rep.GetAll()).Returns(GetTestEvents());
-            seatRepositoryMock.Setup(rep => rep.GetAll()).Returns(GetTestSeats());
-            areaRepositoryMock.Setup(rep => rep.GetAll()).Returns(GetTestAreas());
-            layoutRepositoryMock.Setup(rep => rep.GetAll()).Returns(GetTestLayouts());
+            eventRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEvents());
+            seatRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestSeats());
+            areaRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestAreas());
+            layoutRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestLayouts());
             _service = new EventService(eventRepositoryMock.Object, seatRepositoryMock.Object, areaRepositoryMock.Object, layoutRepositoryMock.Object);
         }
 
@@ -102,10 +102,10 @@ namespace TicketManagement.UnitTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(eventModel);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventModel);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
 
         [Test]
@@ -122,10 +122,10 @@ namespace TicketManagement.UnitTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(eventModel);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventModel);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
 
         [Test]
@@ -142,10 +142,10 @@ namespace TicketManagement.UnitTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(eventModel);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventModel);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
 
         [Test]
@@ -163,10 +163,10 @@ namespace TicketManagement.UnitTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Update(eventModel);
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventModel);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
 
         [Test]
@@ -184,10 +184,10 @@ namespace TicketManagement.UnitTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Update(eventModel);
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventModel);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
     }
 }

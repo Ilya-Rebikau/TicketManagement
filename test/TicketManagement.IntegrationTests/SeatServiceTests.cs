@@ -1,6 +1,6 @@
-﻿using System;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Services;
@@ -33,14 +33,14 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(seat);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(seat);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
 
         [Test]
-        public void CreateSeat__ShouldReturnAddedSeat()
+        public async Task CreateSeat__ShouldReturnAddedSeat()
         {
             // Arrange
             Seat seat = new ()
@@ -51,13 +51,14 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            Seat addedSeat = _service.Create(seat);
+            Seat addedSeat = await _service.CreateAsync(seat);
 
             // Assert
             Assert.AreEqual(seat, addedSeat);
 
-            // Delete added seat
-            _service.Delete(_service.GetAll().Last());
+            // DeleteAsync added seat
+            var seats = await _service.GetAllAsync();
+            await _service.DeleteAsync(seats.Last());
         }
 
         [Test]
@@ -73,14 +74,14 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Update(seat);
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(seat);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
 
         [Test]
-        public void UpdateSeat_WhenSeatDoesntExist_ShouldReturnEmptySeat()
+        public async Task UpdateSeat_WhenSeatDoesntExist_ShouldReturnEmptySeat()
         {
             // Arrange
             Seat seat = new ()
@@ -92,14 +93,14 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            Seat updatedSeat = _service.Update(seat);
+            Seat updatedSeat = await _service.UpdateAsync(seat);
 
             // Assert
             Assert.AreEqual(0, updatedSeat.Id);
         }
 
         [Test]
-        public void UpdateSeat_ShouldReturnUpdatedSeat()
+        public async Task UpdateSeat_ShouldReturnUpdatedSeat()
         {
             // Arrange
             Seat seat = new ()
@@ -111,37 +112,37 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            Seat updatedSeat = _service.Update(seat);
+            Seat updatedSeat = await _service.UpdateAsync(seat);
 
             // Assert
             Assert.AreEqual(seat, updatedSeat);
 
             // Back to old
             updatedSeat.Row = 1;
-            _service.Update(updatedSeat);
+            await _service.UpdateAsync(updatedSeat);
         }
 
         [Test]
-        public void GetSeatById_ShouldReturnFoundSeat()
+        public async Task GetSeatById_ShouldReturnFoundSeat()
         {
             // Arrange
             int id = 1;
 
             // Act
-            Seat foundSeat = _service.GetById(id);
+            Seat foundSeat = await _service.GetByIdAsync(id);
 
             // Assert
             Assert.AreEqual(id, foundSeat.Id);
         }
 
         [Test]
-        public void GetSeatById_WhenSeatDoesntExist_ShouldReturnEmptySeat()
+        public async Task GetSeatById_WhenSeatDoesntExist_ShouldReturnEmptySeat()
         {
             // Arrange
             int id = -1;
 
             // Act
-            Seat seat = _service.GetById(id);
+            Seat seat = await _service.GetByIdAsync(id);
 
             // Assert
             Assert.AreEqual(0, seat.Id);

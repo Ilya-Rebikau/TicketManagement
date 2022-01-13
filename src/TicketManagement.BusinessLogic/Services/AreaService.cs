@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
@@ -21,20 +22,20 @@ namespace TicketManagement.BusinessLogic.Services
         {
         }
 
-        public override Area Create(Area obj)
+        public async override Task<Area> CreateAsync(Area obj)
         {
             CheckForPositiveCoords(obj);
-            CheckForUniqueDescription(obj);
-            CheckForUniqueCoordsInLayout(obj);
-            return Repository.Create(obj);
+            await CheckForUniqueDescription(obj);
+            await CheckForUniqueCoordsInLayout(obj);
+            return await Repository.CreateAsync(obj);
         }
 
-        public override Area Update(Area obj)
+        public async override Task<Area> UpdateAsync(Area obj)
         {
             CheckForPositiveCoords(obj);
-            CheckForUniqueDescription(obj);
-            CheckForUniqueCoordsInLayout(obj);
-            return Repository.Update(obj);
+            await CheckForUniqueDescription(obj);
+            await CheckForUniqueCoordsInLayout(obj);
+            return await Repository.UpdateAsync(obj);
         }
 
         /// <summary>
@@ -42,9 +43,9 @@ namespace TicketManagement.BusinessLogic.Services
         /// </summary>
         /// <param name="obj">Adding or updating area.</param>
         /// <exception cref="ArgumentException">Generates exception in case description is not unique.</exception>
-        private void CheckForUniqueDescription(Area obj)
+        private async Task CheckForUniqueDescription(Area obj)
         {
-            IEnumerable<Area> areas = Repository.GetAll();
+            IEnumerable<Area> areas = await Repository.GetAllAsync();
             IEnumerable<Area> areasInLayout = areas.Where(area => area.Description == obj.Description && area.LayoutId == obj.LayoutId && area.Id != obj.Id);
             if (areasInLayout.Any())
             {
@@ -70,9 +71,9 @@ namespace TicketManagement.BusinessLogic.Services
         /// </summary>
         /// <param name="obj">Adding or updating area.</param>
         /// <exception cref="ArgumentException">Generates exception in case coords aren't unique for layout.</exception>
-        private void CheckForUniqueCoordsInLayout(Area obj)
+        private async Task CheckForUniqueCoordsInLayout(Area obj)
         {
-            IEnumerable<Area> areas = Repository.GetAll();
+            IEnumerable<Area> areas = await Repository.GetAllAsync();
             IEnumerable<Area> areasInLayout = areas.Where(area => area.LayoutId == obj.LayoutId && area.CoordX == obj.CoordX && area.CoordY == obj.CoordY && area.Id != obj.Id);
             if (areasInLayout.Any())
             {

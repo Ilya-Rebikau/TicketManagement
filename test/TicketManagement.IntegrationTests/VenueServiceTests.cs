@@ -1,6 +1,6 @@
-﻿using System;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Services;
@@ -34,10 +34,10 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(venue);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(venue);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
 
         [Test]
@@ -53,10 +53,10 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(venue);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(venue);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
 
         [Test]
@@ -72,10 +72,10 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(venue);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(venue);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
 
         [Test]
@@ -91,14 +91,14 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(venue);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(venue);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
 
         [Test]
-        public void CreateVenue__ShouldReturnAddedVenue()
+        public async Task CreateVenue__ShouldReturnAddedVenue()
         {
             // Arrange
             Venue venue = new ()
@@ -110,13 +110,14 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            Venue addedVenue = _service.Create(venue);
+            Venue addedVenue = await _service.CreateAsync(venue);
 
             // Assert
             Assert.AreEqual(venue, addedVenue);
 
-            // Delete added venue
-            _service.Delete(_service.GetAll().Last());
+            // DeleteAsync added venue
+            var venues = await _service.GetAllAsync();
+            await _service.DeleteAsync(venues.Last());
         }
 
         [Test]
@@ -133,10 +134,10 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Update(venue);
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(venue);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
 
         [Test]
@@ -153,10 +154,10 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Update(venue);
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(venue);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
 
         [Test]
@@ -173,14 +174,14 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Update(venue);
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(venue);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
 
         [Test]
-        public void UpdateVenue_WhenVenueDoesntExist_ShouldReturnEmptyVenue()
+        public async Task UpdateVenue_WhenVenueDoesntExist_ShouldReturnEmptyVenue()
         {
             // Arrange
             Venue venue = new ()
@@ -193,14 +194,14 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            Venue updatedVenue = _service.Update(venue);
+            Venue updatedVenue = await _service.UpdateAsync(venue);
 
             // Assert
             Assert.AreEqual(0, updatedVenue.Id);
         }
 
         [Test]
-        public void UpdateVenue_ShouldReturnUpdatedVenue()
+        public async Task UpdateVenue_ShouldReturnUpdatedVenue()
         {
             // Arrange
             Venue venue = new ()
@@ -213,37 +214,37 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            Venue updatedVenue = _service.Update(venue);
+            Venue updatedVenue = await _service.UpdateAsync(venue);
 
             // Assert
             Assert.AreEqual(venue, updatedVenue);
 
             // Back to old
             updatedVenue.Description = "123 45 678 90 12";
-            _service.Update(updatedVenue);
+            await _service.UpdateAsync(updatedVenue);
         }
 
         [Test]
-        public void GetVenueById_ShouldReturnFoundVenue()
+        public async Task GetVenueById_ShouldReturnFoundVenue()
         {
             // Arrange
             int id = 1;
 
             // Act
-            Venue foundVenue = _service.GetById(id);
+            Venue foundVenue = await _service.GetByIdAsync(id);
 
             // Assert
             Assert.AreEqual(id, foundVenue.Id);
         }
 
         [Test]
-        public void GetVenueById_WhenVenueDoesntExist_ShouldReturnEmptyVenue()
+        public async Task GetVenueById_WhenVenueDoesntExist_ShouldReturnEmptyVenue()
         {
             // Arrange
             int id = -1;
 
             // Act
-            Venue venue = _service.GetById(id);
+            Venue venue = await _service.GetByIdAsync(id);
 
             // Assert
             Assert.AreEqual(0, venue.Id);
@@ -259,10 +260,10 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Delete(venue);
+            AsyncTestDelegate testAction = async () => await _service.DeleteAsync(venue);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
     }
 }

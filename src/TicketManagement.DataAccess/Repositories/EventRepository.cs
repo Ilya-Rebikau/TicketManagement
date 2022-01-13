@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
+using System.Threading.Tasks;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
 
@@ -13,17 +13,17 @@ namespace TicketManagement.DataAccess.Repositories
     /// </summary>
     internal class EventRepository : IRepository<Event>
     {
-        public IEnumerable<Event> GetAll()
+        public async Task<IEnumerable<Event>> GetAllAsync()
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
+            await connection.OpenAsync();
             IList<Event> events = new List<Event>();
             string sql = "Select Id, Name, Description, LayoutId, TimeStart, TimeEnd from event";
             SqlCommand cmd = new SqlCommand(sql, connection);
-            SqlDataReader reader = cmd.ExecuteReader();
+            SqlDataReader reader = await cmd.ExecuteReaderAsync();
             if (reader.HasRows)
             {
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     events.Add(new Event
                     {
@@ -41,19 +41,19 @@ namespace TicketManagement.DataAccess.Repositories
             return events;
         }
 
-        public Event GetById(int id)
+        public async Task<Event> GetByIdAsync(int id)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
+            await connection.OpenAsync();
             string sql = "Select Id, Name, Description, LayoutId, TimeStart, TimeEnd from event where Id = @id";
             SqlCommand cmd = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", id);
             cmd.Parameters.Add(idParam);
-            SqlDataReader reader = cmd.ExecuteReader();
+            SqlDataReader reader = await cmd.ExecuteReaderAsync();
             Event eventModel = new Event();
             if (reader.HasRows)
             {
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     eventModel = new Event
                     {
@@ -70,10 +70,10 @@ namespace TicketManagement.DataAccess.Repositories
             return eventModel;
         }
 
-        public Event Create(Event obj)
+        public async Task<Event> CreateAsync(Event obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
+            await connection.OpenAsync();
             string sql = "sp_CreateEvent";
             SqlCommand command = new SqlCommand(sql, connection);
             command.CommandType = CommandType.StoredProcedure;
@@ -87,14 +87,14 @@ namespace TicketManagement.DataAccess.Repositories
             command.Parameters.Add(layoutIdParam);
             command.Parameters.Add(timeStartParam);
             command.Parameters.Add(timeEndParam);
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
             return obj;
         }
 
-        public Event Update(Event obj)
+        public async Task<Event> UpdateAsync(Event obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
+            await connection.OpenAsync();
             string sql = "sp_UpdateEvent";
             SqlCommand command = new SqlCommand(sql, connection);
             command.CommandType = CommandType.StoredProcedure;
@@ -110,20 +110,20 @@ namespace TicketManagement.DataAccess.Repositories
             command.Parameters.Add(layoutIdParam);
             command.Parameters.Add(timeStartParam);
             command.Parameters.Add(timeEndParam);
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
             return obj;
         }
 
-        public Event Delete(Event obj)
+        public async Task<Event> DeleteAsync(Event obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
+            await connection.OpenAsync();
             string sql = "sp_DeleteEvent";
             SqlCommand command = new SqlCommand(sql, connection);
             command.CommandType = CommandType.StoredProcedure;
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
             command.Parameters.Add(idParam);
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
             return obj;
         }
     }

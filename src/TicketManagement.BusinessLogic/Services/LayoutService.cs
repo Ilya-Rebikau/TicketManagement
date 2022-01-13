@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
@@ -21,16 +22,16 @@ namespace TicketManagement.BusinessLogic.Services
         {
         }
 
-        public override Layout Create(Layout obj)
+        public async override Task<Layout> CreateAsync(Layout obj)
         {
-            CheckForUniqueNameInVenue(obj);
-            return Repository.Create(obj);
+            await CheckForUniqueNameInVenue(obj);
+            return await Repository.CreateAsync(obj);
         }
 
-        public override Layout Update(Layout obj)
+        public async override Task<Layout> UpdateAsync(Layout obj)
         {
-            CheckForUniqueNameInVenue(obj);
-            return Repository.Update(obj);
+            await CheckForUniqueNameInVenue(obj);
+            return await Repository.UpdateAsync(obj);
         }
 
         /// <summary>
@@ -38,9 +39,9 @@ namespace TicketManagement.BusinessLogic.Services
         /// </summary>
         /// <param name="obj">Adding or updating layout.</param>
         /// <exception cref="ArgumentException">Generates exception in case there are layouts in venue with such name.</exception>
-        private void CheckForUniqueNameInVenue(Layout obj)
+        private async Task CheckForUniqueNameInVenue(Layout obj)
         {
-            IEnumerable<Layout> layouts = Repository.GetAll();
+            IEnumerable<Layout> layouts = await Repository.GetAllAsync();
             IEnumerable<Layout> layoutsInVenue = layouts.Where(layout => layout.Name == obj.Name && layout.VenueId == obj.VenueId && layout.Id != obj.Id);
             if (layoutsInVenue.Any())
             {

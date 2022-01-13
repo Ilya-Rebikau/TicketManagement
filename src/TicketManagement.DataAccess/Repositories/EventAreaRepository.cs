@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
+using System.Threading.Tasks;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
 
@@ -11,17 +11,17 @@ namespace TicketManagement.DataAccess.Repositories
     /// </summary>
     internal class EventAreaRepository : IRepository<EventArea>
     {
-        public IEnumerable<EventArea> GetAll()
+        public async Task<IEnumerable<EventArea>> GetAllAsync()
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
+            await connection.OpenAsync();
             IList<EventArea> eventAreas = new List<EventArea>();
             string sql = "Select Id, EventId, Description, CoordX, CoordY, Price from eventarea";
             SqlCommand cmd = new SqlCommand(sql, connection);
-            SqlDataReader reader = cmd.ExecuteReader();
+            SqlDataReader reader = await cmd.ExecuteReaderAsync();
             if (reader.HasRows)
             {
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     eventAreas.Add(new EventArea
                     {
@@ -35,23 +35,23 @@ namespace TicketManagement.DataAccess.Repositories
                 }
             }
 
-            reader.Close();
+            await reader.CloseAsync();
             return eventAreas;
         }
 
-        public EventArea GetById(int id)
+        public async Task<EventArea> GetByIdAsync(int id)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
+            await connection.OpenAsync();
             string sql = "Select Id, EventId, Description, CoordX, CoordY, Price from eventarea where Id = @id";
             SqlCommand cmd = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", id);
             cmd.Parameters.Add(idParam);
-            SqlDataReader reader = cmd.ExecuteReader();
+            SqlDataReader reader = await cmd.ExecuteReaderAsync();
             EventArea eventArea = new EventArea();
             if (reader.HasRows)
             {
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     eventArea = new EventArea
                     {
@@ -68,10 +68,10 @@ namespace TicketManagement.DataAccess.Repositories
             return eventArea;
         }
 
-        public EventArea Create(EventArea obj)
+        public async Task<EventArea> CreateAsync(EventArea obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
+            await connection.OpenAsync();
             string sql = "Insert into eventarea (EventId, Description, CoordX, CoordY, Price) values (@eventId, @description, @coordX, @coordY, @price)";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter eventIdParam = new SqlParameter("@eventId", obj.EventId);
@@ -84,14 +84,14 @@ namespace TicketManagement.DataAccess.Repositories
             command.Parameters.Add(coordXParam);
             command.Parameters.Add(coordYParam);
             command.Parameters.Add(priceParam);
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
             return obj;
         }
 
-        public EventArea Update(EventArea obj)
+        public async Task<EventArea> UpdateAsync(EventArea obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
+            await connection.OpenAsync();
             string sql = "Update eventarea set EventId = @eventId, Description = @description, CoordX = @coordX, CoordY = @coordY, Price = @price where Id = @id";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
@@ -106,19 +106,19 @@ namespace TicketManagement.DataAccess.Repositories
             command.Parameters.Add(coordXParam);
             command.Parameters.Add(coordYParam);
             command.Parameters.Add(priceParam);
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
             return obj;
         }
 
-        public EventArea Delete(EventArea obj)
+        public async Task<EventArea> DeleteAsync(EventArea obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
+            await connection.OpenAsync();
             string sql = "Delete from eventarea where Id = @id";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
             command.Parameters.Add(idParam);
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
             return obj;
         }
     }

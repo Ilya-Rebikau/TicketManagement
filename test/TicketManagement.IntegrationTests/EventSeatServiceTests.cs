@@ -1,6 +1,6 @@
-﻿using System;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Services;
@@ -33,14 +33,14 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(eventSeat);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventSeat);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
 
         [Test]
-        public void CreateEventSeat__ShouldReturnAddedEventSeat()
+        public async Task CreateEventSeat__ShouldReturnAddedEventSeat()
         {
             // Arrange
             EventSeat eventSeat = new ()
@@ -52,13 +52,14 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            EventSeat addedEventSeat = _service.Create(eventSeat);
+            EventSeat addedEventSeat = await _service.CreateAsync(eventSeat);
 
             // Assert
             Assert.AreEqual(eventSeat, addedEventSeat);
 
-            // Delete added event seat
-            _service.Delete(_service.GetAll().Last());
+            // DeleteAsync added event seat
+            var eventSeats = await _service.GetAllAsync();
+            await _service.DeleteAsync(eventSeats.Last());
         }
 
         [Test]
@@ -75,14 +76,14 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Update(eventSeat);
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventSeat);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
 
         [Test]
-        public void UpdateEventSeat_WhenEventSeatDoesntExist_ShouldReturnEmptyEventSeat()
+        public async Task UpdateEventSeat_WhenEventSeatDoesntExist_ShouldReturnEmptyEventSeat()
         {
             // Arrange
             EventSeat eventSeat = new ()
@@ -95,14 +96,14 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            EventSeat updatedSeat = _service.Update(eventSeat);
+            EventSeat updatedSeat = await _service.UpdateAsync(eventSeat);
 
             // Assert
             Assert.AreEqual(0, updatedSeat.Id);
         }
 
         [Test]
-        public void UpdateEventSeat_ShouldReturnUpdatedEventSeat()
+        public async Task UpdateEventSeat_ShouldReturnUpdatedEventSeat()
         {
             // Arrange
             EventSeat eventSeat = new ()
@@ -115,37 +116,37 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            EventSeat updatedEventSeat = _service.Update(eventSeat);
+            EventSeat updatedEventSeat = await _service.UpdateAsync(eventSeat);
 
             // Assert
             Assert.AreEqual(eventSeat, updatedEventSeat);
 
             // Back to old
             updatedEventSeat.Row = 1;
-            _service.Update(updatedEventSeat);
+            await _service.UpdateAsync(updatedEventSeat);
         }
 
         [Test]
-        public void GetEventSeatById_ShouldReturnFoundEventSeat()
+        public async Task GetEventSeatById_ShouldReturnFoundEventSeat()
         {
             // Arrange
             int id = 1;
 
             // Act
-            EventSeat foundEventSeat = _service.GetById(id);
+            EventSeat foundEventSeat = await _service.GetByIdAsync(id);
 
             // Assert
             Assert.AreEqual(id, foundEventSeat.Id);
         }
 
         [Test]
-        public void GetEventSeatById_WhenEventSeatDoesntExist_ShouldReturnEmptyEventSeat()
+        public async Task GetEventSeatById_WhenEventSeatDoesntExist_ShouldReturnEmptyEventSeat()
         {
             // Arrange
             int id = -1;
 
             // Act
-            EventSeat eventSeat = _service.GetById(id);
+            EventSeat eventSeat = await _service.GetByIdAsync(id);
 
             // Assert
             Assert.AreEqual(0, eventSeat.Id);

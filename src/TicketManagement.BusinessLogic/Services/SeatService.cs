@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
@@ -21,18 +22,18 @@ namespace TicketManagement.BusinessLogic.Services
         {
         }
 
-        public override Seat Create(Seat obj)
+        public async override Task<Seat> CreateAsync(Seat obj)
         {
             CheckForPositiveRowAndNumber(obj);
-            CheckForUniqueRowAndNumber(obj);
-            return Repository.Create(obj);
+            await CheckForUniqueRowAndNumber(obj);
+            return await Repository.CreateAsync(obj);
         }
 
-        public override Seat Update(Seat obj)
+        public async override Task<Seat> UpdateAsync(Seat obj)
         {
             CheckForPositiveRowAndNumber(obj);
-            CheckForUniqueRowAndNumber(obj);
-            return Repository.Update(obj);
+            await CheckForUniqueRowAndNumber(obj);
+            return await Repository.UpdateAsync(obj);
         }
 
         /// <summary>
@@ -40,9 +41,9 @@ namespace TicketManagement.BusinessLogic.Services
         /// </summary>
         /// <param name="obj">Adding or updating seat.</param>
         /// <exception cref="ArgumentException">Generates exception in case row and number are not unique.</exception>
-        private void CheckForUniqueRowAndNumber(Seat obj)
+        private async Task CheckForUniqueRowAndNumber(Seat obj)
         {
-            IEnumerable<Seat> seats = Repository.GetAll();
+            IEnumerable<Seat> seats = await Repository.GetAllAsync();
             IEnumerable<Seat> seatsInArea = seats.Where(seat => seat.AreaId == obj.AreaId && seat.Row == obj.Row && seat.Number == obj.Number && seat.Id != obj.Id);
             if (seatsInArea.Any())
             {

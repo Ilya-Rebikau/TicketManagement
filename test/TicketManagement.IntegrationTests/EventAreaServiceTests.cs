@@ -1,6 +1,6 @@
-﻿using System;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.Services;
@@ -35,10 +35,10 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(eventArea);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventArea);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
 
         [Test]
@@ -55,14 +55,14 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(eventArea);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventArea);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
 
         [Test]
-        public void CreateArea__ShouldReturnAddedArea()
+        public async Task CreateArea__ShouldReturnAddedArea()
         {
             // Arrange
             EventArea eventArea = new ()
@@ -75,13 +75,14 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            EventArea addedEventArea = _service.Create(eventArea);
+            EventArea addedEventArea = await _service.CreateAsync(eventArea);
 
             // Assert
             Assert.AreEqual(eventArea, addedEventArea);
 
-            // Delete added event area
-            _service.Delete(_service.GetAll().Last());
+            // DeleteAsync added event area
+            var eventAreas = await _service.GetAllAsync();
+            await _service.DeleteAsync(eventAreas.Last());
         }
 
         [Test]
@@ -99,10 +100,10 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Update(eventArea);
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventArea);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
 
         [Test]
@@ -120,14 +121,14 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Update(eventArea);
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventArea);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
 
         [Test]
-        public void UpdateEventArea_WhenEventAreaDoesntExist_ShouldReturnEmptyEventArea()
+        public async Task UpdateEventArea_WhenEventAreaDoesntExist_ShouldReturnEmptyEventArea()
         {
             // Arrange
             EventArea eventArea = new ()
@@ -141,14 +142,14 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            EventArea updatedEventArea = _service.Update(eventArea);
+            EventArea updatedEventArea = await _service.UpdateAsync(eventArea);
 
             // Assert
             Assert.AreEqual(0, updatedEventArea.Id);
         }
 
         [Test]
-        public void UpdateEventArea_ShouldReturnUpdatedArea()
+        public async Task UpdateEventArea_ShouldReturnUpdatedArea()
         {
             // Arrange
             EventArea eventArea = new ()
@@ -162,37 +163,37 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            EventArea updatedEventArea = _service.Update(eventArea);
+            EventArea updatedEventArea = await _service.UpdateAsync(eventArea);
 
             // Assert
             Assert.AreEqual(eventArea, updatedEventArea);
 
             // Back to old
             updatedEventArea.Price = 11;
-            _service.Update(updatedEventArea);
+            await _service.UpdateAsync(updatedEventArea);
         }
 
         [Test]
-        public void GetAreaById_ShouldReturnFoundArea()
+        public async Task GetAreaById_ShouldReturnFoundArea()
         {
             // Arrange
             int id = 1;
 
             // Act
-            EventArea foundEventArea = _service.GetById(id);
+            EventArea foundEventArea = await _service.GetByIdAsync(id);
 
             // Assert
             Assert.AreEqual(id, foundEventArea.Id);
         }
 
         [Test]
-        public void GetAreaById_WhenAreaDoesntExist_ShouldReturnEmptyArea()
+        public async Task GetAreaById_WhenAreaDoesntExist_ShouldReturnEmptyArea()
         {
             // Arrange
             int id = -1;
 
             // Act
-            EventArea eventArea = _service.GetById(id);
+            EventArea eventArea = await _service.GetByIdAsync(id);
 
             // Assert
             Assert.AreEqual(0, eventArea.Id);
@@ -208,10 +209,10 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Delete(eventArea);
+            AsyncTestDelegate testAction = async () => await _service.DeleteAsync(eventArea);
 
             // Assert
-            Assert.Throws<SqlException>(testAction);
+            Assert.ThrowsAsync<SqlException>(testAction);
         }
     }
 }

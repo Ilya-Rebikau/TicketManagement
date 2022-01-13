@@ -18,7 +18,7 @@ namespace TicketManagement.UnitTests
         public void Setup()
         {
             var seatRepositoryMock = new Mock<IRepository<Seat>>();
-            seatRepositoryMock.Setup(rep => rep.GetAll()).Returns(GetTestSeats());
+            seatRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestSeats());
             _service = new SeatService(seatRepositoryMock.Object);
         }
 
@@ -60,10 +60,10 @@ namespace TicketManagement.UnitTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(seat);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(seat);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
 
         [Test]
@@ -79,10 +79,10 @@ namespace TicketManagement.UnitTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Update(seat);
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(seat);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
 
         [Test]
@@ -97,10 +97,10 @@ namespace TicketManagement.UnitTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(seat);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(seat);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
 
         [Test]
@@ -116,10 +116,10 @@ namespace TicketManagement.UnitTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Update(seat);
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(seat);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
     }
 }

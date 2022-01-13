@@ -17,7 +17,7 @@ namespace TicketManagement.UnitTests
         public void Setup()
         {
             var layoutRepositoryMock = new Mock<IRepository<Layout>>();
-            layoutRepositoryMock.Setup(rep => rep.GetAll()).Returns(GetTestLayouts());
+            layoutRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestLayouts());
             _service = new LayoutService(layoutRepositoryMock.Object);
         }
 
@@ -43,10 +43,10 @@ namespace TicketManagement.UnitTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(layout);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(layout);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
 
         [Test]
@@ -62,10 +62,10 @@ namespace TicketManagement.UnitTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Update(layout);
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(layout);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
     }
 }

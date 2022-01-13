@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
@@ -19,18 +20,18 @@ namespace TicketManagement.BusinessLogic.Services
         {
         }
 
-        public override EventArea Create(EventArea obj)
+        public async override Task<EventArea> CreateAsync(EventArea obj)
         {
             CheckForPositiveCoords(obj);
             CheckForPositivePrice(obj);
-            return Repository.Create(obj);
+            return await Repository.CreateAsync(obj);
         }
 
-        public override EventArea Update(EventArea obj)
+        public async override Task<EventArea> UpdateAsync(EventArea obj)
         {
             CheckForPositiveCoords(obj);
             CheckForPositivePrice(obj);
-            return Repository.Update(obj);
+            return await Repository.UpdateAsync(obj);
         }
 
         /// <summary>

@@ -18,7 +18,7 @@ namespace TicketManagement.UnitTests
         public void Setup()
         {
             var areaRepositoryMock = new Mock<IRepository<Area>>();
-            areaRepositoryMock.Setup(rep => rep.GetAll()).Returns(GetTestAreas());
+            areaRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestAreas());
             _service = new AreaService(areaRepositoryMock.Object);
         }
 
@@ -46,10 +46,10 @@ namespace TicketManagement.UnitTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(area);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(area);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
 
         [Test]
@@ -66,10 +66,10 @@ namespace TicketManagement.UnitTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Update(area);
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(area);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
 
         [Test]
@@ -85,10 +85,10 @@ namespace TicketManagement.UnitTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(area);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(area);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
 
         [Test]
@@ -104,10 +104,10 @@ namespace TicketManagement.UnitTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(area);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(area);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
 
         [Test]
@@ -124,10 +124,10 @@ namespace TicketManagement.UnitTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Update(area);
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(area);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
 
         [Test]
@@ -144,10 +144,10 @@ namespace TicketManagement.UnitTests
             };
 
             // Act
-            TestDelegate testAction = () => _service.Update(area);
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(area);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
     }
 }
