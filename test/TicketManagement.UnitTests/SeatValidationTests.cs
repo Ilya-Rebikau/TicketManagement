@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Moq;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Interfaces;
@@ -22,7 +23,7 @@ namespace TicketManagement.UnitTests
             _service = new SeatService(seatRepositoryMock.Object);
         }
 
-        private IEnumerable<Seat> GetTestSeats()
+        private static IQueryable<Seat> GetTestSeats()
         {
             IEnumerable<Seat> seats = new List<Seat>
             {
@@ -45,7 +46,7 @@ namespace TicketManagement.UnitTests
                 new Seat { Id = 17, AreaId = 3, Row = 2, Number = 2 },
                 new Seat { Id = 18, AreaId = 3, Row = 2, Number = 3 },
             };
-            return seats;
+            return seats.AsQueryable();
         }
 
         [Test]

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -15,7 +15,7 @@ namespace TicketManagement.DataAccess.Interfaces
         /// Get all objects from database.
         /// </summary>
         /// <returns>All objects.</returns>
-        Task<IEnumerable<T>> GetAllAsync();
+        Task<IQueryable<T>> GetAllAsync();
 
         /// <summary>
         /// Get one object from database by his id.

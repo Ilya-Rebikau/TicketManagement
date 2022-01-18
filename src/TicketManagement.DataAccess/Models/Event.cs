@@ -34,5 +34,10 @@ namespace TicketManagement.DataAccess.Models
         /// Gets or sets time when event ends.
         /// </summary>
         public DateTime TimeEnd { get; set; }
+
+        /// <summary>
+        /// Gets or sets image.
+        /// </summary>
+        public string Image { get; set; }
     }
 }

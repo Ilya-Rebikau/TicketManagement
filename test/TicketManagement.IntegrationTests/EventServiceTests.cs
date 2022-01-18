@@ -36,6 +36,7 @@ namespace TicketManagement.IntegrationTests
                 LayoutId = 1,
                 TimeStart = new DateTime(2050, 12, 21, 15, 10, 0),
                 TimeEnd = new DateTime(2050, 12, 21, 16, 40, 0),
+                Image = "image",
             };
 
             // Act
@@ -56,6 +57,7 @@ namespace TicketManagement.IntegrationTests
                 LayoutId = 1,
                 TimeStart = new DateTime(2050, 12, 21, 15, 10, 0),
                 TimeEnd = new DateTime(2050, 12, 21, 16, 40, 0),
+                Image = "image",
             };
 
             // Act
@@ -96,6 +98,7 @@ namespace TicketManagement.IntegrationTests
                 LayoutId = 1,
                 TimeStart = new DateTime(2050, 12, 21, 15, 10, 0),
                 TimeEnd = new DateTime(2050, 12, 21, 16, 40, 0),
+                Image = "image",
             };
 
             // Act
@@ -121,6 +124,7 @@ namespace TicketManagement.IntegrationTests
                 LayoutId = 1,
                 TimeStart = new DateTime(2050, 12, 21, 15, 10, 0),
                 TimeEnd = new DateTime(2050, 12, 21, 16, 40, 0),
+                Image = "image",
             };
 
             // Act
@@ -142,6 +146,7 @@ namespace TicketManagement.IntegrationTests
                 LayoutId = 1,
                 TimeStart = new DateTime(2050, 12, 21, 15, 10, 0),
                 TimeEnd = new DateTime(2050, 12, 21, 16, 40, 0),
+                Image = "image",
             };
 
             // Act

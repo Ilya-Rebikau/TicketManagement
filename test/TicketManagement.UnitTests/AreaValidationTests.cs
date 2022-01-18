@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Moq;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Interfaces;
@@ -22,7 +23,7 @@ namespace TicketManagement.UnitTests
             _service = new AreaService(areaRepositoryMock.Object);
         }
 
-        private IEnumerable<Area> GetTestAreas()
+        private static IQueryable<Area> GetTestAreas()
         {
             IEnumerable<Area> areas = new List<Area>
             {
@@ -30,7 +31,7 @@ namespace TicketManagement.UnitTests
                 new Area { Id = 2, LayoutId = 1, Description = "Second area of first layout", CoordX = 1, CoordY = 2 },
                 new Area { Id = 3, LayoutId = 2, Description = "First area of second layout", CoordX = 1, CoordY = 1 },
             };
-            return areas;
+            return areas.AsQueryable();
         }
 
         [Test]

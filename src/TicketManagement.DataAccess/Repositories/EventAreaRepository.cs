@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
@@ -11,7 +12,7 @@ namespace TicketManagement.DataAccess.Repositories
     /// </summary>
     internal class EventAreaRepository : IRepository<EventArea>
     {
-        public async Task<IEnumerable<EventArea>> GetAllAsync()
+        public async Task<IQueryable<EventArea>> GetAllAsync()
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             await connection.OpenAsync();
@@ -36,7 +37,7 @@ namespace TicketManagement.DataAccess.Repositories
             }
 
             await reader.CloseAsync();
-            return eventAreas;
+            return eventAreas.AsQueryable();
         }
 
         public async Task<EventArea> GetByIdAsync(int id)

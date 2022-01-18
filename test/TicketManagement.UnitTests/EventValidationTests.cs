@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Moq;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Interfaces;
@@ -28,7 +29,7 @@ namespace TicketManagement.UnitTests
             _service = new EventService(eventRepositoryMock.Object, seatRepositoryMock.Object, areaRepositoryMock.Object, layoutRepositoryMock.Object);
         }
 
-        private IEnumerable<Seat> GetTestSeats()
+        private static IQueryable<Seat> GetTestSeats()
         {
             IEnumerable<Seat> seats = new List<Seat>
             {
@@ -51,10 +52,10 @@ namespace TicketManagement.UnitTests
                 new Seat { Id = 17, AreaId = 3, Row = 2, Number = 2 },
                 new Seat { Id = 18, AreaId = 3, Row = 2, Number = 3 },
             };
-            return seats;
+            return seats.AsQueryable();
         }
 
-        private IEnumerable<Area> GetTestAreas()
+        private static IQueryable<Area> GetTestAreas()
         {
             IEnumerable<Area> areas = new List<Area>
             {
@@ -62,10 +63,10 @@ namespace TicketManagement.UnitTests
                 new Area { Id = 2, LayoutId = 1, Description = "Second area of first layout", CoordX = 1, CoordY = 2 },
                 new Area { Id = 3, LayoutId = 2, Description = "First area of second layout", CoordX = 1, CoordY = 1 },
             };
-            return areas;
+            return areas.AsQueryable();
         }
 
-        private IEnumerable<Event> GetTestEvents()
+        private static IQueryable<Event> GetTestEvents()
         {
             IEnumerable<Event> events = new List<Event>
             {
@@ -75,17 +76,17 @@ namespace TicketManagement.UnitTests
                     TimeStart = new DateTime(2030, 12, 21, 15, 0, 0), TimeEnd = new DateTime(2030, 12, 21, 17, 0, 0),
                 },
             };
-            return events;
+            return events.AsQueryable();
         }
 
-        private IEnumerable<Layout> GetTestLayouts()
+        private static IQueryable<Layout> GetTestLayouts()
         {
             IEnumerable<Layout> layouts = new List<Layout>
             {
                 new Layout { Id = 1, VenueId = 1, Name = "First layout", Description = "First layout description" },
                 new Layout { Id = 2, VenueId = 1, Name = "Second layout", Description = "Second layout description" },
             };
-            return layouts;
+            return layouts.AsQueryable();
         }
 
         [Test]

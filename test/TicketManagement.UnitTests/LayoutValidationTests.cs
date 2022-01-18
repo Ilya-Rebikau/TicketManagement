@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Moq;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Interfaces;
@@ -21,14 +22,14 @@ namespace TicketManagement.UnitTests
             _service = new LayoutService(layoutRepositoryMock.Object);
         }
 
-        private IEnumerable<Layout> GetTestLayouts()
+        private static IQueryable<Layout> GetTestLayouts()
         {
             IEnumerable<Layout> layouts = new List<Layout>
             {
                 new Layout { Id = 1, VenueId = 1, Name = "First layout", Description = "First layout description" },
                 new Layout { Id = 2, VenueId = 1, Name = "Second layout", Description = "Second layout description" },
             };
-            return layouts;
+            return layouts.AsQueryable();
         }
 
         [Test]

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -32,9 +33,9 @@ namespace TicketManagement.DataAccess.Repositories
             return await DbContext.Set<T>().SingleOrDefaultAsync(e => e.Id == id);
         }
 
-        public virtual async Task<IEnumerable<T>> GetAllAsync()
+        public virtual async Task<IQueryable<T>> GetAllAsync()
         {
-            return await Task.Run(() => DbContext.Set<T>().AsQueryable());
+            return await Task.Run(() => DbContext.Set<T>());
         }
 
         public virtual async Task<T> CreateAsync(T obj)
