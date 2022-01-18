@@ -5,5 +5,6 @@
 	[Description] nvarchar(max) NOT NULL,
 	[LayoutId] int NOT NULL, 
     [TimeStart] SMALLDATETIME NOT NULL, 
-    [TimeEnd] SMALLDATETIME NOT NULL,
+    [TimeEnd] SMALLDATETIME NOT NULL, 
+    [Image] NVARCHAR(MAX) NOT NULL,
 )

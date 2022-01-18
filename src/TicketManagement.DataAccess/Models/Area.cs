@@ -1,13 +1,12 @@
-﻿namespace TicketManagement.DataAccess.Models
+﻿using TicketManagement.DataAccess.Interfaces;
+
+namespace TicketManagement.DataAccess.Models
 {
     /// <summary>
     /// Represent area's model.
     /// </summary>
-    public class Area
+    public class Area : IEntity
     {
-        /// <summary>
-        /// Gets or sets id.
-        /// </summary>
         public int Id { get; set; }
 
         /// <summary>
