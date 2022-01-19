@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -58,20 +57,6 @@ namespace TicketManagement.DataAccess.Repositories
             T oldEntity = DbContext.Set<T>().Remove(obj).Entity;
             await DbContext.SaveChangesAsync();
             return oldEntity;
-        }
-
-        /// <summary>
-        /// Delete object from database by id.
-        /// </summary>
-        /// <param name="id">Object's id.</param>
-        /// <returns>Deleted object.</returns>
-        public virtual async Task<T> DeleteByIdAsync(int id)
-        {
-            T entity = await DbContext.Set<T>().SingleOrDefaultAsync(x => x.Id == id);
-            EntityEntry<T> temp = DbContext.Entry(entity);
-            temp.State = EntityState.Deleted;
-            await DbContext.SaveChangesAsync();
-            return temp.Entity;
         }
     }
 }
