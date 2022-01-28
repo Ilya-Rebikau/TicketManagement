@@ -56,7 +56,7 @@ namespace TicketManagement.DataAccess.Repositories
             {
                 using TicketManagementContext db = new TicketManagementContext();
                 SqlParameter idParam = new SqlParameter("@id", obj.Id);
-                db.Events.FromSqlRaw("sp_UpdateEvent @idParam", idParam);
+                db.Events.FromSqlRaw("sp_DeleteEvent @idParam", idParam);
             });
 
             return obj;

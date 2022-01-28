@@ -12,11 +12,6 @@ namespace TicketManagement.DataAccess.Models
         // TODO: TimeZone
 
         /// <summary>
-        /// Gets or sets language.
-        /// </summary>
-        public string Language { get; set; }
-
-        /// <summary>
         /// Gets or sets first name.
         /// </summary>
         public string FirstName { get; set; }
@@ -30,11 +25,6 @@ namespace TicketManagement.DataAccess.Models
         /// Gets or sets email.
         /// </summary>
         public string Email { get; set; }
-
-        /// <summary>
-        /// Gets or sets password.
-        /// </summary>
-        public string Password { get; set; }
 
         // TODO: purchase history
 
