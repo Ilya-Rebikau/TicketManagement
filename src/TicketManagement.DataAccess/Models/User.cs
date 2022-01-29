@@ -1,14 +1,13 @@
-﻿using TicketManagement.DataAccess.Interfaces;
+﻿using Microsoft.AspNetCore.Identity;
+using TicketManagement.DataAccess.Interfaces;
 
 namespace TicketManagement.DataAccess.Models
 {
     /// <summary>
     /// Represent user's model.
     /// </summary>
-    public class User : IEntity
+    public class User : IdentityUser
     {
-        public int Id { get; set; }
-
         // TODO: TimeZone
 
         /// <summary>
@@ -20,11 +19,6 @@ namespace TicketManagement.DataAccess.Models
         /// Gets or sets surname.
         /// </summary>
         public string Surname { get; set; }
-
-        /// <summary>
-        /// Gets or sets email.
-        /// </summary>
-        public string Email { get; set; }
 
         // TODO: purchase history
 

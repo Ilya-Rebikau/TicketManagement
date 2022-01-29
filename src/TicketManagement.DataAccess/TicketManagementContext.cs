@@ -58,5 +58,10 @@ namespace TicketManagement.DataAccess
         /// Gets or sets venue models.
         /// </summary>
         public DbSet<Venue> Venues { get; set; }
+
+        /// <summary>
+        /// Gets or sets ticket models.
+        /// </summary>
+        public DbSet<Ticket> Tickets { get; set; }
     }
 }
