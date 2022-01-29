@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
 
@@ -11,29 +12,30 @@ namespace TicketManagement.BusinessLogic.Services
     /// <summary>
     /// Service with CRUD operations and validations for event seat.
     /// </summary>
-    internal class EventSeatService : BaseService<EventSeat>, IService<EventSeat>
+    internal class EventSeatService : BaseService<EventSeat, EventSeatDto>, IService<EventSeatDto>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="EventSeatService"/> class.
         /// </summary>
         /// <param name="repository">EventSeatRepository object.</param>
-        public EventSeatService(IRepository<EventSeat> repository)
-            : base(repository)
+        /// <param name="converter">Converter object.</param>
+        public EventSeatService(IRepository<EventSeat> repository, IConverter<EventSeat, EventSeatDto> converter)
+            : base(repository, converter)
         {
         }
 
-        public async override Task<EventSeat> CreateAsync(EventSeat obj)
+        public async override Task<EventSeatDto> CreateAsync(EventSeatDto obj)
         {
             await CheckForUniqueRowAndNumber(obj);
             CheckForPositiveRowAndNumber(obj);
-            return await Repository.CreateAsync(obj);
+            return await base.CreateAsync(obj);
         }
 
-        public async override Task<EventSeat> UpdateAsync(EventSeat obj)
+        public async override Task<EventSeatDto> UpdateAsync(EventSeatDto obj)
         {
             await CheckForUniqueRowAndNumber(obj);
             CheckForPositiveRowAndNumber(obj);
-            return await Repository.UpdateAsync(obj);
+            return await base.UpdateAsync(obj);
         }
 
         /// <summary>
@@ -41,10 +43,10 @@ namespace TicketManagement.BusinessLogic.Services
         /// </summary>
         /// <param name="obj">Adding or updating seat.</param>
         /// <exception cref="ArgumentException">Generates exception in case row and number are not unique.</exception>
-        private async Task CheckForUniqueRowAndNumber(EventSeat obj)
+        private async Task CheckForUniqueRowAndNumber(EventSeatDto obj)
         {
-            IEnumerable<EventSeat> eventSeats = await Repository.GetAllAsync();
-            IEnumerable<EventSeat> eventSeatsInArea = eventSeats.Where(seat => seat.EventAreaId == obj.EventAreaId && seat.Row == obj.Row && seat.Number == obj.Number && seat.Id != obj.Id);
+            IEnumerable<EventSeatDto> eventSeats = await Converter.ConvertModelsRangeToDtos(await Repository.GetAllAsync());
+            IEnumerable<EventSeatDto> eventSeatsInArea = eventSeats.Where(seat => seat.EventAreaId == obj.EventAreaId && seat.Row == obj.Row && seat.Number == obj.Number && seat.Id != obj.Id);
             if (eventSeatsInArea.Any())
             {
                 throw new ArgumentException("One of seats in this area already has such row and number!");
@@ -56,7 +58,7 @@ namespace TicketManagement.BusinessLogic.Services
         /// </summary>
         /// <param name="obj">Adding or updating seat.</param>
         /// <exception cref="ArgumentException">Generates exception in case row or number are not positive.</exception>
-        private void CheckForPositiveRowAndNumber(EventSeat obj)
+        private void CheckForPositiveRowAndNumber(EventSeatDto obj)
         {
             if (obj.Row <= 0 || obj.Number <= 0)
             {

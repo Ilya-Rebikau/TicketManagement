@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using TicketManagement.DataAccess.Interfaces;
 
-namespace TicketManagement.DataAccess.Models
+namespace TicketManagement.BusinessLogic.ModelsDTO
 {
     /// <summary>
-    /// Represent user's model.
+    /// Represent user's dto model.
     /// </summary>
     public class User : IdentityUser
     {

@@ -10,39 +10,39 @@ namespace TicketManagement.BusinessLogic.Interfaces
     /// <summary>
     /// Services with CRUD operations for models.
     /// </summary>
-    public interface IService<T>
+    public interface IService<TDto>
     {
         /// <summary>
         /// Get all objects from database.
         /// </summary>
         /// <returns>All objects.</returns>
-        Task<IEnumerable<T>> GetAllAsync();
+        Task<IEnumerable<TDto>> GetAllAsync();
 
         /// <summary>
         /// Get one object from database by his id.
         /// </summary>
         /// <param name="id">id.</param>
         /// <returns>Object.</returns>
-        Task<T> GetByIdAsync(int id);
+        Task<TDto> GetByIdAsync(int id);
 
         /// <summary>
         /// Add new object to database with validation logic.
         /// </summary>
         /// <param name="obj">Adding object.</param>
-        Task<T> CreateAsync(T obj);
+        Task<TDto> CreateAsync(TDto obj);
 
         /// <summary>
         /// Update one object in database with validation logic.
         /// </summary>
         /// <param name="obj">Updating object.</param>
         /// <returns>Updated object.</returns>
-        Task<T> UpdateAsync(T obj);
+        Task<TDto> UpdateAsync(TDto obj);
 
         /// <summary>
         /// Delete object from database.
         /// </summary>
         /// <param name="obj">Deleting object.</param>
         /// <returns>Deleted object.</returns>
-        Task<T> DeleteAsync(T obj);
+        Task<TDto> DeleteAsync(TDto obj);
     }
 }

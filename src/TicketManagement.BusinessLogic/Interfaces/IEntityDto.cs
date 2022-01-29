@@ -1,9 +1,9 @@
-﻿namespace TicketManagement.DataAccess.Interfaces
+﻿namespace TicketManagement.BusinessLogic.Interfaces
 {
     /// <summary>
-    /// Entity.
+    /// Dto entity.
     /// </summary>
-    public interface IEntity
+    public interface IEntityDto
     {
         /// <summary>
         /// Gets or sets id.

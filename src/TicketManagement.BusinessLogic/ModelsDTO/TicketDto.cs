@@ -1,11 +1,11 @@
-﻿using TicketManagement.DataAccess.Interfaces;
+﻿using TicketManagement.BusinessLogic.Interfaces;
 
-namespace TicketManagement.DataAccess.Models
+namespace TicketManagement.BusinessLogic.ModelsDTO
 {
     /// <summary>
-    /// Represent ticket's model.
+    /// Represent ticket's dto model.
     /// </summary>
-    public class Ticket : IEntity
+    public class TicketDto : IEntityDto
     {
         public int Id { get; set; }
 

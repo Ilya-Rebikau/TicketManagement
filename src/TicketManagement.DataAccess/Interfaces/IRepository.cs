@@ -10,6 +10,7 @@ namespace TicketManagement.DataAccess.Interfaces
     /// Represent a repository pattern with CRUD operations.
     /// </summary>
     public interface IRepository<T>
+        where T : IEntity
     {
         /// <summary>
         /// Get all objects from database.

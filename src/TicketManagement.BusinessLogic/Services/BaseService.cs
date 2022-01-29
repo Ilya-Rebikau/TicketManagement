@@ -8,46 +8,61 @@ namespace TicketManagement.BusinessLogic.Services
     /// <summary>
     /// Service with base realization for CRUD operations for models.
     /// </summary>
-    /// <typeparam name="T">Type of model for CRUD operations.</typeparam>
-    internal class BaseService<T> : IService<T>
+    /// <typeparam name="TModel">Type of model for CRUD operations.</typeparam>
+    /// <typeparam name="TDto">Type of dto for CRUD operations.</typeparam>
+    internal class BaseService<TModel, TDto> : IService<TDto>
+        where TModel : IEntity
+        where TDto : IEntityDto
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="BaseService{T}"/> class.
+        /// Initializes a new instance of the <see cref="BaseService{TModel, TDto}"/> class.
         /// </summary>
         /// <param name="repository">IRepository object with CRUD operations.</param>
-        protected BaseService(IRepository<T> repository)
+        /// <param name="converter">IConverter object.</param>
+        protected BaseService(IRepository<TModel> repository, IConverter<TModel, TDto> converter)
         {
             Repository = repository;
+            Converter = converter;
         }
 
         /// <summary>
         /// Gets or privatly sets IRepository object for CRUD operations in database.
         /// </summary>
-        protected IRepository<T> Repository { get; private set; }
+        protected IRepository<TModel> Repository { get; private set; }
 
-        public async virtual Task<IEnumerable<T>> GetAllAsync()
+        /// <summary>
+        /// Gets or privatly sets IConverter object.
+        /// </summary>
+        protected IConverter<TModel, TDto> Converter { get; private set; }
+
+        public async virtual Task<IEnumerable<TDto>> GetAllAsync()
         {
-            return await Repository.GetAllAsync();
+            IEnumerable<TModel> models = await Repository.GetAllAsync();
+            return await Converter.ConvertModelsRangeToDtos(models);
         }
 
-        public async virtual Task<T> GetByIdAsync(int id)
+        public async virtual Task<TDto> GetByIdAsync(int id)
         {
-            return await Repository.GetByIdAsync(id);
+            TModel model = await Repository.GetByIdAsync(id);
+            return await Converter.ConvertModelToDto(model);
         }
 
-        public async virtual Task<T> CreateAsync(T obj)
+        public async virtual Task<TDto> CreateAsync(TDto obj)
         {
-            return await Repository.CreateAsync(obj);
+            TModel model = await Repository.CreateAsync(await Converter.ConvertDtoToModel(obj));
+            return await Converter.ConvertModelToDto(model);
         }
 
-        public async virtual Task<T> UpdateAsync(T obj)
+        public async virtual Task<TDto> UpdateAsync(TDto obj)
         {
-            return await Repository.UpdateAsync(obj);
+            TModel model = await Repository.UpdateAsync(await Converter.ConvertDtoToModel(obj));
+            return await Converter.ConvertModelToDto(model);
         }
 
-        public async virtual Task<T> DeleteAsync(T obj)
+        public async virtual Task<TDto> DeleteAsync(TDto obj)
         {
-            return await Repository.DeleteAsync(obj);
+            TModel model = await Repository.DeleteAsync(await Converter.ConvertDtoToModel(obj));
+            return await Converter.ConvertModelToDto(model);
         }
     }
 }
