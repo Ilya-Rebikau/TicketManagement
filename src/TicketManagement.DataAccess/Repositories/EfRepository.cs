@@ -10,7 +10,7 @@ namespace TicketManagement.DataAccess.Repositories
     /// Entity framework repository.
     /// </summary>
     /// <typeparam name="T">Entity.</typeparam>
-    public class EfRepository<T> : IRepository<T>
+    internal class EfRepository<T> : IRepository<T>
         where T : class, IEntity
     {
         /// <summary>
