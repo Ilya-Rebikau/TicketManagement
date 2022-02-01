@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.BusinessLogic.Services;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
@@ -12,14 +14,27 @@ namespace TicketManagement.UnitTests
 {
     internal class LayoutValidationTests
     {
-        private IService<Layout> _service;
+        private IService<LayoutDto> _service;
 
         [SetUp]
-        public void Setup()
+        public async Task SetupAsync()
         {
             var layoutRepositoryMock = new Mock<IRepository<Layout>>();
+            var layoutConverterMock = new Mock<IConverter<Layout, LayoutDto>>();
             layoutRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestLayouts());
-            _service = new LayoutService(layoutRepositoryMock.Object);
+            var layouts = await layoutRepositoryMock.Object.GetAllAsync();
+            layoutConverterMock.Setup(rep => rep.ConvertModelsRangeToDtos(layouts)).ReturnsAsync(GetTestLayoutDtos());
+            _service = new LayoutService(layoutRepositoryMock.Object, layoutConverterMock.Object);
+        }
+
+        private static IEnumerable<LayoutDto> GetTestLayoutDtos()
+        {
+            IEnumerable<LayoutDto> layouts = new List<LayoutDto>
+            {
+                new LayoutDto { Id = 1, VenueId = 1, Name = "First layout", Description = "First layout description" },
+                new LayoutDto { Id = 2, VenueId = 1, Name = "Second layout", Description = "Second layout description" },
+            };
+            return layouts;
         }
 
         private static IQueryable<Layout> GetTestLayouts()
@@ -36,7 +51,7 @@ namespace TicketManagement.UnitTests
         public void CreateLayout_WhenNameIsntUnique_ShouldReturnArgumentException()
         {
             // Arrange
-            Layout layout = new ()
+            LayoutDto layout = new ()
             {
                 VenueId = 1,
                 Description = "Description",
@@ -54,7 +69,7 @@ namespace TicketManagement.UnitTests
         public void UpdateLayout_WhenNameIsntUnique_ShouldReturnArgumentException()
         {
             // Arrange
-            Layout layout = new ()
+            LayoutDto layout = new ()
             {
                 Id = 2,
                 VenueId = 1,

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.BusinessLogic.Services;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
@@ -13,14 +15,27 @@ namespace TicketManagement.UnitTests
     [TestFixture]
     internal class EventAreaValidationTests
     {
-        private IService<EventArea> _service;
+        private IService<EventAreaDto> _service;
 
         [SetUp]
-        public void Setup()
+        public async Task SetupAsync()
         {
             var eventAreaRepositoryMock = new Mock<IRepository<EventArea>>();
+            var eventAreaConverterMock = new Mock<IConverter<EventArea, EventAreaDto>>();
             eventAreaRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventAreas());
-            _service = new EventAreaService(eventAreaRepositoryMock.Object);
+            var eventAreas = await eventAreaRepositoryMock.Object.GetAllAsync();
+            eventAreaConverterMock.Setup(rep => rep.ConvertModelsRangeToDtos(eventAreas)).ReturnsAsync(GetTestEventAreaDtos());
+            _service = new EventAreaService(eventAreaRepositoryMock.Object, eventAreaConverterMock.Object);
+        }
+
+        private static IEnumerable<EventAreaDto> GetTestEventAreaDtos()
+        {
+            IEnumerable<EventAreaDto> eventAreas = new List<EventAreaDto>
+            {
+                new EventAreaDto { Id = 1, EventId = 1, Description = "First event area description", CoordX = 1, CoordY = 1, Price = 11 },
+                new EventAreaDto { Id = 2, EventId = 1, Description = "Second event area description", CoordX = 1, CoordY = 2, Price = 12 },
+            };
+            return eventAreas;
         }
 
         private static IQueryable<EventArea> GetTestEventAreas()
@@ -37,7 +52,7 @@ namespace TicketManagement.UnitTests
         public void CreateEventArea_WhenCoordsArentPositive_ShouldReturnArgumentException()
         {
             // Arrange
-            EventArea eventArea = new ()
+            EventAreaDto eventArea = new ()
             {
                 EventId = 1,
                 Description = "Description",
@@ -57,7 +72,7 @@ namespace TicketManagement.UnitTests
         public void UpdateEventArea_WhenCoordsArentPositive_ShouldReturnArgumentException()
         {
             // Arrange
-            EventArea eventArea = new ()
+            EventAreaDto eventArea = new ()
             {
                 Id = 1,
                 EventId = 1,
@@ -78,7 +93,7 @@ namespace TicketManagement.UnitTests
         public void CreateEventArea_WhenPriceArentPositive_ShouldReturnArgumentException()
         {
             // Arrange
-            EventArea eventArea = new ()
+            EventAreaDto eventArea = new ()
             {
                 EventId = 1,
                 Description = "Description",
@@ -98,7 +113,7 @@ namespace TicketManagement.UnitTests
         public void UpdateEventArea_WhenPriceArentPositive_ShouldReturnArgumentException()
         {
             // Arrange
-            EventArea eventArea = new ()
+            EventAreaDto eventArea = new ()
             {
                 Id = 1,
                 EventId = 1,

@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace TicketManagement.BusinessLogic.ModelsDTO
+namespace TicketManagement.Web.Models
 {
     /// <summary>
     /// Represent user's dto model.
     /// </summary>
     public class User : IdentityUser
     {
+        // TODO: TimeZone, purchase history
+
         /// <summary>
         /// Gets or sets first name.
         /// </summary>

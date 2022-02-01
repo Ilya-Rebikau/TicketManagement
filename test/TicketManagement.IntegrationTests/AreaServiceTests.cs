@@ -1,8 +1,10 @@
 ﻿using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.BusinessLogic.Services;
 using TicketManagement.DataAccess.Models;
 using TicketManagement.DataAccess.Repositories;
@@ -12,20 +14,21 @@ namespace TicketManagement.IntegrationTests
     [TestFixture]
     internal class AreaServiceTests
     {
-        private IService<Area> _service;
+        private IService<AreaDto> _service;
 
         [SetUp]
         public void Setup()
         {
             var areaRepository = new AreaRepository();
-            _service = new AreaService(areaRepository);
+            var areaConverter = new BaseConverter<Area, AreaDto>();
+            _service = new AreaService(areaRepository, areaConverter);
         }
 
         [Test]
         public void CreateArea_WhenLayoutIdDoesntExist_ShouldReturnSqlException()
         {
             // Arrange
-            Area area = new ()
+            AreaDto area = new ()
             {
                 LayoutId = 0,
                 Description = "Description",
@@ -44,7 +47,7 @@ namespace TicketManagement.IntegrationTests
         public void CreateArea_WhenDescriptionIsNull_ShouldReturnSqlException()
         {
             // Arrange
-            Area area = new ()
+            AreaDto area = new ()
             {
                 LayoutId = 1,
                 Description = null,
@@ -63,7 +66,7 @@ namespace TicketManagement.IntegrationTests
         public async Task CreateArea__ShouldReturnAddedArea()
         {
             // Arrange
-            Area area = new ()
+            AreaDto area = new ()
             {
                 LayoutId = 1,
                 Description = "Description",
@@ -72,10 +75,10 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            Area addedArea = await _service.CreateAsync(area);
+            AreaDto addedArea = await _service.CreateAsync(area);
 
             // Assert
-            Assert.AreEqual(area, addedArea);
+            area.Should().BeEquivalentTo(addedArea);
 
             // DeleteAsync added area
             var areas = await _service.GetAllAsync();
@@ -86,7 +89,7 @@ namespace TicketManagement.IntegrationTests
         public void UpdateArea_WhenLayoutIdDoesntExist_ShouldReturnSqlException()
         {
             // Arrange
-            Area area = new ()
+            AreaDto area = new ()
             {
                 Id = 1,
                 LayoutId = 0,
@@ -106,7 +109,7 @@ namespace TicketManagement.IntegrationTests
         public void UpdateArea_WhenDescriptionIsNull_ShouldReturnSqlException()
         {
             // Arrange
-            Area area = new ()
+            AreaDto area = new ()
             {
                 Id = 1,
                 LayoutId = 1,
@@ -126,7 +129,7 @@ namespace TicketManagement.IntegrationTests
         public async Task UpdateArea_WhenAreaDoesntExist_ShouldReturnEmptyArea()
         {
             // Arrange
-            Area area = new ()
+            AreaDto area = new ()
             {
                 Id = 0,
                 LayoutId = 1,
@@ -136,7 +139,7 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            Area updatedArea = await _service.UpdateAsync(area);
+            AreaDto updatedArea = await _service.UpdateAsync(area);
 
             // Assert
             Assert.AreEqual(0, updatedArea.Id);
@@ -146,7 +149,7 @@ namespace TicketManagement.IntegrationTests
         public async Task UpdateArea_ShouldReturnUpdatedArea()
         {
             // Arrange
-            Area area = new ()
+            AreaDto area = new ()
             {
                 Id = 1,
                 LayoutId = 1,
@@ -156,10 +159,10 @@ namespace TicketManagement.IntegrationTests
             };
 
             // Act
-            Area updatedArea = await _service.UpdateAsync(area);
+            AreaDto updatedArea = await _service.UpdateAsync(area);
 
             // Assert
-            Assert.AreEqual(area, updatedArea);
+            area.Should().BeEquivalentTo(updatedArea);
 
             // Back to old
             updatedArea.Description = "First area of first layout";
@@ -173,7 +176,7 @@ namespace TicketManagement.IntegrationTests
             int id = 1;
 
             // Act
-            Area foundArea = await _service.GetByIdAsync(id);
+            AreaDto foundArea = await _service.GetByIdAsync(id);
 
             // Assert
             Assert.AreEqual(id, foundArea.Id);
@@ -186,7 +189,7 @@ namespace TicketManagement.IntegrationTests
             int id = -1;
 
             // Act
-            Area area = await _service.GetByIdAsync(id);
+            AreaDto area = await _service.GetByIdAsync(id);
 
             // Assert
             Assert.AreEqual(0, area.Id);
@@ -196,7 +199,7 @@ namespace TicketManagement.IntegrationTests
         public void DeleteArea_WhenThereAreSeatsInIt_ShouldReturnSqlException()
         {
             // Arrange
-            Area area = new ()
+            AreaDto area = new ()
             {
                 Id = 1,
             };

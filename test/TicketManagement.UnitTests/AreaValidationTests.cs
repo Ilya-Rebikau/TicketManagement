@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.BusinessLogic.Services;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
@@ -13,14 +15,28 @@ namespace TicketManagement.UnitTests
     [TestFixture]
     internal class AreaValidationTests
     {
-        private IService<Area> _service;
+        private IService<AreaDto> _service;
 
         [SetUp]
-        public void Setup()
+        public async Task SetupAsync()
         {
             var areaRepositoryMock = new Mock<IRepository<Area>>();
+            var areaConverterMock = new Mock<IConverter<Area, AreaDto>>();
             areaRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestAreas());
-            _service = new AreaService(areaRepositoryMock.Object);
+            var areas = await areaRepositoryMock.Object.GetAllAsync();
+            areaConverterMock.Setup(rep => rep.ConvertModelsRangeToDtos(areas)).ReturnsAsync(GetTestAreaDtos());
+            _service = new AreaService(areaRepositoryMock.Object, areaConverterMock.Object);
+        }
+
+        private static IEnumerable<AreaDto> GetTestAreaDtos()
+        {
+            IEnumerable<AreaDto> areas = new List<AreaDto>
+            {
+                new AreaDto { Id = 1, LayoutId = 1, Description = "First area of first layout", CoordX = 1, CoordY = 1 },
+                new AreaDto { Id = 2, LayoutId = 1, Description = "Second area of first layout", CoordX = 1, CoordY = 2 },
+                new AreaDto { Id = 3, LayoutId = 2, Description = "First area of second layout", CoordX = 1, CoordY = 1 },
+            };
+            return areas;
         }
 
         private static IQueryable<Area> GetTestAreas()
@@ -38,7 +54,7 @@ namespace TicketManagement.UnitTests
         public void CreateArea_WhenCoordsArentPositive_ShouldReturnArgumentException()
         {
             // Arrange
-            Area area = new ()
+            AreaDto area = new ()
             {
                 LayoutId = 1,
                 Description = "Description",
@@ -57,7 +73,7 @@ namespace TicketManagement.UnitTests
         public void UpdateArea_WhenCoordsArentPositive_ShouldReturnArgumentException()
         {
             // Arrange
-            Area area = new ()
+            AreaDto area = new ()
             {
                 Id = 1,
                 LayoutId = 1,
@@ -77,7 +93,7 @@ namespace TicketManagement.UnitTests
         public void CreateArea_WhenDescriptionIsntUnique_ShouldReturnArgumentException()
         {
             // Arrange
-            Area area = new ()
+            AreaDto area = new ()
             {
                 LayoutId = 1,
                 Description = "First area of first layout",
@@ -96,7 +112,7 @@ namespace TicketManagement.UnitTests
         public void CreateArea_WhenCoordsArentUnique_ShouldReturnArgumentException()
         {
             // Arrange
-            Area area = new ()
+            AreaDto area = new ()
             {
                 LayoutId = 1,
                 Description = "Description",
@@ -115,7 +131,7 @@ namespace TicketManagement.UnitTests
         public void UpdateArea_WhenDescriptionIsntUnique_ShouldReturnArgumentException()
         {
             // Arrange
-            Area area = new ()
+            AreaDto area = new ()
             {
                 Id = 1,
                 LayoutId = 1,
@@ -135,7 +151,7 @@ namespace TicketManagement.UnitTests
         public void UpdateArea_WhenCoordsArentUnique_ShouldReturnArgumentException()
         {
             // Arrange
-            Area area = new ()
+            AreaDto area = new ()
             {
                 Id = 1,
                 LayoutId = 1,
