@@ -10,16 +10,17 @@ namespace TicketManagement.BusinessLogic.Configuration
     /// <summary>
     /// Configure services from BLL.
     /// </summary>
-    public static class ConfigureServices
+    public static class ConfigureBllServices
     {
         /// <summary>
         /// Extension method for IServiceCollection to add services.
         /// </summary>
         /// <param name="services">Services.</param>
+        /// <param name="connection">Connection string to database.</param>
         /// <returns>Added services.</returns>
-        public static IServiceCollection AddBllServices(this IServiceCollection services)
+        public static IServiceCollection AddBllServices(this IServiceCollection services, string connection)
         {
-            services.AddRepositories();
+            services.AddDalServices(connection);
             services.AddScoped(typeof(IConverter<Area, AreaDto>), typeof(BaseConverter<Area, AreaDto>));
             services.AddScoped(typeof(IConverter<EventArea, EventAreaDto>), typeof(BaseConverter<EventArea, EventAreaDto>));
             services.AddScoped(typeof(IConverter<EventSeat, EventSeatDto>), typeof(BaseConverter<EventSeat, EventSeatDto>));

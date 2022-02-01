@@ -3,7 +3,7 @@
 namespace TicketManagement.Web.Models
 {
     /// <summary>
-    /// Represent user's dto model.
+    /// Represent user's model.
     /// </summary>
     public class User : IdentityUser
     {

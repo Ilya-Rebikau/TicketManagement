@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
 using TicketManagement.DataAccess.Repositories;
@@ -8,15 +9,18 @@ namespace TicketManagement.DataAccess.Configuration
     /// <summary>
     /// Configure repositories from DAL.
     /// </summary>
-    public static class ConfigureRepositories
+    public static class ConfigureDalServices
     {
         /// <summary>
-        /// Extension method for IServiceCollection to add repositories.
+        /// Extension method for IServiceCollection to add dal services.
         /// </summary>
         /// <param name="services">Services.</param>
+        /// <param name="connection">Connection string to database.</param>
         /// <returns>Added services.</returns>
-        public static IServiceCollection AddRepositories(this IServiceCollection services)
+        public static IServiceCollection AddDalServices(this IServiceCollection services, string connection)
         {
+            services.AddDbContext<TicketManagementContext>(options =>
+                options.UseSqlServer(connection));
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
             services.AddScoped(typeof(IRepository<Event>), typeof(EventEfRepository));
             return services;
