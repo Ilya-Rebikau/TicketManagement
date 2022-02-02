@@ -1,31 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using TicketManagement.DataAccess;
-using TicketManagement.DataAccess.Models;
+using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.ModelsDTO;
 
 namespace TicketManagement.Web.Controllers
 {
     public class EventSeatsController : Controller
     {
-        private readonly TicketManagementContext _context;
+        private readonly IService<EventSeatDto> _service;
 
-        public EventSeatsController(TicketManagementContext context)
+        public EventSeatsController(IService<EventSeatDto> service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: EventSeats
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.EventSeats.ToListAsync());
+            return View(await _service.GetAllAsync());
         }
 
-        // GET: EventSeats/Details/5
+        [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,8 +29,7 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var eventSeat = await _context.EventSeats
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var eventSeat = await _service.GetByIdAsync((int)id);
             if (eventSeat == null)
             {
                 return NotFound();
@@ -43,30 +38,26 @@ namespace TicketManagement.Web.Controllers
             return View(eventSeat);
         }
 
-        // GET: EventSeats/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: EventSeats/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,EventAreaId,Row,Number,State")] EventSeat eventSeat)
+        public async Task<IActionResult> Create([Bind("Id,EventAreaId,Row,Number,State")] EventSeatDto eventSeat)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(eventSeat);
-                await _context.SaveChangesAsync();
+                await _service.CreateAsync(eventSeat);
                 return RedirectToAction(nameof(Index));
             }
 
             return View(eventSeat);
         }
 
-        // GET: EventSeats/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -74,21 +65,18 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var eventSeat = await _context.EventSeats.FindAsync(id);
-            if (eventSeat == null)
+            var updatingEventSeat = await _service.GetByIdAsync((int)id);
+            if (updatingEventSeat == null)
             {
                 return NotFound();
             }
 
-            return View(eventSeat);
+            return View(updatingEventSeat);
         }
 
-        // POST: EventSeats/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,EventAreaId,Row,Number,State")] EventSeat eventSeat)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,EventAreaId,Row,Number,State")] EventSeatDto eventSeat)
         {
             if (id != eventSeat.Id)
             {
@@ -99,12 +87,11 @@ namespace TicketManagement.Web.Controllers
             {
                 try
                 {
-                    _context.Update(eventSeat);
-                    await _context.SaveChangesAsync();
+                    await _service.UpdateAsync(eventSeat);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EventSeatExists(eventSeat.Id))
+                    if (!await EventSeatExists(eventSeat.Id))
                     {
                         return NotFound();
                     }
@@ -120,7 +107,7 @@ namespace TicketManagement.Web.Controllers
             return View(eventSeat);
         }
 
-        // GET: EventSeats/Delete/5
+        [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -128,31 +115,28 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var eventSeat = await _context.EventSeats
-                .SingleOrDefaultAsync(m => m.Id == id);
-            if (eventSeat == null)
+            var deletingEventSeat = await _service.GetByIdAsync((int)id);
+            if (deletingEventSeat == null)
             {
                 return NotFound();
             }
 
-            return View(eventSeat);
+            return View(deletingEventSeat);
         }
 
-        // POST: EventSeats/Delete/5
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var eventSeat = await _context.EventSeats.FindAsync(id);
-            _context.EventSeats.Remove(eventSeat);
-            await _context.SaveChangesAsync();
+            var eventSeat = await _service.GetByIdAsync(id);
+            await _service.DeleteAsync(eventSeat);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EventSeatExists(int id)
+        private async Task<bool> EventSeatExists(int id)
         {
-            return _context.EventSeats.Any(e => e.Id == id);
+            return await _service.GetByIdAsync(id) is not null;
         }
     }
 }

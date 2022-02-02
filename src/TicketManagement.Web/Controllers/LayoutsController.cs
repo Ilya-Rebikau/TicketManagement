@@ -1,31 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using TicketManagement.DataAccess;
-using TicketManagement.DataAccess.Models;
+using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.ModelsDTO;
 
 namespace TicketManagement.Web.Controllers
 {
     public class LayoutsController : Controller
     {
-        private readonly TicketManagementContext _context;
+        private readonly IService<LayoutDto> _service;
 
-        public LayoutsController(TicketManagementContext context)
+        public LayoutsController(IService<LayoutDto> service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: Layouts
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Layouts.ToListAsync());
+            return View(await _service.GetAllAsync());
         }
 
-        // GET: Layouts/Details/5
+        [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,8 +29,7 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var layout = await _context.Layouts
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var layout = await _service.GetByIdAsync((int)id);
             if (layout == null)
             {
                 return NotFound();
@@ -43,30 +38,26 @@ namespace TicketManagement.Web.Controllers
             return View(layout);
         }
 
-        // GET: Layouts/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Layouts/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,VenueId,Description,Name")] Layout layout)
+        public async Task<IActionResult> Create([Bind("Id,VenueId,Description,Name")] LayoutDto layout)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(layout);
-                await _context.SaveChangesAsync();
+                await _service.CreateAsync(layout);
                 return RedirectToAction(nameof(Index));
             }
 
             return View(layout);
         }
 
-        // GET: Layouts/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -74,21 +65,18 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var layout = await _context.Layouts.FindAsync(id);
-            if (layout == null)
+            var updatingLayout = await _service.GetByIdAsync((int)id);
+            if (updatingLayout == null)
             {
                 return NotFound();
             }
 
-            return View(layout);
+            return View(updatingLayout);
         }
 
-        // POST: Layouts/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,VenueId,Description,Name")] Layout layout)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,VenueId,Description,Name")] LayoutDto layout)
         {
             if (id != layout.Id)
             {
@@ -99,12 +87,11 @@ namespace TicketManagement.Web.Controllers
             {
                 try
                 {
-                    _context.Update(layout);
-                    await _context.SaveChangesAsync();
+                    await _service.UpdateAsync(layout);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!LayoutExists(layout.Id))
+                    if (!await LayoutExists(layout.Id))
                     {
                         return NotFound();
                     }
@@ -120,7 +107,7 @@ namespace TicketManagement.Web.Controllers
             return View(layout);
         }
 
-        // GET: Layouts/Delete/5
+        [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -128,31 +115,28 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var layout = await _context.Layouts
-                .SingleOrDefaultAsync(m => m.Id == id);
-            if (layout == null)
+            var deletingLayout = await _service.GetByIdAsync((int)id);
+            if (deletingLayout == null)
             {
                 return NotFound();
             }
 
-            return View(layout);
+            return View(deletingLayout);
         }
 
-        // POST: Layouts/Delete/5
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var layout = await _context.Layouts.FindAsync(id);
-            _context.Layouts.Remove(layout);
-            await _context.SaveChangesAsync();
+            var layout = await _service.GetByIdAsync(id);
+            await _service.DeleteAsync(layout);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool LayoutExists(int id)
+        private async Task<bool> LayoutExists(int id)
         {
-            return _context.Layouts.Any(e => e.Id == id);
+            return await _service.GetByIdAsync(id) is not null;
         }
     }
 }

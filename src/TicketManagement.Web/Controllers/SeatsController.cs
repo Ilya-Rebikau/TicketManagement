@@ -1,31 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using TicketManagement.DataAccess;
-using TicketManagement.DataAccess.Models;
+using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.ModelsDTO;
 
 namespace TicketManagement.Web.Controllers
 {
     public class SeatsController : Controller
     {
-        private readonly TicketManagementContext _context;
+        private readonly IService<SeatDto> _service;
 
-        public SeatsController(TicketManagementContext context)
+        public SeatsController(IService<SeatDto> service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: Seats
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Seats.ToListAsync());
+            return View(await _service.GetAllAsync());
         }
 
-        // GET: Seats/Details/5
+        [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,8 +29,7 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var seat = await _context.Seats
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var seat = await _service.GetByIdAsync((int)id);
             if (seat == null)
             {
                 return NotFound();
@@ -43,30 +38,26 @@ namespace TicketManagement.Web.Controllers
             return View(seat);
         }
 
-        // GET: Seats/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Seats/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,AreaId,Row,Number")] Seat seat)
+        public async Task<IActionResult> Create([Bind("Id,AreaId,Row,Number")] SeatDto seat)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(seat);
-                await _context.SaveChangesAsync();
+                await _service.CreateAsync(seat);
                 return RedirectToAction(nameof(Index));
             }
 
             return View(seat);
         }
 
-        // GET: Seats/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -74,21 +65,18 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var seat = await _context.Seats.FindAsync(id);
-            if (seat == null)
+            var updatingSeat = await _service.GetByIdAsync((int)id);
+            if (updatingSeat == null)
             {
                 return NotFound();
             }
 
-            return View(seat);
+            return View(updatingSeat);
         }
 
-        // POST: Seats/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,AreaId,Row,Number")] Seat seat)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,AreaId,Row,Number")] SeatDto seat)
         {
             if (id != seat.Id)
             {
@@ -99,12 +87,11 @@ namespace TicketManagement.Web.Controllers
             {
                 try
                 {
-                    _context.Update(seat);
-                    await _context.SaveChangesAsync();
+                    await _service.UpdateAsync(seat);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SeatExists(seat.Id))
+                    if (!await SeatExists(seat.Id))
                     {
                         return NotFound();
                     }
@@ -120,7 +107,7 @@ namespace TicketManagement.Web.Controllers
             return View(seat);
         }
 
-        // GET: Seats/Delete/5
+        [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -128,31 +115,28 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var seat = await _context.Seats
-                .SingleOrDefaultAsync(m => m.Id == id);
-            if (seat == null)
+            var deletingSeat = await _service.GetByIdAsync((int)id);
+            if (deletingSeat == null)
             {
                 return NotFound();
             }
 
-            return View(seat);
+            return View(deletingSeat);
         }
 
-        // POST: Seats/Delete/5
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var seat = await _context.Seats.FindAsync(id);
-            _context.Seats.Remove(seat);
-            await _context.SaveChangesAsync();
+            var seat = await _service.GetByIdAsync(id);
+            await _service.DeleteAsync(seat);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool SeatExists(int id)
+        private async Task<bool> SeatExists(int id)
         {
-            return _context.Seats.Any(e => e.Id == id);
+            return await _service.GetByIdAsync(id) is not null;
         }
     }
 }

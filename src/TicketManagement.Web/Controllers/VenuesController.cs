@@ -1,31 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using TicketManagement.DataAccess;
-using TicketManagement.DataAccess.Models;
+using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.ModelsDTO;
 
 namespace TicketManagement.Web.Controllers
 {
     public class VenuesController : Controller
     {
-        private readonly TicketManagementContext _context;
+        private readonly IService<VenueDto> _service;
 
-        public VenuesController(TicketManagementContext context)
+        public VenuesController(IService<VenueDto> service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: Venues
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Venues.ToListAsync());
+            return View(await _service.GetAllAsync());
         }
 
-        // GET: Venues/Details/5
+        [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,8 +29,7 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var venue = await _context.Venues
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var venue = await _service.GetByIdAsync((int)id);
             if (venue == null)
             {
                 return NotFound();
@@ -43,30 +38,26 @@ namespace TicketManagement.Web.Controllers
             return View(venue);
         }
 
-        // GET: Venues/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Venues/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Description,Address,Phone,Name")] Venue venue)
+        public async Task<IActionResult> Create([Bind("Id,Description,Address,Phone,Name")] VenueDto venue)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(venue);
-                await _context.SaveChangesAsync();
+                await _service.CreateAsync(venue);
                 return RedirectToAction(nameof(Index));
             }
 
             return View(venue);
         }
 
-        // GET: Venues/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -74,21 +65,18 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var venue = await _context.Venues.FindAsync(id);
-            if (venue == null)
+            var updatingVenue = await _service.GetByIdAsync((int)id);
+            if (updatingVenue == null)
             {
                 return NotFound();
             }
 
-            return View(venue);
+            return View(updatingVenue);
         }
 
-        // POST: Venues/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Description,Address,Phone,Name")] Venue venue)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Description,Address,Phone,Name")] VenueDto venue)
         {
             if (id != venue.Id)
             {
@@ -99,12 +87,11 @@ namespace TicketManagement.Web.Controllers
             {
                 try
                 {
-                    _context.Update(venue);
-                    await _context.SaveChangesAsync();
+                    await _service.UpdateAsync(venue);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!VenueExists(venue.Id))
+                    if (!await VenueExists(venue.Id))
                     {
                         return NotFound();
                     }
@@ -120,7 +107,7 @@ namespace TicketManagement.Web.Controllers
             return View(venue);
         }
 
-        // GET: Venues/Delete/5
+        [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -128,31 +115,28 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var venue = await _context.Venues
-                .SingleOrDefaultAsync(m => m.Id == id);
-            if (venue == null)
+            var deletingVenue = await _service.GetByIdAsync((int)id);
+            if (deletingVenue == null)
             {
                 return NotFound();
             }
 
-            return View(venue);
+            return View(deletingVenue);
         }
 
-        // POST: Venues/Delete/5
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var venue = await _context.Venues.FindAsync(id);
-            _context.Venues.Remove(venue);
-            await _context.SaveChangesAsync();
+            var venue = await _service.GetByIdAsync(id);
+            await _service.DeleteAsync(venue);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool VenueExists(int id)
+        private async Task<bool> VenueExists(int id)
         {
-            return _context.Venues.Any(e => e.Id == id);
+            return await _service.GetByIdAsync(id) is not null;
         }
     }
 }

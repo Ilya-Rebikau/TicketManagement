@@ -1,31 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using TicketManagement.DataAccess;
-using TicketManagement.DataAccess.Models;
+using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.ModelsDTO;
 
 namespace TicketManagement.Web.Controllers
 {
     public class EventsController : Controller
     {
-        private readonly TicketManagementContext _context;
+        private readonly IService<EventDto> _service;
 
-        public EventsController(TicketManagementContext context)
+        public EventsController(IService<EventDto> service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: Events
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Events.ToListAsync());
+            return View(await _service.GetAllAsync());
         }
 
-        // GET: Events/Details/5
+        [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,8 +29,7 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var @event = await _context.Events
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var @event = await _service.GetByIdAsync((int)id);
             if (@event == null)
             {
                 return NotFound();
@@ -43,30 +38,26 @@ namespace TicketManagement.Web.Controllers
             return View(@event);
         }
 
-        // GET: Events/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Events/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,LayoutId,TimeStart,TimeEnd,Image")] Event @event)
+        public async Task<IActionResult> Create([Bind("Id, Name, Description, LayoutId, TimeStart, TimeEnd, Image")] EventDto @event)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(@event);
-                await _context.SaveChangesAsync();
+                await _service.CreateAsync(@event);
                 return RedirectToAction(nameof(Index));
             }
 
             return View(@event);
         }
 
-        // GET: Events/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -74,21 +65,18 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var @event = await _context.Events.FindAsync(id);
-            if (@event == null)
+            var updatingEvent = await _service.GetByIdAsync((int)id);
+            if (updatingEvent == null)
             {
                 return NotFound();
             }
 
-            return View(@event);
+            return View(updatingEvent);
         }
 
-        // POST: Events/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,LayoutId,TimeStart,TimeEnd,Image")] Event @event)
+        public async Task<IActionResult> Edit(int id, [Bind("Id, Name, Description, LayoutId, TimeStart, TimeEnd, Image")] EventDto @event)
         {
             if (id != @event.Id)
             {
@@ -99,12 +87,11 @@ namespace TicketManagement.Web.Controllers
             {
                 try
                 {
-                    _context.Update(@event);
-                    await _context.SaveChangesAsync();
+                    await _service.UpdateAsync(@event);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EventExists(@event.Id))
+                    if (!await EventExists(@event.Id))
                     {
                         return NotFound();
                     }
@@ -120,7 +107,7 @@ namespace TicketManagement.Web.Controllers
             return View(@event);
         }
 
-        // GET: Events/Delete/5
+        [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -128,31 +115,28 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var @event = await _context.Events
-                .SingleOrDefaultAsync(m => m.Id == id);
-            if (@event == null)
+            var deletingEvent = await _service.GetByIdAsync((int)id);
+            if (deletingEvent == null)
             {
                 return NotFound();
             }
 
-            return View(@event);
+            return View(deletingEvent);
         }
 
-        // POST: Events/Delete/5
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var @event = await _context.Events.FindAsync(id);
-            _context.Events.Remove(@event);
-            await _context.SaveChangesAsync();
+            var @event = await _service.GetByIdAsync(id);
+            await _service.DeleteAsync(@event);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EventExists(int id)
+        private async Task<bool> EventExists(int id)
         {
-            return _context.Events.Any(e => e.Id == id);
+            return await _service.GetByIdAsync(id) is not null;
         }
     }
 }

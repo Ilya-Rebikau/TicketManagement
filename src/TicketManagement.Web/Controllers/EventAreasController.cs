@@ -1,31 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using TicketManagement.DataAccess;
-using TicketManagement.DataAccess.Models;
+using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.ModelsDTO;
 
 namespace TicketManagement.Web.Controllers
 {
     public class EventAreasController : Controller
     {
-        private readonly TicketManagementContext _context;
+        private readonly IService<EventAreaDto> _service;
 
-        public EventAreasController(TicketManagementContext context)
+        public EventAreasController(IService<EventAreaDto> service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: EventAreas
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.EventAreas.ToListAsync());
+            return View(await _service.GetAllAsync());
         }
 
-        // GET: EventAreas/Details/5
+        [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,8 +29,7 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var eventArea = await _context.EventAreas
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var eventArea = await _service.GetByIdAsync((int)id);
             if (eventArea == null)
             {
                 return NotFound();
@@ -43,30 +38,26 @@ namespace TicketManagement.Web.Controllers
             return View(eventArea);
         }
 
-        // GET: EventAreas/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: EventAreas/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,EventId,Description,CoordX,CoordY,Price")] EventArea eventArea)
+        public async Task<IActionResult> Create([Bind("Id, EventId, Description, CoordX, CoordY, Price")] EventAreaDto eventArea)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(eventArea);
-                await _context.SaveChangesAsync();
+                await _service.CreateAsync(eventArea);
                 return RedirectToAction(nameof(Index));
             }
 
             return View(eventArea);
         }
 
-        // GET: EventAreas/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -74,21 +65,18 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var eventArea = await _context.EventAreas.FindAsync(id);
-            if (eventArea == null)
+            var updatingEventArea = await _service.GetByIdAsync((int)id);
+            if (updatingEventArea == null)
             {
                 return NotFound();
             }
 
-            return View(eventArea);
+            return View(updatingEventArea);
         }
 
-        // POST: EventAreas/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,EventId,Description,CoordX,CoordY,Price")] EventArea eventArea)
+        public async Task<IActionResult> Edit(int id, [Bind("Id, EventId, Description, CoordX, CoordY, Price")] EventAreaDto eventArea)
         {
             if (id != eventArea.Id)
             {
@@ -99,12 +87,11 @@ namespace TicketManagement.Web.Controllers
             {
                 try
                 {
-                    _context.Update(eventArea);
-                    await _context.SaveChangesAsync();
+                    await _service.UpdateAsync(eventArea);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EventAreaExists(eventArea.Id))
+                    if (!await EventAreaExists(eventArea.Id))
                     {
                         return NotFound();
                     }
@@ -120,7 +107,7 @@ namespace TicketManagement.Web.Controllers
             return View(eventArea);
         }
 
-        // GET: EventAreas/Delete/5
+        [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -128,31 +115,28 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var eventArea = await _context.EventAreas
-                .SingleOrDefaultAsync(m => m.Id == id);
-            if (eventArea == null)
+            var deletingEventArea = await _service.GetByIdAsync((int)id);
+            if (deletingEventArea == null)
             {
                 return NotFound();
             }
 
-            return View(eventArea);
+            return View(deletingEventArea);
         }
 
-        // POST: EventAreas/Delete/5
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var eventArea = await _context.EventAreas.FindAsync(id);
-            _context.EventAreas.Remove(eventArea);
-            await _context.SaveChangesAsync();
+            var eventArea = await _service.GetByIdAsync(id);
+            await _service.DeleteAsync(eventArea);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EventAreaExists(int id)
+        private async Task<bool> EventAreaExists(int id)
         {
-            return _context.EventAreas.Any(e => e.Id == id);
+            return await _service.GetByIdAsync(id) is not null;
         }
     }
 }

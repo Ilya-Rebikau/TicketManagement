@@ -1,31 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using TicketManagement.DataAccess;
-using TicketManagement.DataAccess.Models;
+using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.ModelsDTO;
 
 namespace TicketManagement.Web.Controllers
 {
     public class AreasController : Controller
     {
-        private readonly TicketManagementContext _context;
+        private readonly IService<AreaDto> _service;
 
-        public AreasController(TicketManagementContext context)
+        public AreasController(IService<AreaDto> service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: Areas
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Areas.ToListAsync());
+            return View(await _service.GetAllAsync());
         }
 
-        // GET: Areas/Details/5
+        [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,8 +29,7 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var area = await _context.Areas
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var area = await _service.GetByIdAsync((int)id);
             if (area == null)
             {
                 return NotFound();
@@ -43,30 +38,26 @@ namespace TicketManagement.Web.Controllers
             return View(area);
         }
 
-        // GET: Areas/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Areas/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,LayoutId,Description,CoordX,CoordY")] Area area)
+        public async Task<IActionResult> Create([Bind("Id,LayoutId,Description,CoordX,CoordY")] AreaDto area)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(area);
-                await _context.SaveChangesAsync();
+                await _service.CreateAsync(area);
                 return RedirectToAction(nameof(Index));
             }
 
             return View(area);
         }
 
-        // GET: Areas/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -74,21 +65,18 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var area = await _context.Areas.FindAsync(id);
-            if (area == null)
+            var updatingArea = await _service.GetByIdAsync((int)id);
+            if (updatingArea == null)
             {
                 return NotFound();
             }
 
-            return View(area);
+            return View(updatingArea);
         }
 
-        // POST: Areas/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,LayoutId,Description,CoordX,CoordY")] Area area)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,LayoutId,Description,CoordX,CoordY")] AreaDto area)
         {
             if (id != area.Id)
             {
@@ -99,12 +87,11 @@ namespace TicketManagement.Web.Controllers
             {
                 try
                 {
-                    _context.Update(area);
-                    await _context.SaveChangesAsync();
+                    await _service.UpdateAsync(area);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AreaExists(area.Id))
+                    if (!await AreaExists(area.Id))
                     {
                         return NotFound();
                     }
@@ -120,7 +107,7 @@ namespace TicketManagement.Web.Controllers
             return View(area);
         }
 
-        // GET: Areas/Delete/5
+        [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -128,31 +115,28 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var area = await _context.Areas
-                .SingleOrDefaultAsync(m => m.Id == id);
-            if (area == null)
+            var deletingArea = await _service.GetByIdAsync((int)id);
+            if (deletingArea == null)
             {
                 return NotFound();
             }
 
-            return View(area);
+            return View(deletingArea);
         }
 
-        // POST: Areas/Delete/5
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var area = await _context.Areas.FindAsync(id);
-            _context.Areas.Remove(area);
-            await _context.SaveChangesAsync();
+            var area = await _service.GetByIdAsync(id);
+            await _service.DeleteAsync(area);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool AreaExists(int id)
+        private async Task<bool> AreaExists(int id)
         {
-            return _context.Areas.Any(e => e.Id == id);
+            return await _service.GetByIdAsync(id) is not null;
         }
     }
 }
