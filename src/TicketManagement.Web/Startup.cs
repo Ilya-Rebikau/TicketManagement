@@ -31,11 +31,8 @@ namespace TicketManagement.Web
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddControllersWithViews();
             services.AddBllServices(connection);
-            services.AddDbContext<IdentityContext>(options =>
-                options.UseSqlServer(connection));
-
-            services.AddIdentity<User, IdentityRole>()
-                .AddEntityFrameworkStores<IdentityContext>();
+            services.AddDbContext<IdentityContext>(options => options.UseSqlServer(connection));
+            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<IdentityContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

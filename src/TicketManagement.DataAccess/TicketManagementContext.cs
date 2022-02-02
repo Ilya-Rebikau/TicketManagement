@@ -18,13 +18,6 @@ namespace TicketManagement.DataAccess
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TicketManagementContext"/> class.
-        /// </summary>
-        public TicketManagementContext()
-        {
-        }
-
-        /// <summary>
         /// Gets or sets area models.
         /// </summary>
         public DbSet<Area> Areas { get; set; }

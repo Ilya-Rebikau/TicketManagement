@@ -10,14 +10,14 @@ namespace TicketManagement.DataAccess.Repositories
     /// Entity framework repository.
     /// </summary>
     /// <typeparam name="T">Entity.</typeparam>
-    internal class EfRepository<T> : IRepository<T>
+   internal class EfRepository<T> : IRepository<T>
         where T : class, IEntity
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="EfRepository{T}"/> class.
         /// </summary>
-        /// <param name="dbContext">Object of DbContext.</param>
-        public EfRepository(DbContext dbContext)
+        /// <param name="dbContext">Object of TicketManagementContext.</param>
+        public EfRepository(TicketManagementContext dbContext)
         {
             DbContext = dbContext;
         }
@@ -25,7 +25,7 @@ namespace TicketManagement.DataAccess.Repositories
         /// <summary>
         /// Gets or privatly sets object of DbContext.
         /// </summary>
-        protected DbContext DbContext { get; private set; }
+        protected TicketManagementContext DbContext { get; private set; }
 
         public virtual async Task<T> GetByIdAsync(int id)
         {
