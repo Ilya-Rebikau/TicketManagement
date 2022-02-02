@@ -7,8 +7,6 @@ namespace TicketManagement.Web.Models
     /// </summary>
     public class User : IdentityUser
     {
-        // TODO: TimeZone, purchase history, language
-
         /// <summary>
         /// Gets or sets first name.
         /// </summary>

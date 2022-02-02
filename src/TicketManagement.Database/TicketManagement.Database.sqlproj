@@ -80,15 +80,17 @@
     <Build Include="Tables\AspNetUsers.sql" />
     <Build Include="Tables\AspNetRoleClaims.sql" />
     <Build Include="Tables\AspNetUserClaims.sql" />
-    <Build Include="ForeignKeys\FK_AspNetUserClaims_AspNetUsers.sql" />
-    <Build Include="ForeignKeys\FK_AspNetRoleClaims_AspNetRoles.sql" />
+    <Build Include="ForeignKeys\FK_AspNetUsers_AspNetUserClaims.sql" />
+    <Build Include="ForeignKeys\FK_AspNetRoles_AspNetRolesAspNetRoleClaims.sql" />
     <Build Include="Tables\AspNetUserLogins.sql" />
-    <Build Include="ForeignKeys\FK_AspNetUserLogins_AspNetUsers.sql" />
+    <Build Include="ForeignKeys\FK_AspNetUsers_AspNetUserLogins.sql" />
     <Build Include="Tables\AspNetUserRoles.sql" />
-    <Build Include="ForeignKeys\FK_AspNetUserRoles_AspNetRoles.sql" />
-    <Build Include="ForeignKeys\FK_AspNetUserRoles_AspNetUsers.sql" />
+    <Build Include="ForeignKeys\FK_AspNetRoles_AspNetUserRoles.sql" />
+    <Build Include="ForeignKeys\FK_AspNetUsers_AspNetUserRoles.sql" />
     <Build Include="Tables\AspNetUserTokens.sql" />
-    <Build Include="ForeignKeys\FK_AspNetUserTokens_AspNetUsers.sql" />
+    <Build Include="ForeignKeys\FK_AspNetUsers_AspNetUserTokens.sql" />
+    <Build Include="ForeignKeys\FK_AspNetUsers_Ticket.sql" />
+    <Build Include="ForeignKeys\FK_EventSeat_Ticket.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Event.sql" />
