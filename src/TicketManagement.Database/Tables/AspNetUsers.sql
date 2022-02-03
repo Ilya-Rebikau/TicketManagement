@@ -8,7 +8,7 @@
 	[Email] nvarchar(256) NULL,
 	[NormalizedEmail] nvarchar(256) NULL,
 	[EmailConfirmed] bit NOT NULL,
-	[Balance] decimal NOT NULL,
+	[Balance] FLOAT NOT NULL,
 	[PasswordHash] nvarchar(max) NULL,
 	[SecurityStamp] nvarchar(max) NULL,
 	[ConcurrencyStamp] nvarchar(max) NULL,
