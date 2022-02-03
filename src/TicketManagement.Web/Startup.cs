@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,8 +31,22 @@ namespace TicketManagement.Web
         public void ConfigureServices(IServiceCollection services)
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddViewLocalization();
             services.AddBllServices(connection);
+            services.AddLocalization(options => options.ResourcesPath = "Resources");
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                var supportedCultures = new[]
+                {
+                    new CultureInfo("en-US"),
+                    new CultureInfo("ru-RU"),
+                    new CultureInfo("be-BY"),
+                };
+
+                options.DefaultRequestCulture = new RequestCulture("ru-RU");
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+            });
             services.AddDbContext<IdentityContext>(options => options.UseSqlServer(connection));
             services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<IdentityContext>();
         }
@@ -50,6 +66,19 @@ namespace TicketManagement.Web
                 app.UseHsts();
             }
 
+            var supportedCultures = new[]
+            {
+                new CultureInfo("en-US"),
+                new CultureInfo("ru-RU"),
+                new CultureInfo("be-BY"),
+            };
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture("be-BY"),
+                SupportedCultures = supportedCultures,
+                SupportedUICultures = supportedCultures,
+            });
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -62,7 +91,7 @@ namespace TicketManagement.Web
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Events}/{action=Index}/{id?}");
             });
         }
     }

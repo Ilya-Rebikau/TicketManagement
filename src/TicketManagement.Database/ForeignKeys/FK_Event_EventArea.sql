@@ -1,3 +1,3 @@
-﻿ALTER TABLE dbo.EventArea
+﻿ALTER TABLE dbo.EventAreas
 ADD CONSTRAINT FK_Event_EventArea FOREIGN KEY ([EventId])     
-    REFERENCES dbo.[Event] (Id)
+    REFERENCES dbo.[Events] (Id)

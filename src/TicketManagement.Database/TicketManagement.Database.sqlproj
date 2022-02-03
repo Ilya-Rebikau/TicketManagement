@@ -66,7 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="ForeignKeys\FK_Venue_Layout.sql" />
-    <Build Include="Tables\Area.sql" />
+    <Build Include="Tables\Areas.sql" />
     <Build Include="ForeignKeys\FK_Layout_Area.sql" />
     <Build Include="ForeignKeys\FK_Area_Seat.sql" />
     <Build Include="ForeignKeys\FK_Layout_Event.sql" />
@@ -75,7 +75,7 @@
     <Build Include="Programmability\StoredProcedures\sp_CreateEvent.sql" />
     <Build Include="Programmability\StoredProcedures\sp_UpdateEvent.sql" />
     <Build Include="Programmability\StoredProcedures\sp_DeleteEvent.sql" />
-    <Build Include="Tables\Ticket.sql" />
+    <Build Include="Tables\Tickets.sql" />
     <Build Include="Tables\AspNetRoles.sql" />
     <Build Include="Tables\AspNetUsers.sql" />
     <Build Include="Tables\AspNetRoleClaims.sql" />
@@ -93,12 +93,12 @@
     <Build Include="ForeignKeys\FK_EventSeat_Ticket.sql" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Tables\Event.sql" />
-    <Build Include="Tables\EventArea.sql" />
-    <Build Include="Tables\EventSeat.sql" />
-    <Build Include="Tables\Layout.sql" />
-    <Build Include="Tables\Seat.sql" />
-    <Build Include="Tables\Venue.sql" />
+    <Build Include="Tables\Events.sql" />
+    <Build Include="Tables\EventAreas.sql" />
+    <Build Include="Tables\EventSeats.sql" />
+    <Build Include="Tables\Layouts.sql" />
+    <Build Include="Tables\Seats.sql" />
+    <Build Include="Tables\Venues.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="TicketManagement.publish.xml" />

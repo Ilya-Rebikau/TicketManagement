@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[Venue]
+﻿CREATE TABLE [dbo].[Venues]
 (
 	[Id] int identity primary key,
 	[Description] nvarchar(120) NOT NULL,

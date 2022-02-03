@@ -10,4 +10,4 @@ DECLARE @timeStartDT smalldatetime
 DECLARE @timeEndDT smalldatetime
 SET @timeStartDT = CONVERT(smalldatetime, @timeStart, 20)
 SET @timeEndDT = CONVERT(smalldatetime, @timeEnd, 20)
-INSERT INTO Event(Name, Description, LayoutId, TimeStart, TimeEnd, Image) VALUES(@name, @description, @layoutId, @timeStartDT, @timeEndDT, @image)
+INSERT INTO Events(Name, Description, LayoutId, TimeStart, TimeEnd, Image) VALUES(@name, @description, @layoutId, @timeStartDT, @timeEndDT, @image)

@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[Layout]
+﻿CREATE TABLE [dbo].[Layouts]
 (
 	[Id] int identity primary key,
 	[VenueId] int NOT NULL,

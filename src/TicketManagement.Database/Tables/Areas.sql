@@ -1,9 +1,8 @@
-﻿CREATE TABLE [dbo].[EventArea]
+﻿CREATE TABLE [dbo].[Areas]
 (
 	[Id] int identity primary key,
-	[EventId] int NOT NULL,
+	[LayoutId] int NOT NULL,
 	[Description] nvarchar(200) NOT NULL,
 	[CoordX] int NOT NULL,
 	[CoordY] int NOT NULL,
-	[Price] decimal NOT NULL
 )

@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[Event]
+﻿CREATE TABLE [dbo].[Events]
 (
 	[Id] int primary key identity,
 	[Name] nvarchar(120) NOT NULL,

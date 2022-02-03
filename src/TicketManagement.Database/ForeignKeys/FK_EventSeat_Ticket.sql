@@ -1,3 +1,3 @@
-﻿ALTER TABLE dbo.Ticket
+﻿ALTER TABLE dbo.Tickets
 ADD CONSTRAINT FK_EventSeat_Ticket FOREIGN KEY (EventSeatId)     
-    REFERENCES dbo.EventSeat (Id)
+    REFERENCES dbo.EventSeats (Id)

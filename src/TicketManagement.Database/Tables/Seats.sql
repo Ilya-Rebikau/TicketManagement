@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[Seat]
+﻿CREATE TABLE [dbo].[Seats]
 (
 	[Id] int identity primary key,
 	[AreaId] int NOT NULL,

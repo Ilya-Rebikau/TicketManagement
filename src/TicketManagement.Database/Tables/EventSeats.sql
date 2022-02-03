@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[EventSeat]
+﻿CREATE TABLE [dbo].[EventSeats]
 (
 	[Id] int identity primary key,
 	[EventAreaId] int NOT NULL,

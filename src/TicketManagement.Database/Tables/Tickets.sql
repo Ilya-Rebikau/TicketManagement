@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[Ticket]
+﻿CREATE TABLE [dbo].[Tickets]
 (
 	[Id] INT NOT NULL PRIMARY KEY, 
     [EventSeatId] INT NOT NULL, 
