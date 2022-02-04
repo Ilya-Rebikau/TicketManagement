@@ -1,4 +1,5 @@
-﻿using TicketManagement.BusinessLogic.Interfaces;
+﻿using System.ComponentModel.DataAnnotations;
+using TicketManagement.BusinessLogic.Interfaces;
 
 namespace TicketManagement.BusinessLogic.ModelsDTO
 {
@@ -12,21 +13,29 @@ namespace TicketManagement.BusinessLogic.ModelsDTO
         /// <summary>
         /// Gets or sets id of event area.
         /// </summary>
+        [Required(ErrorMessage = "FieldRequired")]
+        [Display(Name = "AreaXAndY")]
         public int EventAreaId { get; set; }
 
         /// <summary>
         /// Gets or sets row number in area.
         /// </summary>
+        [Required(ErrorMessage = "FieldRequired")]
+        [Display(Name = "Row")]
         public int Row { get; set; }
 
         /// <summary>
         /// Gets or sets number in row.
         /// </summary>
+        [Required(ErrorMessage = "FieldRequired")]
+        [Display(Name = "Number")]
         public int Number { get; set; }
 
         /// <summary>
         /// Gets or sets state.
         /// </summary>
+        [Required(ErrorMessage = "FieldRequired")]
+        [Display(Name = "State")]
         public int State { get; set; }
     }
 }

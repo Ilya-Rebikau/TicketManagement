@@ -22,7 +22,7 @@ namespace TicketManagement.DataAccess.Repositories
                 SqlParameter layoutIdParam = new SqlParameter("@layoutId", obj.LayoutId);
                 SqlParameter timeStartParam = new SqlParameter("@timeStart", obj.TimeStart.ToString());
                 SqlParameter timeEndParam = new SqlParameter("@timeEnd", obj.TimeEnd.ToString());
-                SqlParameter imageParam = new SqlParameter("@image", obj.Image);
+                SqlParameter imageParam = new SqlParameter("@image", obj.ImageUrl);
                 DbContext.Events.FromSqlRaw("sp_CreateEvent @name, @description, @layoutId, @timeStart, @timeEnd, @image",
                     nameParam, descriptionParam, layoutIdParam, timeStartParam, timeEndParam, imageParam);
             });
@@ -40,7 +40,7 @@ namespace TicketManagement.DataAccess.Repositories
                 SqlParameter layoutIdParam = new SqlParameter("@layoutId", obj.LayoutId);
                 SqlParameter timeStartParam = new SqlParameter("@timeStart", obj.TimeStart.ToString());
                 SqlParameter timeEndParam = new SqlParameter("@timeEnd", obj.TimeEnd.ToString());
-                SqlParameter imageParam = new SqlParameter("@image", obj.Image);
+                SqlParameter imageParam = new SqlParameter("@image", obj.ImageUrl);
                 DbContext.Events.FromSqlRaw("sp_UpdateEvent @idParam, @name, @description, @layoutId, @timeStart, @timeEnd, @image",
                     idParam, nameParam, descriptionParam, layoutIdParam, timeStartParam, timeEndParam, imageParam);
             });

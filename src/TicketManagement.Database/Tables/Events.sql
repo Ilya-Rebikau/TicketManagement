@@ -6,5 +6,5 @@
 	[LayoutId] int NOT NULL, 
     [TimeStart] SMALLDATETIME NOT NULL, 
     [TimeEnd] SMALLDATETIME NOT NULL, 
-    [Image] NVARCHAR(MAX) NOT NULL,
+    [ImageUrl] NVARCHAR(MAX) NOT NULL,
 )

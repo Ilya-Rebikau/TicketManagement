@@ -11,4 +11,4 @@ DECLARE @timeStartDT smalldatetime
 DECLARE @timeEndDT smalldatetime
 SET @timeStartDT = CONVERT(smalldatetime, @timeStart, 20)
 SET @timeEndDT = CONVERT(smalldatetime, @timeEnd, 20)
-UPDATE Events set Name = @name, Description = @description, LayoutId = @layoutId, TimeStart = @timeStartDT, TimeEnd = @timeEndDT, Image = @image where Id = @id
+UPDATE Events set Name = @name, Description = @description, LayoutId = @layoutId, TimeStart = @timeStartDT, TimeEnd = @timeEndDT, ImageUrl = @image where Id = @id

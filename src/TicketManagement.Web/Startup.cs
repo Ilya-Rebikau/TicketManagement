@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TicketManagement.BusinessLogic.Configuration;
+using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.Web.Infrastructure;
 using TicketManagement.Web.Models;
 
@@ -31,7 +33,14 @@ namespace TicketManagement.Web
         public void ConfigureServices(IServiceCollection services)
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
-            services.AddControllersWithViews().AddViewLocalization();
+            services.AddControllersWithViews().AddViewLocalization().AddDataAnnotationsLocalization(options =>
+            {
+                options.DataAnnotationLocalizerProvider = (type, factory) =>
+                {
+                    var assemblyName = new AssemblyName(typeof(EventDto).GetTypeInfo().Assembly.FullName);
+                    return factory.Create("Translations", assemblyName.Name);
+                };
+            });
             services.AddBllServices(connection);
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             services.Configure<RequestLocalizationOptions>(options =>

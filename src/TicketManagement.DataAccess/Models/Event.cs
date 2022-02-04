@@ -36,8 +36,8 @@ namespace TicketManagement.DataAccess.Models
         public DateTime TimeEnd { get; set; }
 
         /// <summary>
-        /// Gets or sets image.
+        /// Gets or sets image URL.
         /// </summary>
-        public string Image { get; set; }
+        public string ImageUrl { get; set; }
     }
 }

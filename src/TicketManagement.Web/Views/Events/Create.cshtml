@@ -1,12 +1,11 @@
 ﻿@model EventDto
+@inject IViewLocalizer Localizer
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = @Localizer["Title"];
 }
 
-<h1>Create</h1>
-
-<h4>Event</h4>
+<h1>@Localizer["Title"]</h1>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -38,9 +37,9 @@
                 <span asp-validation-for="TimeEnd" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Image" class="control-label"></label>
-                <input asp-for="Image" class="form-control" />
-                <span asp-validation-for="Image" class="text-danger"></span>
+                <label asp-for="ImageUrl" class="control-label"></label>
+                <input asp-for="ImageUrl" class="form-control" />
+                <span asp-validation-for="ImageUrl" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
