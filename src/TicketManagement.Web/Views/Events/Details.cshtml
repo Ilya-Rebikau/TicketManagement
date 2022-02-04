@@ -1,54 +1,88 @@
-﻿@model EventDto
+﻿@model EventViewModel
+@inject IViewLocalizer Localizer
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = @Model.Event.Name;
 }
 
-<h1>Details</h1>
+<h1 class="d-flex justify-content-center">@Model.Event.Name</h1>
 
 <div>
-    <h4>Event</h4>
     <hr />
+    <img class="img-fluid" src="@Model.Event.ImageUrl" alt="@Localizer["Picture"]">
+    <br />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.DisplayNameFor(model => model.Event.Description)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
+            @Html.DisplayFor(model => model.Event.Description)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
+            @Html.DisplayNameFor(model => model.Event.LayoutId)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
+            @Html.DisplayFor(model => model.Event.LayoutId)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LayoutId)
+            @Html.DisplayNameFor(model => model.Event.TimeStart)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LayoutId)
+            @Html.DisplayFor(model => model.Event.TimeStart)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TimeStart)
+            @Html.DisplayNameFor(model => model.Event.TimeEnd)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TimeStart)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TimeEnd)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TimeEnd)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageUrl)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageUrl)
+            @Html.DisplayFor(model => model.Event.TimeEnd)
         </dd>
     </dl>
 </div>
+<hr />
+<h2 class="justify-content-center">@Localizer["Map"]</h2>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+@{int areasNumber = 0;}
+@for (int i = 1; i <= Model.MaxXCoord; i++)
+{
+    <div class="row">
+    @for (int j = 1; j <= Model.MaxYCoord; j++)
+    {
+        if (Model.CheckAreaForExist(i, j))
+        {
+            int seatsNumber = 0;
+            <div class="border col-3">
+
+                    @{
+                        var eventArea = Model.SortedEventAreas().ElementAt(areasNumber);
+                        areasNumber++;
+                    }
+                    @for (int k = 1; k <= eventArea.MaxXCoord; k++)
+                    {
+                        <div class="row">
+                            @for (int z = 1; z <= eventArea.MaxYCoord; z++)
+                            {
+                                if (eventArea.CheckSeatForExist(k, z))
+                                {
+                                    if (eventArea.EventSeats.ElementAt(seatsNumber).State == 0)
+                                    {
+                                        <a class="btn btn-danger">@k-@z</a>
+                                    }
+                                    else
+                                    {
+                                        <a asp-action="Buy" asp-route-eventSeatId="@eventArea.EventSeats.ElementAt(seatsNumber).Id" class="btn btn-success">@k-@z</a>
+                                    }
+                                    seatsNumber++;
+                                }
+                            }
+                        </div>
+                    }
+                </div>
+
+        }
+    }
+    </div>
+}
 </div>
+<a class="btn btn-primary"  >@Localizer["Buy"]</a>
+<a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.Event.Id">@Localizer["Edit"]</a>
+<a class="btn btn-primary" asp-action="Index">@Localizer["Back"]</a>

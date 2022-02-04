@@ -17,6 +17,6 @@ namespace TicketManagement.DataAccess.Models
         /// <summary>
         /// Gets or sets user's id.
         /// </summary>
-        public int UserId { get; set; }
+        public string UserId { get; set; }
     }
 }

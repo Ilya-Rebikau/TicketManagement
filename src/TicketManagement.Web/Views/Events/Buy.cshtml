@@ -1,0 +1,21 @@
+﻿@model TicketDto
+@inject IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = @Localizer["Title"];
+}
+
+<h3>@Localizer["Sure"]</h3>
+    <form asp-action="Buy">
+        <input type="hidden" asp-for="EventSeatId" />
+        <input type="hidden" asp-for="UserId" />
+        <input type="submit" value="@Localizer["Buy"]" class="btn btn-success" />
+    </form>
+<hr />
+<div>
+    <a class="btn btn-primary" asp-action="Index">@Localizer["Back"]</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

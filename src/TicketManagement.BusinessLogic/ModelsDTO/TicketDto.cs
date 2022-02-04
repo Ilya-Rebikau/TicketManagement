@@ -22,6 +22,6 @@ namespace TicketManagement.BusinessLogic.ModelsDTO
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "User")]
-        public int UserId { get; set; }
+        public string UserId { get; set; }
     }
 }

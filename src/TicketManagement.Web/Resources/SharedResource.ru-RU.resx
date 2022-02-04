@@ -120,4 +120,7 @@
   <data name="Events" xml:space="preserve">
     <value>События</value>
   </data>
+  <data name="Footer" xml:space="preserve">
+    <value>Афиша</value>
+  </data>
 </root>

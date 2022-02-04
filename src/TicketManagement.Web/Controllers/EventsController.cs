@@ -1,18 +1,33 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.ModelsDTO;
+using TicketManagement.Web.Models;
+using TicketManagement.Web.Models.Events;
 
 namespace TicketManagement.Web.Controllers
 {
     public class EventsController : Controller
     {
         private readonly IService<EventDto> _service;
+        private readonly IService<TicketDto> _ticketService;
+        private readonly IService<EventAreaDto> _eventAreaService;
+        private readonly IService<EventSeatDto> _eventSeatService;
+        private readonly UserManager<User> _userManager;
 
-        public EventsController(IService<EventDto> service)
+        public EventsController(IService<EventDto> service, IService<TicketDto> ticketService, IService<EventAreaDto> eventAreaService,
+            IService<EventSeatDto> eventSeatService, UserManager<User> userManager)
         {
             _service = service;
+            _ticketService = ticketService;
+            _eventAreaService = eventAreaService;
+            _eventSeatService = eventSeatService;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -35,7 +50,29 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            return View(@event);
+            var eventAreas = await _eventAreaService.GetAllAsync();
+            var eventAreasForEvent = eventAreas.Where(x => x.EventId == (int)id);
+            var eventSeats = await _eventSeatService.GetAllAsync();
+            var eventAreaViewModels = new List<EventAreaViewModel>();
+            foreach (var eventArea in eventAreasForEvent)
+            {
+                var eventSeatsInArea = eventSeats.Where(x => x.EventAreaId == eventArea.Id).ToList();
+                var eventAreaViewModel = new EventAreaViewModel
+                {
+                    EventArea = eventArea,
+                    EventSeats = eventSeatsInArea,
+                };
+
+                eventAreaViewModels.Add(eventAreaViewModel);
+            }
+
+            var eventViewModel = new EventViewModel
+            {
+                EventAreas = eventAreaViewModels,
+                Event = @event,
+            };
+
+            return View(eventViewModel);
         }
 
         [HttpGet]
@@ -131,6 +168,32 @@ namespace TicketManagement.Web.Controllers
         {
             var @event = await _service.GetByIdAsync(id);
             await _service.DeleteAsync(@event);
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Buy(int? eventSeatId)
+        {
+            if (eventSeatId == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var ticket = new TicketDto
+            {
+                UserId = user.Id,
+                EventSeatId = (int)eventSeatId,
+            };
+
+            return View(ticket);
+        }
+
+        [HttpPost]
+        [ActionName("Buy")]
+        public async Task<IActionResult> BuyConfirmed(TicketDto ticket)
+        {
+            await _ticketService.CreateAsync(ticket);
             return RedirectToAction(nameof(Index));
         }
 
