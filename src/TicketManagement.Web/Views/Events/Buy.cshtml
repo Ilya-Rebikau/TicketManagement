@@ -1,14 +1,15 @@
-﻿@model TicketDto
+﻿@model TicketViewModel
 @inject IViewLocalizer Localizer
 
 @{
     ViewData["Title"] = @Localizer["Title"];
 }
 
-<h3>@Localizer["Sure"]</h3>
+<h3>@Localizer["Sure"]@Model.Price$?</h3>
     <form asp-action="Buy">
-        <input type="hidden" asp-for="EventSeatId" />
-        <input type="hidden" asp-for="UserId" />
+        <input type="hidden" asp-for="@Model.Ticket.EventSeatId" />
+        <input type="hidden" asp-for="@Model.Ticket.UserId" />
+        <input type="hidden" asp-for="@Model.Price" />
         <input type="submit" value="@Localizer["Buy"]" class="btn btn-success" />
     </form>
 <hr />

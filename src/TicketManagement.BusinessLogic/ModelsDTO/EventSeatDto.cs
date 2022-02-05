@@ -36,6 +36,6 @@ namespace TicketManagement.BusinessLogic.ModelsDTO
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "State")]
-        public int State { get; set; }
+        public PlaceStatus State { get; set; }
     }
 }

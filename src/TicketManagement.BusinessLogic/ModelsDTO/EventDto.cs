@@ -49,7 +49,7 @@ namespace TicketManagement.BusinessLogic.ModelsDTO
         /// <summary>
         /// Gets or sets image URL.
         /// </summary>
-        [Required(ErrorMessage = "FieldRequired")]
+        [Url(ErrorMessage = "WrongUrl")]
         [Display(Name = "ImageUrl")]
         public string ImageUrl { get; set; }
     }

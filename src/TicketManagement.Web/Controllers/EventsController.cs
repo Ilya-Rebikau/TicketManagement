@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.Web.Models;
@@ -19,15 +20,17 @@ namespace TicketManagement.Web.Controllers
         private readonly IService<EventAreaDto> _eventAreaService;
         private readonly IService<EventSeatDto> _eventSeatService;
         private readonly UserManager<User> _userManager;
+        private readonly IStringLocalizer<EventsController> _localizer;
 
         public EventsController(IService<EventDto> service, IService<TicketDto> ticketService, IService<EventAreaDto> eventAreaService,
-            IService<EventSeatDto> eventSeatService, UserManager<User> userManager)
+            IService<EventSeatDto> eventSeatService, UserManager<User> userManager, IStringLocalizer<EventsController> localizer)
         {
             _service = service;
             _ticketService = ticketService;
             _eventAreaService = eventAreaService;
             _eventSeatService = eventSeatService;
             _userManager = userManager;
+            _localizer = localizer;
         }
 
         [HttpGet]
@@ -83,7 +86,7 @@ namespace TicketManagement.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id, Name, Description, LayoutId, TimeStart, TimeEnd, Image")] EventDto @event)
+        public async Task<IActionResult> Create(EventDto @event)
         {
             if (ModelState.IsValid)
             {
@@ -113,7 +116,7 @@ namespace TicketManagement.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id, Name, Description, LayoutId, TimeStart, TimeEnd, Image")] EventDto @event)
+        public async Task<IActionResult> Edit(int id, EventDto @event)
         {
             if (id != @event.Id)
             {
@@ -172,9 +175,9 @@ namespace TicketManagement.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Buy(int? eventSeatId)
+        public async Task<IActionResult> Buy(int? eventSeatId, double? price)
         {
-            if (eventSeatId == null)
+            if (eventSeatId == null || price == null)
             {
                 return NotFound();
             }
@@ -186,14 +189,33 @@ namespace TicketManagement.Web.Controllers
                 EventSeatId = (int)eventSeatId,
             };
 
-            return View(ticket);
+            var ticketVm = new TicketViewModel
+            {
+                Ticket = ticket,
+                Price = (double)price,
+            };
+
+            return View(ticketVm);
         }
 
         [HttpPost]
         [ActionName("Buy")]
-        public async Task<IActionResult> BuyConfirmed(TicketDto ticket)
+        public async Task<IActionResult> BuyConfirmed(TicketViewModel ticketVm)
         {
-            await _ticketService.CreateAsync(ticket);
+            var user = await _userManager.FindByIdAsync(ticketVm.Ticket.UserId);
+            if (user.Balance >= ticketVm.Price)
+            {
+                user.Balance -= ticketVm.Price;
+                var seat = await _eventSeatService.GetByIdAsync(ticketVm.Ticket.EventSeatId);
+                seat.State = PlaceStatus.Occupied;
+                await _eventSeatService.UpdateAsync(seat);
+                await _ticketService.CreateAsync(ticketVm.Ticket);
+            }
+            else
+            {
+                return ValidationProblem($"{_localizer["NoBalance"]}");
+            }
+
             return RedirectToAction(nameof(Index));
         }
 

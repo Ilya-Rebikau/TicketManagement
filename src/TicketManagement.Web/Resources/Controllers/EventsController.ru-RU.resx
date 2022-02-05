@@ -117,22 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Back" xml:space="preserve">
-    <value>Вернуться к афише</value>
-  </data>
-  <data name="Buy" xml:space="preserve">
-    <value>Купить билет</value>
-  </data>
-  <data name="Edit" xml:space="preserve">
-    <value>Редактировать</value>
-  </data>
-  <data name="Map" xml:space="preserve">
-    <value>Карта мест для данного события</value>
-  </data>
-  <data name="NoPlaces" xml:space="preserve">
-    <value>На данное событие все места куплены или ещё не добавлены!</value>
-  </data>
-  <data name="Picture" xml:space="preserve">
-    <value>Картинка</value>
+  <data name="NoBalance" xml:space="preserve">
+    <value>Недостаточно денег на счёте!</value>
   </data>
 </root>
