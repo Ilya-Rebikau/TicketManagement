@@ -23,6 +23,10 @@ namespace TicketManagement.DataAccess.Configuration
                 options.UseSqlServer(connection));
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
             services.AddScoped(typeof(IRepository<Event>), typeof(EventEfRepository));
+            services.AddScoped(typeof(IRepository<Area>), typeof(AreaEfRepository));
+            services.AddScoped(typeof(IRepository<Layout>), typeof(LayoutEfRepository));
+            services.AddScoped(typeof(IRepository<Seat>), typeof(SeatEfRepository));
+            services.AddScoped(typeof(IRepository<Venue>), typeof(VenueEfRepository));
             return services;
         }
     }
