@@ -25,8 +25,8 @@ namespace TicketManagement.DataAccess.Repositories
             SqlParameter nameParam = new SqlParameter("@name", obj.Name);
             SqlParameter descriptionParam = new SqlParameter("@description", obj.Description);
             SqlParameter layoutIdParam = new SqlParameter("@layoutId", obj.LayoutId);
-            SqlParameter timeStartParam = new SqlParameter("@timeStart", obj.TimeStart.ToString());
-            SqlParameter timeEndParam = new SqlParameter("@timeEnd", obj.TimeEnd.ToString());
+            SqlParameter timeStartParam = new SqlParameter("@timeStart", obj.TimeStart);
+            SqlParameter timeEndParam = new SqlParameter("@timeEnd", obj.TimeEnd);
             SqlParameter imageParam = new SqlParameter("@imageUrl", obj.ImageUrl);
             await DbContext.Database.ExecuteSqlRawAsync("sp_CreateEvent @name, @description, @layoutId, @timeStart, @timeEnd, @imageUrl",
                 nameParam, descriptionParam, layoutIdParam, timeStartParam, timeEndParam, imageParam);
@@ -39,8 +39,8 @@ namespace TicketManagement.DataAccess.Repositories
             SqlParameter nameParam = new SqlParameter("@name", obj.Name);
             SqlParameter descriptionParam = new SqlParameter("@description", obj.Description);
             SqlParameter layoutIdParam = new SqlParameter("@layoutId", obj.LayoutId);
-            SqlParameter timeStartParam = new SqlParameter("@timeStart", obj.TimeStart.ToString());
-            SqlParameter timeEndParam = new SqlParameter("@timeEnd", obj.TimeEnd.ToString());
+            SqlParameter timeStartParam = new SqlParameter("@timeStart", obj.TimeStart);
+            SqlParameter timeEndParam = new SqlParameter("@timeEnd", obj.TimeEnd);
             SqlParameter imageParam = new SqlParameter("@imageUrl", obj.ImageUrl);
             await DbContext.Database.ExecuteSqlRawAsync("sp_UpdateEvent @id, @name, @description, @layoutId, @timeStart, @timeEnd, @imageUrl",
                 idParam, nameParam, descriptionParam, layoutIdParam, timeStartParam, timeEndParam, imageParam);

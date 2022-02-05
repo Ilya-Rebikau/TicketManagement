@@ -29,12 +29,12 @@ namespace TicketManagement.DataAccess.Repositories
 
         public virtual async Task<T> GetByIdAsync(int id)
         {
-            return await DbContext.Set<T>().SingleOrDefaultAsync(e => e.Id == id);
+            return await DbContext.Set<T>().AsNoTracking().SingleOrDefaultAsync(e => e.Id == id);
         }
 
         public virtual async Task<IQueryable<T>> GetAllAsync()
         {
-            return await Task.Run(() => DbContext.Set<T>());
+            return await Task.Run(() => DbContext.Set<T>().AsNoTracking());
         }
 
         public virtual async Task<T> CreateAsync(T obj)
