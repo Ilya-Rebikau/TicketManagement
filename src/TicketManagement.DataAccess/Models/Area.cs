@@ -28,5 +28,10 @@ namespace TicketManagement.DataAccess.Models
         /// Gets or sets Y coordinate in layout.
         /// </summary>
         public int CoordY { get; set; }
+
+        /// <summary>
+        /// Gets or sets base price for area in layout.
+        /// </summary>
+        public double BasePrice { get; set; }
     }
 }

@@ -25,8 +25,8 @@ namespace TicketManagement.DataAccess.Configuration
             services.AddScoped(typeof(IRepository<Event>), typeof(EventEfRepository));
             services.AddScoped(typeof(IRepository<Area>), typeof(AreaEfRepository));
             services.AddScoped(typeof(IRepository<Layout>), typeof(LayoutEfRepository));
-            services.AddScoped(typeof(IRepository<Seat>), typeof(SeatEfRepository));
             services.AddScoped(typeof(IRepository<Venue>), typeof(VenueEfRepository));
+            services.AddScoped(typeof(IRepository<EventArea>), typeof(EventAreaEfRepository));
             return services;
         }
     }

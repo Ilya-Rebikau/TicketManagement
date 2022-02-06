@@ -46,7 +46,7 @@ namespace TicketManagement.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,LayoutId,Description,CoordX,CoordY")] AreaDto area)
+        public async Task<IActionResult> Create(AreaDto area)
         {
             if (ModelState.IsValid)
             {
@@ -76,7 +76,7 @@ namespace TicketManagement.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,LayoutId,Description,CoordX,CoordY")] AreaDto area)
+        public async Task<IActionResult> Edit(int id, AreaDto area)
         {
             if (id != area.Id)
             {

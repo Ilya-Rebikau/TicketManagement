@@ -9,9 +9,9 @@ values (1, 'First layout description', 'First layout'),
 
 --- Area
 insert into dbo.Areas
-values (1, 'First area of first layout', 1, 1),
-(1, 'Second area of first layout', 1, 2),
-(2, 'First area of second layout', 1, 1)
+values (1, 'First area of first layout', 1, 1, 11),
+(1, 'Second area of first layout', 1, 2, 12),
+(2, 'First area of second layout', 1, 1, 13)
 
 --- Seat
 insert into dbo.Seats
@@ -40,7 +40,7 @@ DECLARE @timeStart smalldatetime
 DECLARE @timeEnd smalldatetime
 SET @timeStart = CONVERT(smalldatetime, '2030-12-21 15:00:00', 20)
 SET @timeEnd = CONVERT(smalldatetime, '2030-12-21 17:00:00', 20)
-Exec sp_CreateEvent 'First event name', 'First event description', 1, @timeStart, @timeEnd, 'imageURL'
+Exec sp_CreateEvent 'First event name', 'First event description', 1, @timeStart, @timeEnd, 'https://w-dog.ru/wallpapers/5/16/428743654433638/kotyata-serye-zhivotnye-trava-gazon.jpg'
 
 ---EventArea
 

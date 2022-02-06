@@ -38,6 +38,12 @@ namespace TicketManagement.BusinessLogic.Services
             return await base.UpdateAsync(obj);
         }
 
+        public async override Task<EventSeatDto> DeleteAsync(EventSeatDto obj)
+        {
+            CheckForTickets(obj);
+            return await base.DeleteAsync(obj);
+        }
+
         /// <summary>
         /// Checking that all event seats in event area have unique row and number.
         /// </summary>
@@ -63,6 +69,14 @@ namespace TicketManagement.BusinessLogic.Services
             if (obj.Row <= 0 || obj.Number <= 0)
             {
                 throw new ArgumentException("Row and number must be positive!");
+            }
+        }
+
+        private void CheckForTickets(EventSeatDto obj)
+        {
+            if (obj.State == PlaceStatus.Occupied)
+            {
+                throw new InvalidOperationException("Someone bought tickets for this event seat already!");
             }
         }
     }

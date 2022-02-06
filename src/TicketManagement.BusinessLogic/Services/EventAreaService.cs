@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.ModelsDTO;
@@ -12,14 +14,18 @@ namespace TicketManagement.BusinessLogic.Services
     /// </summary>
     internal class EventAreaService : BaseService<EventArea, EventAreaDto>, IService<EventAreaDto>
     {
+        private readonly IRepository<EventSeat> _eventSeatRepository;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="EventAreaService"/> class.
         /// </summary>
         /// <param name="repository">EventAreaRepository object.</param>
         /// <param name="converter">Converter object.</param>
-        public EventAreaService(IRepository<EventArea> repository, IConverter<EventArea, EventAreaDto> converter)
+        /// <param name="eventSeatRepository">EventSeatRepository object.</param>
+        public EventAreaService(IRepository<EventArea> repository, IConverter<EventArea, EventAreaDto> converter, IRepository<EventSeat> eventSeatRepository)
             : base(repository, converter)
         {
+            _eventSeatRepository = eventSeatRepository;
         }
 
         public async override Task<EventAreaDto> CreateAsync(EventAreaDto obj)
@@ -34,6 +40,22 @@ namespace TicketManagement.BusinessLogic.Services
             CheckForPositiveCoords(obj);
             CheckForPositivePrice(obj);
             return await base.UpdateAsync(obj);
+        }
+
+        public async override Task<EventAreaDto> DeleteAsync(EventAreaDto obj)
+        {
+            await CheckForTickets(obj);
+            return await base.DeleteAsync(obj);
+        }
+
+        private async Task CheckForTickets(EventAreaDto obj)
+        {
+            var allEventSeats = await _eventSeatRepository.GetAllAsync();
+            IEnumerable<EventSeat> eventSeats = allEventSeats.Where(s => s.EventAreaId == obj.Id).Where(s => s.State == (int)PlaceStatus.Occupied).ToList();
+            if (eventSeats.Any())
+            {
+                throw new InvalidOperationException("Someone bought tickets in this event area already!");
+            }
         }
 
         /// <summary>

@@ -26,6 +26,7 @@ namespace TicketManagement.BusinessLogic.Services
 
         public async override Task<AreaDto> CreateAsync(AreaDto obj)
         {
+            CheckForPositivePrice(obj);
             CheckForPositiveCoords(obj);
             await CheckForUniqueDescription(obj);
             await CheckForUniqueCoordsInLayout(obj);
@@ -34,6 +35,7 @@ namespace TicketManagement.BusinessLogic.Services
 
         public async override Task<AreaDto> UpdateAsync(AreaDto obj)
         {
+            CheckForPositivePrice(obj);
             CheckForPositiveCoords(obj);
             await CheckForUniqueDescription(obj);
             await CheckForUniqueCoordsInLayout(obj);
@@ -80,6 +82,14 @@ namespace TicketManagement.BusinessLogic.Services
             if (areasInLayout.Any())
             {
                 throw new ArgumentException("CoordX and CoordY must be unique for areas in one layout!");
+            }
+        }
+
+        private void CheckForPositivePrice(AreaDto obj)
+        {
+            if (obj.BasePrice <= 0)
+            {
+                throw new ArgumentException("Price must be positive!");
             }
         }
     }

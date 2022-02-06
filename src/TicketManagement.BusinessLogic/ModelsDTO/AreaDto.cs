@@ -37,5 +37,9 @@ namespace TicketManagement.BusinessLogic.ModelsDTO
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "CoordYInLayout")]
         public int CoordY { get; set; }
+
+        [Required(ErrorMessage = "FieldRequired")]
+        [Display(Name = "Price")]
+        public double BasePrice { get; set; }
     }
 }

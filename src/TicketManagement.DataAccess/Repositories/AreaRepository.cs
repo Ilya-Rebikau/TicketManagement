@@ -31,6 +31,7 @@ namespace TicketManagement.DataAccess.Repositories
                         Description = reader["Description"].ToString(),
                         CoordX = (int)reader["CoordX"],
                         CoordY = (int)reader["CoordY"],
+                        BasePrice = double.Parse(reader["BasePrice"].ToString()),
                     });
                 }
             }
@@ -60,6 +61,7 @@ namespace TicketManagement.DataAccess.Repositories
                         Description = reader["Description"].ToString(),
                         CoordX = (int)reader["CoordX"],
                         CoordY = (int)reader["CoordY"],
+                        BasePrice = double.Parse(reader["BasePrice"].ToString()),
                     };
                 }
             }
@@ -77,10 +79,12 @@ namespace TicketManagement.DataAccess.Repositories
             SqlParameter descriptionParam = new SqlParameter("@description", obj.Description);
             SqlParameter coordXParam = new SqlParameter("@coordX", obj.CoordX);
             SqlParameter coordYParam = new SqlParameter("@coordY", obj.CoordY);
+            SqlParameter priceParam = new SqlParameter("@price", obj.BasePrice);
             command.Parameters.Add(layoutIdParam);
             command.Parameters.Add(descriptionParam);
             command.Parameters.Add(coordXParam);
             command.Parameters.Add(coordYParam);
+            command.Parameters.Add(priceParam);
             await command.ExecuteNonQueryAsync();
             return obj;
         }
@@ -89,18 +93,20 @@ namespace TicketManagement.DataAccess.Repositories
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             await connection.OpenAsync();
-            string sql = "Update area set LayoutId = @layoutId, Description = @description, CoordX = @coordX, CoordY = @coordY where Id = @id";
+            string sql = "Update area set LayoutId = @layoutId, Description = @description, CoordX = @coordX, CoordY = @coordY, BasePrice = @price where Id = @id";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
             SqlParameter layoutIdParam = new SqlParameter("@layoutId", obj.LayoutId);
             SqlParameter descriptionParam = new SqlParameter("@description", obj.Description);
             SqlParameter coordXParam = new SqlParameter("@coordX", obj.CoordX);
             SqlParameter coordYParam = new SqlParameter("@coordY", obj.CoordY);
+            SqlParameter priceParam = new SqlParameter("@price", obj.BasePrice);
             command.Parameters.Add(idParam);
             command.Parameters.Add(layoutIdParam);
             command.Parameters.Add(descriptionParam);
             command.Parameters.Add(coordXParam);
             command.Parameters.Add(coordYParam);
+            command.Parameters.Add(priceParam);
             await command.ExecuteNonQueryAsync();
             return obj;
         }

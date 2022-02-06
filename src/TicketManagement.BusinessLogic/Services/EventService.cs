@@ -14,75 +14,63 @@ namespace TicketManagement.BusinessLogic.Services
     /// </summary>
     internal class EventService : BaseService<Event, EventDto>, IService<EventDto>
     {
-        /// <summary>
-        /// SeatRepository object.
-        /// </summary>
-        private readonly IRepository<Seat> _seatRepository;
-
-        /// <summary>
-        /// AreaRepository object.
-        /// </summary>
-        private readonly IRepository<Area> _areaRepository;
-
-        /// <summary>
-        /// LayoutRepository object.
-        /// </summary>
-        private readonly IRepository<Layout> _layoutRepository;
-
-        /// <summary>
-        /// Converter for seats.
-        /// </summary>
-        private readonly IConverter<Seat, SeatDto> _seatConverter;
-
-        /// <summary>
-        /// Converter for areas.
-        /// </summary>
-        private readonly IConverter<Area, AreaDto> _areaConverter;
-
-        /// <summary>
-        /// Converter for layouts.
-        /// </summary>
-        private readonly IConverter<Layout, LayoutDto> _layoutConverter;
+        private readonly IRepository<EventArea> _eventAreaRepository;
+        private readonly IRepository<EventSeat> _eventSeatRepository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EventService"/> class.
         /// </summary>
         /// <param name="repository">EventRepository object.</param>
-        /// <param name="seatRepository">SeatRepository object.</param>
-        /// <param name="areaRepository">AreaRepository object.</param>
-        /// <param name="layoutRepository">LayoutRepository object.</param>
         /// <param name="converter">Converter object for events.</param>
-        /// <param name="seatConverter">Converter object for seats.</param>
-        /// <param name="areaConverter">Converter object for areas.</param>
-        /// <param name="layoutConverter">Converter object for layouts.</param>
-        public EventService(IRepository<Event> repository, IRepository<Seat> seatRepository, IRepository<Area> areaRepository, IRepository<Layout> layoutRepository,
-            IConverter<Event, EventDto> converter, IConverter<Seat, SeatDto> seatConverter, IConverter<Area, AreaDto> areaConverter, IConverter<Layout, LayoutDto> layoutConverter)
+        /// <param name="eventAreaRepository">EventAreaRepository object.</param>
+        /// <param name="eventSeatRepository">EventSeatRepository object.</param>
+        public EventService(IRepository<Event> repository, IConverter<Event, EventDto> converter,
+            IRepository<EventArea> eventAreaRepository, IRepository<EventSeat> eventSeatRepository)
             : base(repository, converter)
         {
-            _seatRepository = seatRepository;
-            _areaRepository = areaRepository;
-            _layoutRepository = layoutRepository;
-            _seatConverter = seatConverter;
-            _areaConverter = areaConverter;
-            _layoutConverter = layoutConverter;
+            _eventAreaRepository = eventAreaRepository;
+            _eventSeatRepository = eventSeatRepository;
         }
 
         public async override Task<EventDto> CreateAsync(EventDto obj)
         {
+            await CheckForPrices(obj);
             CheckEventForPastTime(obj);
             CheckForTimeBorders(obj);
             await CheckForSameLayoutInOneTime(obj);
-            await CheckForSeats(obj);
             return await base.CreateAsync(obj);
         }
 
         public async override Task<EventDto> UpdateAsync(EventDto obj)
         {
+            await CheckForPrices(obj);
             CheckEventForPastTime(obj);
             CheckForTimeBorders(obj);
             await CheckForSameLayoutInOneTime(obj);
-            await CheckForSeats(obj);
             return await base.UpdateAsync(obj);
+        }
+
+        public async override Task<EventDto> DeleteAsync(EventDto obj)
+        {
+            await CheckForTickets(obj);
+            return await base.DeleteAsync(obj);
+        }
+
+        private async Task CheckForTickets(EventDto obj)
+        {
+            IEnumerable<EventSeat> eventSeats = new List<EventSeat>();
+            var eventAreas = await _eventAreaRepository.GetAllAsync();
+            var eventAreasInEvent = eventAreas.Where(a => a.EventId == obj.Id).ToList();
+            foreach (var eventArea in eventAreasInEvent)
+            {
+                var allEventSeats = await _eventSeatRepository.GetAllAsync();
+                eventSeats = allEventSeats.Where(s => s.EventAreaId == eventArea.Id).Where(s => s.State == (int)PlaceStatus.Occupied).ToList();
+            }
+
+            if (eventSeats.Any())
+            {
+                throw new InvalidOperationException("Someone bought tickets in this event already!");
+            }
         }
 
         /// <summary>
@@ -126,34 +114,15 @@ namespace TicketManagement.BusinessLogic.Services
             }
         }
 
-        /// <summary>
-        /// Checking that seats in layout exists.
-        /// </summary>
-        /// <param name="obj">Adding or updating event.</param>
-        /// <exception cref="ArgumentException">Generates exception in case there are no seats in layout.</exception>
-        private async Task CheckForSeats(EventDto obj)
+        private async Task CheckForPrices(EventDto obj)
         {
-            await Converter.ConvertModelsRangeToDtos(await Repository.GetAllAsync());
-            IEnumerable<LayoutDto> layouts = await _layoutConverter.ConvertModelsRangeToDtos(await _layoutRepository.GetAllAsync());
-            IEnumerable<AreaDto> areas = await _areaConverter.ConvertModelsRangeToDtos(await _areaRepository.GetAllAsync());
-            IEnumerable<SeatDto> seats = await _seatConverter.ConvertModelsRangeToDtos(await _seatRepository.GetAllAsync());
-            LayoutDto layout = layouts.SingleOrDefault(layout => layout.Id == obj.LayoutId);
-            if (layout != null)
+            var eventAreas = await _eventAreaRepository.GetAllAsync();
+            var eventAreasInEvent = eventAreas.Where(a => a.EventId == obj.Id);
+            foreach (var eventArea in eventAreasInEvent)
             {
-                IEnumerable<AreaDto> areasInLayout = areas.Where(area => area.LayoutId == layout.Id);
-                if (areasInLayout.Any())
+                if (eventArea.Price <= 0)
                 {
-                    IEnumerable<SeatDto> totalSeats = new List<SeatDto>();
-                    foreach (AreaDto a in areasInLayout)
-                    {
-                        IEnumerable<SeatDto> seatsInArea = seats.Where(seat => a.Id == seat.AreaId);
-                        totalSeats.Concat(seatsInArea);
-                    }
-
-                    if (totalSeats.Any())
-                    {
-                        throw new ArgumentException("There are no seats in layout.");
-                    }
+                    throw new ArgumentException("You can't create event without prices in event areas!");
                 }
             }
         }
