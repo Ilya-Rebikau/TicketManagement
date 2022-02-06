@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TicketManagement.BusinessLogic.Interfaces;
@@ -94,6 +95,7 @@ namespace TicketManagement.Web.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
@@ -102,6 +104,7 @@ namespace TicketManagement.Web.Controllers
             return RedirectToAction("Index", "Events");
         }
 
+        [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
@@ -115,6 +118,7 @@ namespace TicketManagement.Web.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpPost]
         public async Task<IActionResult> Edit(EditAccountViewModel model)
         {
@@ -144,6 +148,7 @@ namespace TicketManagement.Web.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpGet]
         public async Task<IActionResult> AddBalance(string id)
         {
@@ -157,6 +162,7 @@ namespace TicketManagement.Web.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpPost]
         public async Task<IActionResult> AddBalance(AddBalanceViewModel model)
         {
@@ -183,6 +189,7 @@ namespace TicketManagement.Web.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpGet]
         public async Task<IActionResult> Index()
         {

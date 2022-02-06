@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TicketManagement.BusinessLogic.Interfaces;
@@ -6,6 +7,7 @@ using TicketManagement.BusinessLogic.ModelsDTO;
 
 namespace TicketManagement.Web.Controllers
 {
+    [Authorize(Roles = "admin, venue manager")]
     [ResponseCache(CacheProfileName = "Caching")]
     public class SeatsController : Controller
     {

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -78,12 +79,14 @@ namespace TicketManagement.Web.Controllers
             return View(eventViewModel);
         }
 
+        [Authorize(Roles = "admin, event manager")]
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
+        [Authorize(Roles = "admin, event manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(EventDto @event)
@@ -97,6 +100,7 @@ namespace TicketManagement.Web.Controllers
             return View(@event);
         }
 
+        [Authorize(Roles = "admin, event manager")]
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -114,6 +118,7 @@ namespace TicketManagement.Web.Controllers
             return View(updatingEvent);
         }
 
+        [Authorize(Roles = "admin, event manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, EventDto @event)
@@ -147,6 +152,7 @@ namespace TicketManagement.Web.Controllers
             return View(@event);
         }
 
+        [Authorize(Roles = "admin, event manager")]
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -164,6 +170,7 @@ namespace TicketManagement.Web.Controllers
             return View(deletingEvent);
         }
 
+        [Authorize(Roles = "admin, event manager")]
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -174,6 +181,7 @@ namespace TicketManagement.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpGet]
         public async Task<IActionResult> Buy(int? eventSeatId, double? price)
         {
@@ -198,6 +206,7 @@ namespace TicketManagement.Web.Controllers
             return View(ticketVm);
         }
 
+        [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpPost]
         [ActionName("Buy")]
         public async Task<IActionResult> BuyConfirmed(TicketViewModel ticketVm)
