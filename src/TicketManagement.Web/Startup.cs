@@ -16,6 +16,7 @@ using Microsoft.Extensions.Hosting;
 using TicketManagement.BusinessLogic.Configuration;
 using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.Web.Infrastructure;
+using TicketManagement.Web.Middlewares;
 using TicketManagement.Web.Models;
 
 namespace TicketManagement.Web
@@ -95,6 +96,8 @@ namespace TicketManagement.Web
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseMiddleware<DbInitializerMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
