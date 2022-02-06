@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using TicketManagement.Web.Models;
 using TicketManagement.Web.Models.Roles;
 using TicketManagement.Web.Models.Users;
@@ -28,14 +29,22 @@ namespace TicketManagement.Web.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
 
         /// <summary>
+        /// Localizer object.
+        /// </summary>
+        private readonly IStringLocalizer<UsersController> _localizer;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="UsersController"/> class.
         /// </summary>
         /// <param name="userManager">UserManager object.</param>
         /// <param name="roleManager">RoleManager object.</param>
-        public UsersController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        /// <param name="localizer">Localizer object.</param>
+        public UsersController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager,
+            IStringLocalizer<UsersController> localizer)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _localizer = localizer;
         }
 
         /// <summary>
@@ -202,7 +211,7 @@ namespace TicketManagement.Web.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Пользователь не найден");
+                    ModelState.AddModelError(string.Empty, $"{_localizer["UserNotFound"]}");
                 }
             }
 

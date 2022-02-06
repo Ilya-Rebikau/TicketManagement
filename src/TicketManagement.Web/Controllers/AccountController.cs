@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.Web.Models;
@@ -49,6 +50,11 @@ namespace TicketManagement.Web.Controllers
         private readonly IService<EventSeatDto> _eventSeatService;
 
         /// <summary>
+        /// Localizer object.
+        /// </summary>
+        private readonly IStringLocalizer<AccountController> _localizer;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="AccountController"/> class.
         /// </summary>
         /// <param name="userManager">UserManager object.</param>
@@ -57,8 +63,9 @@ namespace TicketManagement.Web.Controllers
         /// <param name="eventService">EventService object.</param>
         /// <param name="eventAreaService">EventAreaService object.</param>
         /// <param name="eventSeatService">EventSeatService object.</param>
+        /// <param name="localizer">Localizer object.</param>
         public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IService<TicketDto> ticketService,
-            IService<EventDto> eventService, IService<EventAreaDto> eventAreaService, IService<EventSeatDto> eventSeatService)
+            IService<EventDto> eventService, IService<EventAreaDto> eventAreaService, IService<EventSeatDto> eventSeatService, IStringLocalizer<AccountController> localizer)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -66,6 +73,7 @@ namespace TicketManagement.Web.Controllers
             _eventService = eventService;
             _eventAreaService = eventAreaService;
             _eventSeatService = eventSeatService;
+            _localizer = localizer;
         }
 
         /// <summary>
@@ -143,7 +151,7 @@ namespace TicketManagement.Web.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Неправильный логин и (или) пароль");
+                    ModelState.AddModelError("", $"{_localizer["WrongLoginPassword"]}");
                 }
             }
 

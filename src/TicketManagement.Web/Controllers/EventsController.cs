@@ -50,6 +50,15 @@ namespace TicketManagement.Web.Controllers
         /// </summary>
         private readonly IStringLocalizer<EventsController> _localizer;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EventsController"/> class.
+        /// </summary>
+        /// <param name="service">EventService object.</param>
+        /// <param name="ticketService">TicketService object.</param>
+        /// <param name="eventAreaService">EventAreaService object.</param>
+        /// <param name="eventSeatService">EventSeatService object.</param>
+        /// <param name="userManager">UserManager object.</param>
+        /// <param name="localizer">Localizer object.</param>
         public EventsController(IService<EventDto> service, IService<TicketDto> ticketService, IService<EventAreaDto> eventAreaService,
             IService<EventSeatDto> eventSeatService, UserManager<User> userManager, IStringLocalizer<EventsController> localizer)
         {

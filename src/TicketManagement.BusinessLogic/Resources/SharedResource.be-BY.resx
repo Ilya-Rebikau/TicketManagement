@@ -160,7 +160,7 @@
     <value>Нумар тэлефона</value>
   </data>
   <data name="Price" xml:space="preserve">
-    <value>Цана</value>
+    <value>Цана ($)</value>
   </data>
   <data name="Row" xml:space="preserve">
     <value>Нумар шэрагу</value>

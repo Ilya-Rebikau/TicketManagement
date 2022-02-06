@@ -117,67 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Address" xml:space="preserve">
-    <value>Address</value>
-  </data>
-  <data name="AreaId" xml:space="preserve">
-    <value>Area ID</value>
-  </data>
-  <data name="CoordXInLayout" xml:space="preserve">
-    <value>X coordinate in layout</value>
-  </data>
-  <data name="CoordYInLayout" xml:space="preserve">
-    <value>Y coordinate in layout</value>
-  </data>
-  <data name="Description" xml:space="preserve">
-    <value>Description</value>
-  </data>
-  <data name="EventAreaId" xml:space="preserve">
-    <value>Event area ID</value>
-  </data>
-  <data name="EventId" xml:space="preserve">
-    <value>Event ID</value>
-  </data>
-  <data name="EventSeatId" xml:space="preserve">
-    <value>Event seat ID</value>
-  </data>
-  <data name="FieldRequired" xml:space="preserve">
-    <value>This field is required!</value>
-  </data>
-  <data name="ImageUrl" xml:space="preserve">
-    <value>Image URL</value>
-  </data>
-  <data name="LayoutId" xml:space="preserve">
-    <value>Layout ID</value>
-  </data>
-  <data name="Name" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="Number" xml:space="preserve">
-    <value>Number</value>
-  </data>
-  <data name="Phone" xml:space="preserve">
-    <value>Phone</value>
-  </data>
-  <data name="Price" xml:space="preserve">
-    <value>Price ($)</value>
-  </data>
-  <data name="Row" xml:space="preserve">
-    <value>Row</value>
-  </data>
-  <data name="State" xml:space="preserve">
-    <value>State</value>
-  </data>
-  <data name="TimeEnd" xml:space="preserve">
-    <value>Time of event end</value>
-  </data>
-  <data name="TimeStart" xml:space="preserve">
-    <value>Time of event start</value>
-  </data>
-  <data name="UserId" xml:space="preserve">
-    <value>User ID</value>
-  </data>
-  <data name="VenueId" xml:space="preserve">
-    <value>Venue ID</value>
+  <data name="WrongLoginPassword" xml:space="preserve">
+    <value>Неверный логин и (или) пароль!</value>
   </data>
 </root>
