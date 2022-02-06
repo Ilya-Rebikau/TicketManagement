@@ -1,8 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace TicketManagement.Web.Models.Users
+﻿namespace TicketManagement.Web.Models.Account
 {
-    public class EditUserViewModel
+    public class EditAccountViewModel
     {
         public string Id { get; set; }
 
@@ -17,11 +15,5 @@ namespace TicketManagement.Web.Models.Users
         /// Gets or sets surname.
         /// </summary>
         public string Surname { get; set; }
-
-        /// <summary>
-        /// Gets or sets balance.
-        /// </summary>
-        [Range(0, double.MaxValue)]
-        public double Balance { get; set; }
     }
 }

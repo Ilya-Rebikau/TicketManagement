@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace TicketManagement.Web.Models
 {
@@ -20,6 +21,7 @@ namespace TicketManagement.Web.Models
         /// <summary>
         /// Gets or sets balance.
         /// </summary>
+        [Range(0, double.MaxValue)]
         public double Balance { get; set; }
     }
 }

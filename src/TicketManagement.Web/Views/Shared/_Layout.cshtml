@@ -11,7 +11,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-success border-bottom box-shadow mb-3">
             <div class="container">
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -44,6 +44,34 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Venues" asp-action="Index">Venues</a>
                         </li>
                     </ul>
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <ul class="navbar-nav flex-grow-1 justify-content-end">
+                            <li class="nav-item justify-content-end">
+                                <a class="nav-link text-white" asp-controller="Account" asp-action="Login">Login</a>
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav flex-grow-1 justify-content-end">
+                            <li class="nav-item justify-content-end">
+                                <a class="nav-link text-white" asp-controller="Account" asp-action="Register">Register</a>
+                            </li>
+                        </ul>
+                    }
+                    else
+                    {
+                        <ul class="navbar-nav flex-grow-1 justify-content-end">
+                            <li class="nav-item justify-content-end">
+                                <a class="nav-link text-white" asp-controller="Account" asp-action="Index">Personal account</a>
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav flex-grow-1 justify-content-end">
+                            <li class="nav-item justify-content-end">
+                                <form method="post" asp-controller="Account" asp-action="Logout">
+                                    <input class="nav-link text-white bg-success border-0" type="submit" value="Logout" />
+                                </form>
+                            </li>
+                        </ul>
+                    }
                 </div>
             </div>
         </nav>

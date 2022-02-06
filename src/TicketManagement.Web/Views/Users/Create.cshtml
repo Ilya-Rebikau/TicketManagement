@@ -1,7 +1,10 @@
 ﻿@model CreateUserViewModel
 @{
-    ViewData["Title"] = "Добавление пользователя";
+    ViewBag.Title = "Add new user";
 }
+<h2>Create</h2>
+<h4>User</h4>
+<hr />
 <form asp-action="Create" asp-controller="Users">
     <div asp-validation-summary="All" class="text-danger"></div>
     <div class="form-group">
@@ -9,10 +12,15 @@
         <input type="text" asp-for="Email" class="form-control" />
     </div>
     <div class="form-group">
-        <label asp-for="Password" class="control-label">Пароль</label>
+        <label asp-for="Password" class="control-label">Password</label>
         <input type="password" asp-for="Password" class="form-control" />
     </div>
+    <br />
     <div class="form-group">
-        <input type="submit" value="Добавить" class="btn btn-outline-secondary" />
+        <input type="submit" value="Add user" class="btn btn-success" />
     </div>
 </form>
+<hr />
+<div>
+    <a class="btn btn-primary" asp-action="Index">Back to List</a>
+</div>
