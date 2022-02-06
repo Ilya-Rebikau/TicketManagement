@@ -12,6 +12,9 @@ namespace TicketManagement.BusinessLogic.Services
     /// </summary>
     internal class TicketService : BaseService<Ticket, TicketDto>, IService<TicketDto>
     {
+        /// <summary>
+        /// EventSeatRepository object.
+        /// </summary>
         private readonly IRepository<EventSeat> _eventSeatRepository;
 
         /// <summary>
@@ -32,6 +35,11 @@ namespace TicketManagement.BusinessLogic.Services
             return await base.DeleteAsync(obj);
         }
 
+        /// <summary>
+        /// Doing event seat state free.
+        /// </summary>
+        /// <param name="obj">Ticket with event seat.</param>
+        /// <returns>Task.</returns>
         private async Task DoPlaceFreeAsync(TicketDto obj)
         {
             var eventSeats = await _eventSeatRepository.GetAllAsync();

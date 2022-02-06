@@ -85,6 +85,11 @@ namespace TicketManagement.BusinessLogic.Services
             }
         }
 
+        /// <summary>
+        /// Checking that area has positive price.
+        /// </summary>
+        /// <param name="obj">Adding or updating area.</param>
+        /// <exception cref="ArgumentException">Generates exception in case positive isnt positive.</exception>
         private void CheckForPositivePrice(AreaDto obj)
         {
             if (obj.BasePrice <= 0)

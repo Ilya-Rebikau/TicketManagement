@@ -14,8 +14,19 @@ namespace TicketManagement.BusinessLogic.Services
     /// </summary>
     internal class LayoutService : BaseService<Layout, LayoutDto>, IService<LayoutDto>
     {
+        /// <summary>
+        /// EventRepository object.
+        /// </summary>
         private readonly IRepository<Event> _eventRepository;
+
+        /// <summary>
+        /// EventAreaRepository object.
+        /// </summary>
         private readonly IRepository<EventArea> _eventAreaRepository;
+
+        /// <summary>
+        /// EventSeatRepository object.
+        /// </summary>
         private readonly IRepository<EventSeat> _eventSeatRepository;
 
         /// <summary>
@@ -68,6 +79,12 @@ namespace TicketManagement.BusinessLogic.Services
             }
         }
 
+        /// <summary>
+        /// Checking that there are no tickets in this layout.
+        /// </summary>
+        /// <param name="obj">Deleting layout.</param>
+        /// <returns>Task.</returns>
+        /// <exception cref="InvalidOperationException">Generates exception in case there are tickets in this layout.</exception>
         private async Task CheckForTickets(LayoutDto obj)
         {
             IEnumerable<EventSeat> eventSeats = new List<EventSeat>();

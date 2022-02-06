@@ -48,6 +48,12 @@ namespace TicketManagement.BusinessLogic.Services
             return await base.DeleteAsync(obj);
         }
 
+        /// <summary>
+        /// Checking that there are no tickets in this event area.
+        /// </summary>
+        /// <param name="obj">Deleting event area.</param>
+        /// <returns>Task.</returns>
+        /// <exception cref="InvalidOperationException">Generates exception in case there are tickets in this event area.</exception>
         private async Task CheckForTickets(EventAreaDto obj)
         {
             var allEventSeats = await _eventSeatRepository.GetAllAsync();

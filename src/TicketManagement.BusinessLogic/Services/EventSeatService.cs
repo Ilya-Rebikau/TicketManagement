@@ -72,6 +72,11 @@ namespace TicketManagement.BusinessLogic.Services
             }
         }
 
+        /// <summary>
+        /// Checking that there is no ticket in this event seat.
+        /// </summary>
+        /// <param name="obj">Deleting event seat.</param>
+        /// <exception cref="InvalidOperationException">Generates exception in case there is ticket in this event seat.</exception>
         private void CheckForTickets(EventSeatDto obj)
         {
             if (obj.State == PlaceStatus.Occupied)

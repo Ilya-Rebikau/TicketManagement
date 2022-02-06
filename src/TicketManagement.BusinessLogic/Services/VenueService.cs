@@ -14,9 +14,24 @@ namespace TicketManagement.BusinessLogic.Services
     /// </summary>
     internal class VenueService : BaseService<Venue, VenueDto>, IService<VenueDto>
     {
+        /// <summary>
+        /// LayoutRepository object.
+        /// </summary>
         private readonly IRepository<Layout> _layoutRepository;
+
+        /// <summary>
+        /// EventRepository object.
+        /// </summary>
         private readonly IRepository<Event> _eventRepository;
+
+        /// <summary>
+        /// EventAreaRepository object.
+        /// </summary>
         private readonly IRepository<EventArea> _eventAreaRepository;
+
+        /// <summary>
+        /// EventSeatRepository object.
+        /// </summary>
         private readonly IRepository<EventSeat> _eventSeatRepository;
 
         /// <summary>
@@ -44,6 +59,12 @@ namespace TicketManagement.BusinessLogic.Services
             return await base.DeleteAsync(obj);
         }
 
+        /// <summary>
+        /// Checking that there are no tickets in this venue.
+        /// </summary>
+        /// <param name="obj">Deleting venue.</param>
+        /// <returns>Task.</returns>
+        /// <exception cref="InvalidOperationException">Generates exception in case there are tickets in this venue.</exception>
         private async Task CheckForTickets(VenueDto obj)
         {
             IEnumerable<EventSeat> occupiedEventSeats = new List<EventSeat>();

@@ -14,7 +14,14 @@ namespace TicketManagement.BusinessLogic.Services
     /// </summary>
     internal class EventService : BaseService<Event, EventDto>, IService<EventDto>
     {
+        /// <summary>
+        /// EventAreaRepository object.
+        /// </summary>
         private readonly IRepository<EventArea> _eventAreaRepository;
+
+        /// <summary>
+        /// EventSeatRepository object.
+        /// </summary>
         private readonly IRepository<EventSeat> _eventSeatRepository;
 
         /// <summary>
@@ -56,6 +63,12 @@ namespace TicketManagement.BusinessLogic.Services
             return await base.DeleteAsync(obj);
         }
 
+        /// <summary>
+        /// Checking that there are no tickets in this event.
+        /// </summary>
+        /// <param name="obj">Deleting event.</param>
+        /// <returns>Task.</returns>
+        /// <exception cref="InvalidOperationException">Generates exception in case there are tickets in this event.</exception>
         private async Task CheckForTickets(EventDto obj)
         {
             IEnumerable<EventSeat> eventSeats = new List<EventSeat>();
@@ -114,6 +127,12 @@ namespace TicketManagement.BusinessLogic.Services
             }
         }
 
+        /// <summary>
+        /// Checking that all event areas have price for this event.
+        /// </summary>
+        /// <param name="obj">Adding or updating event.</param>
+        /// <returns>Task.</returns>
+        /// <exception cref="ArgumentException">Generates exception in case event areas haven't price.</exception>
         private async Task CheckForPrices(EventDto obj)
         {
             var eventAreas = await _eventAreaRepository.GetAllAsync();

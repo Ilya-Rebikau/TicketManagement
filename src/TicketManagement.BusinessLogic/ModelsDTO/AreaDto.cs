@@ -38,6 +38,9 @@ namespace TicketManagement.BusinessLogic.ModelsDTO
         [Display(Name = "CoordYInLayout")]
         public int CoordY { get; set; }
 
+        /// <summary>
+        /// Gets or sets base price for area.
+        /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "Price")]
         public double BasePrice { get; set; }
