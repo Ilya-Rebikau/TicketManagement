@@ -7,23 +7,42 @@ using TicketManagement.BusinessLogic.ModelsDTO;
 
 namespace TicketManagement.Web.Controllers
 {
+    /// <summary>
+    /// Controller for venue.
+    /// </summary>
     [Authorize(Roles = "admin, venue manager")]
     [ResponseCache(CacheProfileName = "Caching")]
     public class VenuesController : Controller
     {
+        /// <summary>
+        /// VenueService object.
+        /// </summary>
         private readonly IService<VenueDto> _service;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VenuesController"/> class.
+        /// </summary>
+        /// <param name="service">VenueService object.</param>
         public VenuesController(IService<VenueDto> service)
         {
             _service = service;
         }
 
+        /// <summary>
+        /// Get all venues.
+        /// </summary>
+        /// <returns>Task with IActionResult.</returns>
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             return View(await _service.GetAllAsync());
         }
 
+        /// <summary>
+        /// Details about venue.
+        /// </summary>
+        /// <param name="id">Id of venue.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
@@ -41,12 +60,21 @@ namespace TicketManagement.Web.Controllers
             return View(venue);
         }
 
+        /// <summary>
+        /// Create venue.
+        /// </summary>
+        /// <returns>IActionResult.</returns>
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
+        /// <summary>
+        /// Create venue.
+        /// </summary>
+        /// <param name="venue">Adding venue.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(VenueDto venue)
@@ -60,6 +88,11 @@ namespace TicketManagement.Web.Controllers
             return View(venue);
         }
 
+        /// <summary>
+        /// Edit venue.
+        /// </summary>
+        /// <param name="id">Id of editing venue.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -77,6 +110,12 @@ namespace TicketManagement.Web.Controllers
             return View(updatingVenue);
         }
 
+        /// <summary>
+        /// Edit venue.
+        /// </summary>
+        /// <param name="id">Id of editing venue.</param>
+        /// <param name="venue">Edited venue.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, VenueDto venue)
@@ -110,6 +149,11 @@ namespace TicketManagement.Web.Controllers
             return View(venue);
         }
 
+        /// <summary>
+        /// Delete venue.
+        /// </summary>
+        /// <param name="id">Id of deleting venue.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -127,6 +171,11 @@ namespace TicketManagement.Web.Controllers
             return View(deletingVenue);
         }
 
+        /// <summary>
+        /// Delete confirmation.
+        /// </summary>
+        /// <param name="id">Id of deleting venue.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -137,6 +186,11 @@ namespace TicketManagement.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        /// <summary>
+        /// Check that venue exists.
+        /// </summary>
+        /// <param name="id">Id of venue.</param>
+        /// <returns>True if exists and false if not.</returns>
         private async Task<bool> VenueExists(int id)
         {
             return await _service.GetByIdAsync(id) is not null;

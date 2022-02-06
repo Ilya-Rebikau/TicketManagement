@@ -7,9 +7,18 @@ using TicketManagement.Web.Models;
 
 namespace TicketManagement.Web.Controllers
 {
+    /// <summary>
+    /// Home controller.
+    /// </summary>
     [ResponseCache(CacheProfileName = "Caching")]
     public class HomeController : Controller
     {
+        /// <summary>
+        /// Change language for app.
+        /// </summary>
+        /// <param name="culture">New language.</param>
+        /// <param name="returnUrl">Url for returning.</param>
+        /// <returns>IActionResult.</returns>
         [HttpPost]
         public IActionResult SetLanguage(string culture, string returnUrl)
         {
@@ -24,6 +33,11 @@ namespace TicketManagement.Web.Controllers
             return LocalRedirect(returnUrl);
         }
 
+        /// <summary>
+        /// Error page.
+        /// </summary>
+        /// <returns>IActionResult.</returns>
+        [HttpGet]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

@@ -14,14 +14,40 @@ using TicketManagement.Web.Models.Events;
 
 namespace TicketManagement.Web.Controllers
 {
+    /// <summary>
+    /// Controller for events.
+    /// </summary>
     [ResponseCache(CacheProfileName = "Caching")]
     public class EventsController : Controller
     {
+        /// <summary>
+        /// EventService object.
+        /// </summary>
         private readonly IService<EventDto> _service;
+
+        /// <summary>
+        /// TicketService object.
+        /// </summary>
         private readonly IService<TicketDto> _ticketService;
+
+        /// <summary>
+        /// EventAreaService object.
+        /// </summary>
         private readonly IService<EventAreaDto> _eventAreaService;
+
+        /// <summary>
+        /// EventSeatService object.
+        /// </summary>
         private readonly IService<EventSeatDto> _eventSeatService;
+
+        /// <summary>
+        /// UserManager object.
+        /// </summary>
         private readonly UserManager<User> _userManager;
+
+        /// <summary>
+        /// Localizer object.
+        /// </summary>
         private readonly IStringLocalizer<EventsController> _localizer;
 
         public EventsController(IService<EventDto> service, IService<TicketDto> ticketService, IService<EventAreaDto> eventAreaService,
@@ -35,12 +61,21 @@ namespace TicketManagement.Web.Controllers
             _localizer = localizer;
         }
 
+        /// <summary>
+        /// Get all events.
+        /// </summary>
+        /// <returns>Task with IActionResult.</returns>
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             return View(await _service.GetAllAsync());
         }
 
+        /// <summary>
+        /// Details about event.
+        /// </summary>
+        /// <param name="id">Id of event.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
@@ -81,6 +116,10 @@ namespace TicketManagement.Web.Controllers
             return View(eventViewModel);
         }
 
+        /// <summary>
+        /// Create event.
+        /// </summary>
+        /// <returns>IActionResult.</returns>
         [Authorize(Roles = "admin, event manager")]
         [HttpGet]
         public IActionResult Create()
@@ -88,6 +127,11 @@ namespace TicketManagement.Web.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Create event.
+        /// </summary>
+        /// <param name="event">Adding event.</param>
+        /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, event manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -102,6 +146,11 @@ namespace TicketManagement.Web.Controllers
             return View(@event);
         }
 
+        /// <summary>
+        /// Edit event.
+        /// </summary>
+        /// <param name="id">Id of editing event.</param>
+        /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, event manager")]
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
@@ -121,6 +170,12 @@ namespace TicketManagement.Web.Controllers
             return View(updatingEvent);
         }
 
+        /// <summary>
+        /// Edit event.
+        /// </summary>
+        /// <param name="id">Id of editing event.</param>
+        /// <param name="event">Edited event.</param>
+        /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, event manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -155,6 +210,11 @@ namespace TicketManagement.Web.Controllers
             return View(@event);
         }
 
+        /// <summary>
+        /// Delete event.
+        /// </summary>
+        /// <param name="id">Id of deleting event.</param>
+        /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, event manager")]
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
@@ -174,6 +234,11 @@ namespace TicketManagement.Web.Controllers
             return View(deletingEvent);
         }
 
+        /// <summary>
+        /// Delete confirmation.
+        /// </summary>
+        /// <param name="id">Id of deleting event.</param>
+        /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, event manager")]
         [HttpPost]
         [ActionName("Delete")]
@@ -185,6 +250,12 @@ namespace TicketManagement.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        /// <summary>
+        /// Buy ticket.
+        /// </summary>
+        /// <param name="eventSeatId">EventSeat id.</param>
+        /// <param name="price">Price for ticket.</param>
+        /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpGet]
         public async Task<IActionResult> Buy(int? eventSeatId, double? price)
@@ -210,6 +281,11 @@ namespace TicketManagement.Web.Controllers
             return View(ticketVm);
         }
 
+        /// <summary>
+        /// Buy confirmation.
+        /// </summary>
+        /// <param name="ticketVm">TicketViewModel object.</param>
+        /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpPost]
         [ActionName("Buy")]
@@ -232,6 +308,11 @@ namespace TicketManagement.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        /// <summary>
+        /// Check that event exist.
+        /// </summary>
+        /// <param name="id">Id of event.</param>
+        /// <returns>True if exist and false if not.</returns>
         private async Task<bool> EventExists(int id)
         {
             return await _service.GetByIdAsync(id) is not null;

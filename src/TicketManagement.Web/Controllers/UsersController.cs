@@ -10,25 +10,53 @@ using TicketManagement.Web.Models.Users;
 
 namespace TicketManagement.Web.Controllers
 {
+    /// <summary>
+    /// Controller for users.
+    /// </summary>
     [Authorize(Roles = "admin")]
     [ResponseCache(CacheProfileName = "Caching")]
     public class UsersController : Controller
     {
+        /// <summary>
+        /// UserManager object.
+        /// </summary>
         private readonly UserManager<User> _userManager;
+
+        /// <summary>
+        /// RoleManager object.
+        /// </summary>
         private readonly RoleManager<IdentityRole> _roleManager;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UsersController"/> class.
+        /// </summary>
+        /// <param name="userManager">UserManager object.</param>
+        /// <param name="roleManager">RoleManager object.</param>
         public UsersController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
         }
 
+        /// <summary>
+        /// Get all users.
+        /// </summary>
+        /// <returns>IActionResult.</returns>
         [HttpGet]
         public IActionResult Index() => View(_userManager.Users.ToList());
 
+        /// <summary>
+        /// Create user.
+        /// </summary>
+        /// <returns>IActionResult.</returns>
         [HttpGet]
         public IActionResult Create() => View();
 
+        /// <summary>
+        /// Create user.
+        /// </summary>
+        /// <param name="model">CreateUserViewModel object.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         public async Task<IActionResult> Create(CreateUserViewModel model)
         {
@@ -53,6 +81,11 @@ namespace TicketManagement.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Edit user.
+        /// </summary>
+        /// <param name="id">Id of editing user.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
@@ -66,6 +99,11 @@ namespace TicketManagement.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Edit user.
+        /// </summary>
+        /// <param name="model">EditUserViewModel object.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         public async Task<IActionResult> Edit(EditUserViewModel model)
         {
@@ -97,6 +135,11 @@ namespace TicketManagement.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Delete user.
+        /// </summary>
+        /// <param name="id">Id of deleting object.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         public async Task<ActionResult> Delete(string id)
         {
@@ -109,6 +152,11 @@ namespace TicketManagement.Web.Controllers
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// Change passowrd for user.
+        /// </summary>
+        /// <param name="id">Id of user.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpGet]
 
         public async Task<IActionResult> ChangePassword(string id)
@@ -123,6 +171,11 @@ namespace TicketManagement.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Change password for user.
+        /// </summary>
+        /// <param name="model">ChangePasswordViewModel object.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
@@ -156,6 +209,11 @@ namespace TicketManagement.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Edit roles.
+        /// </summary>
+        /// <param name="userId">User id.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpGet]
         public async Task<IActionResult> EditRoles(string userId)
         {
@@ -177,6 +235,12 @@ namespace TicketManagement.Web.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        /// Edit roles.
+        /// </summary>
+        /// <param name="userId">User id.</param>
+        /// <param name="roles">All roles.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         public async Task<IActionResult> EditRoles(string userId, List<string> roles)
         {
