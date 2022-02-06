@@ -10,6 +10,7 @@ using TicketManagement.Web.Models.Account;
 
 namespace TicketManagement.Web.Controllers
 {
+    [ResponseCache(CacheProfileName = "Caching")]
     public class AccountController : Controller
     {
         private readonly UserManager<User> _userManager;

@@ -6,6 +6,7 @@ using TicketManagement.BusinessLogic.ModelsDTO;
 
 namespace TicketManagement.Web.Controllers
 {
+    [ResponseCache(CacheProfileName = "Caching")]
     public class TicketsController : Controller
     {
         private readonly IService<TicketDto> _service;
@@ -46,7 +47,7 @@ namespace TicketManagement.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,EventSeatId,UserId")] TicketDto ticket)
+        public async Task<IActionResult> Create(TicketDto ticket)
         {
             if (ModelState.IsValid)
             {
@@ -76,7 +77,7 @@ namespace TicketManagement.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,EventSeatId,UserId")] TicketDto ticket)
+        public async Task<IActionResult> Edit(int id, TicketDto ticket)
         {
             if (id != ticket.Id)
             {

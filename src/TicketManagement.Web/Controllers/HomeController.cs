@@ -7,6 +7,7 @@ using TicketManagement.Web.Models;
 
 namespace TicketManagement.Web.Controllers
 {
+    [ResponseCache(CacheProfileName = "Caching")]
     public class HomeController : Controller
     {
         [HttpPost]

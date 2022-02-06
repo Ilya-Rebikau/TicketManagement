@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +12,7 @@ using TicketManagement.Web.Models.Events;
 
 namespace TicketManagement.Web.Controllers
 {
+    [ResponseCache(CacheProfileName = "Caching")]
     public class EventsController : Controller
     {
         private readonly IService<EventDto> _service;

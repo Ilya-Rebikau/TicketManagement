@@ -6,6 +6,7 @@ using TicketManagement.BusinessLogic.ModelsDTO;
 
 namespace TicketManagement.Web.Controllers
 {
+    [ResponseCache(CacheProfileName = "Caching")]
     public class AreasController : Controller
     {
         private readonly IService<AreaDto> _service;
