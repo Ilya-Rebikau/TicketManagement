@@ -14,7 +14,7 @@ namespace TicketManagement.BusinessLogic.ModelsDTO
         /// Gets or sets event's id.
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
-        [Display(Name = "EventName")]
+        [Display(Name = "EventId")]
         public int EventId { get; set; }
 
         /// <summary>

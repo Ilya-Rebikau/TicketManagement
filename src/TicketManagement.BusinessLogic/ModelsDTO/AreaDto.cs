@@ -14,7 +14,7 @@ namespace TicketManagement.BusinessLogic.ModelsDTO
         /// Gets or sets layout's id.
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
-        [Display(Name = "LayoutName")]
+        [Display(Name = "LayoutId")]
         public int LayoutId { get; set; }
 
         /// <summary>

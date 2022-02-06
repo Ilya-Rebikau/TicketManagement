@@ -7,23 +7,42 @@ using TicketManagement.BusinessLogic.ModelsDTO;
 
 namespace TicketManagement.Web.Controllers
 {
+    /// <summary>
+    /// Controller for areas.
+    /// </summary>
     [Authorize(Roles = "admin, venue manager")]
     [ResponseCache(CacheProfileName = "Caching")]
     public class AreasController : Controller
     {
+        /// <summary>
+        /// AreaService object.
+        /// </summary>
         private readonly IService<AreaDto> _service;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AreasController"/> class.
+        /// </summary>
+        /// <param name="service">AreaService object.</param>
         public AreasController(IService<AreaDto> service)
         {
             _service = service;
         }
 
+        /// <summary>
+        /// All areas.
+        /// </summary>
+        /// <returns>Task with IActionResult.</returns>
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             return View(await _service.GetAllAsync());
         }
 
+        /// <summary>
+        /// Details about chosen area.
+        /// </summary>
+        /// <param name="id">Id of chosen area.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
@@ -41,12 +60,21 @@ namespace TicketManagement.Web.Controllers
             return View(area);
         }
 
+        /// <summary>
+        /// Creat area.
+        /// </summary>
+        /// <returns>IActionResult.</returns>
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
+        /// <summary>
+        /// Create area.
+        /// </summary>
+        /// <param name="area">Creating area.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(AreaDto area)
@@ -60,6 +88,11 @@ namespace TicketManagement.Web.Controllers
             return View(area);
         }
 
+        /// <summary>
+        /// Edit area.
+        /// </summary>
+        /// <param name="id">Id of editing area.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -77,6 +110,12 @@ namespace TicketManagement.Web.Controllers
             return View(updatingArea);
         }
 
+        /// <summary>
+        /// Edit area.
+        /// </summary>
+        /// <param name="id">Id of editing area.</param>
+        /// <param name="area">Editing area.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, AreaDto area)
@@ -110,6 +149,11 @@ namespace TicketManagement.Web.Controllers
             return View(area);
         }
 
+        /// <summary>
+        /// Delete area.
+        /// </summary>
+        /// <param name="id">Id of deleting area.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -127,6 +171,11 @@ namespace TicketManagement.Web.Controllers
             return View(deletingArea);
         }
 
+        /// <summary>
+        /// Delete confirmation.
+        /// </summary>
+        /// <param name="id">Id of deleting area.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -137,6 +186,11 @@ namespace TicketManagement.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        /// <summary>
+        /// Check that area exist.
+        /// </summary>
+        /// <param name="id">Id of deleting area.</param>
+        /// <returns>True if exists and false if not.</returns>
         private async Task<bool> AreaExists(int id)
         {
             return await _service.GetByIdAsync(id) is not null;

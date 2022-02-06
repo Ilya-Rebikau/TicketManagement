@@ -14,7 +14,7 @@ namespace TicketManagement.BusinessLogic.ModelsDTO
         /// Gets or sets id of event area.
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
-        [Display(Name = "AreaXAndY")]
+        [Display(Name = "EventAreaId")]
         public int EventAreaId { get; set; }
 
         /// <summary>

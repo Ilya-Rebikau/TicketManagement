@@ -62,7 +62,7 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            EditUserViewModel model = new () { Id = user.Id, Email = user.Email, FirstName = user.FirstName, Surname = user.Surname, Balance = user.Balance };
+            EditUserViewModel model = new () { Id = user.Id, Email = user.Email, FirstName = user.FirstName, Surname = user.Surname, Balance = user.Balance, TimeZone = user.TimeZone };
             return View(model);
         }
 
@@ -79,6 +79,7 @@ namespace TicketManagement.Web.Controllers
                     user.FirstName = model.FirstName;
                     user.Surname = model.Surname;
                     user.Balance = model.Balance;
+                    user.TimeZone = model.TimeZone;
 
                     var result = await _userManager.UpdateAsync(user);
                     if (result.Succeeded)

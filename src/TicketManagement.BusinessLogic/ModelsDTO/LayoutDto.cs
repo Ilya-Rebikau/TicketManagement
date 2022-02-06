@@ -14,7 +14,7 @@ namespace TicketManagement.BusinessLogic.ModelsDTO
         /// Gets or sets venue's id.
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
-        [Display(Name = "VenueName")]
+        [Display(Name = "VenueId")]
         public int VenueId { get; set; }
 
         /// <summary>

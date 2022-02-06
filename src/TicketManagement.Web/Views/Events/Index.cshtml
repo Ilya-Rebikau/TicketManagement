@@ -24,7 +24,7 @@
                             <figcaption class="d-flex justify-content-center">
                                 <div>
                                     <h3 class="text-center">@Html.DisplayFor(modelItem => Model.ElementAt(i + j).Name)</h3>
-                                    if (User.IsInRole("admin") || User.IsInRole("event manager"))
+                                    @if (User.IsInRole("admin") || User.IsInRole("event manager"))
                                     {
                                         <div class="row">
                                             <div class="col"><a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.ElementAt(i + j).Id">@Localizer["Edit"]</a></div>

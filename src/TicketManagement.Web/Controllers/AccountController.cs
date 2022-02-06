@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -11,16 +12,51 @@ using TicketManagement.Web.Models.Account;
 
 namespace TicketManagement.Web.Controllers
 {
+    /// <summary>
+    /// Controller for user account.
+    /// </summary>
     [ResponseCache(CacheProfileName = "Caching")]
     public class AccountController : Controller
     {
+        /// <summary>
+        /// UserManager object.
+        /// </summary>
         private readonly UserManager<User> _userManager;
+
+        /// <summary>
+        /// SignInManager object.
+        /// </summary>
         private readonly SignInManager<User> _signInManager;
+
+        /// <summary>
+        /// TicketService object.
+        /// </summary>
         private readonly IService<TicketDto> _ticketService;
+
+        /// <summary>
+        /// EventService object.
+        /// </summary>
         private readonly IService<EventDto> _eventService;
+
+        /// <summary>
+        /// EventAreaService object.
+        /// </summary>
         private readonly IService<EventAreaDto> _eventAreaService;
+
+        /// <summary>
+        /// EventSeatService object.
+        /// </summary>
         private readonly IService<EventSeatDto> _eventSeatService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AccountController"/> class.
+        /// </summary>
+        /// <param name="userManager">UserManager object.</param>
+        /// <param name="signInManager">SignInManager object.</param>
+        /// <param name="ticketService">TicketService object.</param>
+        /// <param name="eventService">EventService object.</param>
+        /// <param name="eventAreaService">EventAreaService object.</param>
+        /// <param name="eventSeatService">EventSeatService object.</param>
         public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IService<TicketDto> ticketService,
             IService<EventDto> eventService, IService<EventAreaDto> eventAreaService, IService<EventSeatDto> eventSeatService)
         {
@@ -32,12 +68,21 @@ namespace TicketManagement.Web.Controllers
             _eventSeatService = eventSeatService;
         }
 
+        /// <summary>
+        /// Register user.
+        /// </summary>
+        /// <returns>IActionResult.</returns>
         [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
 
+        /// <summary>
+        /// Register user.
+        /// </summary>
+        /// <param name="model">RegisterViewModel object.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
@@ -62,12 +107,22 @@ namespace TicketManagement.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Login for user.
+        /// </summary>
+        /// <param name="returnUrl">Url to back.</param>
+        /// <returns>IActionResult.</returns>
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 
+        /// <summary>
+        /// Login for user.
+        /// </summary>
+        /// <param name="model">LoginViewModel object.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
@@ -95,6 +150,10 @@ namespace TicketManagement.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Logout for user.
+        /// </summary>
+        /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -104,6 +163,11 @@ namespace TicketManagement.Web.Controllers
             return RedirectToAction("Index", "Events");
         }
 
+        /// <summary>
+        /// Edit account.
+        /// </summary>
+        /// <param name="id">User id.</param>
+        /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
@@ -114,10 +178,22 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            EditAccountViewModel model = new () { Id = user.Id, Email = user.Email, FirstName = user.FirstName, Surname = user.Surname };
+            EditAccountViewModel model = new ()
+            {
+                Id = user.Id,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                Surname = user.Surname,
+                TimeZone = user.TimeZone,
+            };
             return View(model);
         }
 
+        /// <summary>
+        /// Edit user.
+        /// </summary>
+        /// <param name="model">EditAccountViewModel object.</param>
+        /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpPost]
         public async Task<IActionResult> Edit(EditAccountViewModel model)
@@ -131,6 +207,7 @@ namespace TicketManagement.Web.Controllers
                     user.UserName = model.Email;
                     user.FirstName = model.FirstName;
                     user.Surname = model.Surname;
+                    user.TimeZone = model.TimeZone;
 
                     var result = await _userManager.UpdateAsync(user);
                     if (result.Succeeded)
@@ -148,6 +225,11 @@ namespace TicketManagement.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Add balance on account.
+        /// </summary>
+        /// <param name="id">User id.</param>
+        /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpGet]
         public async Task<IActionResult> AddBalance(string id)
@@ -162,6 +244,11 @@ namespace TicketManagement.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Add balance on account.
+        /// </summary>
+        /// <param name="model">AddBalanceViewModel object.</param>
+        /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpPost]
         public async Task<IActionResult> AddBalance(AddBalanceViewModel model)
@@ -189,6 +276,10 @@ namespace TicketManagement.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Personal account.
+        /// </summary>
+        /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -203,10 +294,12 @@ namespace TicketManagement.Web.Controllers
             {
                 var ticketEventSeat = eventSeats.FirstOrDefault(s => s.Id == ticket.EventSeatId);
                 var eventArea = eventAreas.FirstOrDefault(a => a.Id == ticketEventSeat.EventAreaId);
+                var @event = await _eventService.GetByIdAsync(eventArea.EventId);
+                await ConvertTimeForUser(@event);
                 var ticketVm = new AccountTicketViewModel
                 {
                     Price = eventArea.Price,
-                    Event = await _eventService.GetByIdAsync(eventArea.EventId),
+                    Event = @event,
                 };
                 ticketsVm.Add(ticketVm);
             }
@@ -223,6 +316,22 @@ namespace TicketManagement.Web.Controllers
             }
 
             return View(accountVm);
+        }
+
+        /// <summary>
+        /// Convert time from UTC to user time zone.
+        /// </summary>
+        /// <param name="event">Event object.</param>
+        /// <returns>Task.</returns>
+        private async Task ConvertTimeForUser(EventDto @event)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            if (!string.IsNullOrWhiteSpace(user.TimeZone))
+            {
+                var userTimeZone = TimeZoneInfo.FindSystemTimeZoneById(user.TimeZone);
+                @event.TimeStart = TimeZoneInfo.ConvertTime(@event.TimeStart, TimeZoneInfo.Utc, userTimeZone);
+                @event.TimeEnd = TimeZoneInfo.ConvertTime(@event.TimeEnd, TimeZoneInfo.Utc, userTimeZone);
+            }
         }
     }
 }

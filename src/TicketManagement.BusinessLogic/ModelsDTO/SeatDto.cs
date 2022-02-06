@@ -14,7 +14,7 @@ namespace TicketManagement.BusinessLogic.ModelsDTO
         /// Gets or sets area's id.
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
-        [Display(Name = "AreaXAndY")]
+        [Display(Name = "AreaId")]
         public int AreaId { get; set; }
 
         /// <summary>

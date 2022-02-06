@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -54,6 +55,7 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
+            await ConvertTimeForUser(@event);
             var eventAreas = await _eventAreaService.GetAllAsync();
             var eventAreasForEvent = eventAreas.Where(x => x.EventId == (int)id);
             var eventSeats = await _eventSeatService.GetAllAsync();
@@ -115,6 +117,7 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
+            await ConvertTimeForUser(updatingEvent);
             return View(updatingEvent);
         }
 
@@ -167,6 +170,7 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
+            await ConvertTimeForUser(deletingEvent);
             return View(deletingEvent);
         }
 
@@ -231,6 +235,22 @@ namespace TicketManagement.Web.Controllers
         private async Task<bool> EventExists(int id)
         {
             return await _service.GetByIdAsync(id) is not null;
+        }
+
+        /// <summary>
+        /// Convert time from UTC to user time zone.
+        /// </summary>
+        /// <param name="event">Event object.</param>
+        /// <returns>Task.</returns>
+        private async Task ConvertTimeForUser(EventDto @event)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            if (!string.IsNullOrWhiteSpace(user.TimeZone))
+            {
+                var userTimeZone = TimeZoneInfo.FindSystemTimeZoneById(user.TimeZone);
+                @event.TimeStart = TimeZoneInfo.ConvertTime(@event.TimeStart, TimeZoneInfo.Utc, userTimeZone);
+                @event.TimeEnd = TimeZoneInfo.ConvertTime(@event.TimeEnd, TimeZoneInfo.Utc, userTimeZone);
+            }
         }
     }
 }

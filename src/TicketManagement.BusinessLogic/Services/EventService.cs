@@ -41,6 +41,7 @@ namespace TicketManagement.BusinessLogic.Services
 
         public async override Task<EventDto> CreateAsync(EventDto obj)
         {
+            ConvertTimeToUtc(obj);
             await CheckForPrices(obj);
             CheckEventForPastTime(obj);
             CheckForTimeBorders(obj);
@@ -50,6 +51,7 @@ namespace TicketManagement.BusinessLogic.Services
 
         public async override Task<EventDto> UpdateAsync(EventDto obj)
         {
+            ConvertTimeToUtc(obj);
             await CheckForPrices(obj);
             CheckEventForPastTime(obj);
             CheckForTimeBorders(obj);
@@ -61,6 +63,16 @@ namespace TicketManagement.BusinessLogic.Services
         {
             await CheckForTickets(obj);
             return await base.DeleteAsync(obj);
+        }
+
+        /// <summary>
+        /// Convert time to UTC.
+        /// </summary>
+        /// <param name="obj">Creating or updating event.</param>
+        private static void ConvertTimeToUtc(EventDto obj)
+        {
+            obj.TimeStart = TimeZoneInfo.ConvertTimeToUtc(obj.TimeStart);
+            obj.TimeEnd = TimeZoneInfo.ConvertTimeToUtc(obj.TimeEnd);
         }
 
         /// <summary>

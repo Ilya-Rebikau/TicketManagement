@@ -6,8 +6,16 @@ using TicketManagement.Web.Models;
 
 namespace TicketManagement.Web.Infrastructure
 {
+    /// <summary>
+    /// Database initializer.
+    /// </summary>
     public static class DbInitializer
     {
+        /// <summary>
+        /// Initialize database with admin account and base roles.
+        /// </summary>
+        /// <param name="context">HttpContext object.</param>
+        /// <returns>Task.</returns>
         public static async Task Initialize(HttpContext context)
         {
             UserManager<User> userManager = context.RequestServices.GetRequiredService<UserManager<User>>();
