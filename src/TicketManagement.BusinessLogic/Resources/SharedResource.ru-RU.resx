@@ -120,8 +120,8 @@
   <data name="Address" xml:space="preserve">
     <value>Адрес</value>
   </data>
-  <data name="AreaXAndY" xml:space="preserve">
-    <value>Координаты Х и У зоны в зале</value>
+  <data name="AreaId" xml:space="preserve">
+    <value>ID зоны</value>
   </data>
   <data name="CoordXInLayout" xml:space="preserve">
     <value>Координата Х в зале</value>
@@ -132,8 +132,14 @@
   <data name="Description" xml:space="preserve">
     <value>Описание</value>
   </data>
-  <data name="EventName" xml:space="preserve">
-    <value>Название события</value>
+  <data name="EventAreaId" xml:space="preserve">
+    <value>ID зоны события</value>
+  </data>
+  <data name="EventId" xml:space="preserve">
+    <value>ID события</value>
+  </data>
+  <data name="EventSeatId" xml:space="preserve">
+    <value>ID сидения события</value>
   </data>
   <data name="FieldRequired" xml:space="preserve">
     <value>Это поле обязательно для ввода!</value>
@@ -141,8 +147,8 @@
   <data name="ImageUrl" xml:space="preserve">
     <value>Адрес картинки (URL)</value>
   </data>
-  <data name="LayoutName" xml:space="preserve">
-    <value>Название зала</value>
+  <data name="LayoutId" xml:space="preserve">
+    <value>ID зала</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>Название</value>
@@ -159,11 +165,8 @@
   <data name="Row" xml:space="preserve">
     <value>Номер ряда</value>
   </data>
-  <data name="SeatRowAndNumber" xml:space="preserve">
-    <value>Номера ряда и места в зоне</value>
-  </data>
   <data name="State" xml:space="preserve">
-    <value>Состояние (занято или нет)</value>
+    <value>Состояние</value>
   </data>
   <data name="TimeEnd" xml:space="preserve">
     <value>Конец события</value>
@@ -171,10 +174,10 @@
   <data name="TimeStart" xml:space="preserve">
     <value>Начало события</value>
   </data>
-  <data name="User" xml:space="preserve">
-    <value>Email покупателя</value>
+  <data name="UserId" xml:space="preserve">
+    <value>ID пользователя</value>
   </data>
-  <data name="VenueName" xml:space="preserve">
-    <value>Название здания</value>
+  <data name="VenueId" xml:space="preserve">
+    <value>ID здания</value>
   </data>
 </root>

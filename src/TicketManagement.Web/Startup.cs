@@ -10,7 +10,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TicketManagement.BusinessLogic.Configuration;
-using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.Web.Infrastructure;
 using TicketManagement.Web.Middlewares;
 using TicketManagement.Web.Models;
@@ -31,19 +30,19 @@ namespace TicketManagement.Web
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddControllersWithViews(options =>
-            options.CacheProfiles.Add("Caching",
-            new CacheProfile
-            {
-                Location = ResponseCacheLocation.Client,
-                Duration = 300,
-            }))
+                options.CacheProfiles.Add("Caching",
+                new CacheProfile
+                {
+                    Location = ResponseCacheLocation.Client,
+                    Duration = 300,
+                }))
                 .AddViewLocalization()
                 .AddDataAnnotationsLocalization(options =>
             {
                 options.DataAnnotationLocalizerProvider = (type, factory) =>
                 {
-                    var assemblyName = new AssemblyName(typeof(EventDto).GetTypeInfo().Assembly.FullName);
-                    return factory.Create("Translations", assemblyName.Name);
+                    var assemblyName = new AssemblyName(typeof(ConfigureBllServices).GetTypeInfo().Assembly.FullName);
+                    return factory.Create("SharedResource", assemblyName.Name);
                 };
             });
             services.AddBllServices(connection);
@@ -88,7 +87,7 @@ namespace TicketManagement.Web
             };
             app.UseRequestLocalization(new RequestLocalizationOptions
             {
-                DefaultRequestCulture = new RequestCulture("be-BY"),
+                DefaultRequestCulture = new RequestCulture("ru-RU"),
                 SupportedCultures = supportedCultures,
                 SupportedUICultures = supportedCultures,
             });
