@@ -72,6 +72,11 @@ namespace TicketManagement.DataAccess.Repositories
             return obj;
         }
 
+        /// <summary>
+        /// Deleting event areas and event seats for this event.
+        /// </summary>
+        /// <param name="obj">Deleting event.</param>
+        /// <returns>Task.</returns>
         private async Task DeleteEventAreasAndEventSeatsAsync(Event obj)
         {
             var eventAreas = DbContext.EventAreas;
@@ -92,6 +97,11 @@ namespace TicketManagement.DataAccess.Repositories
             await DbContext.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Copy areas and seats to event areas and event seats during event creation.
+        /// </summary>
+        /// <param name="obj">Creating event.</param>
+        /// <returns>Task.</returns>
         private async Task CopyAreasAndSeatsIntoEvent(Event obj)
         {
             var areas = DbContext.Areas.ToList();

@@ -1,14 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
 
 namespace TicketManagement.DataAccess.Repositories
 {
+    /// <summary>
+    /// Ef repository for layout.
+    /// </summary>
     internal class LayoutEfRepository : EfRepository<Layout>, IRepository<Layout>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LayoutEfRepository"/> class.
+        /// </summary>
+        /// <param name="dbContext">TicketManagementContext object.</param>
         public LayoutEfRepository(TicketManagementContext dbContext)
             : base(dbContext)
         {
@@ -20,12 +25,22 @@ namespace TicketManagement.DataAccess.Repositories
             return await base.DeleteAsync(obj);
         }
 
+        /// <summary>
+        /// Delete events, event areas, event seats, areas, seats.
+        /// </summary>
+        /// <param name="obj">Deleting layout.</param>
+        /// <returns>Task.</returns>
         private async Task DeleteAllAsync(Layout obj)
         {
             await DeleteEventsAsync(obj);
             await DeleteAreasAsync(obj);
         }
 
+        /// <summary>
+        /// Delete areas in layout.
+        /// </summary>
+        /// <param name="obj">Deleting layout.</param>
+        /// <returns>Task.</returns>
         private async Task DeleteAreasAsync(Layout obj)
         {
             var areas = DbContext.Areas;
@@ -39,6 +54,11 @@ namespace TicketManagement.DataAccess.Repositories
             await DbContext.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Delete seats in area.
+        /// </summary>
+        /// <param name="area">Deleting area.</param>
+        /// <returns>Task.</returns>
         private async Task DeleteSeatsAsync(Area area)
         {
             var seats = DbContext.Seats;
@@ -51,6 +71,11 @@ namespace TicketManagement.DataAccess.Repositories
             await DbContext.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Delete events in layout.
+        /// </summary>
+        /// <param name="layout">Deleting layout.</param>
+        /// <returns>Task.</returns>
         private async Task DeleteEventsAsync(Layout layout)
         {
             var events = DbContext.Events;
@@ -63,6 +88,11 @@ namespace TicketManagement.DataAccess.Repositories
             await DbContext.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Delete event areas in event.
+        /// </summary>
+        /// <param name="event">Deleting event.</param>
+        /// <returns>Task.</returns>
         private async Task DeleteEventAreasAsync(Event @event)
         {
             var eventAreas = DbContext.EventAreas;
@@ -76,6 +106,11 @@ namespace TicketManagement.DataAccess.Repositories
             await DbContext.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Delete event seats in event area.
+        /// </summary>
+        /// <param name="eventArea">Deleting event area.</param>
+        /// <returns>Task.</returns>
         private async Task DeleteEventSeatsAsync(EventArea eventArea)
         {
             var eventSeats = DbContext.EventSeats;

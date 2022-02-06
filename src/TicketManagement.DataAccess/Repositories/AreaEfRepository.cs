@@ -5,8 +5,15 @@ using TicketManagement.DataAccess.Models;
 
 namespace TicketManagement.DataAccess.Repositories
 {
+    /// <summary>
+    /// Ef repository for area.
+    /// </summary>
     internal class AreaEfRepository : EfRepository<Area>, IRepository<Area>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AreaEfRepository"/> class.
+        /// </summary>
+        /// <param name="dbContext">TicketManagementContext object.</param>
         public AreaEfRepository(TicketManagementContext dbContext)
             : base(dbContext)
         {
@@ -18,6 +25,11 @@ namespace TicketManagement.DataAccess.Repositories
             return await base.DeleteAsync(obj);
         }
 
+        /// <summary>
+        /// Delete seats in this area.
+        /// </summary>
+        /// <param name="obj">Deleting area.</param>
+        /// <returns>Task.</returns>
         private async Task DeleteSeatsInAreaAsync(Area obj)
         {
             var seats = DbContext.Seats;
