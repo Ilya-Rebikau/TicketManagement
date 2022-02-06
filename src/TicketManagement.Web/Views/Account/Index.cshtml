@@ -1,4 +1,4 @@
-﻿@model User
+﻿@model AccountViewModel
 
 @{
     ViewData["Title"] = "Personal account";
@@ -10,32 +10,53 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
+            @Html.DisplayNameFor(model => model.User.Email)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
+            @Html.DisplayFor(model => model.User.Email)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FirstName)
+            @Html.DisplayNameFor(model => model.User.FirstName)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FirstName)
+            @Html.DisplayFor(model => model.User.FirstName)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Surname)
+            @Html.DisplayNameFor(model => model.User.Surname)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Surname)
+            @Html.DisplayFor(model => model.User.Surname)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Balance)
+            @Html.DisplayNameFor(model => model.User.Balance)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Balance)
+            @Html.DisplayFor(model => model.User.Balance)
         </dd>
     </dl>
 </div>
+@if (Model.Tickets.Count > 0)
+{
+    <table class="table">
+    <tr>
+        <th>Event</th>
+        <th>Price</th>
+    </tr>
+@foreach (var item in Model.Tickets) 
+{
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Event.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Price)
+        </td>
+    </tr>
+}
+</table>
+}
+<hr />
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
-    <a asp-action="AddBalance" asp-route-id="@Model.Id">Add balance</a>
+    <a asp-action="Edit" asp-route-id="@Model.User.Id">Edit</a>
+    <a asp-action="AddBalance" asp-route-id="@Model.User.Id">Add balance</a>
 </div>

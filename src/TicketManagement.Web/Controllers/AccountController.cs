@@ -1,6 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.Web.Models;
 using TicketManagement.Web.Models.Account;
 
@@ -10,11 +14,20 @@ namespace TicketManagement.Web.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly IService<TicketDto> _ticketService;
+        private readonly IService<EventDto> _eventService;
+        private readonly IService<EventAreaDto> _eventAreaService;
+        private readonly IService<EventSeatDto> _eventSeatService;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IService<TicketDto> ticketService,
+            IService<EventDto> eventService, IService<EventAreaDto> eventAreaService, IService<EventSeatDto> eventSeatService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _ticketService = ticketService;
+            _eventService = eventService;
+            _eventAreaService = eventAreaService;
+            _eventSeatService = eventSeatService;
         }
 
         [HttpGet]
@@ -151,7 +164,7 @@ namespace TicketManagement.Web.Controllers
                 User user = await _userManager.FindByIdAsync(model.Id);
                 if (user != null)
                 {
-                    user.Balance = model.Balance;
+                    user.Balance += model.Balance;
 
                     var result = await _userManager.UpdateAsync(user);
                     if (result.Succeeded)
@@ -173,12 +186,35 @@ namespace TicketManagement.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
+            var tickets = await _ticketService.GetAllAsync();
+            var usersTickets = tickets.Where(t => t.UserId == user.Id).ToList();
+            var eventSeats = await _eventSeatService.GetAllAsync();
+            var eventAreas = await _eventAreaService.GetAllAsync();
+            var ticketsVm = new List<AccountTicketViewModel>();
+            foreach (var ticket in usersTickets)
+            {
+                var ticketEventSeat = eventSeats.FirstOrDefault(s => s.Id == ticket.EventSeatId);
+                var eventArea = eventAreas.FirstOrDefault(a => a.Id == ticketEventSeat.EventAreaId);
+                var ticketVm = new AccountTicketViewModel
+                {
+                    Price = eventArea.Price,
+                    Event = await _eventService.GetByIdAsync(eventArea.EventId),
+                };
+                ticketsVm.Add(ticketVm);
+            }
+
+            var accountVm = new AccountViewModel
+            {
+                User = user,
+                Tickets = ticketsVm,
+            };
+
             if (user == null)
             {
                 return NotFound();
             }
 
-            return View(user);
+            return View(accountVm);
         }
     }
 }

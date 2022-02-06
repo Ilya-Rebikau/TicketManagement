@@ -44,14 +44,17 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Venues" asp-action="Index">Venues</a>
                         </li>
                     </ul>
+                    <ul class="navbar-nav flex-grow-1 justify-content-end">
+                        <li class="nav-item justify-content-end">
+                            <div class="nav-link text-white">@await Html.PartialAsync("_SelectLanguagePartial")</div>
+                        </li>
+                    </ul>
                     @if (!User.Identity.IsAuthenticated)
                     {
                         <ul class="navbar-nav flex-grow-1 justify-content-end">
                             <li class="nav-item justify-content-end">
                                 <a class="nav-link text-white" asp-controller="Account" asp-action="Login">Login</a>
                             </li>
-                        </ul>
-                        <ul class="navbar-nav flex-grow-1 justify-content-end">
                             <li class="nav-item justify-content-end">
                                 <a class="nav-link text-white" asp-controller="Account" asp-action="Register">Register</a>
                             </li>
@@ -63,8 +66,6 @@
                             <li class="nav-item justify-content-end">
                                 <a class="nav-link text-white" asp-controller="Account" asp-action="Index">Personal account</a>
                             </li>
-                        </ul>
-                        <ul class="navbar-nav flex-grow-1 justify-content-end">
                             <li class="nav-item justify-content-end">
                                 <form method="post" asp-controller="Account" asp-action="Logout">
                                     <input class="nav-link text-white bg-success border-0" type="submit" value="Logout" />
@@ -78,9 +79,6 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
-            <div>
-                @await Html.PartialAsync("_SelectLanguagePartial")
-            </div>
             @RenderBody()
         </main>
     </div>
