@@ -1,9 +1,9 @@
 ﻿@model CreateUserViewModel
+@inject IViewLocalizer loc
 @{
-    ViewBag.Title = "Add new user";
+    ViewData["Title"] = @loc["Title"];
 }
-<h2>Create</h2>
-<h4>User</h4>
+<h1>@loc["Title"]</h1>
 <hr />
 <form asp-action="Create" asp-controller="Users">
     <div asp-validation-summary="All" class="text-danger"></div>
@@ -17,10 +17,10 @@
     </div>
     <br />
     <div class="form-group">
-        <input type="submit" value="Add user" class="btn btn-success" />
+        <input type="submit" value="@loc["Create"]" class="btn btn-success" />
     </div>
 </form>
 <hr />
 <div>
-    <a class="btn btn-primary" asp-action="Index">Back to List</a>
+    <a class="btn btn-primary" asp-action="Index">@loc["Back"]</a>
 </div>

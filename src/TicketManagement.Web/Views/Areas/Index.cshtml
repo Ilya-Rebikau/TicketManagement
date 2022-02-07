@@ -1,14 +1,15 @@
 ﻿@model IEnumerable<AreaViewModel>
-
+@inject IViewLocalizer Localizer
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = @Localizer["Title"];
 }
 
-<h1>Index</h1>
+<h1>@Localizer["Title"]</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-primary" asp-action="Create">@Localizer["Add"]</a>
 </p>
+<hr />
 <table class="table">
     <thead>
         <tr>
@@ -49,9 +50,9 @@
                 @Html.DisplayFor(modelItem => item.BasePrice)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.Id">@Localizer["Edit"]</a>
+                <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id">@Localizer["Details"]</a>
+                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">@Localizer["Delete"]</a>
             </td>
         </tr>
 }

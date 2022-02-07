@@ -121,9 +121,9 @@
     <value>Вернуться к афише</value>
   </data>
   <data name="Create" xml:space="preserve">
-    <value>Создать</value>
+    <value>Добавить</value>
   </data>
   <data name="Title" xml:space="preserve">
-    <value>Добавить событие</value>
+    <value>Добавление события</value>
   </data>
 </root>

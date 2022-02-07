@@ -1,12 +1,11 @@
 ﻿@model TicketViewModel
-
+@inject IViewLocalizer loc
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = @loc["Title"];
 }
 
-<h1>Edit</h1>
+<h1>@loc["Title"]</h1>
 
-<h4>Ticket</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -24,14 +23,14 @@
                 <span asp-validation-for="UserId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="@loc["Save"]" class="btn btn-success" />
             </div>
         </form>
     </div>
 </div>
-
+<hr />
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a class="btn btn-btn-primary" asp-action="Index">@loc["Back"]</a>
 </div>
 
 @section Scripts {

@@ -1,16 +1,17 @@
 ﻿@model IEnumerable<User>
+@inject IViewLocalizer loc
 @{
-    ViewBag.Title = "Users";
+    ViewData["Title"] = @loc["Title"];
 }
 <h2>Here we can all users in system</h2>
-<a class="btn btn-primary" asp-action="Create">Add user</a>
+<a class="btn btn-primary" asp-action="Create">@loc["Create"]</a>
 <br />
 <br />
 <table class="table table-striped">
     <tr class="bg-success">
-        <th class="text-white">Email</th>
+        <th class="text-white">@loc["Email"]</th>
         <th class="text-white"></th>
-        <th class="text-white">Operations</th>
+        <th class="text-white">@loc["Operations"]</th>
     </tr>
     @foreach (var user in Model)
     {
@@ -18,12 +19,10 @@
             <td>@user.Email</td>
             <td>
                 <form asp-action="Delete" asp-route-id="@user.Id" method="post">
-                    <a class="btn btn-sm btn-primary" asp-action="Edit" asp-route-id="@user.Id">Edit</a>
-                    <a class="btn btn-sm btn-primary" asp-action="EditRoles" asp-route-userid="@user.Id">Access permissions</a>
-                    <a class="btn btn-sm btn-primary" asp-action="ChangePassword" asp-route-id="@user.Id">Change password</a>
-                    <button type="submit" class="btn btn-sm btn-danger">
-                        Delete
-                    </button>
+                    <a class="btn btn-sm btn-primary" asp-action="Edit" asp-route-id="@user.Id">@loc["Edit"]</a>
+                    <a class="btn btn-sm btn-primary" asp-action="EditRoles" asp-route-userid="@user.Id">@loc["AccessPermissions"]</a>
+                    <a class="btn btn-sm btn-primary" asp-action="ChangePassword" asp-route-id="@user.Id">@loc["ChangePassword"]</a>
+                    <button type="submit" class="btn btn-sm btn-danger">@loc["Delete"]</button>
                 </form>
             </td>
         </tr>

@@ -1,6 +1,9 @@
 ﻿@model ChangeRoleViewModel
- 
-<h2>Change access permissions for user: @Model.UserEmail</h2>
+@inject IViewLocalizer loc
+@{
+    ViewData["Title"] = @loc["Title"];
+}
+<h2>@loc["ChangePermissions"] @Model.UserEmail</h2>
 <hr />
 <form asp-action="EditRoles" method="post">
     <input type="hidden" name="userId" value="@Model.UserId" />
@@ -12,9 +15,9 @@
         }
     </div>
     <br />
-    <button type="submit" class="btn btn-success">Save</button>
+    <button type="submit" class="btn btn-success">@loc["Save"]</button>
 </form>
 <hr />
 <div>
-    <a class="btn btn-primary" asp-action="Index">Back to List</a>
+    <a class="btn btn-primary" asp-action="Index">@loc["Back"]</a>
 </div>

@@ -1,12 +1,11 @@
 ﻿@model EventAreaViewModel
-
+@inject IViewLocalizer loc
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = loc["Title"];
 }
 
-<h1>Create</h1>
+<h1>@loc["Title"]</h1>
 
-<h4>EventArea</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -38,14 +37,14 @@
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="@loc["Create"]" class="btn btn-success" />
             </div>
         </form>
     </div>
 </div>
-
+<hr />
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a class="btn btn-primary" asp-action="Index">@loc["Back"]</a>
 </div>
 
 @section Scripts {

@@ -1,10 +1,10 @@
 ﻿@model RegisterViewModel
-
+@inject IViewLocalizer Localizer
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = @Localizer["Title"];
 }
 
-<h2>Регистрация нового пользователя</h2>
+<h2>@Localizer["Title"]</h2>
 <form method="post" asp-controller="Account" asp-action="Register">
     <div asp-validation-summary="ModelOnly"></div>
     <div>
@@ -23,6 +23,6 @@
         <span asp-validation-for="PasswordConfirm"></span>
     </div>
     <div>
-        <input type="submit" value="Регистрация" />
+        <input type="submit" value="@Localizer["Register"]" />
     </div>
 </form>

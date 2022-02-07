@@ -1,9 +1,10 @@
 ﻿@model EditUserViewModel
+@inject IViewLocalizer loc
 @{
-    ViewBag.Title = "Edit user";
+    ViewData["Title"] = @loc["Title"];
 }
-<h1>Edit</h1>
-<h4>User</h4>
+<h1>@loc["Title"]</h1>
+
 <hr />
 <form asp-action="Edit" asp-controller="Users">
     <div asp-validation-summary="All" class="text-danger"></div>
@@ -32,10 +33,10 @@
     </div>
     <br />
     <div class="form-group">
-        <input type="submit" value="Save" class="btn btn-success" />
+        <input type="submit" value="@loc["Save"]" class="btn btn-success" />
     </div>
     <hr />
     <div>
-        <a class="btn btn-primary" asp-action="Index">Back to List</a>
+        <a class="btn btn-primary" asp-action="Index">@loc["Back"]</a>
 </div>
 </form>

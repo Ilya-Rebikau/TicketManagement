@@ -1,16 +1,16 @@
 ﻿@model AccountViewModel
-
+@inject IViewLocalizer Localizer
 @{
-    ViewData["Title"] = "Personal account";
+    ViewData["Title"] = @Localizer["Title"];
 }
 
-<h1>Personal account</h1>
+<h1>@Localizer["Title"]</h1>
 
 <div>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.User.Email)
+            @Localizer["Email"]
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.User.Email)
@@ -45,10 +45,10 @@
 {
     <table class="table">
     <tr>
-        <th>Event</th>
-        <th>Event time start</th>
-        <th>Event time end</th>
-        <th>Price ($)</th>
+        <th>@Localizer["Event"]</th>
+        <th>@Localizer["TimeStart"]</th>
+        <th>@Localizer["TimeEnd"]</th>
+        <th>@Localizer["Price"]</th>
     </tr>
 @foreach (var item in Model.Tickets) 
 {
@@ -73,7 +73,7 @@
 {
     <hr />
     <div>
-        <a asp-action="Edit" asp-route-id="@Model.User.Id">Edit</a>
-        <a asp-action="AddBalance" asp-route-id="@Model.User.Id">Add balance</a>
+        <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.User.Id">@Localizer["Edit"]</a>
+        <a class="btn btn-primary" asp-action="AddBalance" asp-route-id="@Model.User.Id">@Localizer["AddBalance"]</a>
     </div>
 }

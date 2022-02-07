@@ -1,4 +1,4 @@
-﻿@inject IHtmlLocalizer<SharedResource> SharedLocalizer
+﻿@inject IViewLocalizer loc
 
 <!DOCTYPE html>
 <html lang="en">
@@ -20,40 +20,40 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Events" asp-action="Index">@SharedLocalizer["Events"]</a>
+                            <a class="nav-link text-white" asp-area="" asp-controller="Events" asp-action="Index">@loc["Events"]</a>
                         </li>
                         @if (User.IsInRole("admin") || User.IsInRole("venue manager"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Venues" asp-action="Index">Venues</a>
+                                <a class="nav-link text-white" asp-area="" asp-controller="Venues" asp-action="Index">@loc["Venues"]</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Layouts" asp-action="Index">Layouts</a>
+                                <a class="nav-link text-white" asp-area="" asp-controller="Layouts" asp-action="Index">@loc["Layouts"]</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Areas" asp-action="Index">Areas</a>
+                                <a class="nav-link text-white" asp-area="" asp-controller="Areas" asp-action="Index">@loc["Areas"]</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Seats" asp-action="Index">Seats</a>
+                                <a class="nav-link text-white" asp-area="" asp-controller="Seats" asp-action="Index">@loc["Seats"]</a>
                             </li>
 
                         }
                         @if (User.IsInRole("admin") || User.IsInRole("event manager"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="EventSeats" asp-action="Index">EventSeats</a>
+                                <a class="nav-link text-white" asp-area="" asp-controller="EventSeats" asp-action="Index">@loc["EventSeats"]</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="EventAreas" asp-action="Index">EventAreas</a>
+                                <a class="nav-link text-white" asp-area="" asp-controller="EventAreas" asp-action="Index">@loc["EventAreas"]</a>
                             </li>
                         }
                         @if (User.IsInRole("admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Tickets" asp-action="Index">Tickets</a>
+                                <a class="nav-link text-white" asp-area="" asp-controller="Tickets" asp-action="Index">@loc["Tickets"]</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
+                                <a class="nav-link text-white" asp-area="" asp-controller="Users" asp-action="Index">@loc["Users"]</a>
                             </li>
                         }
                     </ul>
@@ -66,10 +66,10 @@
                     {
                         <ul class="navbar-nav flex-grow-1 justify-content-end">
                             <li class="nav-item justify-content-end">
-                                <a class="nav-link text-white" asp-controller="Account" asp-action="Login">Login</a>
+                                <a class="nav-link text-white" asp-controller="Account" asp-action="Login">@loc["Login"]</a>
                             </li>
                             <li class="nav-item justify-content-end">
-                                <a class="nav-link text-white" asp-controller="Account" asp-action="Register">Register</a>
+                                <a class="nav-link text-white" asp-controller="Account" asp-action="Register">@loc["Register"]</a>
                             </li>
                         </ul>
                     }
@@ -77,11 +77,11 @@
                     {
                         <ul class="navbar-nav flex-grow-1 justify-content-end">
                             <li class="nav-item justify-content-end">
-                                <a class="nav-link text-white" asp-controller="Account" asp-action="Index">Personal account</a>
+                                <a class="nav-link text-white" asp-controller="Account" asp-action="Index">@loc["PersonalAccount"]</a>
                             </li>
                             <li class="nav-item justify-content-end">
                                 <form method="post" asp-controller="Account" asp-action="Logout">
-                                    <input class="nav-link text-white bg-success border-0" type="submit" value="Logout" />
+                                    <input class="nav-link text-white bg-success border-0" type="submit" value="@loc["Logout"]" />
                                 </form>
                             </li>
                         </ul>
@@ -98,7 +98,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2022 - @SharedLocalizer["Footer"]
+            &copy; 2022 - @loc[""]
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
