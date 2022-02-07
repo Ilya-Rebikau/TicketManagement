@@ -123,4 +123,7 @@
   <data name="Footer" xml:space="preserve">
     <value>Афиша</value>
   </data>
+  <data name="Password" xml:space="preserve">
+    <value>Пароль</value>
+  </data>
 </root>

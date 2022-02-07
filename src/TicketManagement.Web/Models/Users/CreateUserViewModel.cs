@@ -10,14 +10,14 @@ namespace TicketManagement.Web.Models.Users
         /// <summary>
         /// Gets or sets user email.
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "FieldRequired")]
         [Display(Name="Email")]
         public string Email { get; set; }
 
         /// <summary>
         /// Gets or sets user password.
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "FieldRequired")]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }

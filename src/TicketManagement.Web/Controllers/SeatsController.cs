@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.ModelsDTO;
+using TicketManagement.Web.Models.Seats;
 
 namespace TicketManagement.Web.Controllers
 {
@@ -35,7 +37,14 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _service.GetAllAsync());
+            var seats = await _service.GetAllAsync();
+            var seatsVm = new List<SeatViewModel>();
+            foreach (var seat in seats)
+            {
+                seatsVm.Add(seat);
+            }
+
+            return View(seatsVm);
         }
 
         /// <summary>
@@ -57,7 +66,8 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            return View(seat);
+            SeatViewModel seatVm = seat;
+            return View(seatVm);
         }
 
         /// <summary>
@@ -73,19 +83,20 @@ namespace TicketManagement.Web.Controllers
         /// <summary>
         /// Create seat.
         /// </summary>
-        /// <param name="seat">Adding seat.</param>
+        /// <param name="seatVm">Adding seat.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(SeatDto seat)
+        public async Task<IActionResult> Create(SeatViewModel seatVm)
         {
             if (ModelState.IsValid)
             {
+                SeatDto seat = seatVm;
                 await _service.CreateAsync(seat);
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(seat);
+            return View(seatVm);
         }
 
         /// <summary>
@@ -107,26 +118,28 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            return View(updatingSeat);
+            SeatViewModel seatVm = updatingSeat;
+            return View(seatVm);
         }
 
         /// <summary>
         /// Edit seat.
         /// </summary>
         /// <param name="id">Id of editing seat.</param>
-        /// <param name="seat">Edited seat.</param>
+        /// <param name="seatVm">Edited seat.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, SeatDto seat)
+        public async Task<IActionResult> Edit(int id, SeatViewModel seatVm)
         {
-            if (id != seat.Id)
+            if (id != seatVm.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                SeatDto seat = seatVm;
                 try
                 {
                     await _service.UpdateAsync(seat);
@@ -146,7 +159,7 @@ namespace TicketManagement.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(seat);
+            return View(seatVm);
         }
 
         /// <summary>
@@ -168,7 +181,8 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            return View(deletingSeat);
+            SeatViewModel seatVm = deletingSeat;
+            return View(seatVm);
         }
 
         /// <summary>

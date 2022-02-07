@@ -2,39 +2,39 @@
 @inject IViewLocalizer Localizer
 
 @{
-    ViewData["Title"] = @Model.Event.Name;
+    ViewData["Title"] = @Model.Name;
 }
 
-<h1 class="d-flex justify-content-center">@Model.Event.Name</h1>
+<h1 class="d-flex justify-content-center">@Model.Name</h1>
 
 <div>
     <hr />
-    <img class="img-fluid" src="@Model.Event.ImageUrl" alt="@Localizer["Picture"]">
+    <img class="img-fluid" src="@Model.ImageUrl" alt="@Localizer["Picture"]">
     <br />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.Description)
+            @Html.DisplayNameFor(model => model.Description)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Event.Description)
+            @Html.DisplayFor(model => model.Description)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.LayoutId)
+            @Html.DisplayNameFor(model => model.LayoutId)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Event.LayoutId)
+            @Html.DisplayFor(model => model.LayoutId)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.TimeStart)
+            @Html.DisplayNameFor(model => model.TimeStart)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Event.TimeStart)
+            @Html.DisplayFor(model => model.TimeStart)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Event.TimeEnd)
+            @Html.DisplayNameFor(model => model.TimeEnd)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Event.TimeEnd)
+            @Html.DisplayFor(model => model.TimeEnd)
         </dd>
     </dl>
 </div>
@@ -99,6 +99,6 @@ else
 
 @if (User.IsInRole("admin") || User.IsInRole("event manager"))
 {
-    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.Event.Id">@Localizer["Edit"]</a>
+    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.Id">@Localizer["Edit"]</a>
 }
 <a class="btn btn-primary" asp-action="Index">@Localizer["Back"]</a>

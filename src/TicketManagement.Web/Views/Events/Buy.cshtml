@@ -7,8 +7,8 @@
 
 <h3>@Localizer["Sure"]@Model.Price$?</h3>
     <form asp-action="Buy">
-        <input type="hidden" asp-for="@Model.Ticket.EventSeatId" />
-        <input type="hidden" asp-for="@Model.Ticket.UserId" />
+        <input type="hidden" asp-for="@Model.EventSeatId" />
+        <input type="hidden" asp-for="@Model.UserId" />
         <input type="hidden" asp-for="@Model.Price" />
         <input type="submit" value="@Localizer["Buy"]" class="btn btn-success" />
     </form>

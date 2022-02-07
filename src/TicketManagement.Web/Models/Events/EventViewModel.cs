@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using TicketManagement.BusinessLogic.ModelsDTO;
 
@@ -10,20 +12,57 @@ namespace TicketManagement.Web.Models.Events
     public class EventViewModel
     {
         /// <summary>
-        /// Gets or sets layout of event.
+        /// Gets or sets id.
         /// </summary>
-        public LayoutDto Layout { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
-        /// Gets or sets event.
+        /// Gets or sets name.
         /// </summary>
-        public EventDto Event { get; set; }
+        [Required(ErrorMessage = "FieldRequired")]
+        [Display(Name = "Name")]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets description.
+        /// </summary>
+        [Required(ErrorMessage = "FieldRequired")]
+        [Display(Name = "Description")]
+        public string Description { get; set; }
+
+        /// <summary>
+        /// Gets or sets layout's id.
+        /// </summary>
+        [Required(ErrorMessage = "FieldRequired")]
+        [Display(Name = "LayoutId")]
+        public int LayoutId { get; set; }
+
+        /// <summary>
+        /// Gets or sets time when event starts.
+        /// </summary>
+        [Required(ErrorMessage = "FieldRequired")]
+        [Display(Name = "TimeStart")]
+        public DateTime TimeStart { get; set; }
+
+        /// <summary>
+        /// Gets or sets time when event ends.
+        /// </summary>
+        [Required(ErrorMessage = "FieldRequired")]
+        [Display(Name = "TimeEnd")]
+        public DateTime TimeEnd { get; set; }
+
+        /// <summary>
+        /// Gets or sets image URL.
+        /// </summary>
+        [Url(ErrorMessage = "WrongUrl")]
+        [Display(Name = "ImageUrl")]
+        public string ImageUrl { get; set; }
 
         /// <summary>
         /// Privately gets or sets list of EventAreaViewModel objects.
         /// EventAreaViewModel objects represents event areas.
         /// </summary>
-        public IList<EventAreaViewModel> EventAreas { private get; set; }
+        public IList<EventAreaViewModelInEvent> EventAreas { private get; set; }
 
         /// <summary>
         /// Gets max X coordinate from event areas in event.
@@ -50,10 +89,46 @@ namespace TicketManagement.Web.Models.Events
         }
 
         /// <summary>
+        /// Convert event dto to event view model.
+        /// </summary>
+        /// <param name="event">Event dto.</param>
+        public static implicit operator EventViewModel(EventDto @event)
+        {
+            return new EventViewModel
+            {
+                Id = @event.Id,
+                Name = @event.Name,
+                Description = @event.Description,
+                LayoutId = @event.LayoutId,
+                TimeStart = @event.TimeStart,
+                TimeEnd = @event.TimeEnd,
+                ImageUrl = @event.ImageUrl,
+            };
+        }
+
+        /// <summary>
+        /// Convert event view model to event dto.
+        /// </summary>
+        /// <param name="eventVm">Event view model.</param>
+        public static implicit operator EventDto(EventViewModel eventVm)
+        {
+            return new EventDto
+            {
+                Id = eventVm.Id,
+                Name = eventVm.Name,
+                Description = eventVm.Description,
+                LayoutId = eventVm.LayoutId,
+                TimeStart = eventVm.TimeStart,
+                TimeEnd = eventVm.TimeEnd,
+                ImageUrl = eventVm.ImageUrl,
+            };
+        }
+
+        /// <summary>
         /// Sorting event areas by X and Y coordinates.
         /// </summary>
         /// <returns>Sorted event areas.</returns>
-        public List<EventAreaViewModel> SortedEventAreas() => EventAreas.OrderBy(x => x.EventArea.CoordX).ThenBy(y => y.EventArea.CoordY).ToList();
+        public List<EventAreaViewModelInEvent> SortedEventAreas() => EventAreas.OrderBy(x => x.EventArea.CoordX).ThenBy(y => y.EventArea.CoordY).ToList();
 
         /// <summary>
         /// Check that event area with X and Y coordinate exist.

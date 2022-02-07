@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.ModelsDTO;
+using TicketManagement.Web.Models.Venues;
 
 namespace TicketManagement.Web.Controllers
 {
@@ -35,7 +37,14 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _service.GetAllAsync());
+            var venues = await _service.GetAllAsync();
+            var venuesVm = new List<VenueViewModel>();
+            foreach (var venue in venues)
+            {
+                venuesVm.Add(venue);
+            }
+
+            return View(venuesVm);
         }
 
         /// <summary>
@@ -57,7 +66,8 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            return View(venue);
+            VenueViewModel venueVm = venue;
+            return View(venueVm);
         }
 
         /// <summary>
@@ -73,19 +83,20 @@ namespace TicketManagement.Web.Controllers
         /// <summary>
         /// Create venue.
         /// </summary>
-        /// <param name="venue">Adding venue.</param>
+        /// <param name="venueVm">Adding venue.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(VenueDto venue)
+        public async Task<IActionResult> Create(VenueViewModel venueVm)
         {
             if (ModelState.IsValid)
             {
+                VenueDto venue = venueVm;
                 await _service.CreateAsync(venue);
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(venue);
+            return View(venueVm);
         }
 
         /// <summary>
@@ -107,26 +118,28 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            return View(updatingVenue);
+            VenueViewModel venueVm = updatingVenue;
+            return View(venueVm);
         }
 
         /// <summary>
         /// Edit venue.
         /// </summary>
         /// <param name="id">Id of editing venue.</param>
-        /// <param name="venue">Edited venue.</param>
+        /// <param name="venueVm">Edited venue.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, VenueDto venue)
+        public async Task<IActionResult> Edit(int id, VenueViewModel venueVm)
         {
-            if (id != venue.Id)
+            if (id != venueVm.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                VenueDto venue = venueVm;
                 try
                 {
                     await _service.UpdateAsync(venue);
@@ -146,7 +159,7 @@ namespace TicketManagement.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(venue);
+            return View(venueVm);
         }
 
         /// <summary>
@@ -168,7 +181,8 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            return View(deletingVenue);
+            VenueViewModel venueVm = deletingVenue;
+            return View(venueVm);
         }
 
         /// <summary>

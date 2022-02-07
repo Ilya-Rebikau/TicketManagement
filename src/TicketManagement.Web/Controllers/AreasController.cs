@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.ModelsDTO;
+using TicketManagement.Web.Models.Areas;
 
 namespace TicketManagement.Web.Controllers
 {
@@ -35,7 +37,14 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _service.GetAllAsync());
+            var areas = await _service.GetAllAsync();
+            var areasVm = new List<AreaViewModel>();
+            foreach (var area in areas)
+            {
+                areasVm.Add(area);
+            }
+
+            return View(areasVm);
         }
 
         /// <summary>
@@ -57,7 +66,8 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            return View(area);
+            AreaViewModel areaVm = area;
+            return View(areaVm);
         }
 
         /// <summary>
@@ -73,19 +83,20 @@ namespace TicketManagement.Web.Controllers
         /// <summary>
         /// Create area.
         /// </summary>
-        /// <param name="area">Creating area.</param>
+        /// <param name="areaVm">Creating area.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(AreaDto area)
+        public async Task<IActionResult> Create(AreaViewModel areaVm)
         {
             if (ModelState.IsValid)
             {
+                AreaDto area = areaVm;
                 await _service.CreateAsync(area);
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(area);
+            return View(areaVm);
         }
 
         /// <summary>
@@ -107,26 +118,28 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            return View(updatingArea);
+            AreaViewModel areaVm = updatingArea;
+            return View(areaVm);
         }
 
         /// <summary>
         /// Edit area.
         /// </summary>
         /// <param name="id">Id of editing area.</param>
-        /// <param name="area">Editing area.</param>
+        /// <param name="areaVm">Editing area.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, AreaDto area)
+        public async Task<IActionResult> Edit(int id, AreaViewModel areaVm)
         {
-            if (id != area.Id)
+            if (id != areaVm.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                AreaDto area = areaVm;
                 try
                 {
                     await _service.UpdateAsync(area);
@@ -146,7 +159,7 @@ namespace TicketManagement.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(area);
+            return View(areaVm);
         }
 
         /// <summary>
@@ -168,7 +181,8 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            return View(deletingArea);
+            AreaViewModel areaVm = deletingArea;
+            return View(areaVm);
         }
 
         /// <summary>

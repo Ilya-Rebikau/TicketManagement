@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.ModelsDTO;
+using TicketManagement.Web.Models.Layouts;
 
 namespace TicketManagement.Web.Controllers
 {
@@ -35,7 +37,14 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _service.GetAllAsync());
+            var layouts = await _service.GetAllAsync();
+            var layoutsVm = new List<LayoutViewModel>();
+            foreach (var layout in layouts)
+            {
+                layoutsVm.Add(layout);
+            }
+
+            return View(layoutsVm);
         }
 
         /// <summary>
@@ -57,7 +66,8 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            return View(layout);
+            LayoutViewModel layoutVm = layout;
+            return View(layoutVm);
         }
 
         /// <summary>
@@ -73,19 +83,20 @@ namespace TicketManagement.Web.Controllers
         /// <summary>
         /// Create layout.
         /// </summary>
-        /// <param name="layout">Adding layout.</param>
+        /// <param name="layoutVm">Adding layout.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(LayoutDto layout)
+        public async Task<IActionResult> Create(LayoutViewModel layoutVm)
         {
             if (ModelState.IsValid)
             {
+                LayoutDto layout = layoutVm;
                 await _service.CreateAsync(layout);
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(layout);
+            return View(layoutVm);
         }
 
         /// <summary>
@@ -107,26 +118,28 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            return View(updatingLayout);
+            LayoutViewModel layoutVm = updatingLayout;
+            return View(layoutVm);
         }
 
         /// <summary>
         /// Edit layout.
         /// </summary>
         /// <param name="id">Id of editing layout.</param>
-        /// <param name="layout">Edited layout.</param>
+        /// <param name="layoutVm">Edited layout.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, LayoutDto layout)
+        public async Task<IActionResult> Edit(int id, LayoutViewModel layoutVm)
         {
-            if (id != layout.Id)
+            if (id != layoutVm.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                LayoutDto layout = layoutVm;
                 try
                 {
                     await _service.UpdateAsync(layout);
@@ -146,7 +159,7 @@ namespace TicketManagement.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(layout);
+            return View(layoutVm);
         }
 
         /// <summary>
@@ -168,7 +181,8 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            return View(deletingLayout);
+            LayoutViewModel layoutVm = deletingLayout;
+            return View(layoutVm);
         }
 
         /// <summary>

@@ -11,6 +11,7 @@ using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.Web.Models;
 using TicketManagement.Web.Models.Events;
+using TicketManagement.Web.Models.Tickets;
 
 namespace TicketManagement.Web.Controllers
 {
@@ -77,7 +78,14 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _service.GetAllAsync());
+            var events = await _service.GetAllAsync();
+            var eventsVm = new List<EventViewModel>();
+            foreach (var @event in events)
+            {
+                eventsVm.Add(@event);
+            }
+
+            return View(eventsVm);
         }
 
         /// <summary>
@@ -103,11 +111,11 @@ namespace TicketManagement.Web.Controllers
             var eventAreas = await _eventAreaService.GetAllAsync();
             var eventAreasForEvent = eventAreas.Where(x => x.EventId == (int)id);
             var eventSeats = await _eventSeatService.GetAllAsync();
-            var eventAreaViewModels = new List<EventAreaViewModel>();
+            var eventAreaViewModels = new List<EventAreaViewModelInEvent>();
             foreach (var eventArea in eventAreasForEvent)
             {
                 var eventSeatsInArea = eventSeats.Where(x => x.EventAreaId == eventArea.Id).ToList();
-                var eventAreaViewModel = new EventAreaViewModel
+                var eventAreaViewModel = new EventAreaViewModelInEvent
                 {
                     EventArea = eventArea,
                     EventSeats = eventSeatsInArea,
@@ -116,12 +124,8 @@ namespace TicketManagement.Web.Controllers
                 eventAreaViewModels.Add(eventAreaViewModel);
             }
 
-            var eventViewModel = new EventViewModel
-            {
-                EventAreas = eventAreaViewModels,
-                Event = @event,
-            };
-
+            EventViewModel eventViewModel = @event;
+            eventViewModel.EventAreas = eventAreaViewModels;
             return View(eventViewModel);
         }
 
@@ -139,20 +143,21 @@ namespace TicketManagement.Web.Controllers
         /// <summary>
         /// Create event.
         /// </summary>
-        /// <param name="event">Adding event.</param>
+        /// <param name="eventVm">Adding event.</param>
         /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, event manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(EventDto @event)
+        public async Task<IActionResult> Create(EventViewModel eventVm)
         {
             if (ModelState.IsValid)
             {
+                EventDto @event = eventVm;
                 await _service.CreateAsync(@event);
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(@event);
+            return View(eventVm);
         }
 
         /// <summary>
@@ -176,27 +181,29 @@ namespace TicketManagement.Web.Controllers
             }
 
             await ConvertTimeForUser(updatingEvent);
-            return View(updatingEvent);
+            EventViewModel eventVm = updatingEvent;
+            return View(eventVm);
         }
 
         /// <summary>
         /// Edit event.
         /// </summary>
         /// <param name="id">Id of editing event.</param>
-        /// <param name="event">Edited event.</param>
+        /// <param name="eventVm">Edited event.</param>
         /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, event manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, EventDto @event)
+        public async Task<IActionResult> Edit(int id, EventViewModel eventVm)
         {
-            if (id != @event.Id)
+            if (id != eventVm.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                EventDto @event = eventVm;
                 try
                 {
                     await _service.UpdateAsync(@event);
@@ -216,7 +223,7 @@ namespace TicketManagement.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(@event);
+            return View(eventVm);
         }
 
         /// <summary>
@@ -240,7 +247,8 @@ namespace TicketManagement.Web.Controllers
             }
 
             await ConvertTimeForUser(deletingEvent);
-            return View(deletingEvent);
+            EventViewModel eventVm = deletingEvent;
+            return View(eventVm);
         }
 
         /// <summary>
@@ -281,11 +289,8 @@ namespace TicketManagement.Web.Controllers
                 EventSeatId = (int)eventSeatId,
             };
 
-            var ticketVm = new TicketViewModel
-            {
-                Ticket = ticket,
-                Price = (double)price,
-            };
+            TicketViewModel ticketVm = ticket;
+            ticketVm.Price = (double)price;
 
             return View(ticketVm);
         }
@@ -300,14 +305,15 @@ namespace TicketManagement.Web.Controllers
         [ActionName("Buy")]
         public async Task<IActionResult> BuyConfirmed(TicketViewModel ticketVm)
         {
-            var user = await _userManager.FindByIdAsync(ticketVm.Ticket.UserId);
+            TicketDto ticket = ticketVm;
+            var user = await _userManager.FindByIdAsync(ticket.UserId);
             if (user.Balance >= ticketVm.Price)
             {
                 user.Balance -= ticketVm.Price;
-                var seat = await _eventSeatService.GetByIdAsync(ticketVm.Ticket.EventSeatId);
+                var seat = await _eventSeatService.GetByIdAsync(ticket.EventSeatId);
                 seat.State = PlaceStatus.Occupied;
                 await _eventSeatService.UpdateAsync(seat);
-                await _ticketService.CreateAsync(ticketVm.Ticket);
+                await _ticketService.CreateAsync(ticket);
             }
             else
             {
@@ -335,7 +341,7 @@ namespace TicketManagement.Web.Controllers
         private async Task ConvertTimeForUser(EventDto @event)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
-            if (!string.IsNullOrWhiteSpace(user.TimeZone))
+            if (user is not null && !string.IsNullOrWhiteSpace(user.TimeZone))
             {
                 var userTimeZone = TimeZoneInfo.FindSystemTimeZoneById(user.TimeZone);
                 @event.TimeStart = TimeZoneInfo.ConvertTime(@event.TimeStart, TimeZoneInfo.Utc, userTimeZone);

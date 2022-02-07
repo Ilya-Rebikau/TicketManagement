@@ -36,13 +36,13 @@ namespace TicketManagement.Web
                     Location = ResponseCacheLocation.Client,
                     Duration = 300,
                 }))
-                .AddViewLocalization()
-                .AddDataAnnotationsLocalization(options =>
+            .AddViewLocalization()
+            .AddDataAnnotationsLocalization(options =>
             {
                 options.DataAnnotationLocalizerProvider = (type, factory) =>
                 {
-                    var assemblyName = new AssemblyName(typeof(ConfigureBllServices).GetTypeInfo().Assembly.FullName);
-                    return factory.Create("SharedResource", assemblyName.Name);
+                    var assemblyName = new AssemblyName(typeof(Program).GetTypeInfo().Assembly.FullName);
+                    return factory.Create("ModelsTranslations", assemblyName.Name);
                 };
             });
             services.AddBllServices(connection);

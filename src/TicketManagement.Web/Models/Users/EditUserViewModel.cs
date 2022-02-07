@@ -43,6 +43,7 @@ namespace TicketManagement.Web.Models.Users
         /// <summary>
         /// Gets or sets time zone.
         /// </summary>
+        [Display(Name = "TimeZone")]
         public string TimeZone { get; set; }
 
         /// <summary>

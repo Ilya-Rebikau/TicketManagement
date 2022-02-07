@@ -10,14 +10,14 @@ namespace TicketManagement.Web.Models.Account
         /// <summary>
         /// Gets or sets email.
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "Email")]
         public string Email { get; set; }
 
         /// <summary>
         /// Gets or sets password.
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "FieldRequired")]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
@@ -25,7 +25,7 @@ namespace TicketManagement.Web.Models.Account
         /// <summary>
         /// Gets or sets password confirmation.
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "FieldRequired")]
         [Compare("Password", ErrorMessage = "PasswordsDifferent")]
         [DataType(DataType.Password)]
         [Display(Name = "PasswordConfirm")]

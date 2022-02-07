@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.ModelsDTO;
+using TicketManagement.Web.Models.EventAreas;
 
 namespace TicketManagement.Web.Controllers
 {
@@ -35,7 +37,14 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _service.GetAllAsync());
+            var eventAreas = await _service.GetAllAsync();
+            var eventAreasVm = new List<EventAreaViewModel>();
+            foreach (var eventArea in eventAreas)
+            {
+                eventAreasVm.Add(eventArea);
+            }
+
+            return View(eventAreasVm);
         }
 
         /// <summary>
@@ -57,7 +66,8 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            return View(eventArea);
+            EventAreaViewModel eventAreaVm = eventArea;
+            return View(eventAreaVm);
         }
 
         /// <summary>
@@ -73,19 +83,20 @@ namespace TicketManagement.Web.Controllers
         /// <summary>
         /// Create event area.
         /// </summary>
-        /// <param name="eventArea">Adding event area.</param>
+        /// <param name="eventAreaVm">Adding event area.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(EventAreaDto eventArea)
+        public async Task<IActionResult> Create(EventAreaViewModel eventAreaVm)
         {
             if (ModelState.IsValid)
             {
+                EventAreaDto eventArea = eventAreaVm;
                 await _service.CreateAsync(eventArea);
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(eventArea);
+            return View(eventAreaVm);
         }
 
         /// <summary>
@@ -107,26 +118,28 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            return View(updatingEventArea);
+            EventAreaViewModel eventAreaVm = updatingEventArea;
+            return View(eventAreaVm);
         }
 
         /// <summary>
         /// Edit event area.
         /// </summary>
         /// <param name="id">Id of editing event area.</param>
-        /// <param name="eventArea">Edited event area.</param>
+        /// <param name="eventAreaVm">Edited event area.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, EventAreaDto eventArea)
+        public async Task<IActionResult> Edit(int id, EventAreaViewModel eventAreaVm)
         {
-            if (id != eventArea.Id)
+            if (id != eventAreaVm.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                EventAreaDto eventArea = eventAreaVm;
                 try
                 {
                     await _service.UpdateAsync(eventArea);
@@ -146,7 +159,7 @@ namespace TicketManagement.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(eventArea);
+            return View(eventAreaVm);
         }
 
         /// <summary>
@@ -168,7 +181,8 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            return View(deletingEventArea);
+            EventAreaViewModel eventAreaVm = deletingEventArea;
+            return View(eventAreaVm);
         }
 
         /// <summary>

@@ -118,66 +118,93 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Address" xml:space="preserve">
-    <value>Адрес</value>
+    <value>Address</value>
   </data>
   <data name="AreaId" xml:space="preserve">
-    <value>ID зоны</value>
+    <value>Area ID</value>
+  </data>
+  <data name="Balance" xml:space="preserve">
+    <value>Balance</value>
   </data>
   <data name="CoordXInLayout" xml:space="preserve">
-    <value>Координата Х в зале</value>
+    <value>X coordinate in layout</value>
   </data>
   <data name="CoordYInLayout" xml:space="preserve">
-    <value>Координата У в зале</value>
+    <value>Y coordinate in layout</value>
   </data>
   <data name="Description" xml:space="preserve">
-    <value>Описание</value>
+    <value>Description</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
   </data>
   <data name="EventAreaId" xml:space="preserve">
-    <value>ID зоны события</value>
+    <value>Event area ID</value>
   </data>
   <data name="EventId" xml:space="preserve">
-    <value>ID события</value>
+    <value>Event ID</value>
   </data>
   <data name="EventSeatId" xml:space="preserve">
-    <value>ID сидения события</value>
+    <value>Event seat ID</value>
   </data>
   <data name="FieldRequired" xml:space="preserve">
-    <value>Это поле обязательно для ввода!</value>
+    <value>This field is required!</value>
+  </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>First name</value>
   </data>
   <data name="ImageUrl" xml:space="preserve">
-    <value>Адрес картинки (URL)</value>
+    <value>Image URL</value>
   </data>
   <data name="LayoutId" xml:space="preserve">
-    <value>ID зала</value>
+    <value>Layout ID</value>
   </data>
   <data name="Name" xml:space="preserve">
-    <value>Название</value>
+    <value>Name</value>
   </data>
   <data name="Number" xml:space="preserve">
-    <value>Номер места</value>
+    <value>Number</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="PasswordConfirm" xml:space="preserve">
+    <value>Confirm password</value>
   </data>
   <data name="Phone" xml:space="preserve">
-    <value>Номер телефона</value>
+    <value>Phone</value>
   </data>
   <data name="Price" xml:space="preserve">
-    <value>Цена ($)</value>
+    <value>Price ($)</value>
+  </data>
+  <data name="Remember" xml:space="preserve">
+    <value>Remember?</value>
   </data>
   <data name="Row" xml:space="preserve">
-    <value>Номер ряда</value>
+    <value>Row</value>
   </data>
   <data name="State" xml:space="preserve">
-    <value>Состояние</value>
+    <value>State</value>
+  </data>
+  <data name="Surname" xml:space="preserve">
+    <value>Surname</value>
   </data>
   <data name="TimeEnd" xml:space="preserve">
-    <value>Конец события</value>
+    <value>Time of event end</value>
   </data>
   <data name="TimeStart" xml:space="preserve">
-    <value>Начало события</value>
+    <value>Time of event start</value>
+  </data>
+  <data name="TimeZone" xml:space="preserve">
+    <value>Time zone</value>
   </data>
   <data name="UserId" xml:space="preserve">
-    <value>ID пользователя</value>
+    <value>User ID</value>
   </data>
   <data name="VenueId" xml:space="preserve">
-    <value>ID здания</value>
+    <value>Venue ID</value>
+  </data>
+  <data name="WrongUrl" xml:space="preserve">
+    <value>Wrong URL</value>
   </data>
 </root>

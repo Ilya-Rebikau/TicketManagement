@@ -334,7 +334,7 @@ namespace TicketManagement.Web.Controllers
         private async Task ConvertTimeForUser(EventDto @event)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
-            if (!string.IsNullOrWhiteSpace(user.TimeZone))
+            if (user is not null && !string.IsNullOrWhiteSpace(user.TimeZone))
             {
                 var userTimeZone = TimeZoneInfo.FindSystemTimeZoneById(user.TimeZone);
                 @event.TimeStart = TimeZoneInfo.ConvertTime(@event.TimeStart, TimeZoneInfo.Utc, userTimeZone);

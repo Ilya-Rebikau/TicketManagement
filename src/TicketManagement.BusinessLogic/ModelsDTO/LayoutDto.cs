@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using TicketManagement.BusinessLogic.Interfaces;
+﻿using TicketManagement.BusinessLogic.Interfaces;
 
 namespace TicketManagement.BusinessLogic.ModelsDTO
 {
@@ -13,22 +12,16 @@ namespace TicketManagement.BusinessLogic.ModelsDTO
         /// <summary>
         /// Gets or sets venue's id.
         /// </summary>
-        [Required(ErrorMessage = "FieldRequired")]
-        [Display(Name = "VenueId")]
         public int VenueId { get; set; }
 
         /// <summary>
         /// Gets or sets description.
         /// </summary>
-        [Required(ErrorMessage = "FieldRequired")]
-        [Display(Name = "Description")]
         public string Description { get; set; }
 
         /// <summary>
         /// Gets or sets name of layout in venue.
         /// </summary>
-        [Required(ErrorMessage = "FieldRequired")]
-        [Display(Name = "Name")]
         public string Name { get; set; }
     }
 }

@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.ModelsDTO;
+using TicketManagement.Web.Models.EventSeats;
 
 namespace TicketManagement.Web.Controllers
 {
@@ -35,7 +37,14 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _service.GetAllAsync());
+            var eventSeats = await _service.GetAllAsync();
+            var eventSeatsVm = new List<EventSeatViewModel>();
+            foreach (var eventSeat in eventSeats)
+            {
+                eventSeatsVm.Add(eventSeat);
+            }
+
+            return View(eventSeatsVm);
         }
 
         /// <summary>
@@ -57,7 +66,8 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            return View(eventSeat);
+            EventSeatViewModel eventSeatVm = eventSeat;
+            return View(eventSeatVm);
         }
 
         /// <summary>
@@ -73,19 +83,20 @@ namespace TicketManagement.Web.Controllers
         /// <summary>
         /// Create event seat.
         /// </summary>
-        /// <param name="eventSeat">Adding event seat.</param>
+        /// <param name="eventSeatVm">Adding event seat.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(EventSeatDto eventSeat)
+        public async Task<IActionResult> Create(EventSeatViewModel eventSeatVm)
         {
             if (ModelState.IsValid)
             {
+                EventSeatDto eventSeat = eventSeatVm;
                 await _service.CreateAsync(eventSeat);
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(eventSeat);
+            return View(eventSeatVm);
         }
 
         /// <summary>
@@ -107,26 +118,28 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            return View(updatingEventSeat);
+            EventSeatViewModel eventSeatVm = updatingEventSeat;
+            return View(eventSeatVm);
         }
 
         /// <summary>
         /// Edit event seat.
         /// </summary>
         /// <param name="id">Id of editing event seat.</param>
-        /// <param name="eventSeat">Edited event seat.</param>
+        /// <param name="eventSeatVm">Edited event seat.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, EventSeatDto eventSeat)
+        public async Task<IActionResult> Edit(int id, EventSeatViewModel eventSeatVm)
         {
-            if (id != eventSeat.Id)
+            if (id != eventSeatVm.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                EventSeatDto eventSeat = eventSeatVm;
                 try
                 {
                     await _service.UpdateAsync(eventSeat);
@@ -146,7 +159,7 @@ namespace TicketManagement.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(eventSeat);
+            return View(eventSeatVm);
         }
 
         /// <summary>
@@ -168,7 +181,8 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            return View(deletingEventSeat);
+            EventSeatViewModel eventSeatVm = deletingEventSeat;
+            return View(eventSeatVm);
         }
 
         /// <summary>

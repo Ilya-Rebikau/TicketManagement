@@ -7,7 +7,7 @@ namespace TicketManagement.Web.Models.Events
     /// <summary>
     /// EventArea view model.
     /// </summary>
-    public class EventAreaViewModel
+    public class EventAreaViewModelInEvent
     {
         /// <summary>
         /// Gets or sets EventArea.
