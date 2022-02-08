@@ -83,6 +83,7 @@ namespace TicketManagement.DataAccess.RepositoriesEf
             foreach (var @event in eventsInLayout)
             {
                 await DeleteEventAreasAsync(@event);
+                DbContext.Events.Remove(@event);
             }
 
             await DbContext.SaveChangesAsync();

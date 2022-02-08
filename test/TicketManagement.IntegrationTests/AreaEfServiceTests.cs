@@ -101,29 +101,8 @@ namespace TicketManagement.IntegrationTests
             // Assert
             area.Should().BeEquivalentTo(addedArea);
 
+            // Delete added area
             await _service.DeleteAsync(addedArea);
-        }
-
-        [Test]
-        public async Task DeleteArea__ShouldReturnDeletedArea()
-        {
-            // Arrange
-            var areas = await _service.GetAllAsync();
-            var area = areas.Single(a => a.Description == "Description");
-
-            // Act
-            AsyncTestDelegate testAction = async () => await _service.DeleteAsync(area);
-            AreaDto deletedArea = await _service.DeleteAsync(area);
-
-            // Assert
-            if (area is null)
-            {
-                Assert.ThrowsAsync<InvalidOperationException>(testAction);
-            }
-            else
-            {
-                area.Should().BeEquivalentTo(deletedArea);
-            }
         }
 
         [Test]
@@ -174,7 +153,7 @@ namespace TicketManagement.IntegrationTests
             // Arrange
             AreaDto area = new ()
             {
-                Id = 2,
+                Id = 1,
                 LayoutId = 1,
                 Description = "New description!",
                 CoordX = 1,
@@ -218,21 +197,24 @@ namespace TicketManagement.IntegrationTests
                 CoordY = 111111111,
                 Description = "New description",
             };
-            _service.CreateAsync(area).Wait();
-            AreaDto addedArea = _service.GetAllAsync().Result.Last();
+            var addedArea = await _service.CreateAsync(area);
+            var allSeats = await _seatService.GetAllAsync();
+            int allSeatsCount = allSeats.Count();
             SeatDto seat = new ()
             {
                 AreaId = addedArea.Id,
                 Row = 1,
                 Number = 1,
             };
-            _seatService.CreateAsync(seat).Wait();
+            await _seatService.CreateAsync(seat);
 
             // Act
             await _service.DeleteAsync(addedArea);
+            var allNewSeats = await _seatService.GetAllAsync();
+            int allNewSeatsCount = allNewSeats.Count();
 
             // Assert
-            Assert.AreEqual(0, _seatService.GetAllAsync().Result.Last());
+            Assert.AreEqual(allSeatsCount, allNewSeatsCount);
         }
     }
 }

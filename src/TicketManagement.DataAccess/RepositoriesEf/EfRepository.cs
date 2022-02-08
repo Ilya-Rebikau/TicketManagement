@@ -39,9 +39,12 @@ namespace TicketManagement.DataAccess.RepositoriesEf
 
         public virtual async Task<T> CreateAsync(T obj)
         {
+            EntityEntry<T> temp = DbContext.Entry(obj);
+            temp.State = EntityState.Added;
             await DbContext.Set<T>().AddAsync(obj);
             await DbContext.SaveChangesAsync();
-            return obj;
+            temp.State = EntityState.Detached;
+            return temp.Entity;
         }
 
         public virtual async Task<T> UpdateAsync(T obj)
@@ -49,14 +52,18 @@ namespace TicketManagement.DataAccess.RepositoriesEf
             EntityEntry<T> temp = DbContext.Entry(obj);
             temp.State = EntityState.Modified;
             await DbContext.SaveChangesAsync();
+            temp.State = EntityState.Detached;
             return temp.Entity;
         }
 
         public virtual async Task<T> DeleteAsync(T obj)
         {
-            T oldEntity = DbContext.Set<T>().Remove(obj).Entity;
+            EntityEntry<T> temp = DbContext.Entry(obj);
+            temp.State = EntityState.Deleted;
+            DbContext.Set<T>().Remove(obj);
             await DbContext.SaveChangesAsync();
-            return oldEntity;
+            temp.State = EntityState.Detached;
+            return temp.Entity;
         }
     }
 }
