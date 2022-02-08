@@ -38,9 +38,10 @@ values
 --- Event
 DECLARE @timeStart smalldatetime
 DECLARE @timeEnd smalldatetime
+DECLARE @id INT
 SET @timeStart = CONVERT(smalldatetime, '2030-12-21 15:00:00', 20)
 SET @timeEnd = CONVERT(smalldatetime, '2030-12-21 17:00:00', 20)
-Exec sp_CreateEvent 'First event name', 'First event description', 1, @timeStart, @timeEnd, 'https://w-dog.ru/wallpapers/5/16/428743654433638/kotyata-serye-zhivotnye-trava-gazon.jpg'
+Exec sp_CreateEvent 'First event name', 'First event description', 1, @timeStart, @timeEnd, 'https://w-dog.ru/wallpapers/5/16/428743654433638/kotyata-serye-zhivotnye-trava-gazon.jpg', @id OUTPUT
 
 ---EventArea
 

@@ -21,10 +21,17 @@ namespace TicketManagement.UnitTests
         {
             var layoutRepositoryMock = new Mock<IRepository<Layout>>();
             var layoutConverterMock = new Mock<IConverter<Layout, LayoutDto>>();
-            layoutRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestLayouts());
+            layoutRepositoryMock.Setup(rep => rep.GetAllAsync());
             var layouts = await layoutRepositoryMock.Object.GetAllAsync();
             layoutConverterMock.Setup(rep => rep.ConvertModelsRangeToDtos(layouts)).ReturnsAsync(GetTestLayoutDtos());
-            _service = new LayoutService(layoutRepositoryMock.Object, layoutConverterMock.Object);
+            var eventRepositoryMock = new Mock<IRepository<Event>>();
+            var eventAreaRepositoryMock = new Mock<IRepository<EventArea>>();
+            var eventSeatRepositoryMock = new Mock<IRepository<EventSeat>>();
+            eventRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEvents());
+            eventAreaRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventAreas());
+            eventSeatRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventSeats());
+            _service = new LayoutService(layoutRepositoryMock.Object, layoutConverterMock.Object, eventRepositoryMock.Object,
+                eventAreaRepositoryMock.Object, eventSeatRepositoryMock.Object);
         }
 
         private static IEnumerable<LayoutDto> GetTestLayoutDtos()
@@ -37,14 +44,47 @@ namespace TicketManagement.UnitTests
             return layouts;
         }
 
-        private static IQueryable<Layout> GetTestLayouts()
+        private static IQueryable<Event> GetTestEvents()
         {
-            IEnumerable<Layout> layouts = new List<Layout>
+            IEnumerable<Event> events = new List<Event>
             {
-                new Layout { Id = 1, VenueId = 1, Name = "First layout", Description = "First layout description" },
-                new Layout { Id = 2, VenueId = 1, Name = "Second layout", Description = "Second layout description" },
+                new Event { Id = 1, LayoutId = 1 },
             };
-            return layouts.AsQueryable();
+            return events.AsQueryable();
+        }
+
+        private static IQueryable<EventArea> GetTestEventAreas()
+        {
+            IEnumerable<EventArea> eventAreas = new List<EventArea>
+            {
+                new EventArea { Id = 1, EventId = 1 },
+            };
+            return eventAreas.AsQueryable();
+        }
+
+        private static IQueryable<EventSeat> GetTestEventSeats()
+        {
+            IEnumerable<EventSeat> seats = new List<EventSeat>
+            {
+                new EventSeat { Id = 1, EventAreaId = 1, State = 1 },
+            };
+            return seats.AsQueryable();
+        }
+
+        [Test]
+        public void DeleteLayout_WhenThereAreTicketsInIt_ShouldReturnInvalidOperationException()
+        {
+            // Arrange
+            LayoutDto layout = new ()
+            {
+                Id = 1,
+            };
+
+            // Act
+            AsyncTestDelegate testAction = async () => await _service.DeleteAsync(layout);
+
+            // Assert
+            Assert.ThrowsAsync<InvalidOperationException>(testAction);
         }
 
         [Test]
@@ -54,7 +94,6 @@ namespace TicketManagement.UnitTests
             LayoutDto layout = new ()
             {
                 VenueId = 1,
-                Description = "Description",
                 Name = "First layout",
             };
 
@@ -73,7 +112,6 @@ namespace TicketManagement.UnitTests
             {
                 Id = 2,
                 VenueId = 1,
-                Description = "Description",
                 Name = "First layout",
             };
 

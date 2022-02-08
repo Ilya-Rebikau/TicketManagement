@@ -21,98 +21,31 @@ namespace TicketManagement.UnitTests
         public async Task SetupAsync()
         {
             var eventRepositoryMock = new Mock<IRepository<Event>>();
-            var seatRepositoryMock = new Mock<IRepository<Seat>>();
-            var areaRepositoryMock = new Mock<IRepository<Area>>();
-            var layoutRepositoryMock = new Mock<IRepository<Layout>>();
+            var eventSeatRepositoryMock = new Mock<IRepository<EventSeat>>();
+            var eventAreaRepositoryMock = new Mock<IRepository<EventArea>>();
             var eventConverterMock = new Mock<IConverter<Event, EventDto>>();
-            var seatConverterMock = new Mock<IConverter<Seat, SeatDto>>();
-            var areaConverterMock = new Mock<IConverter<Area, AreaDto>>();
-            var layoutConverterMock = new Mock<IConverter<Layout, LayoutDto>>();
-            eventRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEvents());
-            seatRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestSeats());
-            areaRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestAreas());
-            layoutRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestLayouts());
-            var seats = await seatRepositoryMock.Object.GetAllAsync();
-            seatConverterMock.Setup(rep => rep.ConvertModelsRangeToDtos(seats)).ReturnsAsync(GetTestSeatDtos());
-            var areas = await areaRepositoryMock.Object.GetAllAsync();
-            areaConverterMock.Setup(rep => rep.ConvertModelsRangeToDtos(areas)).ReturnsAsync(GetTestAreaDtos());
-            var layouts = await layoutRepositoryMock.Object.GetAllAsync();
-            layoutConverterMock.Setup(rep => rep.ConvertModelsRangeToDtos(layouts)).ReturnsAsync(GetTestLayoutDtos());
+            eventRepositoryMock.Setup(rep => rep.GetAllAsync());
+            eventSeatRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventSeats());
+            eventAreaRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventAreas());
             var events = await eventRepositoryMock.Object.GetAllAsync();
             eventConverterMock.Setup(rep => rep.ConvertModelsRangeToDtos(events)).ReturnsAsync(GetTestEventDtos());
-            _service = new EventService(eventRepositoryMock.Object, seatRepositoryMock.Object, areaRepositoryMock.Object, layoutRepositoryMock.Object,
-                eventConverterMock.Object, seatConverterMock.Object, areaConverterMock.Object, layoutConverterMock.Object);
+            _service = new EventService(eventRepositoryMock.Object, eventConverterMock.Object, eventAreaRepositoryMock.Object, eventSeatRepositoryMock.Object);
         }
 
-        private static IEnumerable<LayoutDto> GetTestLayoutDtos()
+        private static IQueryable<EventArea> GetTestEventAreas()
         {
-            IEnumerable<LayoutDto> layouts = new List<LayoutDto>
+            IEnumerable<EventArea> eventAreas = new List<EventArea>
             {
-                new LayoutDto { Id = 1, VenueId = 1, Name = "First layout", Description = "First layout description" },
-                new LayoutDto { Id = 2, VenueId = 1, Name = "Second layout", Description = "Second layout description" },
+                new EventArea { Id = 1, EventId = 1 },
             };
-            return layouts;
+            return eventAreas.AsQueryable();
         }
 
-        private static IEnumerable<AreaDto> GetTestAreaDtos()
+        private static IQueryable<EventSeat> GetTestEventSeats()
         {
-            IEnumerable<AreaDto> areas = new List<AreaDto>
+            IEnumerable<EventSeat> seats = new List<EventSeat>
             {
-                new AreaDto { Id = 1, LayoutId = 1, Description = "First area of first layout", CoordX = 1, CoordY = 1 },
-                new AreaDto { Id = 2, LayoutId = 1, Description = "Second area of first layout", CoordX = 1, CoordY = 2 },
-                new AreaDto { Id = 3, LayoutId = 2, Description = "First area of second layout", CoordX = 1, CoordY = 1 },
-            };
-            return areas;
-        }
-
-        private static IEnumerable<SeatDto> GetTestSeatDtos()
-        {
-            IEnumerable<SeatDto> seats = new List<SeatDto>
-            {
-                new SeatDto { Id = 1, AreaId = 1, Row = 1, Number = 1 },
-                new SeatDto { Id = 2, AreaId = 1, Row = 1, Number = 2 },
-                new SeatDto { Id = 3, AreaId = 1, Row = 1, Number = 3 },
-                new SeatDto { Id = 4, AreaId = 1, Row = 2, Number = 1 },
-                new SeatDto { Id = 5, AreaId = 1, Row = 2, Number = 2 },
-                new SeatDto { Id = 6, AreaId = 1, Row = 2, Number = 3 },
-                new SeatDto { Id = 7, AreaId = 2, Row = 1, Number = 1 },
-                new SeatDto { Id = 8, AreaId = 2, Row = 1, Number = 2 },
-                new SeatDto { Id = 9, AreaId = 2, Row = 1, Number = 3 },
-                new SeatDto { Id = 10, AreaId = 2, Row = 2, Number = 1 },
-                new SeatDto { Id = 11, AreaId = 2, Row = 2, Number = 2 },
-                new SeatDto { Id = 12, AreaId = 2, Row = 2, Number = 3 },
-                new SeatDto { Id = 13, AreaId = 3, Row = 1, Number = 1 },
-                new SeatDto { Id = 14, AreaId = 3, Row = 1, Number = 2 },
-                new SeatDto { Id = 15, AreaId = 3, Row = 1, Number = 3 },
-                new SeatDto { Id = 16, AreaId = 3, Row = 2, Number = 1 },
-                new SeatDto { Id = 17, AreaId = 3, Row = 2, Number = 2 },
-                new SeatDto { Id = 18, AreaId = 3, Row = 2, Number = 3 },
-            };
-            return seats;
-        }
-
-        private static IQueryable<Seat> GetTestSeats()
-        {
-            IEnumerable<Seat> seats = new List<Seat>
-            {
-                new Seat { Id = 1, AreaId = 1, Row = 1, Number = 1 },
-                new Seat { Id = 2, AreaId = 1, Row = 1, Number = 2 },
-                new Seat { Id = 3, AreaId = 1, Row = 1, Number = 3 },
-                new Seat { Id = 4, AreaId = 1, Row = 2, Number = 1 },
-                new Seat { Id = 5, AreaId = 1, Row = 2, Number = 2 },
-                new Seat { Id = 6, AreaId = 1, Row = 2, Number = 3 },
-                new Seat { Id = 7, AreaId = 2, Row = 1, Number = 1 },
-                new Seat { Id = 8, AreaId = 2, Row = 1, Number = 2 },
-                new Seat { Id = 9, AreaId = 2, Row = 1, Number = 3 },
-                new Seat { Id = 10, AreaId = 2, Row = 2, Number = 1 },
-                new Seat { Id = 11, AreaId = 2, Row = 2, Number = 2 },
-                new Seat { Id = 12, AreaId = 2, Row = 2, Number = 3 },
-                new Seat { Id = 13, AreaId = 3, Row = 1, Number = 1 },
-                new Seat { Id = 14, AreaId = 3, Row = 1, Number = 2 },
-                new Seat { Id = 15, AreaId = 3, Row = 1, Number = 3 },
-                new Seat { Id = 16, AreaId = 3, Row = 2, Number = 1 },
-                new Seat { Id = 17, AreaId = 3, Row = 2, Number = 2 },
-                new Seat { Id = 18, AreaId = 3, Row = 2, Number = 3 },
+                new EventSeat { Id = 1, EventAreaId = 1, State = 1 },
             };
             return seats.AsQueryable();
         }
@@ -125,43 +58,42 @@ namespace TicketManagement.UnitTests
                 {
                     Id = 1, Name = "First event name", Description = "First event description", LayoutId = 1,
                     TimeStart = new DateTime(2030, 12, 21, 15, 0, 0), TimeEnd = new DateTime(2030, 12, 21, 17, 0, 0),
+                    ImageUrl = "https://w-dog.ru/wallpapers/5/16/428743654433638/kotyata-serye-zhivotnye-trava-gazon.jpg",
                 },
             };
             return events;
         }
 
-        private static IQueryable<Area> GetTestAreas()
+        [Test]
+        public void CreateEvent_WhenEventAreasWithoutPrice_ShouldReturnInvalidOperationException()
         {
-            IEnumerable<Area> areas = new List<Area>
+            // Arrange
+            EventDto @event = new ()
             {
-                new Area { Id = 1, LayoutId = 1, Description = "First area of first layout", CoordX = 1, CoordY = 1 },
-                new Area { Id = 2, LayoutId = 1, Description = "Second area of first layout", CoordX = 1, CoordY = 2 },
-                new Area { Id = 3, LayoutId = 2, Description = "First area of second layout", CoordX = 1, CoordY = 1 },
+                Id = 1,
             };
-            return areas.AsQueryable();
+
+            // Act
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(@event);
+
+            // Assert
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
 
-        private static IQueryable<Event> GetTestEvents()
+        [Test]
+        public void DeleteEvent_WhenThereAreTicketsInIt_ShouldReturnInvalidOperationException()
         {
-            IEnumerable<Event> events = new List<Event>
+            // Arrange
+            EventDto @event = new ()
             {
-                new Event
-                {
-                    Id = 1, Name = "First event name", Description = "First event description", LayoutId = 1,
-                    TimeStart = new DateTime(2030, 12, 21, 15, 0, 0), TimeEnd = new DateTime(2030, 12, 21, 17, 0, 0),
-                },
+                Id = 1,
             };
-            return events.AsQueryable();
-        }
 
-        private static IQueryable<Layout> GetTestLayouts()
-        {
-            IEnumerable<Layout> layouts = new List<Layout>
-            {
-                new Layout { Id = 1, VenueId = 1, Name = "First layout", Description = "First layout description" },
-                new Layout { Id = 2, VenueId = 1, Name = "Second layout", Description = "Second layout description" },
-            };
-            return layouts.AsQueryable();
+            // Act
+            AsyncTestDelegate testAction = async () => await _service.DeleteAsync(@event);
+
+            // Assert
+            Assert.ThrowsAsync<InvalidOperationException>(testAction);
         }
 
         [Test]
@@ -170,12 +102,10 @@ namespace TicketManagement.UnitTests
             // Arrange
             EventDto eventModel = new ()
             {
-                Name = "Name",
-                Description = "Description",
+                Id = 2,
                 LayoutId = 1,
-                TimeStart = new DateTime(2030, 12, 21, 15, 10, 0),
-                TimeEnd = new DateTime(2030, 12, 21, 16, 40, 0),
-                Image = "image",
+                TimeStart = new DateTime(2025, 12, 21, 15, 10, 0),
+                TimeEnd = new DateTime(2035, 12, 21, 16, 40, 0),
             };
 
             // Act
@@ -191,12 +121,8 @@ namespace TicketManagement.UnitTests
             // Arrange
             EventDto eventModel = new ()
             {
-                Name = "Name",
-                Description = "Description",
-                LayoutId = 1,
                 TimeStart = new DateTime(2000, 1, 1),
                 TimeEnd = new DateTime(2022, 2, 2),
-                Image = "image",
             };
 
             // Act
@@ -212,12 +138,8 @@ namespace TicketManagement.UnitTests
             // Arrange
             EventDto eventModel = new ()
             {
-                Name = "Name",
-                Description = "Description",
-                LayoutId = 1,
                 TimeStart = new DateTime(2023, 1, 1),
                 TimeEnd = new DateTime(2022, 2, 2),
-                Image = "image",
             };
 
             // Act
@@ -233,13 +155,8 @@ namespace TicketManagement.UnitTests
             // Arrange
             EventDto eventModel = new ()
             {
-                Id = 1,
-                Name = "Name",
-                Description = "Description",
-                LayoutId = 1,
                 TimeStart = new DateTime(2000, 1, 1),
                 TimeEnd = new DateTime(2022, 2, 2),
-                Image = "image",
             };
 
             // Act
@@ -255,13 +172,8 @@ namespace TicketManagement.UnitTests
             // Arrange
             EventDto eventModel = new ()
             {
-                Id = 1,
-                Name = "Name",
-                Description = "Description",
-                LayoutId = 1,
                 TimeStart = new DateTime(2023, 1, 1),
                 TimeEnd = new DateTime(2022, 2, 2),
-                Image = "image",
             };
 
             // Act

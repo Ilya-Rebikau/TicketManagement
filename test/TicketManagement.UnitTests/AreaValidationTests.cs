@@ -22,7 +22,7 @@ namespace TicketManagement.UnitTests
         {
             var areaRepositoryMock = new Mock<IRepository<Area>>();
             var areaConverterMock = new Mock<IConverter<Area, AreaDto>>();
-            areaRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestAreas());
+            areaRepositoryMock.Setup(rep => rep.GetAllAsync());
             var areas = await areaRepositoryMock.Object.GetAllAsync();
             areaConverterMock.Setup(rep => rep.ConvertModelsRangeToDtos(areas)).ReturnsAsync(GetTestAreaDtos());
             _service = new AreaService(areaRepositoryMock.Object, areaConverterMock.Object);
@@ -32,22 +32,11 @@ namespace TicketManagement.UnitTests
         {
             IEnumerable<AreaDto> areas = new List<AreaDto>
             {
-                new AreaDto { Id = 1, LayoutId = 1, Description = "First area of first layout", CoordX = 1, CoordY = 1 },
-                new AreaDto { Id = 2, LayoutId = 1, Description = "Second area of first layout", CoordX = 1, CoordY = 2 },
-                new AreaDto { Id = 3, LayoutId = 2, Description = "First area of second layout", CoordX = 1, CoordY = 1 },
+                new AreaDto { Id = 1, LayoutId = 1, Description = "First area of first layout", CoordX = 1, CoordY = 1, BasePrice = 11 },
+                new AreaDto { Id = 2, LayoutId = 1, Description = "Second area of first layout", CoordX = 1, CoordY = 2, BasePrice = 12 },
+                new AreaDto { Id = 3, LayoutId = 2, Description = "First area of second layout", CoordX = 1, CoordY = 1, BasePrice = 13 },
             };
             return areas;
-        }
-
-        private static IQueryable<Area> GetTestAreas()
-        {
-            IEnumerable<Area> areas = new List<Area>
-            {
-                new Area { Id = 1, LayoutId = 1, Description = "First area of first layout", CoordX = 1, CoordY = 1 },
-                new Area { Id = 2, LayoutId = 1, Description = "Second area of first layout", CoordX = 1, CoordY = 2 },
-                new Area { Id = 3, LayoutId = 2, Description = "First area of second layout", CoordX = 1, CoordY = 1 },
-            };
-            return areas.AsQueryable();
         }
 
         [Test]
@@ -56,10 +45,24 @@ namespace TicketManagement.UnitTests
             // Arrange
             AreaDto area = new ()
             {
-                LayoutId = 1,
-                Description = "Description",
                 CoordX = -1,
                 CoordY = 0,
+            };
+
+            // Act
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(area);
+
+            // Assert
+            Assert.ThrowsAsync<ArgumentException>(testAction);
+        }
+
+        [Test]
+        public void CreateArea_WhenBasePriceIsntPositive_ShouldReturnArgumentException()
+        {
+            // Arrange
+            AreaDto area = new ()
+            {
+                BasePrice = -1,
             };
 
             // Act
@@ -75,11 +78,24 @@ namespace TicketManagement.UnitTests
             // Arrange
             AreaDto area = new ()
             {
-                Id = 1,
-                LayoutId = 1,
-                Description = "Description",
                 CoordX = -1,
                 CoordY = 0,
+            };
+
+            // Act
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(area);
+
+            // Assert
+            Assert.ThrowsAsync<ArgumentException>(testAction);
+        }
+
+        [Test]
+        public void UpdateArea_WhenBasePriceIsntPositive_ShouldReturnArgumentException()
+        {
+            // Arrange
+            AreaDto area = new ()
+            {
+                BasePrice = 0,
             };
 
             // Act
@@ -97,8 +113,6 @@ namespace TicketManagement.UnitTests
             {
                 LayoutId = 1,
                 Description = "First area of first layout",
-                CoordX = 10000,
-                CoordY = 10000,
             };
 
             // Act
@@ -115,7 +129,6 @@ namespace TicketManagement.UnitTests
             AreaDto area = new ()
             {
                 LayoutId = 1,
-                Description = "Description",
                 CoordX = 1,
                 CoordY = 1,
             };
@@ -133,11 +146,8 @@ namespace TicketManagement.UnitTests
             // Arrange
             AreaDto area = new ()
             {
-                Id = 1,
                 LayoutId = 1,
                 Description = "Second area of first layout",
-                CoordX = 10000,
-                CoordY = 10000,
             };
 
             // Act
@@ -153,9 +163,7 @@ namespace TicketManagement.UnitTests
             // Arrange
             AreaDto area = new ()
             {
-                Id = 1,
                 LayoutId = 1,
-                Description = "Description",
                 CoordX = 1,
                 CoordY = 2,
             };

@@ -132,7 +132,7 @@ namespace TicketManagement.BusinessLogic.Services
         private async Task CheckForSameLayoutInOneTime(EventDto obj)
         {
             IEnumerable<EventDto> events = await Converter.ConvertModelsRangeToDtos(await Repository.GetAllAsync());
-            IEnumerable<EventDto> eventsInLayout = events.Where(ev => ev.LayoutId == obj.LayoutId && obj.TimeStart >= ev.TimeStart && obj.TimeEnd <= ev.TimeEnd && ev.Id != obj.Id);
+            IEnumerable<EventDto> eventsInLayout = events.Where(ev => ev.LayoutId == obj.LayoutId && obj.TimeStart <= ev.TimeStart && obj.TimeEnd >= ev.TimeEnd && ev.Id != obj.Id);
             if (eventsInLayout.Any())
             {
                 throw new ArgumentException("You can't create event in one time in one layout!");

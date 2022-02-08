@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Interfaces;
@@ -18,34 +17,38 @@ namespace TicketManagement.UnitTests
         private IService<EventAreaDto> _service;
 
         [SetUp]
-        public async Task SetupAsync()
+        public void SetupAsync()
         {
             var eventAreaRepositoryMock = new Mock<IRepository<EventArea>>();
+            var eventSeatRepositoryMock = new Mock<IRepository<EventSeat>>();
             var eventAreaConverterMock = new Mock<IConverter<EventArea, EventAreaDto>>();
-            eventAreaRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventAreas());
-            var eventAreas = await eventAreaRepositoryMock.Object.GetAllAsync();
-            eventAreaConverterMock.Setup(rep => rep.ConvertModelsRangeToDtos(eventAreas)).ReturnsAsync(GetTestEventAreaDtos());
-            _service = new EventAreaService(eventAreaRepositoryMock.Object, eventAreaConverterMock.Object);
+            eventSeatRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventSeats());
+            _service = new EventAreaService(eventAreaRepositoryMock.Object, eventAreaConverterMock.Object, eventSeatRepositoryMock.Object);
         }
 
-        private static IEnumerable<EventAreaDto> GetTestEventAreaDtos()
+        private static IQueryable<EventSeat> GetTestEventSeats()
         {
-            IEnumerable<EventAreaDto> eventAreas = new List<EventAreaDto>
+            IEnumerable<EventSeat> eventSeats = new List<EventSeat>
             {
-                new EventAreaDto { Id = 1, EventId = 1, Description = "First event area description", CoordX = 1, CoordY = 1, Price = 11 },
-                new EventAreaDto { Id = 2, EventId = 1, Description = "Second event area description", CoordX = 1, CoordY = 2, Price = 12 },
+                new EventSeat { EventAreaId = 1, State = 1 },
             };
-            return eventAreas;
+            return eventSeats.AsQueryable();
         }
 
-        private static IQueryable<EventArea> GetTestEventAreas()
+        [Test]
+        public void DeleteEventArea_WhenThereAreTicketsInIt_ShouldReturnInvalidOperationException()
         {
-            IEnumerable<EventArea> eventAreas = new List<EventArea>
+            // Arrange
+            EventAreaDto eventArea = new ()
             {
-                new EventArea { Id = 1, EventId = 1, Description = "First event area description", CoordX = 1, CoordY = 1, Price = 11 },
-                new EventArea { Id = 2, EventId = 1, Description = "Second event area description", CoordX = 1, CoordY = 2, Price = 12 },
+                Id = 1,
             };
-            return eventAreas.AsQueryable();
+
+            // Act
+            AsyncTestDelegate testAction = async () => await _service.DeleteAsync(eventArea);
+
+            // Assert
+            Assert.ThrowsAsync<InvalidOperationException>(testAction);
         }
 
         [Test]
@@ -54,11 +57,8 @@ namespace TicketManagement.UnitTests
             // Arrange
             EventAreaDto eventArea = new ()
             {
-                EventId = 1,
-                Description = "Description",
                 CoordX = -1,
                 CoordY = 0,
-                Price = 1,
             };
 
             // Act
@@ -74,12 +74,8 @@ namespace TicketManagement.UnitTests
             // Arrange
             EventAreaDto eventArea = new ()
             {
-                Id = 1,
-                EventId = 1,
-                Description = "Description",
                 CoordX = -1,
                 CoordY = 0,
-                Price = 1,
             };
 
             // Act
@@ -95,10 +91,6 @@ namespace TicketManagement.UnitTests
             // Arrange
             EventAreaDto eventArea = new ()
             {
-                EventId = 1,
-                Description = "Description",
-                CoordX = 124214,
-                CoordY = 12321421,
                 Price = -1,
             };
 
@@ -115,11 +107,6 @@ namespace TicketManagement.UnitTests
             // Arrange
             EventAreaDto eventArea = new ()
             {
-                Id = 1,
-                EventId = 1,
-                Description = "Description",
-                CoordX = 124124124,
-                CoordY = 1241241243,
                 Price = 0,
             };
 

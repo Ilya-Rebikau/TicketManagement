@@ -22,7 +22,7 @@ namespace TicketManagement.UnitTests
         {
             var eventSeatRepositoryMock = new Mock<IRepository<EventSeat>>();
             var eventSeatConverterMock = new Mock<IConverter<EventSeat, EventSeatDto>>();
-            eventSeatRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventSeats());
+            eventSeatRepositoryMock.Setup(rep => rep.GetAllAsync());
             var eventSeats = await eventSeatRepositoryMock.Object.GetAllAsync();
             eventSeatConverterMock.Setup(rep => rep.ConvertModelsRangeToDtos(eventSeats)).ReturnsAsync(GetTestEventSeatDtos());
             _service = new EventSeatService(eventSeatRepositoryMock.Object, eventSeatConverterMock.Object);
@@ -32,28 +32,25 @@ namespace TicketManagement.UnitTests
         {
             IEnumerable<EventSeatDto> seats = new List<EventSeatDto>
             {
-                new EventSeatDto { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = 1 },
-                new EventSeatDto { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = 1 },
-                new EventSeatDto { Id = 3, EventAreaId = 1, Row = 2, Number = 1, State = 1 },
-                new EventSeatDto { Id = 4, EventAreaId = 2, Row = 1, Number = 1, State = 0 },
-                new EventSeatDto { Id = 5, EventAreaId = 2, Row = 1, Number = 2, State = 1 },
-                new EventSeatDto { Id = 6, EventAreaId = 2, Row = 2, Number = 1, State = 0 },
+                new EventSeatDto { Id = 1, EventAreaId = 1, Row = 1, Number = 1 },
             };
             return seats;
         }
 
-        private static IQueryable<EventSeat> GetTestEventSeats()
+        [Test]
+        public void DeleteEventSeat_WhenItIsntFree_ShouldReturnInvalidOperationException()
         {
-            IEnumerable<EventSeat> seats = new List<EventSeat>
+            // Arrange
+            EventSeatDto eventSeat = new ()
             {
-                new EventSeat { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = 1 },
-                new EventSeat { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = 1 },
-                new EventSeat { Id = 3, EventAreaId = 1, Row = 2, Number = 1, State = 1 },
-                new EventSeat { Id = 4, EventAreaId = 2, Row = 1, Number = 1, State = 0 },
-                new EventSeat { Id = 5, EventAreaId = 2, Row = 1, Number = 2, State = 1 },
-                new EventSeat { Id = 6, EventAreaId = 2, Row = 2, Number = 1, State = 0 },
+                State = PlaceStatus.Occupied,
             };
-            return seats.AsQueryable();
+
+            // Act
+            AsyncTestDelegate testAction = async () => await _service.DeleteAsync(eventSeat);
+
+            // Assert
+            Assert.ThrowsAsync<InvalidOperationException>(testAction);
         }
 
         [Test]
@@ -62,10 +59,8 @@ namespace TicketManagement.UnitTests
             // Arrange
             EventSeatDto eventSeat = new ()
             {
-                EventAreaId = 1,
                 Row = 0,
                 Number = -1,
-                State = 0,
             };
 
             // Act
@@ -81,11 +76,8 @@ namespace TicketManagement.UnitTests
             // Arrange
             EventSeatDto eventSeat = new ()
             {
-                Id = 1,
-                EventAreaId = 1,
                 Row = 0,
                 Number = -1,
-                State = 0,
             };
 
             // Act
@@ -101,10 +93,10 @@ namespace TicketManagement.UnitTests
             // Arrange
             EventSeatDto eventSeat = new ()
             {
+                Id = 2,
                 EventAreaId = 1,
                 Row = 1,
                 Number = 1,
-                State = 1,
             };
 
             // Act
@@ -120,10 +112,10 @@ namespace TicketManagement.UnitTests
             // Arrange
             EventSeatDto eventSeat = new ()
             {
+                Id = 2,
                 EventAreaId = 1,
                 Row = 1,
                 Number = 1,
-                State = 1,
             };
 
             // Act
