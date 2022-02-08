@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
 
-namespace TicketManagement.DataAccess.Repositories
+namespace TicketManagement.DataAccess.RepositoriesEf
 {
     /// <summary>
     /// Ef repository for area.

@@ -3,48 +3,56 @@ using System.Threading.Tasks;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
 
-namespace TicketManagement.DataAccess.Repositories
+namespace TicketManagement.DataAccess.RepositoriesEf
 {
     /// <summary>
-    /// Ef repository for layout.
+    /// Ef repository for venue.
     /// </summary>
-    internal class LayoutEfRepository : EfRepository<Layout>, IRepository<Layout>
+    internal class VenueEfRepository : EfRepository<Venue>, IRepository<Venue>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="LayoutEfRepository"/> class.
+        /// Initializes a new instance of the <see cref="VenueEfRepository"/> class.
         /// </summary>
         /// <param name="dbContext">TicketManagementContext object.</param>
-        public LayoutEfRepository(TicketManagementContext dbContext)
+        public VenueEfRepository(TicketManagementContext dbContext)
             : base(dbContext)
         {
         }
 
-        public async override Task<Layout> DeleteAsync(Layout obj)
+        public async override Task<Venue> DeleteAsync(Venue obj)
         {
             await DeleteAllAsync(obj);
             return await base.DeleteAsync(obj);
         }
 
         /// <summary>
-        /// Delete events, event areas, event seats, areas, seats.
+        /// Delete all models in venue.
         /// </summary>
-        /// <param name="obj">Deleting layout.</param>
+        /// <param name="obj">Deleting venue.</param>
         /// <returns>Task.</returns>
-        private async Task DeleteAllAsync(Layout obj)
+        private async Task DeleteAllAsync(Venue obj)
         {
-            await DeleteEventsAsync(obj);
-            await DeleteAreasAsync(obj);
+            var layouts = DbContext.Layouts;
+            var layoutsInVenue = layouts.Where(l => l.VenueId == obj.Id).ToList();
+            foreach (var layout in layoutsInVenue)
+            {
+                await DeleteAreasAsync(layout);
+                await DeleteEventsAsync(layout);
+                DbContext.Layouts.Remove(layout);
+            }
+
+            await DbContext.SaveChangesAsync();
         }
 
         /// <summary>
         /// Delete areas in layout.
         /// </summary>
-        /// <param name="obj">Deleting layout.</param>
+        /// <param name="layout">Deleting layout.</param>
         /// <returns>Task.</returns>
-        private async Task DeleteAreasAsync(Layout obj)
+        private async Task DeleteAreasAsync(Layout layout)
         {
             var areas = DbContext.Areas;
-            var areasInLayout = areas.Where(a => a.LayoutId == obj.Id).ToList();
+            var areasInLayout = areas.Where(a => a.LayoutId == layout.Id).ToList();
             foreach (var area in areasInLayout)
             {
                 await DeleteSeatsAsync(area);

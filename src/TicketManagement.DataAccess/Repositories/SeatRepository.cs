@@ -17,7 +17,7 @@ namespace TicketManagement.DataAccess.Repositories
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             await connection.OpenAsync();
             IList<Seat> seats = new List<Seat>();
-            string sql = "Select Id, AreaId, Row, Number from seat";
+            string sql = "Select Id, AreaId, Row, Number from seats";
             SqlCommand cmd = new SqlCommand(sql, connection);
             SqlDataReader reader = await cmd.ExecuteReaderAsync();
             if (reader.HasRows)
@@ -42,7 +42,7 @@ namespace TicketManagement.DataAccess.Repositories
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             await connection.OpenAsync();
-            string sql = "Select Id, AreaId, Row, Number from seat where Id = @id";
+            string sql = "Select Id, AreaId, Row, Number from seats where Id = @id";
             SqlCommand cmd = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", id);
             cmd.Parameters.Add(idParam);
@@ -69,7 +69,7 @@ namespace TicketManagement.DataAccess.Repositories
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             await connection.OpenAsync();
-            string sql = "Insert into seat (AreaId, Row, Number) values (@areaId, @row, @number)";
+            string sql = "Insert into seats (AreaId, Row, Number) values (@areaId, @row, @number)";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter areaIdParam = new SqlParameter("@areaId", obj.AreaId);
             SqlParameter rowParam = new SqlParameter("@row", obj.Row);
@@ -85,7 +85,7 @@ namespace TicketManagement.DataAccess.Repositories
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             await connection.OpenAsync();
-            string sql = "Update seat set AreaId = @areaId, Row = @row, Number = @number where Id = @id";
+            string sql = "Update seats set AreaId = @areaId, Row = @row, Number = @number where Id = @id";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
             SqlParameter areaIdParam = new SqlParameter("@areaId", obj.AreaId);

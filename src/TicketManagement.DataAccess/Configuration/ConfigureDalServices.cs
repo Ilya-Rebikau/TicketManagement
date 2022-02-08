@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
-using TicketManagement.DataAccess.Repositories;
+using TicketManagement.DataAccess.RepositoriesEf;
 
 namespace TicketManagement.DataAccess.Configuration
 {

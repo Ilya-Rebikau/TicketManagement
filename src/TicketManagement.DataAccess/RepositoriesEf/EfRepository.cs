@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using TicketManagement.DataAccess.Interfaces;
 
-namespace TicketManagement.DataAccess.Repositories
+namespace TicketManagement.DataAccess.RepositoriesEf
 {
     /// <summary>
     /// Entity framework repository.

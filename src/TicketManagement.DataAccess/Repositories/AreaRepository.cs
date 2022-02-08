@@ -17,7 +17,7 @@ namespace TicketManagement.DataAccess.Repositories
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             await connection.OpenAsync();
             IList<Area> areas = new List<Area>();
-            string sql = "Select Id, LayoutId, Description, CoordX, CoordY from area";
+            string sql = "Select Id, LayoutId, Description, CoordX, CoordY, BasePrice from areas";
             SqlCommand cmd = new SqlCommand(sql, connection);
             SqlDataReader reader = await cmd.ExecuteReaderAsync();
             if (reader.HasRows)
@@ -44,7 +44,7 @@ namespace TicketManagement.DataAccess.Repositories
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             await connection.OpenAsync();
-            string sql = "Select Id, LayoutId, Description, CoordX, CoordY from area where Id = @id";
+            string sql = "Select Id, LayoutId, Description, CoordX, CoordY, BasePrice from areas where Id = @id";
             SqlCommand cmd = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", id);
             cmd.Parameters.Add(idParam);
@@ -72,7 +72,7 @@ namespace TicketManagement.DataAccess.Repositories
         public async Task<Area> CreateAsync(Area obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            string sql = "Insert into area (LayoutId, Description, CoordX, CoordY) values (@layoutId, @description, @coordX, @coordY)";
+            string sql = "Insert into areas (LayoutId, Description, CoordX, CoordY, BasePrice) values (@layoutId, @description, @coordX, @coordY, @price)";
             await connection.OpenAsync();
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter layoutIdParam = new SqlParameter("@layoutId", obj.LayoutId);
@@ -93,7 +93,7 @@ namespace TicketManagement.DataAccess.Repositories
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             await connection.OpenAsync();
-            string sql = "Update area set LayoutId = @layoutId, Description = @description, CoordX = @coordX, CoordY = @coordY, BasePrice = @price where Id = @id";
+            string sql = "Update areas set LayoutId = @layoutId, Description = @description, CoordX = @coordX, CoordY = @coordY, BasePrice = @price where Id = @id";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
             SqlParameter layoutIdParam = new SqlParameter("@layoutId", obj.LayoutId);
@@ -115,7 +115,7 @@ namespace TicketManagement.DataAccess.Repositories
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             await connection.OpenAsync();
-            string sql = "Delete from area where Id = @id";
+            string sql = "Delete from areas where Id = @id";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
             command.Parameters.Add(idParam);

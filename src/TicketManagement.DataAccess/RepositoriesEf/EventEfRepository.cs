@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
 
-namespace TicketManagement.DataAccess.Repositories
+namespace TicketManagement.DataAccess.RepositoriesEf
 {
     /// <summary>
     /// EntityFramework repository for events using stored procedures.

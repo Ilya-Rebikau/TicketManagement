@@ -1,31 +1,48 @@
-﻿using System.Data.SqlClient;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.BusinessLogic.Services;
+using TicketManagement.DataAccess;
 using TicketManagement.DataAccess.Models;
-using TicketManagement.DataAccess.Repositories;
+using TicketManagement.DataAccess.RepositoriesEf;
 
 namespace TicketManagement.IntegrationTests
 {
     [TestFixture]
-    internal class AreaServiceTests
+    internal class AreaEfServiceTests
     {
         private IService<AreaDto> _service;
+        private IService<SeatDto> _seatService;
 
         [SetUp]
         public void Setup()
         {
-            var areaRepository = new AreaRepository();
+            var serviceProvider = new ServiceCollection()
+            .AddEntityFrameworkSqlServer()
+            .BuildServiceProvider();
+
+            var builder = new DbContextOptionsBuilder<TicketManagementContext>();
+
+            builder.UseSqlServer(DbConnection.GetStringConnection())
+                    .UseInternalServiceProvider(serviceProvider);
+
+            var context = new TicketManagementContext(builder.Options);
+            var areaRepository = new AreaEfRepository(context);
             var areaConverter = new BaseConverter<Area, AreaDto>();
             _service = new AreaService(areaRepository, areaConverter);
+            var seatRepository = new EfRepository<Seat>(context);
+            var seatConverter = new BaseConverter<Seat, SeatDto>();
+            _seatService = new SeatService(seatRepository, seatConverter);
         }
 
         [Test]
-        public void CreateArea_WhenLayoutIdDoesntExist_ShouldReturnSqlException()
+        public void CreateArea_WhenLayoutIdDoesntExist_ShouldReturnDbUpdateException()
         {
             // Arrange
             AreaDto area = new ()
@@ -34,17 +51,18 @@ namespace TicketManagement.IntegrationTests
                 Description = "Description",
                 CoordX = 1,
                 CoordY = 1,
+                BasePrice = 1,
             };
 
             // Act
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(area);
 
             // Assert
-            Assert.ThrowsAsync<SqlException>(testAction);
+            Assert.ThrowsAsync<DbUpdateException>(testAction);
         }
 
         [Test]
-        public void CreateArea_WhenDescriptionIsNull_ShouldReturnSqlException()
+        public void CreateArea_WhenDescriptionIsNull_ShouldReturnDbUpdateException()
         {
             // Arrange
             AreaDto area = new ()
@@ -53,13 +71,14 @@ namespace TicketManagement.IntegrationTests
                 Description = null,
                 CoordX = 100000000,
                 CoordY = 100000000,
+                BasePrice = 1,
             };
 
             // Act
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(area);
 
             // Assert
-            Assert.ThrowsAsync<SqlException>(testAction);
+            Assert.ThrowsAsync<DbUpdateException>(testAction);
         }
 
         [Test]
@@ -72,21 +91,43 @@ namespace TicketManagement.IntegrationTests
                 Description = "Description",
                 CoordX = 124325246,
                 CoordY = 23452351,
+                BasePrice = 1,
             };
 
             // Act
             AreaDto addedArea = await _service.CreateAsync(area);
+            area.Id = addedArea.Id;
 
             // Assert
             area.Should().BeEquivalentTo(addedArea);
 
-            // DeleteAsync added area
-            var areas = await _service.GetAllAsync();
-            await _service.DeleteAsync(areas.Last());
+            await _service.DeleteAsync(addedArea);
         }
 
         [Test]
-        public void UpdateArea_WhenLayoutIdDoesntExist_ShouldReturnSqlException()
+        public async Task DeleteArea__ShouldReturnDeletedArea()
+        {
+            // Arrange
+            var areas = await _service.GetAllAsync();
+            var area = areas.Single(a => a.Description == "Description");
+
+            // Act
+            AsyncTestDelegate testAction = async () => await _service.DeleteAsync(area);
+            AreaDto deletedArea = await _service.DeleteAsync(area);
+
+            // Assert
+            if (area is null)
+            {
+                Assert.ThrowsAsync<InvalidOperationException>(testAction);
+            }
+            else
+            {
+                area.Should().BeEquivalentTo(deletedArea);
+            }
+        }
+
+        [Test]
+        public void UpdateArea_WhenLayoutIdDoesntExist_ShouldReturnDbUpdateException()
         {
             // Arrange
             AreaDto area = new ()
@@ -96,17 +137,18 @@ namespace TicketManagement.IntegrationTests
                 Description = "Description",
                 CoordX = 1,
                 CoordY = 1,
+                BasePrice = 1,
             };
 
             // Act
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(area);
 
             // Assert
-            Assert.ThrowsAsync<SqlException>(testAction);
+            Assert.ThrowsAsync<DbUpdateException>(testAction);
         }
 
         [Test]
-        public void UpdateArea_WhenDescriptionIsNull_ShouldReturnSqlException()
+        public void UpdateArea_WhenDescriptionIsNull_ShouldReturnDbUpdateException()
         {
             // Arrange
             AreaDto area = new ()
@@ -116,33 +158,14 @@ namespace TicketManagement.IntegrationTests
                 Description = null,
                 CoordX = 100000000,
                 CoordY = 100000000,
+                BasePrice = 1,
             };
 
             // Act
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(area);
 
             // Assert
-            Assert.ThrowsAsync<SqlException>(testAction);
-        }
-
-        [Test]
-        public async Task UpdateArea_WhenAreaDoesntExist_ShouldReturnEmptyArea()
-        {
-            // Arrange
-            AreaDto area = new ()
-            {
-                Id = 0,
-                LayoutId = 1,
-                Description = "Description",
-                CoordX = 1123124124,
-                CoordY = 2123123123,
-            };
-
-            // Act
-            AreaDto updatedArea = await _service.UpdateAsync(area);
-
-            // Assert
-            Assert.AreEqual(0, updatedArea.Id);
+            Assert.ThrowsAsync<DbUpdateException>(testAction);
         }
 
         [Test]
@@ -151,11 +174,12 @@ namespace TicketManagement.IntegrationTests
             // Arrange
             AreaDto area = new ()
             {
-                Id = 1,
+                Id = 2,
                 LayoutId = 1,
-                Description = "New description",
+                Description = "New description!",
                 CoordX = 1,
                 CoordY = 1,
+                BasePrice = 1,
             };
 
             // Act
@@ -183,32 +207,32 @@ namespace TicketManagement.IntegrationTests
         }
 
         [Test]
-        public async Task GetAreaById_WhenAreaDoesntExist_ShouldReturnEmptyArea()
-        {
-            // Arrange
-            int id = -1;
-
-            // Act
-            AreaDto area = await _service.GetByIdAsync(id);
-
-            // Assert
-            Assert.AreEqual(0, area.Id);
-        }
-
-        [Test]
-        public void DeleteArea_WhenThereAreSeatsInIt_ShouldReturnSqlException()
+        public async Task DeleteArea_WhenThereAreSeatsInIt_ShouldDeletedSeats()
         {
             // Arrange
             AreaDto area = new ()
             {
-                Id = 1,
+                LayoutId = 1,
+                BasePrice = 11,
+                CoordX = 111111111,
+                CoordY = 111111111,
+                Description = "New description",
             };
+            _service.CreateAsync(area).Wait();
+            AreaDto addedArea = _service.GetAllAsync().Result.Last();
+            SeatDto seat = new ()
+            {
+                AreaId = addedArea.Id,
+                Row = 1,
+                Number = 1,
+            };
+            _seatService.CreateAsync(seat).Wait();
 
             // Act
-            AsyncTestDelegate testAction = async () => await _service.DeleteAsync(area);
+            await _service.DeleteAsync(addedArea);
 
             // Assert
-            Assert.ThrowsAsync<SqlException>(testAction);
+            Assert.AreEqual(0, _seatService.GetAllAsync().Result.Last());
         }
     }
 }
