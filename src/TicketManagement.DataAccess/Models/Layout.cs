@@ -1,13 +1,12 @@
-﻿namespace TicketManagement.DataAccess.Models
+﻿using TicketManagement.DataAccess.Interfaces;
+
+namespace TicketManagement.DataAccess.Models
 {
     /// <summary>
     /// Represent layout's model.
     /// </summary>
-    public class Layout
+    public class Layout : IEntity
     {
-        /// <summary>
-        /// Gets or sets id.
-        /// </summary>
         public int Id { get; set; }
 
         /// <summary>

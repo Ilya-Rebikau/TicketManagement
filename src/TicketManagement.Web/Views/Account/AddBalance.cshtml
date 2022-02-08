@@ -1,0 +1,25 @@
+﻿@model AddBalanceViewModel
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = @Localizer["Title"];
+}
+<h1>@Localizer["Title"]</h1>
+<hr />
+<form asp-action="AddBalance" asp-controller="Account">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="form-group">
+        <input type="hidden" asp-for="Id" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Balance" class="control-label"></label>
+        <input type="number" asp-for="Balance" class="form-control" />
+    </div>
+    <br />
+    <div class="form-group">
+        <input type="submit" value="@Localizer["Add"]" class="btn btn-success" />
+    </div>
+    <hr />
+    <div>
+        <a class="btn btn-primary" asp-action="Index">@Localizer["Back"]</a>
+</div>
+</form>

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
 
@@ -11,17 +12,17 @@ namespace TicketManagement.DataAccess.Repositories
     /// </summary>
     internal class AreaRepository : IRepository<Area>
     {
-        public IEnumerable<Area> GetAll()
+        public async Task<IQueryable<Area>> GetAllAsync()
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
+            await connection.OpenAsync();
             IList<Area> areas = new List<Area>();
-            string sql = "Select Id, LayoutId, Description, CoordX, CoordY from area";
+            string sql = "Select Id, LayoutId, Description, CoordX, CoordY, BasePrice from areas";
             SqlCommand cmd = new SqlCommand(sql, connection);
-            SqlDataReader reader = cmd.ExecuteReader();
+            SqlDataReader reader = await cmd.ExecuteReaderAsync();
             if (reader.HasRows)
             {
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     areas.Add(new Area
                     {
@@ -30,27 +31,28 @@ namespace TicketManagement.DataAccess.Repositories
                         Description = reader["Description"].ToString(),
                         CoordX = (int)reader["CoordX"],
                         CoordY = (int)reader["CoordY"],
+                        BasePrice = double.Parse(reader["BasePrice"].ToString()),
                     });
                 }
             }
 
-            reader.Close();
-            return areas;
+            await reader.CloseAsync();
+            return areas.AsQueryable();
         }
 
-        public Area GetById(int id)
+        public async Task<Area> GetByIdAsync(int id)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
-            string sql = "Select Id, LayoutId, Description, CoordX, CoordY from area where Id = @id";
+            await connection.OpenAsync();
+            string sql = "Select Id, LayoutId, Description, CoordX, CoordY, BasePrice from areas where Id = @id";
             SqlCommand cmd = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", id);
             cmd.Parameters.Add(idParam);
-            SqlDataReader reader = cmd.ExecuteReader();
+            SqlDataReader reader = await cmd.ExecuteReaderAsync();
             Area area = new Area();
             if (reader.HasRows)
             {
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     area = new Area
                     {
@@ -59,6 +61,7 @@ namespace TicketManagement.DataAccess.Repositories
                         Description = reader["Description"].ToString(),
                         CoordX = (int)reader["CoordX"],
                         CoordY = (int)reader["CoordY"],
+                        BasePrice = double.Parse(reader["BasePrice"].ToString()),
                     };
                 }
             }
@@ -66,53 +69,57 @@ namespace TicketManagement.DataAccess.Repositories
             return area;
         }
 
-        public Area Create(Area obj)
+        public async Task<Area> CreateAsync(Area obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            string sql = "Insert into area (LayoutId, Description, CoordX, CoordY) values (@layoutId, @description, @coordX, @coordY)";
-            connection.Open();
+            string sql = "Insert into areas (LayoutId, Description, CoordX, CoordY, BasePrice) values (@layoutId, @description, @coordX, @coordY, @price)";
+            await connection.OpenAsync();
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter layoutIdParam = new SqlParameter("@layoutId", obj.LayoutId);
             SqlParameter descriptionParam = new SqlParameter("@description", obj.Description);
             SqlParameter coordXParam = new SqlParameter("@coordX", obj.CoordX);
             SqlParameter coordYParam = new SqlParameter("@coordY", obj.CoordY);
+            SqlParameter priceParam = new SqlParameter("@price", obj.BasePrice);
             command.Parameters.Add(layoutIdParam);
             command.Parameters.Add(descriptionParam);
             command.Parameters.Add(coordXParam);
             command.Parameters.Add(coordYParam);
-            command.ExecuteNonQuery();
+            command.Parameters.Add(priceParam);
+            await command.ExecuteNonQueryAsync();
             return obj;
         }
 
-        public Area Update(Area obj)
+        public async Task<Area> UpdateAsync(Area obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
-            string sql = "Update area set LayoutId = @layoutId, Description = @description, CoordX = @coordX, CoordY = @coordY where Id = @id";
+            await connection.OpenAsync();
+            string sql = "Update areas set LayoutId = @layoutId, Description = @description, CoordX = @coordX, CoordY = @coordY, BasePrice = @price where Id = @id";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
             SqlParameter layoutIdParam = new SqlParameter("@layoutId", obj.LayoutId);
             SqlParameter descriptionParam = new SqlParameter("@description", obj.Description);
             SqlParameter coordXParam = new SqlParameter("@coordX", obj.CoordX);
             SqlParameter coordYParam = new SqlParameter("@coordY", obj.CoordY);
+            SqlParameter priceParam = new SqlParameter("@price", obj.BasePrice);
             command.Parameters.Add(idParam);
             command.Parameters.Add(layoutIdParam);
             command.Parameters.Add(descriptionParam);
             command.Parameters.Add(coordXParam);
             command.Parameters.Add(coordYParam);
-            command.ExecuteNonQuery();
+            command.Parameters.Add(priceParam);
+            await command.ExecuteNonQueryAsync();
             return obj;
         }
 
-        public Area Delete(Area obj)
+        public async Task<Area> DeleteAsync(Area obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
-            string sql = "Delete from area where Id = @id";
+            await connection.OpenAsync();
+            string sql = "Delete from areas where Id = @id";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
             command.Parameters.Add(idParam);
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
             return obj;
         }
     }

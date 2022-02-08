@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.BusinessLogic.Services;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
@@ -12,105 +15,114 @@ namespace TicketManagement.UnitTests
     [TestFixture]
     internal class EventSeatValidationTests
     {
-        private IService<EventSeat> _service;
+        private IService<EventSeatDto> _service;
 
         [SetUp]
-        public void Setup()
+        public async Task SetupAsync()
         {
             var eventSeatRepositoryMock = new Mock<IRepository<EventSeat>>();
-            eventSeatRepositoryMock.Setup(rep => rep.GetAll()).Returns(GetTestEventSeats());
-            _service = new EventSeatService(eventSeatRepositoryMock.Object);
+            var eventSeatConverterMock = new Mock<IConverter<EventSeat, EventSeatDto>>();
+            eventSeatRepositoryMock.Setup(rep => rep.GetAllAsync());
+            var eventSeats = await eventSeatRepositoryMock.Object.GetAllAsync();
+            eventSeatConverterMock.Setup(rep => rep.ConvertModelsRangeToDtos(eventSeats)).ReturnsAsync(GetTestEventSeatDtos());
+            _service = new EventSeatService(eventSeatRepositoryMock.Object, eventSeatConverterMock.Object);
         }
 
-        private IEnumerable<EventSeat> GetTestEventSeats()
+        private static IEnumerable<EventSeatDto> GetTestEventSeatDtos()
         {
-            IEnumerable<EventSeat> seats = new List<EventSeat>
+            IEnumerable<EventSeatDto> seats = new List<EventSeatDto>
             {
-                new EventSeat { Id = 1, EventAreaId = 1, Row = 1, Number = 1, State = 1 },
-                new EventSeat { Id = 2, EventAreaId = 1, Row = 1, Number = 2, State = 1 },
-                new EventSeat { Id = 3, EventAreaId = 1, Row = 2, Number = 1, State = 1 },
-                new EventSeat { Id = 4, EventAreaId = 2, Row = 1, Number = 1, State = 0 },
-                new EventSeat { Id = 5, EventAreaId = 2, Row = 1, Number = 2, State = 1 },
-                new EventSeat { Id = 6, EventAreaId = 2, Row = 2, Number = 1, State = 0 },
+                new EventSeatDto { Id = 1, EventAreaId = 1, Row = 1, Number = 1 },
             };
             return seats;
+        }
+
+        [Test]
+        public void DeleteEventSeat_WhenItIsntFree_ShouldReturnInvalidOperationException()
+        {
+            // Arrange
+            EventSeatDto eventSeat = new ()
+            {
+                State = PlaceStatus.Occupied,
+            };
+
+            // Act
+            AsyncTestDelegate testAction = async () => await _service.DeleteAsync(eventSeat);
+
+            // Assert
+            Assert.ThrowsAsync<InvalidOperationException>(testAction);
         }
 
         [Test]
         public void CreateEventSeat_WhenRowAndNumberArentPositive_ShouldReturnArgumentException()
         {
             // Arrange
-            EventSeat eventSeat = new ()
+            EventSeatDto eventSeat = new ()
             {
-                EventAreaId = 1,
                 Row = 0,
                 Number = -1,
-                State = 0,
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(eventSeat);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventSeat);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
 
         [Test]
         public void UpdateEventSeat_WhenRowAndNumberArentPositive_ShouldReturnArgumentException()
         {
             // Arrange
-            EventSeat eventSeat = new ()
+            EventSeatDto eventSeat = new ()
             {
-                Id = 1,
-                EventAreaId = 1,
                 Row = 0,
                 Number = -1,
-                State = 0,
             };
 
             // Act
-            TestDelegate testAction = () => _service.Update(eventSeat);
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventSeat);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
 
         [Test]
         public void CreateEventSeat_WhenRowAndNumberArentUnique_ShouldReturnArgumentException()
         {
             // Arrange
-            EventSeat eventSeat = new ()
+            EventSeatDto eventSeat = new ()
             {
+                Id = 2,
                 EventAreaId = 1,
                 Row = 1,
                 Number = 1,
-                State = 1,
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(eventSeat);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventSeat);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
 
         [Test]
         public void UpdateEventSeat_WhenRowAndNumberArentUnique_ShouldReturnArgumentException()
         {
             // Arrange
-            EventSeat eventSeat = new ()
+            EventSeatDto eventSeat = new ()
             {
+                Id = 2,
                 EventAreaId = 1,
                 Row = 1,
                 Number = 1,
-                State = 1,
             };
 
             // Act
-            TestDelegate testAction = () => _service.Update(eventSeat);
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventSeat);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
     }
 }

@@ -1,3 +1,3 @@
-﻿ALTER TABLE dbo.[Event]
+﻿ALTER TABLE dbo.[Events]
 ADD CONSTRAINT FK_Layout_Event FOREIGN KEY (LayoutId)     
-    REFERENCES dbo.Layout (Id)
+    REFERENCES dbo.Layouts (Id)

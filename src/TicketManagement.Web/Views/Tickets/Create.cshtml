@@ -1,0 +1,37 @@
+﻿@model TicketViewModel
+@inject IViewLocalizer loc
+@{
+    ViewData["Title"] = @loc["Title"];
+}
+
+<h1>@loc["Title"]</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="EventSeatId" class="control-label"></label>
+                <input asp-for="EventSeatId" class="form-control" />
+                <span asp-validation-for="EventSeatId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserId" class="control-label"></label>
+                <input asp-for="UserId" class="form-control" />
+                <span asp-validation-for="UserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input class="btn btn-success" type="submit" value="@loc["Create"]" />
+            </div>
+        </form>
+    </div>
+</div>
+<hr />
+<div>
+    <a class="btn btn-primary" asp-action="Index">@loc["Back"]</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

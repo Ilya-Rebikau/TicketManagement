@@ -1,20 +1,20 @@
 ﻿--- Venue
-insert into dbo.Venue
+insert into dbo.Venues
 values ('First venue description', 'First venue address', '123 45 678 90 12', 'First venue name')
 
 --- Layout
-insert into dbo.Layout
+insert into dbo.Layouts
 values (1, 'First layout description', 'First layout'),
 (1, 'Second layout description', 'Second layout')
 
 --- Area
-insert into dbo.Area
-values (1, 'First area of first layout', 1, 1),
-(1, 'Second area of first layout', 1, 2),
-(2, 'First area of second layout', 1, 1)
+insert into dbo.Areas
+values (1, 'First area of first layout', 1, 1, 11),
+(1, 'Second area of first layout', 1, 2, 12),
+(2, 'First area of second layout', 1, 1, 13)
 
 --- Seat
-insert into dbo.Seat
+insert into dbo.Seats
 values 
 (1, 1, 1),
 (1, 1, 2),
@@ -38,19 +38,20 @@ values
 --- Event
 DECLARE @timeStart smalldatetime
 DECLARE @timeEnd smalldatetime
+DECLARE @id INT
 SET @timeStart = CONVERT(smalldatetime, '2030-12-21 15:00:00', 20)
 SET @timeEnd = CONVERT(smalldatetime, '2030-12-21 17:00:00', 20)
-Exec sp_CreateEvent 'First event name', 'First event description', 1, @timeStart, @timeEnd
+Exec sp_CreateEvent 'First event name', 'First event description', 1, @timeStart, @timeEnd, 'https://w-dog.ru/wallpapers/5/16/428743654433638/kotyata-serye-zhivotnye-trava-gazon.jpg', @id OUTPUT
 
 ---EventArea
 
-insert into dbo.EventArea
+insert into dbo.EventAreas
 values 
 (1, 'First event area description', 1, 1, 11),
 (1, 'Second event area description', 1, 2, 12)
 
 ---EventSeat
-insert into dbo.EventSeat
+insert into dbo.EventSeats
 values
 (1, 1, 1, 0),
 (1, 1, 2, 1),

@@ -1,0 +1,79 @@
+﻿@model AccountViewModel
+@inject IViewLocalizer Localizer
+@{
+    ViewData["Title"] = @Localizer["Title"];
+}
+
+<h1>@Localizer["Title"]</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Localizer["Email"]
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.User.Email)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.User.FirstName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.User.FirstName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.User.Surname)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.User.Surname)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.User.Balance)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.User.Balance)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.User.TimeZone)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.User.TimeZone)
+        </dd>
+    </dl>
+</div>
+@if (Model.Tickets.Count > 0)
+{
+    <table class="table">
+    <tr>
+        <th>@Localizer["Event"]</th>
+        <th>@Localizer["TimeStart"]</th>
+        <th>@Localizer["TimeEnd"]</th>
+        <th>@Localizer["Price"]</th>
+    </tr>
+@foreach (var item in Model.Tickets) 
+{
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Event.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Event.TimeStart)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Event.TimeEnd)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Price)
+        </td>
+    </tr>
+}
+</table>
+}
+@if (User.IsInRole("admin") || User.IsInRole("user") || User.IsInRole("event manager") || User.IsInRole("venue manager"))
+{
+    <hr />
+    <div>
+        <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.User.Id">@Localizer["Edit"]</a>
+        <a class="btn btn-primary" asp-action="AddBalance" asp-route-id="@Model.User.Id">@Localizer["AddBalance"]</a>
+    </div>
+}

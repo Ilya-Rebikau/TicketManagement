@@ -1,0 +1,26 @@
+﻿@model CreateUserViewModel
+@inject IViewLocalizer loc
+@{
+    ViewData["Title"] = @loc["Title"];
+}
+<h1>@loc["Title"]</h1>
+<hr />
+<form asp-action="Create" asp-controller="Users">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="Email" class="control-label"></label>
+        <input type="text" asp-for="Email" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Password" class="control-label"></label>
+        <input type="password" asp-for="Password" class="form-control" />
+    </div>
+    <br />
+    <div class="form-group">
+        <input type="submit" value="@loc["Create"]" class="btn btn-success" />
+    </div>
+</form>
+<hr />
+<div>
+    <a class="btn btn-primary" asp-action="Index">@loc["Back"]</a>
+</div>

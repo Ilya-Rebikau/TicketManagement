@@ -1,13 +1,12 @@
-﻿namespace TicketManagement.DataAccess.Models
+﻿using TicketManagement.DataAccess.Interfaces;
+
+namespace TicketManagement.DataAccess.Models
 {
     /// <summary>
     /// Represent venue's model.
     /// </summary>
-    public class Venue
+    public class Venue : IEntity
     {
-        /// <summary>
-        /// Gets or sets id.
-        /// </summary>
         public int Id { get; set; }
 
         /// <summary>
