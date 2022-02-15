@@ -16,8 +16,8 @@ namespace TicketManagement.DataAccess.RepositoriesEf
         /// <summary>
         /// Initializes a new instance of the <see cref="EfRepository{T}"/> class.
         /// </summary>
-        /// <param name="dbContext">Object of TicketManagementContext.</param>
-        public EfRepository(TicketManagementContext dbContext)
+        /// <param name="dbContext">Object of DbContext.</param>
+        public EfRepository(DbContext dbContext)
         {
             DbContext = dbContext;
         }
@@ -25,7 +25,7 @@ namespace TicketManagement.DataAccess.RepositoriesEf
         /// <summary>
         /// Gets or privatly sets object of DbContext.
         /// </summary>
-        protected TicketManagementContext DbContext { get; private set; }
+        protected DbContext DbContext { get; private set; }
 
         public virtual async Task<T> GetByIdAsync(int id)
         {

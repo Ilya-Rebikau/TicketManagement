@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
 
@@ -13,8 +14,8 @@ namespace TicketManagement.DataAccess.RepositoriesEf
         /// <summary>
         /// Initializes a new instance of the <see cref="EventAreaEfRepository"/> class.
         /// </summary>
-        /// <param name="dbContext">TicketManagementContext object.</param>
-        public EventAreaEfRepository(TicketManagementContext dbContext)
+        /// <param name="dbContext">DbContext object.</param>
+        public EventAreaEfRepository(DbContext dbContext)
             : base(dbContext)
         {
         }
@@ -32,11 +33,11 @@ namespace TicketManagement.DataAccess.RepositoriesEf
         /// <returns>Task.</returns>
         private async Task DeleteEventSeatsAsync(EventArea obj)
         {
-            var eventSeats = DbContext.EventSeats;
+            var eventSeats = DbContext.Set<EventSeat>();
             var eventSeatsInEventArea = eventSeats.Where(s => s.EventAreaId == obj.Id).ToList();
             foreach (var eventSeat in eventSeatsInEventArea)
             {
-                DbContext.EventSeats.Remove(eventSeat);
+                DbContext.Set<EventSeat>().Remove(eventSeat);
             }
 
             await DbContext.SaveChangesAsync();

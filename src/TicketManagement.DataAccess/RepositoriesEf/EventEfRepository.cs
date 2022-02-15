@@ -15,8 +15,8 @@ namespace TicketManagement.DataAccess.RepositoriesEf
         /// <summary>
         /// Initializes a new instance of the <see cref="EventEfRepository"/> class.
         /// </summary>
-        /// <param name="dbContext">TicketManagementContext object.</param>
-        public EventEfRepository(TicketManagementContext dbContext)
+        /// <param name="dbContext">DbContext object.</param>
+        public EventEfRepository(DbContext dbContext)
             : base(dbContext)
         {
         }
@@ -79,19 +79,19 @@ namespace TicketManagement.DataAccess.RepositoriesEf
         /// <returns>Task.</returns>
         private async Task DeleteEventAreasAndEventSeatsAsync(Event obj)
         {
-            var eventAreas = DbContext.EventAreas;
+            var eventAreas = DbContext.Set<EventArea>();
             var eventAreasInEvent = eventAreas.Where(e => e.EventId == obj.Id).ToList();
             foreach (var eventArea in eventAreasInEvent)
             {
-                var eventSeats = DbContext.EventSeats;
+                var eventSeats = DbContext.Set<EventSeat>();
                 var eventSeatsInEventArea = eventSeats.Where(s => s.EventAreaId == eventArea.Id).ToList();
                 foreach (var eventSeat in eventSeatsInEventArea)
                 {
-                    DbContext.EventSeats.Remove(eventSeat);
+                    DbContext.Set<EventSeat>().Remove(eventSeat);
                 }
 
                 await DbContext.SaveChangesAsync();
-                DbContext.EventAreas.Remove(eventArea);
+                DbContext.Set<EventArea>().Remove(eventArea);
             }
 
             await DbContext.SaveChangesAsync();
@@ -104,8 +104,8 @@ namespace TicketManagement.DataAccess.RepositoriesEf
         /// <returns>Task.</returns>
         private async Task CopyAreasAndSeatsIntoEvent(Event obj)
         {
-            var areas = DbContext.Areas.ToList();
-            var seats = DbContext.Seats;
+            var areas = DbContext.Set<Area>().ToList();
+            var seats = DbContext.Set<Seat>();
             var areasInLayout = areas.Where(a => a.LayoutId == obj.LayoutId).ToList();
             foreach (var area in areasInLayout)
             {

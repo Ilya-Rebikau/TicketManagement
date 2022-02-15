@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
 
@@ -13,8 +14,8 @@ namespace TicketManagement.DataAccess.RepositoriesEf
         /// <summary>
         /// Initializes a new instance of the <see cref="VenueEfRepository"/> class.
         /// </summary>
-        /// <param name="dbContext">TicketManagementContext object.</param>
-        public VenueEfRepository(TicketManagementContext dbContext)
+        /// <param name="dbContext">DbContext object.</param>
+        public VenueEfRepository(DbContext dbContext)
             : base(dbContext)
         {
         }
@@ -32,13 +33,13 @@ namespace TicketManagement.DataAccess.RepositoriesEf
         /// <returns>Task.</returns>
         private async Task DeleteAllAsync(Venue obj)
         {
-            var layouts = DbContext.Layouts;
+            var layouts = DbContext.Set<Layout>();
             var layoutsInVenue = layouts.Where(l => l.VenueId == obj.Id).ToList();
             foreach (var layout in layoutsInVenue)
             {
                 await DeleteAreasAsync(layout);
                 await DeleteEventsAsync(layout);
-                DbContext.Layouts.Remove(layout);
+                DbContext.Set<Layout>().Remove(layout);
             }
 
             await DbContext.SaveChangesAsync();
@@ -51,12 +52,12 @@ namespace TicketManagement.DataAccess.RepositoriesEf
         /// <returns>Task.</returns>
         private async Task DeleteAreasAsync(Layout layout)
         {
-            var areas = DbContext.Areas;
+            var areas = DbContext.Set<Area>();
             var areasInLayout = areas.Where(a => a.LayoutId == layout.Id).ToList();
             foreach (var area in areasInLayout)
             {
                 await DeleteSeatsAsync(area);
-                DbContext.Areas.Remove(area);
+                DbContext.Set<Area>().Remove(area);
             }
 
             await DbContext.SaveChangesAsync();
@@ -69,11 +70,11 @@ namespace TicketManagement.DataAccess.RepositoriesEf
         /// <returns>Task.</returns>
         private async Task DeleteSeatsAsync(Area area)
         {
-            var seats = DbContext.Seats;
+            var seats = DbContext.Set<Seat>();
             var seatsInArea = seats.Where(s => s.AreaId == area.Id).ToList();
             foreach (var seat in seatsInArea)
             {
-                DbContext.Seats.Remove(seat);
+                DbContext.Set<Seat>().Remove(seat);
             }
 
             await DbContext.SaveChangesAsync();
@@ -86,7 +87,7 @@ namespace TicketManagement.DataAccess.RepositoriesEf
         /// <returns>Task.</returns>
         private async Task DeleteEventsAsync(Layout layout)
         {
-            var events = DbContext.Events;
+            var events = DbContext.Set<Event>();
             var eventsInLayout = events.Where(e => e.LayoutId == layout.Id).ToList();
             foreach (var @event in eventsInLayout)
             {
@@ -103,12 +104,12 @@ namespace TicketManagement.DataAccess.RepositoriesEf
         /// <returns>Task.</returns>
         private async Task DeleteEventAreasAsync(Event @event)
         {
-            var eventAreas = DbContext.EventAreas;
+            var eventAreas = DbContext.Set<EventArea>();
             var eventAreasInEvent = eventAreas.Where(e => e.EventId == @event.Id).ToList();
             foreach (var eventArea in eventAreasInEvent)
             {
                 await DeleteEventSeatsAsync(eventArea);
-                DbContext.EventAreas.Remove(eventArea);
+                DbContext.Set<EventArea>().Remove(eventArea);
             }
 
             await DbContext.SaveChangesAsync();
@@ -121,11 +122,11 @@ namespace TicketManagement.DataAccess.RepositoriesEf
         /// <returns>Task.</returns>
         private async Task DeleteEventSeatsAsync(EventArea eventArea)
         {
-            var eventSeats = DbContext.EventSeats;
+            var eventSeats = DbContext.Set<EventSeat>();
             var eventSeatsInEventArea = eventSeats.Where(s => s.EventAreaId == eventArea.Id).ToList();
             foreach (var eventSeat in eventSeatsInEventArea)
             {
-                DbContext.EventSeats.Remove(eventSeat);
+                DbContext.Set<EventSeat>().Remove(eventSeat);
             }
 
             await DbContext.SaveChangesAsync();
