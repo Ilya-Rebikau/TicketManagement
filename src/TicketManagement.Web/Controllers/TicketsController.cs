@@ -89,14 +89,14 @@ namespace TicketManagement.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(TicketViewModel ticketVm)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                TicketDto ticket = ticketVm;
-                await _service.CreateAsync(ticket);
-                return RedirectToAction(nameof(Index));
+                return View(ticketVm);
             }
 
-            return View(ticketVm);
+            TicketDto ticket = ticketVm;
+            await _service.CreateAsync(ticket);
+            return RedirectToAction(nameof(Index));
         }
 
         /// <summary>
@@ -137,29 +137,29 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                TicketDto ticket = ticketVm;
-                try
-                {
-                    await _service.UpdateAsync(ticket);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await TicketExists(ticket.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-
-                return RedirectToAction(nameof(Index));
+                return View(ticketVm);
             }
 
-            return View(ticketVm);
+            TicketDto ticket = ticketVm;
+            try
+            {
+                await _service.UpdateAsync(ticket);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await TicketExists(ticket.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         /// <summary>

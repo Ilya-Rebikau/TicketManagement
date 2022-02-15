@@ -89,14 +89,14 @@ namespace TicketManagement.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(VenueViewModel venueVm)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                VenueDto venue = venueVm;
-                await _service.CreateAsync(venue);
-                return RedirectToAction(nameof(Index));
+                return View(venueVm);
             }
 
-            return View(venueVm);
+            VenueDto venue = venueVm;
+            await _service.CreateAsync(venue);
+            return RedirectToAction(nameof(Index));
         }
 
         /// <summary>
@@ -137,29 +137,29 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                VenueDto venue = venueVm;
-                try
-                {
-                    await _service.UpdateAsync(venue);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await VenueExists(venue.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-
-                return RedirectToAction(nameof(Index));
+                return View(venueVm);
             }
 
-            return View(venueVm);
+            VenueDto venue = venueVm;
+            try
+            {
+                await _service.UpdateAsync(venue);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await VenueExists(venue.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         /// <summary>

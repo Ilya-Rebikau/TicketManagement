@@ -94,21 +94,24 @@ namespace TicketManagement.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                User user = new () { Email = model.Email, UserName = model.Email };
-                var result = await _userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
+                return View(model);
+            }
+
+            User user = new () { Email = model.Email, UserName = model.Email };
+            var result = await _userManager.CreateAsync(user, model.Password);
+            await _userManager.AddToRoleAsync(user, "user");
+            if (result.Succeeded)
+            {
+                await _signInManager.SignInAsync(user, false);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                foreach (var error in result.Errors)
                 {
-                    await _signInManager.SignInAsync(user, false);
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
+                    ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
 
@@ -135,24 +138,26 @@ namespace TicketManagement.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
-                if (result.Succeeded)
+                return View(model);
+            }
+
+            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+            if (result.Succeeded)
+            {
+                if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                 {
-                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                    {
-                        return Redirect(model.ReturnUrl);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index", "Events");
-                    }
+                    return Redirect(model.ReturnUrl);
                 }
                 else
                 {
-                    ModelState.AddModelError("", $"{_localizer["WrongLoginPassword"]}");
+                    return RedirectToAction("Index", "Events");
                 }
+            }
+            else
+            {
+                ModelState.AddModelError("", $"{_localizer["WrongLoginPassword"]}");
             }
 
             return View(model);
@@ -206,27 +211,29 @@ namespace TicketManagement.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(EditAccountViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                User user = await _userManager.FindByIdAsync(model.Id);
-                if (user != null)
+                return View(model);
+            }
+
+            User user = await _userManager.FindByIdAsync(model.Id);
+            if (user != null)
+            {
+                user.Email = model.Email;
+                user.UserName = model.Email;
+                user.FirstName = model.FirstName;
+                user.Surname = model.Surname;
+                user.TimeZone = model.TimeZone;
+
+                var result = await _userManager.UpdateAsync(user);
+                if (result.Succeeded)
                 {
-                    user.Email = model.Email;
-                    user.UserName = model.Email;
-                    user.FirstName = model.FirstName;
-                    user.Surname = model.Surname;
-                    user.TimeZone = model.TimeZone;
+                    return RedirectToAction("Index");
+                }
 
-                    var result = await _userManager.UpdateAsync(user);
-                    if (result.Succeeded)
-                    {
-                        return RedirectToAction("Index");
-                    }
-
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
 
@@ -261,23 +268,25 @@ namespace TicketManagement.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> AddBalance(AddBalanceViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                User user = await _userManager.FindByIdAsync(model.Id);
-                if (user != null)
+                return View(model);
+            }
+
+            User user = await _userManager.FindByIdAsync(model.Id);
+            if (user != null)
+            {
+                user.Balance += model.Balance;
+
+                var result = await _userManager.UpdateAsync(user);
+                if (result.Succeeded)
                 {
-                    user.Balance += model.Balance;
+                    return RedirectToAction("Index");
+                }
 
-                    var result = await _userManager.UpdateAsync(user);
-                    if (result.Succeeded)
-                    {
-                        return RedirectToAction("Index");
-                    }
-
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
 

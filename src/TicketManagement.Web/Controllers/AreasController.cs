@@ -89,14 +89,14 @@ namespace TicketManagement.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(AreaViewModel areaVm)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                AreaDto area = areaVm;
-                await _service.CreateAsync(area);
-                return RedirectToAction(nameof(Index));
+                return View(areaVm);
             }
 
-            return View(areaVm);
+            AreaDto area = areaVm;
+            await _service.CreateAsync(area);
+            return RedirectToAction(nameof(Index));
         }
 
         /// <summary>
@@ -137,29 +137,29 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                AreaDto area = areaVm;
-                try
-                {
-                    await _service.UpdateAsync(area);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await AreaExists(area.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-
-                return RedirectToAction(nameof(Index));
+                return View(areaVm);
             }
 
-            return View(areaVm);
+            AreaDto area = areaVm;
+            try
+            {
+                await _service.UpdateAsync(area);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await AreaExists(area.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         /// <summary>

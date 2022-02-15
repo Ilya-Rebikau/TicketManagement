@@ -89,14 +89,14 @@ namespace TicketManagement.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SeatViewModel seatVm)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                SeatDto seat = seatVm;
-                await _service.CreateAsync(seat);
-                return RedirectToAction(nameof(Index));
+                return View(seatVm);
             }
 
-            return View(seatVm);
+            SeatDto seat = seatVm;
+            await _service.CreateAsync(seat);
+            return RedirectToAction(nameof(Index));
         }
 
         /// <summary>
@@ -137,29 +137,29 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                SeatDto seat = seatVm;
-                try
-                {
-                    await _service.UpdateAsync(seat);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await SeatExists(seat.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-
-                return RedirectToAction(nameof(Index));
+                return View(seatVm);
             }
 
-            return View(seatVm);
+            SeatDto seat = seatVm;
+            try
+            {
+                await _service.UpdateAsync(seat);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await SeatExists(seat.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         /// <summary>

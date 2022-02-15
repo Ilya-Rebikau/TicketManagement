@@ -89,14 +89,14 @@ namespace TicketManagement.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(EventAreaViewModel eventAreaVm)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                EventAreaDto eventArea = eventAreaVm;
-                await _service.CreateAsync(eventArea);
-                return RedirectToAction(nameof(Index));
+                return View(eventAreaVm);
             }
 
-            return View(eventAreaVm);
+            EventAreaDto eventArea = eventAreaVm;
+            await _service.CreateAsync(eventArea);
+            return RedirectToAction(nameof(Index));
         }
 
         /// <summary>
@@ -137,29 +137,29 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                EventAreaDto eventArea = eventAreaVm;
-                try
-                {
-                    await _service.UpdateAsync(eventArea);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await EventAreaExists(eventArea.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-
-                return RedirectToAction(nameof(Index));
+                return View(eventAreaVm);
             }
 
-            return View(eventAreaVm);
+            EventAreaDto eventArea = eventAreaVm;
+            try
+            {
+                await _service.UpdateAsync(eventArea);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await EventAreaExists(eventArea.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         /// <summary>
