@@ -21,6 +21,7 @@ namespace TicketManagement.DataAccess.Configuration
         {
             services.AddDbContext<TicketManagementContext>(options =>
                 options.UseSqlServer(connection));
+            services.AddScoped(typeof(DbContext), typeof(TicketManagementContext));
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
             services.AddScoped(typeof(IRepository<Event>), typeof(EventEfRepository));
             services.AddScoped(typeof(IRepository<Area>), typeof(AreaEfRepository));
