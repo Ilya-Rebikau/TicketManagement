@@ -71,8 +71,8 @@ namespace TicketManagement.BusinessLogic.Services
         /// <exception cref="ArgumentException">Generates exception in case there are layouts in venue with such name.</exception>
         private async Task CheckForUniqueNameInVenue(LayoutDto obj)
         {
-            IEnumerable<LayoutDto> layouts = await Converter.ConvertModelsRangeToDtos(await Repository.GetAllAsync());
-            IEnumerable<LayoutDto> layoutsInVenue = layouts.Where(layout => layout.Name == obj.Name && layout.VenueId == obj.VenueId && layout.Id != obj.Id);
+            var layouts = await Converter.ConvertModelsRangeToDtos(await Repository.GetAllAsync());
+            var layoutsInVenue = layouts.Where(layout => layout.Name == obj.Name && layout.VenueId == obj.VenueId && layout.Id != obj.Id);
             if (layoutsInVenue.Any())
             {
                 throw new ArgumentException("One of layouts in this venue already has such name!");
@@ -87,7 +87,7 @@ namespace TicketManagement.BusinessLogic.Services
         /// <exception cref="InvalidOperationException">Generates exception in case there are tickets in this layout.</exception>
         private async Task CheckForTickets(LayoutDto obj)
         {
-            IEnumerable<EventSeat> eventSeats = new List<EventSeat>();
+            var eventSeats = new List<EventSeat>();
             var events = await _eventRepository.GetAllAsync();
             var eventsInLayout = events.Where(e => e.LayoutId == obj.Id).ToList();
             foreach (var @event in eventsInLayout)

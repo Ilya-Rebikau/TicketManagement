@@ -18,10 +18,10 @@ namespace TicketManagement.Web.Infrastructure
         /// <returns>Task.</returns>
         public static async Task Initialize(HttpContext context)
         {
-            UserManager<User> userManager = context.RequestServices.GetRequiredService<UserManager<User>>();
-            RoleManager<IdentityRole> roleManager = context.RequestServices.GetRequiredService<RoleManager<IdentityRole>>();
-            string adminName = "admin@mail.ru";
-            string password = "Qwer!1";
+            var userManager = context.RequestServices.GetRequiredService<UserManager<User>>();
+            var roleManager = context.RequestServices.GetRequiredService<RoleManager<IdentityRole>>();
+            var adminName = "admin@mail.ru";
+            var password = "Qwer!1";
             if (await roleManager.FindByNameAsync("admin") == null)
             {
                 await roleManager.CreateAsync(new IdentityRole("admin"));
@@ -49,7 +49,7 @@ namespace TicketManagement.Web.Infrastructure
                     UserName = adminName,
                     Email = adminName,
                 };
-                IdentityResult result = await userManager.CreateAsync(admin, password);
+                var result = await userManager.CreateAsync(admin, password);
                 if (result.Succeeded)
                 {
                     await userManager.AddToRoleAsync(admin, "admin");

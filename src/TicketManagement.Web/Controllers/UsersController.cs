@@ -79,7 +79,7 @@ namespace TicketManagement.Web.Controllers
                 return View(model);
             }
 
-            User user = new User { Email = model.Email, UserName = model.Email };
+            var user = new User { Email = model.Email, UserName = model.Email };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
@@ -105,7 +105,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            User user = await _userManager.FindByIdAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
                 return NotFound();
@@ -128,7 +128,7 @@ namespace TicketManagement.Web.Controllers
                 return View(model);
             }
 
-            User user = await _userManager.FindByIdAsync(model.Id);
+            var user = await _userManager.FindByIdAsync(model.Id);
             if (user != null)
             {
                 user.Email = model.Email;
@@ -161,7 +161,7 @@ namespace TicketManagement.Web.Controllers
         [HttpPost]
         public async Task<ActionResult> Delete(string id)
         {
-            User user = await _userManager.FindByIdAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
             if (user != null)
             {
                 await _userManager.DeleteAsync(user);
@@ -179,7 +179,7 @@ namespace TicketManagement.Web.Controllers
 
         public async Task<IActionResult> ChangePassword(string id)
         {
-            User user = await _userManager.FindByIdAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
                 return NotFound();
@@ -202,7 +202,7 @@ namespace TicketManagement.Web.Controllers
                 return View(model);
             }
 
-            User user = await _userManager.FindByIdAsync(model.Id);
+            var user = await _userManager.FindByIdAsync(model.Id);
             if (user != null)
             {
                 var passwordValidator = HttpContext.RequestServices.GetService(typeof(IPasswordValidator<User>)) as IPasswordValidator<User>;
@@ -237,7 +237,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> EditRoles(string userId)
         {
-            User user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(userId);
             if (user != null)
             {
                 var userRoles = await _userManager.GetRolesAsync(user);
@@ -264,7 +264,7 @@ namespace TicketManagement.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> EditRoles(string userId, List<string> roles)
         {
-            User user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(userId);
             if (user != null)
             {
                 var userRoles = await _userManager.GetRolesAsync(user);

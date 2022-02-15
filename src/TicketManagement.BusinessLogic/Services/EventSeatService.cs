@@ -51,8 +51,8 @@ namespace TicketManagement.BusinessLogic.Services
         /// <exception cref="ArgumentException">Generates exception in case row and number are not unique.</exception>
         private async Task CheckForUniqueRowAndNumber(EventSeatDto obj)
         {
-            IEnumerable<EventSeatDto> eventSeats = await Converter.ConvertModelsRangeToDtos(await Repository.GetAllAsync());
-            IEnumerable<EventSeatDto> eventSeatsInArea = eventSeats.Where(seat => seat.EventAreaId == obj.EventAreaId && seat.Row == obj.Row && seat.Number == obj.Number && seat.Id != obj.Id);
+            var eventSeats = await Converter.ConvertModelsRangeToDtos(await Repository.GetAllAsync());
+            var eventSeatsInArea = eventSeats.Where(seat => seat.EventAreaId == obj.EventAreaId && seat.Row == obj.Row && seat.Number == obj.Number && seat.Id != obj.Id);
             if (eventSeatsInArea.Any())
             {
                 throw new ArgumentException("One of seats in this area already has such row and number!");

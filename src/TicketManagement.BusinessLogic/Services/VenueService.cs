@@ -67,7 +67,7 @@ namespace TicketManagement.BusinessLogic.Services
         /// <exception cref="InvalidOperationException">Generates exception in case there are tickets in this venue.</exception>
         private async Task CheckForTickets(VenueDto obj)
         {
-            IEnumerable<EventSeat> occupiedEventSeats = new List<EventSeat>();
+            var occupiedEventSeats = new List<EventSeat>();
             var layouts = await _layoutRepository.GetAllAsync();
             var layoutsInVenue = layouts.Where(l => l.VenueId == obj.Id).ToList();
             foreach (var layout in layoutsInVenue)

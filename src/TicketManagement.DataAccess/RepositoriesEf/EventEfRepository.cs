@@ -23,18 +23,18 @@ namespace TicketManagement.DataAccess.RepositoriesEf
 
         public override async Task<Event> CreateAsync(Event obj)
         {
-            SqlParameter idParam = new SqlParameter
+            var idParam = new SqlParameter
             {
                 ParameterName = "@id",
                 SqlDbType = System.Data.SqlDbType.Int,
                 Direction = System.Data.ParameterDirection.Output,
             };
-            SqlParameter nameParam = new SqlParameter("@name", obj.Name);
-            SqlParameter descriptionParam = new SqlParameter("@description", obj.Description);
-            SqlParameter layoutIdParam = new SqlParameter("@layoutId", obj.LayoutId);
-            SqlParameter timeStartParam = new SqlParameter("@timeStart", obj.TimeStart);
-            SqlParameter timeEndParam = new SqlParameter("@timeEnd", obj.TimeEnd);
-            SqlParameter imageParam = new SqlParameter("@imageUrl", obj.ImageUrl);
+            var nameParam = new SqlParameter("@name", obj.Name);
+            var descriptionParam = new SqlParameter("@description", obj.Description);
+            var layoutIdParam = new SqlParameter("@layoutId", obj.LayoutId);
+            var timeStartParam = new SqlParameter("@timeStart", obj.TimeStart);
+            var timeEndParam = new SqlParameter("@timeEnd", obj.TimeEnd);
+            var imageParam = new SqlParameter("@imageUrl", obj.ImageUrl);
             await DbContext.Database.ExecuteSqlRawAsync("sp_CreateEvent @name, @description, @layoutId, @timeStart, @timeEnd, @imageUrl, @id OUT",
                 nameParam, descriptionParam, layoutIdParam, timeStartParam, timeEndParam, imageParam, idParam);
             obj.Id = int.Parse(idParam.Value.ToString());
@@ -46,13 +46,13 @@ namespace TicketManagement.DataAccess.RepositoriesEf
         {
             var oldEvent = await GetByIdAsync(obj.Id);
             int oldLayoutId = oldEvent.LayoutId;
-            SqlParameter idParam = new SqlParameter("@id", obj.Id);
-            SqlParameter nameParam = new SqlParameter("@name", obj.Name);
-            SqlParameter descriptionParam = new SqlParameter("@description", obj.Description);
-            SqlParameter layoutIdParam = new SqlParameter("@layoutId", obj.LayoutId);
-            SqlParameter timeStartParam = new SqlParameter("@timeStart", obj.TimeStart);
-            SqlParameter timeEndParam = new SqlParameter("@timeEnd", obj.TimeEnd);
-            SqlParameter imageParam = new SqlParameter("@imageUrl", obj.ImageUrl);
+            var idParam = new SqlParameter("@id", obj.Id);
+            var nameParam = new SqlParameter("@name", obj.Name);
+            var descriptionParam = new SqlParameter("@description", obj.Description);
+            var layoutIdParam = new SqlParameter("@layoutId", obj.LayoutId);
+            var timeStartParam = new SqlParameter("@timeStart", obj.TimeStart);
+            var timeEndParam = new SqlParameter("@timeEnd", obj.TimeEnd);
+            var imageParam = new SqlParameter("@imageUrl", obj.ImageUrl);
             await DbContext.Database.ExecuteSqlRawAsync("sp_UpdateEvent @id, @name, @description, @layoutId, @timeStart, @timeEnd, @imageUrl",
                 idParam, nameParam, descriptionParam, layoutIdParam, timeStartParam, timeEndParam, imageParam);
             if (oldLayoutId != obj.LayoutId)
@@ -67,7 +67,7 @@ namespace TicketManagement.DataAccess.RepositoriesEf
         public override async Task<Event> DeleteAsync(Event obj)
         {
             await DeleteEventAreasAndEventSeatsAsync(obj);
-            SqlParameter idParam = new SqlParameter("@id", obj.Id);
+            var idParam = new SqlParameter("@id", obj.Id);
             await DbContext.Database.ExecuteSqlRawAsync("sp_DeleteEvent @id", idParam);
             return obj;
         }

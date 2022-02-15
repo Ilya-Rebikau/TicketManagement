@@ -37,31 +37,31 @@ namespace TicketManagement.BusinessLogic.Services
 
         public async virtual Task<IEnumerable<TDto>> GetAllAsync()
         {
-            IEnumerable<TModel> models = await Repository.GetAllAsync();
+            var models = await Repository.GetAllAsync();
             return await Converter.ConvertModelsRangeToDtos(models);
         }
 
         public async virtual Task<TDto> GetByIdAsync(int id)
         {
-            TModel model = await Repository.GetByIdAsync(id);
+            var model = await Repository.GetByIdAsync(id);
             return await Converter.ConvertModelToDto(model);
         }
 
         public async virtual Task<TDto> CreateAsync(TDto obj)
         {
-            TModel model = await Repository.CreateAsync(await Converter.ConvertDtoToModel(obj));
+            var model = await Repository.CreateAsync(await Converter.ConvertDtoToModel(obj));
             return await Converter.ConvertModelToDto(model);
         }
 
         public async virtual Task<TDto> UpdateAsync(TDto obj)
         {
-            TModel model = await Repository.UpdateAsync(await Converter.ConvertDtoToModel(obj));
+            var model = await Repository.UpdateAsync(await Converter.ConvertDtoToModel(obj));
             return await Converter.ConvertModelToDto(model);
         }
 
         public async virtual Task<TDto> DeleteAsync(TDto obj)
         {
-            TModel model = await Repository.DeleteAsync(await Converter.ConvertDtoToModel(obj));
+            var model = await Repository.DeleteAsync(await Converter.ConvertDtoToModel(obj));
             return await Converter.ConvertModelToDto(model);
         }
     }

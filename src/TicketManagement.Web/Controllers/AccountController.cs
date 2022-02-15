@@ -105,7 +105,7 @@ namespace TicketManagement.Web.Controllers
                 return View(model);
             }
 
-            User user = new () { Email = model.Email, UserName = model.Email };
+            var user = new User { Email = model.Email, UserName = model.Email };
             var result = await _userManager.CreateAsync(user, model.Password);
             await _userManager.AddToRoleAsync(user, "user");
             if (result.Succeeded)
@@ -191,7 +191,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            User user = await _userManager.FindByIdAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
                 return NotFound();
@@ -222,7 +222,7 @@ namespace TicketManagement.Web.Controllers
                 return View(model);
             }
 
-            User user = await _userManager.FindByIdAsync(model.Id);
+            var user = await _userManager.FindByIdAsync(model.Id);
             if (user != null)
             {
                 user.Email = model.Email;
@@ -255,7 +255,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> AddBalance(string id)
         {
-            User user = await _userManager.FindByIdAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
                 return NotFound();
@@ -279,7 +279,7 @@ namespace TicketManagement.Web.Controllers
                 return View(model);
             }
 
-            User user = await _userManager.FindByIdAsync(model.Id);
+            var user = await _userManager.FindByIdAsync(model.Id);
             if (user != null)
             {
                 user.Balance += model.Balance;

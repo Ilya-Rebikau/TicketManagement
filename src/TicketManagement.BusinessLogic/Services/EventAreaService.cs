@@ -57,7 +57,7 @@ namespace TicketManagement.BusinessLogic.Services
         private async Task CheckForTickets(EventAreaDto obj)
         {
             var allEventSeats = await _eventSeatRepository.GetAllAsync();
-            IEnumerable<EventSeat> eventSeats = allEventSeats.Where(s => s.EventAreaId == obj.Id).Where(s => s.State == (int)PlaceStatus.Occupied).ToList();
+            var eventSeats = allEventSeats.Where(s => s.EventAreaId == obj.Id).Where(s => s.State == (int)PlaceStatus.Occupied).ToList();
             if (eventSeats.Any())
             {
                 throw new InvalidOperationException("Someone bought tickets in this event area already!");

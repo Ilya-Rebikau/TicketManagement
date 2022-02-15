@@ -83,7 +83,7 @@ namespace TicketManagement.BusinessLogic.Services
         /// <exception cref="InvalidOperationException">Generates exception in case there are tickets in this event.</exception>
         private async Task CheckForTickets(EventDto obj)
         {
-            IEnumerable<EventSeat> eventSeats = new List<EventSeat>();
+            var eventSeats = new List<EventSeat>();
             var eventAreas = await _eventAreaRepository.GetAllAsync();
             var eventAreasInEvent = eventAreas.Where(a => a.EventId == obj.Id).ToList();
             foreach (var eventArea in eventAreasInEvent)
@@ -131,8 +131,8 @@ namespace TicketManagement.BusinessLogic.Services
         /// <exception cref="ArgumentException">Generates exception in case event in this layout and time already exists.</exception>
         private async Task CheckForSameLayoutInOneTime(EventDto obj)
         {
-            IEnumerable<EventDto> events = await Converter.ConvertModelsRangeToDtos(await Repository.GetAllAsync());
-            IEnumerable<EventDto> eventsInLayout = events.Where(ev => ev.LayoutId == obj.LayoutId && obj.TimeStart <= ev.TimeStart && obj.TimeEnd >= ev.TimeEnd && ev.Id != obj.Id);
+            var events = await Converter.ConvertModelsRangeToDtos(await Repository.GetAllAsync());
+            var eventsInLayout = events.Where(ev => ev.LayoutId == obj.LayoutId && obj.TimeStart <= ev.TimeStart && obj.TimeEnd >= ev.TimeEnd && ev.Id != obj.Id);
             if (eventsInLayout.Any())
             {
                 throw new ArgumentException("You can't create event in one time in one layout!");

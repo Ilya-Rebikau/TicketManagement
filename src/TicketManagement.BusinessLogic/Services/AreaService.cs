@@ -49,8 +49,8 @@ namespace TicketManagement.BusinessLogic.Services
         /// <exception cref="ArgumentException">Generates exception in case description is not unique.</exception>
         private async Task CheckForUniqueDescription(AreaDto obj)
         {
-            IEnumerable<AreaDto> areas = await Converter.ConvertModelsRangeToDtos(await Repository.GetAllAsync());
-            IEnumerable<AreaDto> areasInLayout = areas.Where(area => area.Description == obj.Description && area.LayoutId == obj.LayoutId && area.Id != obj.Id);
+            var areas = await Converter.ConvertModelsRangeToDtos(await Repository.GetAllAsync());
+            var areasInLayout = areas.Where(area => area.Description == obj.Description && area.LayoutId == obj.LayoutId && area.Id != obj.Id);
             if (areasInLayout.Any())
             {
                 throw new ArgumentException("One of areas in this layout already has such description!");
@@ -77,8 +77,8 @@ namespace TicketManagement.BusinessLogic.Services
         /// <exception cref="ArgumentException">Generates exception in case coords aren't unique for layout.</exception>
         private async Task CheckForUniqueCoordsInLayout(AreaDto obj)
         {
-            IEnumerable<AreaDto> areas = await Converter.ConvertModelsRangeToDtos(await Repository.GetAllAsync());
-            IEnumerable<AreaDto> areasInLayout = areas.Where(area => area.LayoutId == obj.LayoutId && area.CoordX == obj.CoordX && area.CoordY == obj.CoordY && area.Id != obj.Id);
+            var areas = await Converter.ConvertModelsRangeToDtos(await Repository.GetAllAsync());
+            var areasInLayout = areas.Where(area => area.LayoutId == obj.LayoutId && area.CoordX == obj.CoordX && area.CoordY == obj.CoordY && area.Id != obj.Id);
             if (areasInLayout.Any())
             {
                 throw new ArgumentException("CoordX and CoordY must be unique for areas in one layout!");

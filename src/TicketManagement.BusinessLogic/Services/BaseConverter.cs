@@ -19,9 +19,9 @@ namespace TicketManagement.BusinessLogic.Services
         {
             return await Task.Run(() =>
             {
-                MapperConfiguration config = new MapperConfiguration(cfg => cfg.CreateMap<TModel, TDto>());
-                Mapper mapper = new Mapper(config);
-                TDto dto = mapper.Map<TModel, TDto>(model);
+                var config = new MapperConfiguration(cfg => cfg.CreateMap<TModel, TDto>());
+                var mapper = new Mapper(config);
+                var dto = mapper.Map<TModel, TDto>(model);
                 return dto;
             });
         }
@@ -30,16 +30,16 @@ namespace TicketManagement.BusinessLogic.Services
         {
             return await Task.Run(() =>
             {
-                MapperConfiguration config = new MapperConfiguration(cfg => cfg.CreateMap<TDto, TModel>());
-                Mapper mapper = new Mapper(config);
-                TModel model = mapper.Map<TDto, TModel>(dto);
+                var config = new MapperConfiguration(cfg => cfg.CreateMap<TDto, TModel>());
+                var mapper = new Mapper(config);
+                var model = mapper.Map<TDto, TModel>(dto);
                 return model;
             });
         }
 
         public async Task<IEnumerable<TDto>> ConvertModelsRangeToDtos(IEnumerable<TModel> models)
         {
-            IList<TDto> dtos = new List<TDto>();
+            var dtos = new List<TDto>();
             foreach (var model in models)
             {
                 dtos.Add(await ConvertModelToDto(model));
@@ -50,7 +50,7 @@ namespace TicketManagement.BusinessLogic.Services
 
         public async Task<IEnumerable<TModel>> ConvertDtosRangeToModels(IEnumerable<TDto> dtos)
         {
-            IList<TModel> models = new List<TModel>();
+            var models = new List<TModel>();
             foreach (var dto in dtos)
             {
                 models.Add(await ConvertDtoToModel(dto));
