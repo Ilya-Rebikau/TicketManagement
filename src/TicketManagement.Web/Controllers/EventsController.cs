@@ -22,6 +22,11 @@ namespace TicketManagement.Web.Controllers
     public class EventsController : Controller
     {
         /// <summary>
+        /// Const for showing error with low balance for buying ticket from resource file.
+        /// </summary>
+        private const string NoBalance = "NoBalance";
+
+        /// <summary>
         /// EventService object.
         /// </summary>
         private readonly IService<EventDto> _service;
@@ -317,7 +322,7 @@ namespace TicketManagement.Web.Controllers
             }
             else
             {
-                return ValidationProblem($"{_localizer["NoBalance"]}");
+                return ValidationProblem(_localizer[NoBalance]);
             }
 
             return RedirectToAction(nameof(Index));

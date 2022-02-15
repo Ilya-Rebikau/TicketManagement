@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.ModelsDTO;
+using TicketManagement.Web.Extensions;
 using TicketManagement.Web.Models;
 using TicketManagement.Web.Models.Account;
 
@@ -19,6 +20,11 @@ namespace TicketManagement.Web.Controllers
     [ResponseCache(CacheProfileName = "Caching")]
     public class AccountController : Controller
     {
+        /// <summary>
+        /// Const for showing error with wrong login or/and password from resource file.
+        /// </summary>
+        private const string WrongLoginPasswordResxKey = "WrongLoginPassword";
+
         /// <summary>
         /// UserManager object.
         /// </summary>
@@ -105,7 +111,7 @@ namespace TicketManagement.Web.Controllers
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, false);
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
             else
             {
@@ -152,12 +158,12 @@ namespace TicketManagement.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("Index", "Events");
+                    return RedirectToAction(nameof(Index), typeof(EventsController).GetControllerName());
                 }
             }
             else
             {
-                ModelState.AddModelError("", $"{_localizer["WrongLoginPassword"]}");
+                ModelState.AddModelError("", _localizer[WrongLoginPasswordResxKey]);
             }
 
             return View(model);
@@ -173,7 +179,7 @@ namespace TicketManagement.Web.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Events");
+            return RedirectToAction(nameof(Index), typeof(EventsController).GetControllerName());
         }
 
         /// <summary>
@@ -228,7 +234,7 @@ namespace TicketManagement.Web.Controllers
                 var result = await _userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Index");
+                    return RedirectToAction(nameof(Index));
                 }
 
                 foreach (var error in result.Errors)
@@ -281,7 +287,7 @@ namespace TicketManagement.Web.Controllers
                 var result = await _userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Index");
+                    return RedirectToAction(nameof(Index));
                 }
 
                 foreach (var error in result.Errors)

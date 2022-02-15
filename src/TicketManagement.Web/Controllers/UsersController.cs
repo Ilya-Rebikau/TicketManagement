@@ -19,6 +19,11 @@ namespace TicketManagement.Web.Controllers
     public class UsersController : Controller
     {
         /// <summary>
+        /// Const for showing error that user wasn't found from resource file.
+        /// </summary>
+        private const string UserNotFound = "UserNotFound";
+
+        /// <summary>
         /// UserManager object.
         /// </summary>
         private readonly UserManager<User> _userManager;
@@ -79,7 +84,7 @@ namespace TicketManagement.Web.Controllers
             if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(user, "user");
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
             else
             {
@@ -136,7 +141,7 @@ namespace TicketManagement.Web.Controllers
                 var result = await _userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Index");
+                    return RedirectToAction(nameof(Index));
                 }
 
                 foreach (var error in result.Errors)
@@ -162,7 +167,7 @@ namespace TicketManagement.Web.Controllers
                 await _userManager.DeleteAsync(user);
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
         /// <summary>
@@ -208,7 +213,7 @@ namespace TicketManagement.Web.Controllers
                 {
                     user.PasswordHash = passwordHasher.HashPassword(user, model.NewPassword);
                     await _userManager.UpdateAsync(user);
-                    return RedirectToAction("Index");
+                    return RedirectToAction(nameof(Index));
                 }
 
                 foreach (var error in result.Errors)
@@ -218,7 +223,7 @@ namespace TicketManagement.Web.Controllers
             }
             else
             {
-                ModelState.AddModelError(string.Empty, $"{_localizer["UserNotFound"]}");
+                ModelState.AddModelError(string.Empty, _localizer[UserNotFound]);
             }
 
             return View(model);
@@ -267,7 +272,7 @@ namespace TicketManagement.Web.Controllers
                 var removedRoles = userRoles.Except(roles);
                 await _userManager.AddToRolesAsync(user, addedRoles);
                 await _userManager.RemoveFromRolesAsync(user, removedRoles);
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
 
             return NotFound();
