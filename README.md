@@ -1,8 +1,22 @@
 
 # TicketManagement
-## Ticket management application that provides different abilities for users (without graphical interface).
-To create this application were studied: ADO .NET, principles of OOP, SOLID, unit and integration testing, code convention, SQL, etc.  
-During the creation of the application were created: data access layer with models, repositories (using ADO .NET) and connection to MS SQL; business logic layer with services (services using IRepository interface to get access to data in database, also add validations to create and update operations); test database with test data; unit tests with validation testing; integration tests with correct input data testing and CRUD operations testing.  
-To use this application you need to download this solution, change path to your SQL server in project TicketManagement.DataAccess in file [appsettings.json](https://github.com/EPAM-Gomel-NET-Lab/IlyaRebikau/blob/develop/src/TicketManagement.DataAccess/appsettings.json "Database config") (Data Source=.\\SQLEXPRESS change to Data Source=*path to your SQL server*), create database from project TicketManagement.Database.  
-Since this application without graphical interface you can test it thanks to unit and integration tests.  
-To start integration tests you need to create test database from project TicketManagement.Database and change path to it in file [appsettings.json](https://github.com/EPAM-Gomel-NET-Lab/IlyaRebikau/blob/develop/test/TicketManagement.IntegrationTests/appsettings.json "Test database config") (Data Source=.\\SQLEXPRESS change to Data Source=*path to your SQL server*) in TicketManagement.IntegrationTests project.  
+## Ticket management application that provides different abilities for users.
+### How to use:
+1. To use this application you need to download this solution;
+2. Create database from project TicketManagement.Database;
+3. Change path to your SQL server in project TicketManagement.Web in file [appsettings.json](https://github.com/EPAM-Gomel-NET-Lab/IlyaRebikau/blob/develop/src/TicketManagement.Web/appsettings.json "Database config") (Server=.\\SQLEXPRESS change to Server=*path to your SQL server*);
+4. Graphical interface was created, use TicketManagement.Web project to run it.
+
+### Credentials:
+There are 4 roles in this application, you can use them.
+1. Admin account - login: admin@mail.ru, password: Qwer!1
+2. Event manager account - login: eventmanager@mail.ru, password: Qwer!1
+3. Venue manager account - login: venuemanager@mail.ru, password: Qwer!1
+4. User account - login: user@mail.ru, password: Qwer!1  
+
+There is no need to change path to your sql server in file [appsettings.json](https://github.com/EPAM-Gomel-NET-Lab/IlyaRebikau/blob/develop/src/TicketManagement.DataAccess/appsettings.json "Old database config") because this file is using for old repositories (with ADO.NET).
+## You can test it thanks to unit and integration tests.
+### How to use integration tests for BLL:
+1. Create test database from project TicketManagement.Database;
+2. Change path to database in file [appsettings.json](https://github.com/EPAM-Gomel-NET-Lab/IlyaRebikau/blob/develop/test/TicketManagement.IntegrationTests/appsettings.json "Test database config") (Server=.\\SQLEXPRESS change to Server=*path to your SQL server*) in TicketManagement.IntegrationTests project;  
+3. Run tests.

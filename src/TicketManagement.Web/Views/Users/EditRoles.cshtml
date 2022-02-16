@@ -1,0 +1,23 @@
+﻿@model ChangeRoleViewModel
+@inject IViewLocalizer loc
+@{
+    ViewData["Title"] = @loc["Title"];
+}
+<h2>@loc["ChangePermissions"] @Model.UserEmail</h2>
+<hr />
+<form asp-action="EditRoles" method="post">
+    <input type="hidden" name="userId" value="@Model.UserId" />
+    <div class="form-group">
+        @foreach (IdentityRole role in Model.AllRoles)
+        {
+            <input type="checkbox" class="form-check-input" name="roles" value="@role.Name"
+                   @(Model.UserRoles.Contains(role.Name) ? "checked=\"checked\"" : "") />@role.Name <br />
+        }
+    </div>
+    <br />
+    <button type="submit" class="btn btn-success">@loc["Save"]</button>
+</form>
+<hr />
+<div>
+    <a class="btn btn-primary" asp-action="Index">@loc["Back"]</a>
+</div>

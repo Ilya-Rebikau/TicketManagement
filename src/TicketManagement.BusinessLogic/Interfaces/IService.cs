@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 [assembly: InternalsVisibleTo("TicketManagement.IntegrationTests")]
 [assembly: InternalsVisibleTo("TicketManagement.UnitTests")]
@@ -9,39 +10,46 @@ namespace TicketManagement.BusinessLogic.Interfaces
     /// <summary>
     /// Services with CRUD operations for models.
     /// </summary>
-    public interface IService<T>
+    public interface IService<TDto>
     {
         /// <summary>
         /// Get all objects from database.
         /// </summary>
         /// <returns>All objects.</returns>
-        IEnumerable<T> GetAll();
+        Task<IEnumerable<TDto>> GetAllAsync();
 
         /// <summary>
         /// Get one object from database by his id.
         /// </summary>
         /// <param name="id">id.</param>
         /// <returns>Object.</returns>
-        T GetById(int id);
+        Task<TDto> GetByIdAsync(int id);
 
         /// <summary>
         /// Add new object to database with validation logic.
         /// </summary>
         /// <param name="obj">Adding object.</param>
-        T Create(T obj);
+        Task<TDto> CreateAsync(TDto obj);
 
         /// <summary>
         /// Update one object in database with validation logic.
         /// </summary>
         /// <param name="obj">Updating object.</param>
         /// <returns>Updated object.</returns>
-        T Update(T obj);
+        Task<TDto> UpdateAsync(TDto obj);
 
         /// <summary>
         /// Delete object from database.
         /// </summary>
         /// <param name="obj">Deleting object.</param>
         /// <returns>Deleted object.</returns>
-        T Delete(T obj);
+        Task<TDto> DeleteAsync(TDto obj);
+
+        /// <summary>
+        /// Delete object by id.
+        /// </summary>
+        /// <param name="id">Id of deleting object.</param>
+        /// <returns>Id of deleted object.</returns>
+        Task<int> DeleteById(int id);
     }
 }

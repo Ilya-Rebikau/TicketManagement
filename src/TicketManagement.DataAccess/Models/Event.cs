@@ -1,15 +1,13 @@
 ﻿using System;
+using TicketManagement.DataAccess.Interfaces;
 
 namespace TicketManagement.DataAccess.Models
 {
     /// <summary>
     /// Represent event's model.
     /// </summary>
-    public class Event
+    public class Event : IEntity
     {
-        /// <summary>
-        /// Gets or sets id.
-        /// </summary>
         public int Id { get; set; }
 
         /// <summary>
@@ -36,5 +34,10 @@ namespace TicketManagement.DataAccess.Models
         /// Gets or sets time when event ends.
         /// </summary>
         public DateTime TimeEnd { get; set; }
+
+        /// <summary>
+        /// Gets or sets image URL.
+        /// </summary>
+        public string ImageUrl { get; set; }
     }
 }

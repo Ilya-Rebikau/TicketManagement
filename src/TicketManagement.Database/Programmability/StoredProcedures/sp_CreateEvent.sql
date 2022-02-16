@@ -2,11 +2,10 @@
     @name NVARCHAR(120),
     @description NVARCHAR(MAX),
     @layoutId INT,
-    @timeStart NVARCHAR(30),
-    @timeEnd NVARCHAR(30)
+    @timeStart smalldatetime,
+    @timeEnd smalldatetime,
+    @imageUrl NVARCHAR(MAX),
+	@Identity int OUT
 AS
-DECLARE @timeStartDT smalldatetime
-DECLARE @timeEndDT smalldatetime
-SET @timeStartDT = CONVERT(smalldatetime, @timeStart, 20)
-SET @timeEndDT = CONVERT(smalldatetime, @timeEnd, 20)
-INSERT INTO Event(Name, Description, LayoutId, TimeStart, TimeEnd) VALUES(@name, @description, @layoutId, @timeStartDT, @timeEndDT)
+INSERT INTO Events(Name, Description, LayoutId, TimeStart, TimeEnd, ImageUrl) VALUES(@name, @description, @layoutId, @timeStart, @timeEnd, @imageUrl)
+SET @Identity = SCOPE_IDENTITY()

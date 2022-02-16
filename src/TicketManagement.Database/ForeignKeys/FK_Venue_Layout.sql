@@ -1,3 +1,3 @@
-﻿ALTER TABLE dbo.Layout
+﻿ALTER TABLE dbo.Layouts
 ADD CONSTRAINT FK_Venue_Layout FOREIGN KEY (VenueId)     
-    REFERENCES dbo.Venue (Id)
+    REFERENCES dbo.Venues (Id)

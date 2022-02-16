@@ -1,0 +1,47 @@
+﻿@model IEnumerable<LayoutViewModel>
+@inject IViewLocalizer loc
+@{
+    ViewData["Title"] = @loc["Title"];
+}
+
+<h1>@loc["Title"]</h1>
+
+<p>
+    <a class="btn btn-primary" asp-action="Create">@loc["Create"]</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.VenueId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.VenueId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                <a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.Id">@loc["Edit"]</a>
+                <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.Id">@loc["Details"]</a>
+                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">@loc["Delete"]</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

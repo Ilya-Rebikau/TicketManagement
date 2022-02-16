@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.BusinessLogic.Services;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
@@ -12,182 +15,172 @@ namespace TicketManagement.UnitTests
     [TestFixture]
     internal class EventValidationTests
     {
-        private IService<Event> _service;
+        private IService<EventDto> _service;
 
         [SetUp]
-        public void Setup()
+        public async Task SetupAsync()
         {
             var eventRepositoryMock = new Mock<IRepository<Event>>();
-            var seatRepositoryMock = new Mock<IRepository<Seat>>();
-            var areaRepositoryMock = new Mock<IRepository<Area>>();
-            var layoutRepositoryMock = new Mock<IRepository<Layout>>();
-            eventRepositoryMock.Setup(rep => rep.GetAll()).Returns(GetTestEvents());
-            seatRepositoryMock.Setup(rep => rep.GetAll()).Returns(GetTestSeats());
-            areaRepositoryMock.Setup(rep => rep.GetAll()).Returns(GetTestAreas());
-            layoutRepositoryMock.Setup(rep => rep.GetAll()).Returns(GetTestLayouts());
-            _service = new EventService(eventRepositoryMock.Object, seatRepositoryMock.Object, areaRepositoryMock.Object, layoutRepositoryMock.Object);
+            var eventSeatRepositoryMock = new Mock<IRepository<EventSeat>>();
+            var eventAreaRepositoryMock = new Mock<IRepository<EventArea>>();
+            var eventConverterMock = new Mock<IConverter<Event, EventDto>>();
+            eventRepositoryMock.Setup(rep => rep.GetAllAsync());
+            eventSeatRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventSeats());
+            eventAreaRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventAreas());
+            var events = await eventRepositoryMock.Object.GetAllAsync();
+            eventConverterMock.Setup(rep => rep.ConvertModelsRangeToDtos(events)).ReturnsAsync(GetTestEventDtos());
+            _service = new EventService(eventRepositoryMock.Object, eventConverterMock.Object, eventAreaRepositoryMock.Object, eventSeatRepositoryMock.Object);
         }
 
-        private IEnumerable<Seat> GetTestSeats()
+        private static IQueryable<EventArea> GetTestEventAreas()
         {
-            IEnumerable<Seat> seats = new List<Seat>
+            IEnumerable<EventArea> eventAreas = new List<EventArea>
             {
-                new Seat { Id = 1, AreaId = 1, Row = 1, Number = 1 },
-                new Seat { Id = 2, AreaId = 1, Row = 1, Number = 2 },
-                new Seat { Id = 3, AreaId = 1, Row = 1, Number = 3 },
-                new Seat { Id = 4, AreaId = 1, Row = 2, Number = 1 },
-                new Seat { Id = 5, AreaId = 1, Row = 2, Number = 2 },
-                new Seat { Id = 6, AreaId = 1, Row = 2, Number = 3 },
-                new Seat { Id = 7, AreaId = 2, Row = 1, Number = 1 },
-                new Seat { Id = 8, AreaId = 2, Row = 1, Number = 2 },
-                new Seat { Id = 9, AreaId = 2, Row = 1, Number = 3 },
-                new Seat { Id = 10, AreaId = 2, Row = 2, Number = 1 },
-                new Seat { Id = 11, AreaId = 2, Row = 2, Number = 2 },
-                new Seat { Id = 12, AreaId = 2, Row = 2, Number = 3 },
-                new Seat { Id = 13, AreaId = 3, Row = 1, Number = 1 },
-                new Seat { Id = 14, AreaId = 3, Row = 1, Number = 2 },
-                new Seat { Id = 15, AreaId = 3, Row = 1, Number = 3 },
-                new Seat { Id = 16, AreaId = 3, Row = 2, Number = 1 },
-                new Seat { Id = 17, AreaId = 3, Row = 2, Number = 2 },
-                new Seat { Id = 18, AreaId = 3, Row = 2, Number = 3 },
+                new EventArea { Id = 1, EventId = 1 },
             };
-            return seats;
+            return eventAreas.AsQueryable();
         }
 
-        private IEnumerable<Area> GetTestAreas()
+        private static IQueryable<EventSeat> GetTestEventSeats()
         {
-            IEnumerable<Area> areas = new List<Area>
+            IEnumerable<EventSeat> seats = new List<EventSeat>
             {
-                new Area { Id = 1, LayoutId = 1, Description = "First area of first layout", CoordX = 1, CoordY = 1 },
-                new Area { Id = 2, LayoutId = 1, Description = "Second area of first layout", CoordX = 1, CoordY = 2 },
-                new Area { Id = 3, LayoutId = 2, Description = "First area of second layout", CoordX = 1, CoordY = 1 },
+                new EventSeat { Id = 1, EventAreaId = 1, State = 1 },
             };
-            return areas;
+            return seats.AsQueryable();
         }
 
-        private IEnumerable<Event> GetTestEvents()
+        private static IEnumerable<EventDto> GetTestEventDtos()
         {
-            IEnumerable<Event> events = new List<Event>
+            IEnumerable<EventDto> events = new List<EventDto>
             {
-                new Event
+                new EventDto
                 {
                     Id = 1, Name = "First event name", Description = "First event description", LayoutId = 1,
                     TimeStart = new DateTime(2030, 12, 21, 15, 0, 0), TimeEnd = new DateTime(2030, 12, 21, 17, 0, 0),
+                    ImageUrl = "https://w-dog.ru/wallpapers/5/16/428743654433638/kotyata-serye-zhivotnye-trava-gazon.jpg",
                 },
             };
             return events;
         }
 
-        private IEnumerable<Layout> GetTestLayouts()
+        [Test]
+        public void CreateEvent_WhenEventAreasWithoutPrice_ShouldReturnInvalidOperationException()
         {
-            IEnumerable<Layout> layouts = new List<Layout>
+            // Arrange
+            EventDto @event = new ()
             {
-                new Layout { Id = 1, VenueId = 1, Name = "First layout", Description = "First layout description" },
-                new Layout { Id = 2, VenueId = 1, Name = "Second layout", Description = "Second layout description" },
+                Id = 1,
             };
-            return layouts;
+
+            // Act
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(@event);
+
+            // Assert
+            Assert.ThrowsAsync<ArgumentException>(testAction);
+        }
+
+        [Test]
+        public void DeleteEvent_WhenThereAreTicketsInIt_ShouldReturnInvalidOperationException()
+        {
+            // Arrange
+            EventDto @event = new ()
+            {
+                Id = 1,
+            };
+
+            // Act
+            AsyncTestDelegate testAction = async () => await _service.DeleteAsync(@event);
+
+            // Assert
+            Assert.ThrowsAsync<InvalidOperationException>(testAction);
         }
 
         [Test]
         public void CreateEvent_WhenTimeIsBusy_ShouldReturnArgumentException()
         {
             // Arrange
-            Event eventModel = new ()
+            EventDto eventModel = new ()
             {
-                Name = "Name",
-                Description = "Description",
+                Id = 2,
                 LayoutId = 1,
-                TimeStart = new DateTime(2030, 12, 21, 15, 10, 0),
-                TimeEnd = new DateTime(2030, 12, 21, 16, 40, 0),
+                TimeStart = new DateTime(2025, 12, 21, 15, 10, 0),
+                TimeEnd = new DateTime(2035, 12, 21, 16, 40, 0),
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(eventModel);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventModel);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
 
         [Test]
         public void CreateEvent_WhenDatesInPast_ShouldReturnArgumentException()
         {
             // Arrange
-            Event eventModel = new ()
+            EventDto eventModel = new ()
             {
-                Name = "Name",
-                Description = "Description",
-                LayoutId = 1,
                 TimeStart = new DateTime(2000, 1, 1),
                 TimeEnd = new DateTime(2022, 2, 2),
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(eventModel);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventModel);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
 
         [Test]
         public void CreateEvent_WhenWrongDates_ShouldReturnArgumentException()
         {
             // Arrange
-            Event eventModel = new ()
+            EventDto eventModel = new ()
             {
-                Name = "Name",
-                Description = "Description",
-                LayoutId = 1,
                 TimeStart = new DateTime(2023, 1, 1),
                 TimeEnd = new DateTime(2022, 2, 2),
             };
 
             // Act
-            TestDelegate testAction = () => _service.Create(eventModel);
+            AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventModel);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
 
         [Test]
         public void UpdateEvent_WhenDatesInPast_ShouldReturnArgumentException()
         {
             // Arrange
-            Event eventModel = new ()
+            EventDto eventModel = new ()
             {
-                Id = 1,
-                Name = "Name",
-                Description = "Description",
-                LayoutId = 1,
                 TimeStart = new DateTime(2000, 1, 1),
                 TimeEnd = new DateTime(2022, 2, 2),
             };
 
             // Act
-            TestDelegate testAction = () => _service.Update(eventModel);
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventModel);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
 
         [Test]
         public void UpdateEvent_WhenWrongDates_ShouldReturnArgumentException()
         {
             // Arrange
-            Event eventModel = new ()
+            EventDto eventModel = new ()
             {
-                Id = 1,
-                Name = "Name",
-                Description = "Description",
-                LayoutId = 1,
                 TimeStart = new DateTime(2023, 1, 1),
                 TimeEnd = new DateTime(2022, 2, 2),
             };
 
             // Act
-            TestDelegate testAction = () => _service.Update(eventModel);
+            AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventModel);
 
             // Assert
-            Assert.Throws<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ArgumentException>(testAction);
         }
     }
 }

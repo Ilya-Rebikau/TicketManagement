@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
 
@@ -11,17 +12,17 @@ namespace TicketManagement.DataAccess.Repositories
     /// </summary>
     internal class LayoutRepository : IRepository<Layout>
     {
-        public IEnumerable<Layout> GetAll()
+        public async Task<IQueryable<Layout>> GetAllAsync()
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
+            await connection.OpenAsync();
             IList<Layout> layouts = new List<Layout>();
             string sql = "Select Id, VenueId, Description, Name from layout";
             SqlCommand cmd = new SqlCommand(sql, connection);
-            SqlDataReader reader = cmd.ExecuteReader();
+            SqlDataReader reader = await cmd.ExecuteReaderAsync();
             if (reader.HasRows)
             {
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     layouts.Add(new Layout
                     {
@@ -34,22 +35,22 @@ namespace TicketManagement.DataAccess.Repositories
             }
 
             reader.Close();
-            return layouts;
+            return layouts.AsQueryable();
         }
 
-        public Layout GetById(int id)
+        public async Task<Layout> GetByIdAsync(int id)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
+            await connection.OpenAsync();
             string sql = "Select Id, VenueId, Description, Name from layout where Id = @id";
             SqlCommand cmd = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", id);
             cmd.Parameters.Add(idParam);
-            SqlDataReader reader = cmd.ExecuteReader();
+            SqlDataReader reader = await cmd.ExecuteReaderAsync();
             Layout layout = new Layout();
             if (reader.HasRows)
             {
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     layout = new Layout
                     {
@@ -64,10 +65,10 @@ namespace TicketManagement.DataAccess.Repositories
             return layout;
         }
 
-        public Layout Create(Layout obj)
+        public async Task<Layout> CreateAsync(Layout obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
+            await connection.OpenAsync();
             string sql = "Insert into layout (VenueId, Description, Name) values (@venueId, @description, @name)";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter venueIdParam = new SqlParameter("@venueId", obj.VenueId);
@@ -76,14 +77,14 @@ namespace TicketManagement.DataAccess.Repositories
             command.Parameters.Add(venueIdParam);
             command.Parameters.Add(descriptionParam);
             command.Parameters.Add(nameParam);
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
             return obj;
         }
 
-        public Layout Update(Layout obj)
+        public async Task<Layout> UpdateAsync(Layout obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
+            await connection.OpenAsync();
             string sql = "Update layout set VenueId = @venueId, Description = @description, Name = @name where Id = @id";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
@@ -94,19 +95,19 @@ namespace TicketManagement.DataAccess.Repositories
             command.Parameters.Add(venueIdParam);
             command.Parameters.Add(descriptionParam);
             command.Parameters.Add(nameParam);
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
             return obj;
         }
 
-        public Layout Delete(Layout obj)
+        public async Task<Layout> DeleteAsync(Layout obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
+            await connection.OpenAsync();
             string sql = "Delete from layout where Id = @id";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
             command.Parameters.Add(idParam);
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
             return obj;
         }
     }

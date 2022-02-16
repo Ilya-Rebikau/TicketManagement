@@ -1,0 +1,109 @@
+﻿@inject IViewLocalizer loc
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-success border-bottom box-shadow mb-3">
+            <div class="container">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Events" asp-action="Index">@loc["Events"]</a>
+                        </li>
+                        @if (User.IsInRole("admin") || User.IsInRole("venue manager"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-controller="Venues" asp-action="Index">@loc["Venues"]</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-controller="Layouts" asp-action="Index">@loc["Layouts"]</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-controller="Areas" asp-action="Index">@loc["Areas"]</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-controller="Seats" asp-action="Index">@loc["Seats"]</a>
+                            </li>
+
+                        }
+                        @if (User.IsInRole("admin") || User.IsInRole("event manager"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-controller="EventSeats" asp-action="Index">@loc["EventSeats"]</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-controller="EventAreas" asp-action="Index">@loc["EventAreas"]</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-controller="Tickets" asp-action="Index">@loc["Tickets"]</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-controller="Users" asp-action="Index">@loc["Users"]</a>
+                            </li>
+                        }
+                    </ul>
+                    <ul class="navbar-nav flex-grow-1 justify-content-end">
+                        <li class="nav-item justify-content-end">
+                            <div class="nav-link text-white">@await Html.PartialAsync("_SelectLanguagePartial")</div>
+                        </li>
+                    </ul>
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <ul class="navbar-nav flex-grow-1 justify-content-end">
+                            <li class="nav-item justify-content-end">
+                                <a class="nav-link text-white" asp-controller="Account" asp-action="Login">@loc["Login"]</a>
+                            </li>
+                            <li class="nav-item justify-content-end">
+                                <a class="nav-link text-white" asp-controller="Account" asp-action="Register">@loc["Register"]</a>
+                            </li>
+                        </ul>
+                    }
+                    else
+                    {
+                        <ul class="navbar-nav flex-grow-1 justify-content-end">
+                            <li class="nav-item justify-content-end">
+                                <a class="nav-link text-white" asp-controller="Account" asp-action="Index">@loc["PersonalAccount"]</a>
+                            </li>
+                            <li class="nav-item justify-content-end">
+                                <form method="post" asp-controller="Account" asp-action="Logout">
+                                    <input class="nav-link text-white bg-success border-0" type="submit" value="@loc["Logout"]" />
+                                </form>
+                            </li>
+                        </ul>
+                    }
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2022 - @loc["Footer"]
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

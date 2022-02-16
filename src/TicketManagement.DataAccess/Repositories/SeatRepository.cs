@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
 
@@ -11,17 +12,17 @@ namespace TicketManagement.DataAccess.Repositories
     /// </summary>
     internal class SeatRepository : IRepository<Seat>
     {
-        public IEnumerable<Seat> GetAll()
+        public async Task<IQueryable<Seat>> GetAllAsync()
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
+            await connection.OpenAsync();
             IList<Seat> seats = new List<Seat>();
-            string sql = "Select Id, AreaId, Row, Number from seat";
+            string sql = "Select Id, AreaId, Row, Number from seats";
             SqlCommand cmd = new SqlCommand(sql, connection);
-            SqlDataReader reader = cmd.ExecuteReader();
+            SqlDataReader reader = await cmd.ExecuteReaderAsync();
             if (reader.HasRows)
             {
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     seats.Add(new Seat
                     {
@@ -34,22 +35,22 @@ namespace TicketManagement.DataAccess.Repositories
             }
 
             reader.Close();
-            return seats;
+            return seats.AsQueryable();
         }
 
-        public Seat GetById(int id)
+        public async Task<Seat> GetByIdAsync(int id)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
-            string sql = "Select Id, AreaId, Row, Number from seat where Id = @id";
+            await connection.OpenAsync();
+            string sql = "Select Id, AreaId, Row, Number from seats where Id = @id";
             SqlCommand cmd = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", id);
             cmd.Parameters.Add(idParam);
-            SqlDataReader reader = cmd.ExecuteReader();
+            SqlDataReader reader = await cmd.ExecuteReaderAsync();
             Seat seat = new Seat();
             if (reader.HasRows)
             {
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     seat = new Seat
                     {
@@ -64,11 +65,11 @@ namespace TicketManagement.DataAccess.Repositories
             return seat;
         }
 
-        public Seat Create(Seat obj)
+        public async Task<Seat> CreateAsync(Seat obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
-            string sql = "Insert into seat (AreaId, Row, Number) values (@areaId, @row, @number)";
+            await connection.OpenAsync();
+            string sql = "Insert into seats (AreaId, Row, Number) values (@areaId, @row, @number)";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter areaIdParam = new SqlParameter("@areaId", obj.AreaId);
             SqlParameter rowParam = new SqlParameter("@row", obj.Row);
@@ -76,15 +77,15 @@ namespace TicketManagement.DataAccess.Repositories
             command.Parameters.Add(areaIdParam);
             command.Parameters.Add(rowParam);
             command.Parameters.Add(numberParam);
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
             return obj;
         }
 
-        public Seat Update(Seat obj)
+        public async Task<Seat> UpdateAsync(Seat obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
-            string sql = "Update seat set AreaId = @areaId, Row = @row, Number = @number where Id = @id";
+            await connection.OpenAsync();
+            string sql = "Update seats set AreaId = @areaId, Row = @row, Number = @number where Id = @id";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
             SqlParameter areaIdParam = new SqlParameter("@areaId", obj.AreaId);
@@ -94,19 +95,19 @@ namespace TicketManagement.DataAccess.Repositories
             command.Parameters.Add(areaIdParam);
             command.Parameters.Add(rowParam);
             command.Parameters.Add(numberParam);
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
             return obj;
         }
 
-        public Seat Delete(Seat obj)
+        public async Task<Seat> DeleteAsync(Seat obj)
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            connection.Open();
+            await connection.OpenAsync();
             string sql = "Delete from seat where Id = @id";
             SqlCommand command = new SqlCommand(sql, connection);
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
             command.Parameters.Add(idParam);
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
             return obj;
         }
     }

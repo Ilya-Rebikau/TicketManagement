@@ -13,7 +13,7 @@ namespace TicketManagement.DataAccess
         /// <returns>String connection.</returns>
         public static string GetStringConnection()
         {
-            IConfigurationBuilder builder = new ConfigurationBuilder().AddJsonFile("appsettings.json");
+            var builder = new ConfigurationBuilder().AddJsonFile("appsettings.json");
             return builder.Build().GetConnectionString("DefaultConnection");
         }
     }

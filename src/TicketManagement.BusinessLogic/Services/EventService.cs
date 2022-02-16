@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
 
@@ -10,54 +12,90 @@ namespace TicketManagement.BusinessLogic.Services
     /// <summary>
     /// Service with CRUD operations and validations for event.
     /// </summary>
-    internal class EventService : BaseService<Event>, IService<Event>
+    internal class EventService : BaseService<Event, EventDto>, IService<EventDto>
     {
         /// <summary>
-        /// SeatRepository object.
+        /// EventAreaRepository object.
         /// </summary>
-        private readonly IRepository<Seat> _seatRepository;
+        private readonly IRepository<EventArea> _eventAreaRepository;
 
         /// <summary>
-        /// AreaRepository object.
+        /// EventSeatRepository object.
         /// </summary>
-        private readonly IRepository<Area> _areaRepository;
-
-        /// <summary>
-        /// LayoutRepository object.
-        /// </summary>
-        private readonly IRepository<Layout> _layoutRepository;
+        private readonly IRepository<EventSeat> _eventSeatRepository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EventService"/> class.
         /// </summary>
         /// <param name="repository">EventRepository object.</param>
-        /// <param name="seatRepository">SeatRepository object.</param>
-        /// <param name="areaRepository">AreaRepository object.</param>
-        /// <param name="layoutRepository">LayoutRepository object.</param>
-        public EventService(IRepository<Event> repository, IRepository<Seat> seatRepository, IRepository<Area> areaRepository, IRepository<Layout> layoutRepository)
-            : base(repository)
+        /// <param name="converter">Converter object for events.</param>
+        /// <param name="eventAreaRepository">EventAreaRepository object.</param>
+        /// <param name="eventSeatRepository">EventSeatRepository object.</param>
+        public EventService(IRepository<Event> repository, IConverter<Event, EventDto> converter,
+            IRepository<EventArea> eventAreaRepository, IRepository<EventSeat> eventSeatRepository)
+            : base(repository, converter)
         {
-            _seatRepository = seatRepository;
-            _areaRepository = areaRepository;
-            _layoutRepository = layoutRepository;
+            _eventAreaRepository = eventAreaRepository;
+            _eventSeatRepository = eventSeatRepository;
         }
 
-        public override Event Create(Event obj)
+        public async override Task<EventDto> CreateAsync(EventDto obj)
         {
+            ConvertTimeToUtc(obj);
+            await CheckForPrices(obj);
             CheckEventForPastTime(obj);
             CheckForTimeBorders(obj);
-            CheckForSameLayoutInOneTime(obj);
-            CheckForSeats(obj);
-            return Repository.Create(obj);
+            await CheckForSameLayoutInOneTime(obj);
+            return await base.CreateAsync(obj);
         }
 
-        public override Event Update(Event obj)
+        public async override Task<EventDto> UpdateAsync(EventDto obj)
         {
+            ConvertTimeToUtc(obj);
+            await CheckForPrices(obj);
             CheckEventForPastTime(obj);
             CheckForTimeBorders(obj);
-            CheckForSameLayoutInOneTime(obj);
-            CheckForSeats(obj);
-            return Repository.Update(obj);
+            await CheckForSameLayoutInOneTime(obj);
+            return await base.UpdateAsync(obj);
+        }
+
+        public async override Task<EventDto> DeleteAsync(EventDto obj)
+        {
+            await CheckForTickets(obj);
+            return await base.DeleteAsync(obj);
+        }
+
+        /// <summary>
+        /// Convert time to UTC.
+        /// </summary>
+        /// <param name="obj">Creating or updating event.</param>
+        private static void ConvertTimeToUtc(EventDto obj)
+        {
+            obj.TimeStart = TimeZoneInfo.ConvertTimeToUtc(obj.TimeStart);
+            obj.TimeEnd = TimeZoneInfo.ConvertTimeToUtc(obj.TimeEnd);
+        }
+
+        /// <summary>
+        /// Checking that there are no tickets in this event.
+        /// </summary>
+        /// <param name="obj">Deleting event.</param>
+        /// <returns>Task.</returns>
+        /// <exception cref="InvalidOperationException">Generates exception in case there are tickets in this event.</exception>
+        private async Task CheckForTickets(EventDto obj)
+        {
+            var eventSeats = new List<EventSeat>();
+            var eventAreas = await _eventAreaRepository.GetAllAsync();
+            var eventAreasInEvent = eventAreas.Where(a => a.EventId == obj.Id).ToList();
+            foreach (var eventArea in eventAreasInEvent)
+            {
+                var allEventSeats = await _eventSeatRepository.GetAllAsync();
+                eventSeats = allEventSeats.Where(s => s.EventAreaId == eventArea.Id).Where(s => s.State == (int)PlaceStatus.Occupied).ToList();
+            }
+
+            if (eventSeats.Any())
+            {
+                throw new InvalidOperationException("Someone bought tickets in this event already!");
+            }
         }
 
         /// <summary>
@@ -65,7 +103,7 @@ namespace TicketManagement.BusinessLogic.Services
         /// </summary>
         /// <param name="obj">Adding or updating event.</param>
         /// <exception cref="ArgumentException">Generates exception in case TimeStart or TimeEnd in past time.</exception>
-        private void CheckEventForPastTime(Event obj)
+        private void CheckEventForPastTime(EventDto obj)
         {
             if (obj.TimeStart <= DateTime.Now || obj.TimeEnd <= DateTime.Now)
             {
@@ -78,7 +116,7 @@ namespace TicketManagement.BusinessLogic.Services
         /// </summary>
         /// <param name="obj">Adding or updating event.</param>
         /// <exception cref="ArgumentException">Generates exception in case TimeStart after TimeEnd.</exception>
-        private void CheckForTimeBorders(Event obj)
+        private void CheckForTimeBorders(EventDto obj)
         {
             if (obj.TimeStart >= obj.TimeEnd)
             {
@@ -91,10 +129,10 @@ namespace TicketManagement.BusinessLogic.Services
         /// </summary>
         /// <param name="obj">Adding or updating event.</param>
         /// <exception cref="ArgumentException">Generates exception in case event in this layout and time already exists.</exception>
-        private void CheckForSameLayoutInOneTime(Event obj)
+        private async Task CheckForSameLayoutInOneTime(EventDto obj)
         {
-            IEnumerable<Event> events = Repository.GetAll();
-            IEnumerable<Event> eventsInLayout = events.Where(ev => ev.LayoutId == obj.LayoutId && obj.TimeStart >= ev.TimeStart && obj.TimeEnd <= ev.TimeEnd && ev.Id != obj.Id);
+            var events = await Converter.ConvertModelsRangeToDtos(await Repository.GetAllAsync());
+            var eventsInLayout = events.Where(ev => ev.LayoutId == obj.LayoutId && obj.TimeStart <= ev.TimeStart && obj.TimeEnd >= ev.TimeEnd && ev.Id != obj.Id);
             if (eventsInLayout.Any())
             {
                 throw new ArgumentException("You can't create event in one time in one layout!");
@@ -102,32 +140,20 @@ namespace TicketManagement.BusinessLogic.Services
         }
 
         /// <summary>
-        /// Checking that seats in layout exists.
+        /// Checking that all event areas have price for this event.
         /// </summary>
         /// <param name="obj">Adding or updating event.</param>
-        /// <exception cref="ArgumentException">Generates exception in case there are no seats in layout.</exception>
-        private void CheckForSeats(Event obj)
+        /// <returns>Task.</returns>
+        /// <exception cref="ArgumentException">Generates exception in case event areas haven't price.</exception>
+        private async Task CheckForPrices(EventDto obj)
         {
-            IEnumerable<Layout> layouts = _layoutRepository.GetAll();
-            IEnumerable<Area> areas = _areaRepository.GetAll();
-            IEnumerable<Seat> seats = _seatRepository.GetAll();
-            Layout layout = layouts.SingleOrDefault(layout => layout.Id == obj.LayoutId);
-            if (layout != null)
+            var eventAreas = await _eventAreaRepository.GetAllAsync();
+            var eventAreasInEvent = eventAreas.Where(a => a.EventId == obj.Id);
+            foreach (var eventArea in eventAreasInEvent)
             {
-                IEnumerable<Area> areasInLayout = areas.Where(area => area.LayoutId == layout.Id);
-                if (areasInLayout.Any())
+                if (eventArea.Price <= 0)
                 {
-                    IEnumerable<Seat> totalSeats = new List<Seat>();
-                    foreach (Area a in areasInLayout)
-                    {
-                        IEnumerable<Seat> seatsInArea = seats.Where(seat => a.Id == seat.AreaId);
-                        totalSeats.Concat(seatsInArea);
-                    }
-
-                    if (totalSeats.Any())
-                    {
-                        throw new ArgumentException("There are no seats in layout.");
-                    }
+                    throw new ArgumentException("You can't create event without prices in event areas!");
                 }
             }
         }
