@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -53,6 +54,12 @@ namespace TicketManagement.Web.WebServices
         public async Task<string> DeleteUserAsync(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
+            var userRoles = await _userManager.GetRolesAsync(user);
+            if (userRoles.Contains("admin"))
+            {
+                throw new InvalidOperationException("You can't delete admin account.");
+            }
+
             if (user != null)
             {
                 await _userManager.DeleteAsync(user);

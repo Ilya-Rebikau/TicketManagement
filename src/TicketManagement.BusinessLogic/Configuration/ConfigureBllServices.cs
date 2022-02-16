@@ -3,7 +3,6 @@ using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.BusinessLogic.Services;
 using TicketManagement.DataAccess.Configuration;
-using TicketManagement.DataAccess.Models;
 
 namespace TicketManagement.BusinessLogic.Configuration
 {

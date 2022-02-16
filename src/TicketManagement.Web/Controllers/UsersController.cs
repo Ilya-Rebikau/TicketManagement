@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using TicketManagement.Web.Infrastructure;
 using TicketManagement.Web.Interfaces;
 using TicketManagement.Web.Models;
-using TicketManagement.Web.Models.Roles;
 using TicketManagement.Web.Models.Users;
 
 namespace TicketManagement.Web.Controllers
@@ -17,6 +17,7 @@ namespace TicketManagement.Web.Controllers
     /// </summary>
     [Authorize(Roles = "admin")]
     [ResponseCache(CacheProfileName = "Caching")]
+    [ExceptionFilter]
     public class UsersController : Controller
     {
         /// <summary>

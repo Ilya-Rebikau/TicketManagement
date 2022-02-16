@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using TicketManagement.Web.Extensions;
+using TicketManagement.Web.Infrastructure;
 using TicketManagement.Web.Interfaces;
 using TicketManagement.Web.Models;
 using TicketManagement.Web.Models.Account;
@@ -14,6 +15,7 @@ namespace TicketManagement.Web.Controllers
     /// Controller for user account.
     /// </summary>
     [ResponseCache(CacheProfileName = "Caching")]
+    [ExceptionFilter]
     public class AccountController : Controller
     {
         /// <summary>

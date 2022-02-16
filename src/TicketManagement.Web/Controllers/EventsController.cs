@@ -1,10 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.ModelsDTO;
+using TicketManagement.Web.Infrastructure;
 using TicketManagement.Web.Interfaces;
 using TicketManagement.Web.Models.Events;
 using TicketManagement.Web.Models.Tickets;
@@ -15,6 +17,7 @@ namespace TicketManagement.Web.Controllers
     /// Controller for events.
     /// </summary>
     [ResponseCache(CacheProfileName = "Caching")]
+    [ExceptionFilter]
     public class EventsController : Controller
     {
         /// <summary>
@@ -248,7 +251,7 @@ namespace TicketManagement.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            return ValidationProblem(_localizer[NoBalance]);
+            throw new InvalidOperationException(_localizer[NoBalance]);
         }
 
         /// <summary>

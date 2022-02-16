@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.ModelsDTO;
+using TicketManagement.Web.Infrastructure;
 using TicketManagement.Web.Models.Areas;
 
 namespace TicketManagement.Web.Controllers
@@ -14,6 +15,7 @@ namespace TicketManagement.Web.Controllers
     /// </summary>
     [Authorize(Roles = "admin, venue manager")]
     [ResponseCache(CacheProfileName = "Caching")]
+    [ExceptionFilter]
     public class AreasController : Controller
     {
         /// <summary>

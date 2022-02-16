@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
-using TicketManagement.Web.Models;
+using TicketManagement.Web.Infrastructure;
 
 namespace TicketManagement.Web.Controllers
 {
@@ -11,6 +10,7 @@ namespace TicketManagement.Web.Controllers
     /// Home controller.
     /// </summary>
     [ResponseCache(CacheProfileName = "Caching")]
+    [ExceptionFilter]
     public class HomeController : Controller
     {
         /// <summary>
@@ -31,17 +31,6 @@ namespace TicketManagement.Web.Controllers
                 });
 
             return LocalRedirect(returnUrl);
-        }
-
-        /// <summary>
-        /// Error page.
-        /// </summary>
-        /// <returns>IActionResult.</returns>
-        [HttpGet]
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
