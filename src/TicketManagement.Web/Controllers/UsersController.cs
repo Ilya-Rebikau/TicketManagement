@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using TicketManagement.Web.Interfaces;
 using TicketManagement.Web.Models;
 using TicketManagement.Web.Models.Roles;
 using TicketManagement.Web.Models.Users;
@@ -24,14 +25,14 @@ namespace TicketManagement.Web.Controllers
         private const string UserNotFound = "UserNotFound";
 
         /// <summary>
+        /// UsersWebService object.
+        /// </summary>
+        private readonly IUsersWebService _service;
+
+        /// <summary>
         /// UserManager object.
         /// </summary>
         private readonly UserManager<User> _userManager;
-
-        /// <summary>
-        /// RoleManager object.
-        /// </summary>
-        private readonly RoleManager<IdentityRole> _roleManager;
 
         /// <summary>
         /// Localizer object.
@@ -41,14 +42,15 @@ namespace TicketManagement.Web.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="UsersController"/> class.
         /// </summary>
+        /// <param name="service">UsersWebService object.</param>
         /// <param name="userManager">UserManager object.</param>
-        /// <param name="roleManager">RoleManager object.</param>
         /// <param name="localizer">Localizer object.</param>
-        public UsersController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager,
+        public UsersController(IUsersWebService service,
+            UserManager<User> userManager,
             IStringLocalizer<UsersController> localizer)
         {
+            _service = service;
             _userManager = userManager;
-            _roleManager = roleManager;
             _localizer = localizer;
         }
 
@@ -128,26 +130,15 @@ namespace TicketManagement.Web.Controllers
                 return View(model);
             }
 
-            var user = await _userManager.FindByIdAsync(model.Id);
-            if (user != null)
+            var result = await _service.UpdateUserInEditAsync(model);
+            if (result.Succeeded)
             {
-                user.Email = model.Email;
-                user.UserName = model.Email;
-                user.FirstName = model.FirstName;
-                user.Surname = model.Surname;
-                user.Balance = model.Balance;
-                user.TimeZone = model.TimeZone;
+                return RedirectToAction(nameof(Index));
+            }
 
-                var result = await _userManager.UpdateAsync(user);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
             }
 
             return View(model);
@@ -161,12 +152,7 @@ namespace TicketManagement.Web.Controllers
         [HttpPost]
         public async Task<ActionResult> Delete(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user != null)
-            {
-                await _userManager.DeleteAsync(user);
-            }
-
+            await _service.DeleteUserAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
@@ -205,14 +191,9 @@ namespace TicketManagement.Web.Controllers
             var user = await _userManager.FindByIdAsync(model.Id);
             if (user != null)
             {
-                var passwordValidator = HttpContext.RequestServices.GetService(typeof(IPasswordValidator<User>)) as IPasswordValidator<User>;
-                var passwordHasher = HttpContext.RequestServices.GetService(typeof(IPasswordHasher<User>)) as IPasswordHasher<User>;
-
-                var result = await passwordValidator.ValidateAsync(_userManager, user, model.NewPassword);
+                var result = await _service.ChangePasswordAsync(model, user, HttpContext);
                 if (result.Succeeded)
                 {
-                    user.PasswordHash = passwordHasher.HashPassword(user, model.NewPassword);
-                    await _userManager.UpdateAsync(user);
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -240,16 +221,7 @@ namespace TicketManagement.Web.Controllers
             var user = await _userManager.FindByIdAsync(userId);
             if (user != null)
             {
-                var userRoles = await _userManager.GetRolesAsync(user);
-                var allRoles = _roleManager.Roles.ToList();
-                ChangeRoleViewModel model = new ()
-                {
-                    UserId = user.Id,
-                    UserEmail = user.UserName,
-                    UserRoles = userRoles,
-                    AllRoles = allRoles,
-                };
-                return View(model);
+                return View(await _service.GetChangeRoleViewModel(user));
             }
 
             return NotFound();
@@ -267,11 +239,7 @@ namespace TicketManagement.Web.Controllers
             var user = await _userManager.FindByIdAsync(userId);
             if (user != null)
             {
-                var userRoles = await _userManager.GetRolesAsync(user);
-                var addedRoles = roles.Except(userRoles);
-                var removedRoles = userRoles.Except(roles);
-                await _userManager.AddToRolesAsync(user, addedRoles);
-                await _userManager.RemoveFromRolesAsync(user, removedRoles);
+                await _service.EditRolesAsync(roles, user);
                 return RedirectToAction(nameof(Index));
             }
 

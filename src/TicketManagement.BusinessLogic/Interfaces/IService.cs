@@ -44,5 +44,12 @@ namespace TicketManagement.BusinessLogic.Interfaces
         /// <param name="obj">Deleting object.</param>
         /// <returns>Deleted object.</returns>
         Task<TDto> DeleteAsync(TDto obj);
+
+        /// <summary>
+        /// Delete object by id.
+        /// </summary>
+        /// <param name="id">Id of deleting object.</param>
+        /// <returns>Id of deleted object.</returns>
+        Task<int> DeleteById(int id);
     }
 }

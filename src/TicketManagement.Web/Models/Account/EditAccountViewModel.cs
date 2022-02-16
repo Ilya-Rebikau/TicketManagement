@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace TicketManagement.Web.Models.Account
@@ -41,6 +40,22 @@ namespace TicketManagement.Web.Models.Account
         /// Gets all time zones.
         /// </summary>
         public SelectList TimeZones { get; } = new SelectList(GetStandartTimeZones());
+
+        /// <summary>
+        /// Convert user to edit account view model.
+        /// </summary>
+        /// <param name="user">User.</param>
+        public static implicit operator EditAccountViewModel(User user)
+        {
+            return new EditAccountViewModel
+            {
+                Id = user.Id,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                Surname = user.Surname,
+                TimeZone = user.TimeZone,
+            };
+        }
 
         /// <summary>
         /// Get list with all standart time zones.

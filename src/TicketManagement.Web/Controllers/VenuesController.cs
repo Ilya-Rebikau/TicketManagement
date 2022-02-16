@@ -195,8 +195,7 @@ namespace TicketManagement.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var venue = await _service.GetByIdAsync(id);
-            await _service.DeleteAsync(venue);
+            await _service.DeleteById(id);
             return RedirectToAction(nameof(Index));
         }
 

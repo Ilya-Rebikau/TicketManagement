@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TicketManagement.BusinessLogic.Configuration;
+using TicketManagement.Web.Configuration;
 using TicketManagement.Web.Infrastructure;
 using TicketManagement.Web.Models;
 
@@ -44,7 +44,7 @@ namespace TicketManagement.Web
                     return factory.Create("ModelsTranslations", assemblyName.Name);
                 };
             });
-            services.AddBllServices(connection);
+            services.AddWebServices(connection);
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             services.Configure<RequestLocalizationOptions>(options =>
             {

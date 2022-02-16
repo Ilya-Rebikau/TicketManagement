@@ -64,5 +64,12 @@ namespace TicketManagement.BusinessLogic.Services
             var model = await Repository.DeleteAsync(await Converter.ConvertDtoToModel(obj));
             return await Converter.ConvertModelToDto(model);
         }
+
+        public async virtual Task<int> DeleteById(int id)
+        {
+            var model = await GetByIdAsync(id);
+            await DeleteAsync(model);
+            return id;
+        }
     }
 }

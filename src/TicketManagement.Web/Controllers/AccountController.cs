@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.Web.Extensions;
+using TicketManagement.Web.Interfaces;
 using TicketManagement.Web.Models;
 using TicketManagement.Web.Models.Account;
 
@@ -26,6 +22,11 @@ namespace TicketManagement.Web.Controllers
         private const string WrongLoginPasswordResxKey = "WrongLoginPassword";
 
         /// <summary>
+        /// AccountWebService object.
+        /// </summary>
+        private readonly IAccountWebService _service;
+
+        /// <summary>
         /// UserManager object.
         /// </summary>
         private readonly UserManager<User> _userManager;
@@ -36,26 +37,6 @@ namespace TicketManagement.Web.Controllers
         private readonly SignInManager<User> _signInManager;
 
         /// <summary>
-        /// TicketService object.
-        /// </summary>
-        private readonly IService<TicketDto> _ticketService;
-
-        /// <summary>
-        /// EventService object.
-        /// </summary>
-        private readonly IService<EventDto> _eventService;
-
-        /// <summary>
-        /// EventAreaService object.
-        /// </summary>
-        private readonly IService<EventAreaDto> _eventAreaService;
-
-        /// <summary>
-        /// EventSeatService object.
-        /// </summary>
-        private readonly IService<EventSeatDto> _eventSeatService;
-
-        /// <summary>
         /// Localizer object.
         /// </summary>
         private readonly IStringLocalizer<AccountController> _localizer;
@@ -63,22 +44,18 @@ namespace TicketManagement.Web.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="AccountController"/> class.
         /// </summary>
+        /// <param name="service">AccountWebService object.</param>
         /// <param name="userManager">UserManager object.</param>
         /// <param name="signInManager">SignInManager object.</param>
-        /// <param name="ticketService">TicketService object.</param>
-        /// <param name="eventService">EventService object.</param>
-        /// <param name="eventAreaService">EventAreaService object.</param>
-        /// <param name="eventSeatService">EventSeatService object.</param>
         /// <param name="localizer">Localizer object.</param>
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IService<TicketDto> ticketService,
-            IService<EventDto> eventService, IService<EventAreaDto> eventAreaService, IService<EventSeatDto> eventSeatService, IStringLocalizer<AccountController> localizer)
+        public AccountController(IAccountWebService service,
+            UserManager<User> userManager,
+            SignInManager<User> signInManager,
+            IStringLocalizer<AccountController> localizer)
         {
+            _service = service;
             _userManager = userManager;
             _signInManager = signInManager;
-            _ticketService = ticketService;
-            _eventService = eventService;
-            _eventAreaService = eventAreaService;
-            _eventSeatService = eventSeatService;
             _localizer = localizer;
         }
 
@@ -105,12 +82,9 @@ namespace TicketManagement.Web.Controllers
                 return View(model);
             }
 
-            var user = new User { Email = model.Email, UserName = model.Email };
-            var result = await _userManager.CreateAsync(user, model.Password);
-            await _userManager.AddToRoleAsync(user, "user");
+            var result = await _service.RegisterUser(model);
             if (result.Succeeded)
             {
-                await _signInManager.SignInAsync(user, false);
                 return RedirectToAction(nameof(Index));
             }
             else
@@ -197,14 +171,7 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            EditAccountViewModel model = new ()
-            {
-                Id = user.Id,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                Surname = user.Surname,
-                TimeZone = user.TimeZone,
-            };
+            EditAccountViewModel model = user;
             return View(model);
         }
 
@@ -225,13 +192,7 @@ namespace TicketManagement.Web.Controllers
             var user = await _userManager.FindByIdAsync(model.Id);
             if (user != null)
             {
-                user.Email = model.Email;
-                user.UserName = model.Email;
-                user.FirstName = model.FirstName;
-                user.Surname = model.Surname;
-                user.TimeZone = model.TimeZone;
-
-                var result = await _userManager.UpdateAsync(user);
+                var result = await _service.UpdateUserInEdit(model, user);
                 if (result.Succeeded)
                 {
                     return RedirectToAction(nameof(Index));
@@ -279,21 +240,15 @@ namespace TicketManagement.Web.Controllers
                 return View(model);
             }
 
-            var user = await _userManager.FindByIdAsync(model.Id);
-            if (user != null)
+            var result = await _service.AddBalanceToUser(model);
+            if (result.Succeeded)
             {
-                user.Balance += model.Balance;
+                return RedirectToAction(nameof(Index));
+            }
 
-                var result = await _userManager.UpdateAsync(user);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
             }
 
             return View(model);
@@ -308,53 +263,12 @@ namespace TicketManagement.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
-            var tickets = await _ticketService.GetAllAsync();
-            var usersTickets = tickets.Where(t => t.UserId == user.Id).ToList();
-            var eventSeats = await _eventSeatService.GetAllAsync();
-            var eventAreas = await _eventAreaService.GetAllAsync();
-            var ticketsVm = new List<AccountTicketViewModel>();
-            foreach (var ticket in usersTickets)
-            {
-                var ticketEventSeat = eventSeats.FirstOrDefault(s => s.Id == ticket.EventSeatId);
-                var eventArea = eventAreas.FirstOrDefault(a => a.Id == ticketEventSeat.EventAreaId);
-                var @event = await _eventService.GetByIdAsync(eventArea.EventId);
-                await ConvertTimeForUser(@event);
-                var ticketVm = new AccountTicketViewModel
-                {
-                    Price = eventArea.Price,
-                    Event = @event,
-                };
-                ticketsVm.Add(ticketVm);
-            }
-
-            var accountVm = new AccountViewModel
-            {
-                User = user,
-                Tickets = ticketsVm,
-            };
-
             if (user == null)
             {
                 return NotFound();
             }
 
-            return View(accountVm);
-        }
-
-        /// <summary>
-        /// Convert time from UTC to user time zone.
-        /// </summary>
-        /// <param name="event">Event object.</param>
-        /// <returns>Task.</returns>
-        private async Task ConvertTimeForUser(EventDto @event)
-        {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            if (user is not null && !string.IsNullOrWhiteSpace(user.TimeZone))
-            {
-                var userTimeZone = TimeZoneInfo.FindSystemTimeZoneById(user.TimeZone);
-                @event.TimeStart = TimeZoneInfo.ConvertTime(@event.TimeStart, TimeZoneInfo.Utc, userTimeZone);
-                @event.TimeEnd = TimeZoneInfo.ConvertTime(@event.TimeEnd, TimeZoneInfo.Utc, userTimeZone);
-            }
+            return View(await _service.GetAccountViewModelInIndex(user));
         }
     }
 }

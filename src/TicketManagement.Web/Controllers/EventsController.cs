@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.ModelsDTO;
-using TicketManagement.Web.Models;
+using TicketManagement.Web.Interfaces;
 using TicketManagement.Web.Models.Events;
 using TicketManagement.Web.Models.Tickets;
 
@@ -29,27 +25,12 @@ namespace TicketManagement.Web.Controllers
         /// <summary>
         /// EventService object.
         /// </summary>
-        private readonly IService<EventDto> _service;
+        private readonly IService<EventDto> _eventService;
 
         /// <summary>
-        /// TicketService object.
+        /// EventWebService object.
         /// </summary>
-        private readonly IService<TicketDto> _ticketService;
-
-        /// <summary>
-        /// EventAreaService object.
-        /// </summary>
-        private readonly IService<EventAreaDto> _eventAreaService;
-
-        /// <summary>
-        /// EventSeatService object.
-        /// </summary>
-        private readonly IService<EventSeatDto> _eventSeatService;
-
-        /// <summary>
-        /// UserManager object.
-        /// </summary>
-        private readonly UserManager<User> _userManager;
+        private readonly IEventWebService _eventWebService;
 
         /// <summary>
         /// Localizer object.
@@ -59,20 +40,13 @@ namespace TicketManagement.Web.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="EventsController"/> class.
         /// </summary>
-        /// <param name="service">EventService object.</param>
-        /// <param name="ticketService">TicketService object.</param>
-        /// <param name="eventAreaService">EventAreaService object.</param>
-        /// <param name="eventSeatService">EventSeatService object.</param>
-        /// <param name="userManager">UserManager object.</param>
+        /// <param name="eventService">EventService object.</param>
+        /// <param name="eventWebService">EventWebService object.</param>
         /// <param name="localizer">Localizer object.</param>
-        public EventsController(IService<EventDto> service, IService<TicketDto> ticketService, IService<EventAreaDto> eventAreaService,
-            IService<EventSeatDto> eventSeatService, UserManager<User> userManager, IStringLocalizer<EventsController> localizer)
+        public EventsController(IService<EventDto> eventService, IEventWebService eventWebService, IStringLocalizer<EventsController> localizer)
         {
-            _service = service;
-            _ticketService = ticketService;
-            _eventAreaService = eventAreaService;
-            _eventSeatService = eventSeatService;
-            _userManager = userManager;
+            _eventService = eventService;
+            _eventWebService = eventWebService;
             _localizer = localizer;
         }
 
@@ -83,14 +57,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var events = await _service.GetAllAsync();
-            var eventsVm = new List<EventViewModel>();
-            foreach (var @event in events)
-            {
-                eventsVm.Add(@event);
-            }
-
-            return View(eventsVm);
+            return View(await _eventWebService.GetAllEventViewModelsAsync());
         }
 
         /// <summary>
@@ -106,32 +73,13 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var @event = await _service.GetByIdAsync((int)id);
+            var @event = await _eventService.GetByIdAsync((int)id);
             if (@event == null)
             {
                 return NotFound();
             }
 
-            await ConvertTimeForUser(@event);
-            var eventAreas = await _eventAreaService.GetAllAsync();
-            var eventAreasForEvent = eventAreas.Where(x => x.EventId == (int)id);
-            var eventSeats = await _eventSeatService.GetAllAsync();
-            var eventAreaViewModels = new List<EventAreaViewModelInEvent>();
-            foreach (var eventArea in eventAreasForEvent)
-            {
-                var eventSeatsInArea = eventSeats.Where(x => x.EventAreaId == eventArea.Id).ToList();
-                var eventAreaViewModel = new EventAreaViewModelInEvent
-                {
-                    EventArea = eventArea,
-                    EventSeats = eventSeatsInArea,
-                };
-
-                eventAreaViewModels.Add(eventAreaViewModel);
-            }
-
-            EventViewModel eventViewModel = @event;
-            eventViewModel.EventAreas = eventAreaViewModels;
-            return View(eventViewModel);
+            return View(await _eventWebService.GetEventViewModelForDetailsAsync(@event, HttpContext));
         }
 
         /// <summary>
@@ -161,7 +109,7 @@ namespace TicketManagement.Web.Controllers
             }
 
             EventDto @event = eventVm;
-            await _service.CreateAsync(@event);
+            await _eventService.CreateAsync(@event);
             return RedirectToAction(nameof(Index));
         }
 
@@ -179,15 +127,13 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var updatingEvent = await _service.GetByIdAsync((int)id);
+            var updatingEvent = await _eventService.GetByIdAsync((int)id);
             if (updatingEvent == null)
             {
                 return NotFound();
             }
 
-            await ConvertTimeForUser(updatingEvent);
-            EventViewModel eventVm = updatingEvent;
-            return View(eventVm);
+            return View(_eventWebService.GetEventViewModelForEditAndDeleteAsync(updatingEvent, HttpContext));
         }
 
         /// <summary>
@@ -214,7 +160,7 @@ namespace TicketManagement.Web.Controllers
             EventDto @event = eventVm;
             try
             {
-                await _service.UpdateAsync(@event);
+                await _eventService.UpdateAsync(@event);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -245,15 +191,13 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var deletingEvent = await _service.GetByIdAsync((int)id);
+            var deletingEvent = await _eventService.GetByIdAsync((int)id);
             if (deletingEvent == null)
             {
                 return NotFound();
             }
 
-            await ConvertTimeForUser(deletingEvent);
-            EventViewModel eventVm = deletingEvent;
-            return View(eventVm);
+            return View(_eventWebService.GetEventViewModelForEditAndDeleteAsync(deletingEvent, HttpContext));
         }
 
         /// <summary>
@@ -267,8 +211,7 @@ namespace TicketManagement.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var @event = await _service.GetByIdAsync(id);
-            await _service.DeleteAsync(@event);
+            await _eventService.DeleteById(id);
             return RedirectToAction(nameof(Index));
         }
 
@@ -287,17 +230,7 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            var ticket = new TicketDto
-            {
-                UserId = user.Id,
-                EventSeatId = (int)eventSeatId,
-            };
-
-            TicketViewModel ticketVm = ticket;
-            ticketVm.Price = (double)price;
-
-            return View(ticketVm);
+            return View(await _eventWebService.GetTicketViewModelForBuyAsync(eventSeatId, price, HttpContext));
         }
 
         /// <summary>
@@ -310,22 +243,12 @@ namespace TicketManagement.Web.Controllers
         [ActionName("Buy")]
         public async Task<IActionResult> BuyConfirmed(TicketViewModel ticketVm)
         {
-            TicketDto ticket = ticketVm;
-            var user = await _userManager.FindByIdAsync(ticket.UserId);
-            if (user.Balance >= ticketVm.Price)
+            if (await _eventWebService.UpdateEventSeatStateAfterBuyingTicket(ticketVm))
             {
-                user.Balance -= ticketVm.Price;
-                var seat = await _eventSeatService.GetByIdAsync(ticket.EventSeatId);
-                seat.State = PlaceStatus.Occupied;
-                await _eventSeatService.UpdateAsync(seat);
-                await _ticketService.CreateAsync(ticket);
-            }
-            else
-            {
-                return ValidationProblem(_localizer[NoBalance]);
+                return RedirectToAction(nameof(Index));
             }
 
-            return RedirectToAction(nameof(Index));
+            return ValidationProblem(_localizer[NoBalance]);
         }
 
         /// <summary>
@@ -335,23 +258,7 @@ namespace TicketManagement.Web.Controllers
         /// <returns>True if exist and false if not.</returns>
         private async Task<bool> EventExists(int id)
         {
-            return await _service.GetByIdAsync(id) is not null;
-        }
-
-        /// <summary>
-        /// Convert time from UTC to user time zone.
-        /// </summary>
-        /// <param name="event">Event object.</param>
-        /// <returns>Task.</returns>
-        private async Task ConvertTimeForUser(EventDto @event)
-        {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            if (user is not null && !string.IsNullOrWhiteSpace(user.TimeZone))
-            {
-                var userTimeZone = TimeZoneInfo.FindSystemTimeZoneById(user.TimeZone);
-                @event.TimeStart = TimeZoneInfo.ConvertTime(@event.TimeStart, TimeZoneInfo.Utc, userTimeZone);
-                @event.TimeEnd = TimeZoneInfo.ConvertTime(@event.TimeEnd, TimeZoneInfo.Utc, userTimeZone);
-            }
+            return await _eventService.GetByIdAsync(id) is not null;
         }
     }
 }
