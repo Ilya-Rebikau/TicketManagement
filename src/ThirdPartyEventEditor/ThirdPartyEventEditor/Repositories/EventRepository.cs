@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using ThirdPartyEventEditor.Interfaces;
 using ThirdPartyEventEditor.Models;
@@ -20,41 +21,47 @@ namespace ThirdPartyEventEditor.Repositories
 
         public ThirdPartyEvent Create(ThirdPartyEvent obj)
         {
-            try  
-            {  
-                var json = File.ReadAllText(_filesConfig.FullPathToFile);
-                if (string.IsNullOrWhiteSpace(json))
-                {
-                    string baseJson = "{\"events\": {}}";
-                    File.WriteAllText(_filesConfig.FullPathToFile, baseJson);
-                    json = File.ReadAllText(_filesConfig.FullPathToFile);
-                }
-
-                var jsonObj = JObject.Parse(json);
-                var eventsArray = jsonObj.GetValue("events") as JArray;
-                if (eventsArray is null)
-                {
-                    eventsArray = new JArray();
-                }
-
-                obj.Id = eventsArray.Count + 1;
-                var newEventJson = JsonConvert.SerializeObject(obj);
-                var newEvent = JObject.Parse(newEventJson);
-                eventsArray.Add(newEvent);
-                jsonObj["events"] = eventsArray;
-                string newJsonResult = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-                File.WriteAllText(_filesConfig.FullPathToFile, newJsonResult);
-                return obj;
-            }
-            catch
+            var json = File.ReadAllText(_filesConfig.FullPathToFile);
+            if (string.IsNullOrWhiteSpace(json))
             {
-                throw new ArgumentException("Wrong event data.");
+                string baseJson = "{\"events\": {}}";
+                File.WriteAllText(_filesConfig.FullPathToFile, baseJson);
+                json = File.ReadAllText(_filesConfig.FullPathToFile);
             }
+
+            var jsonObj = JObject.Parse(json);
+            if (!(jsonObj.GetValue("events") is JArray eventsArray))
+            {
+                eventsArray = new JArray();
+            }
+
+            obj.Id = eventsArray.Count + 1;
+            var newEventJson = JsonConvert.SerializeObject(obj);
+            var newEvent = JObject.Parse(newEventJson);
+            eventsArray.Add(newEvent);
+            jsonObj["events"] = eventsArray;
+            string newJsonResult = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
+            File.WriteAllText(_filesConfig.FullPathToFile, newJsonResult);
+            return obj;
         }
 
         public ThirdPartyEvent Delete(ThirdPartyEvent obj)
         {
-            throw new NotImplementedException();
+            var json = File.ReadAllText(_filesConfig.FullPathToFile);
+            try
+            {
+                var jObject = JObject.Parse(json);
+                var eventsArray = jObject["events"] as JArray;
+                var deletingEvent = eventsArray.SingleOrDefault(e => e["Id"].Value<int>() == obj.Id);
+                eventsArray.Remove(deletingEvent);
+                string output = JsonConvert.SerializeObject(jObject, Formatting.Indented);
+                File.WriteAllText(_filesConfig.FullPathToFile, output);
+                return obj;
+            }
+            catch (Exception)
+            {
+                throw new NullReferenceException("No such event in file!");
+            }
         }
 
         public IEnumerable<ThirdPartyEvent> GetAll()
@@ -90,12 +97,46 @@ namespace ThirdPartyEventEditor.Repositories
 
         public ThirdPartyEvent GetById(int id)
         {
-            throw new NotImplementedException();
+            var json = File.ReadAllText(_filesConfig.FullPathToFile);
+            try
+            {
+                var jObject = JObject.Parse(json);
+                var eventsArray = jObject["events"] as JArray;
+                var jEvent = eventsArray.SingleOrDefault(e => e["Id"].Value<int>() == id);
+                var @event = jEvent.ToObject<ThirdPartyEvent>();
+                return @event;
+            }
+            catch
+            {
+                throw new NullReferenceException("No such event in file.");
+            }
         }
 
         public ThirdPartyEvent Update(ThirdPartyEvent obj)
         {
-            throw new NotImplementedException();
+            string json = File.ReadAllText(_filesConfig.FullPathToFile);
+            try
+            {
+                var jObject = JObject.Parse(json);
+                var eventsArray = jObject["events"] as JArray;
+                foreach (var @event in eventsArray.Where(e => e["Id"].Value<int>() == obj.Id))
+                {
+                    @event["Name"] = !string.IsNullOrWhiteSpace(obj.Name) ? obj.Name : "";
+                    @event["Description"] = !string.IsNullOrWhiteSpace(obj.Description) ? obj.Description : "";
+                    @event["StartDate"] = obj.StartDate;
+                    @event["EndDate"] = obj.EndDate;
+                    @event["PosterImage"] = !string.IsNullOrWhiteSpace(obj.PosterImage) ? obj.PosterImage : "";
+                }
+
+                jObject["events"] = eventsArray;
+                string output = JsonConvert.SerializeObject(jObject, Formatting.Indented);
+                File.WriteAllText(_filesConfig.FullPathToFile, output);
+                return obj;
+            }
+            catch
+            {
+                throw new NullReferenceException("No such event in file.");
+            }
         }
 
         private async Task<string> UploadSampleImage(string imageFileName)
