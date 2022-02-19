@@ -10,10 +10,20 @@ using ThirdPartyEventEditor.Models;
 
 namespace ThirdPartyEventEditor.Repositories
 {
-    public class EventRepository : IRepository<ThirdPartyEvent>
+    /// <summary>
+    /// Repository for third party events.
+    /// </summary>
+    internal class EventRepository : IRepository<ThirdPartyEvent>
     {
+        /// <summary>
+        /// IFilesConfig object.
+        /// </summary>
         private readonly IFilesConfig _filesConfig;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EventRepository"/> class.
+        /// </summary>
+        /// <param name="filesConfig">IFilesConfig object.</param>
         public EventRepository(IFilesConfig filesConfig)
         {
             _filesConfig = filesConfig;
@@ -57,6 +67,25 @@ namespace ThirdPartyEventEditor.Repositories
                 string output = JsonConvert.SerializeObject(jObject, Formatting.Indented);
                 File.WriteAllText(_filesConfig.FullPathToFile, output);
                 return obj;
+            }
+            catch (Exception)
+            {
+                throw new NullReferenceException("No such event in file!");
+            }
+        }
+
+        public int DeleteById(int id)
+        {
+            var json = File.ReadAllText(_filesConfig.FullPathToFile);
+            try
+            {
+                var jObject = JObject.Parse(json);
+                var eventsArray = jObject["events"] as JArray;
+                var deletingEvent = eventsArray.SingleOrDefault(e => e["Id"].Value<int>() == id);
+                eventsArray.Remove(deletingEvent);
+                string output = JsonConvert.SerializeObject(jObject, Formatting.Indented);
+                File.WriteAllText(_filesConfig.FullPathToFile, output);
+                return id;
             }
             catch (Exception)
             {

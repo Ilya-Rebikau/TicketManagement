@@ -141,9 +141,12 @@
     <Compile Include="Interfaces\IFilesConfig.cs" />
     <Compile Include="Interfaces\IEntity.cs" />
     <Compile Include="Interfaces\IRepository.cs" />
+    <Compile Include="Interfaces\IService.cs" />
     <Compile Include="Models\ThirdPartyEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\EventRepository.cs" />
+    <Compile Include="Services\BaseService.cs" />
+    <Compile Include="Services\EventService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\poster_circus.png">

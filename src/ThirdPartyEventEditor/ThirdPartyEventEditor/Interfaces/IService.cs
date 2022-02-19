@@ -1,56 +1,52 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 
-[assembly: InternalsVisibleTo("TicketManagement.IntegrationTests")]
-[assembly: InternalsVisibleTo("TicketManagement.UnitTests")]
-
-namespace TicketManagement.BusinessLogic.Interfaces
+namespace ThirdPartyEventEditor.Interfaces
 {
     /// <summary>
     /// Services with CRUD operations for models.
     /// </summary>
-    public interface IService<TDto>
+    public interface IService<T>
+        where T : IEntity
     {
         /// <summary>
-        /// Get all objects from database.
+        /// Get all objects from json file.
         /// </summary>
         /// <returns>All objects.</returns>
-        Task<IEnumerable<TDto>> GetAllAsync();
+        IEnumerable<T> GetAll();
 
         /// <summary>
-        /// Get one object from database by his id.
+        /// Get one object from json file by his id.
         /// </summary>
         /// <param name="id">id.</param>
         /// <returns>Object.</returns>
-        Task<TDto> GetByIdAsync(int id);
+        T GetById(int id);
 
         /// <summary>
-        /// Add new object to database with validation logic.
+        /// Add new object to json file with validation logic.
         /// </summary>
         /// <param name="obj">Adding object.</param>
         /// <returns>Create object.</returns>
-        Task<TDto> CreateAsync(TDto obj);
+        T Create(T obj);
 
         /// <summary>
-        /// Update one object in database with validation logic.
+        /// Update one object in json file with validation logic.
         /// </summary>
         /// <param name="obj">Updating object.</param>
         /// <returns>Updated object.</returns>
-        Task<TDto> UpdateAsync(TDto obj);
+        T Update(T obj);
 
         /// <summary>
-        /// Delete object from database.
+        /// Delete object from json file.
         /// </summary>
         /// <param name="obj">Deleting object.</param>
         /// <returns>Deleted object.</returns>
-        Task<TDto> DeleteAsync(TDto obj);
+        T Delete(T obj);
 
         /// <summary>
         /// Delete object by id.
         /// </summary>
         /// <param name="id">Id of deleting object.</param>
         /// <returns>Id of deleted object.</returns>
-        Task<int> DeleteById(int id);
+        int DeleteById(int id);
     }
 }

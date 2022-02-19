@@ -2,6 +2,7 @@
 using ThirdPartyEventEditor.Interfaces;
 using ThirdPartyEventEditor.Models;
 using ThirdPartyEventEditor.Repositories;
+using ThirdPartyEventEditor.Services;
 
 namespace ThirdPartyEventEditor.App_Start
 {
@@ -14,6 +15,7 @@ namespace ThirdPartyEventEditor.App_Start
         {
             Bind<IFilesConfig>().To<FilesConfig>();
             Bind<IRepository<ThirdPartyEvent>>().To<EventRepository>();
+            Bind<IService<ThirdPartyEvent>>().To<EventService>();
         }
     }
 }

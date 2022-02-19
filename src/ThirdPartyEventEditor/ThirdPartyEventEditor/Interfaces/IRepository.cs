@@ -25,6 +25,7 @@ namespace ThirdPartyEventEditor.Interfaces
         /// Add new object to json file.
         /// </summary>
         /// <param name="obj">Adding object.</param>
+        /// <returns>Created object.</returns>
         T Create(T obj);
 
         /// <summary>
@@ -40,5 +41,12 @@ namespace ThirdPartyEventEditor.Interfaces
         /// <param name="obj">Deleting object.</param>
         /// <returns>Deleted object.</returns>
         T Delete(T obj);
+
+        /// <summary>
+        /// Delete object from json file by his id.
+        /// </summary>
+        /// <param name="id">Id of deleting object.</param>
+        /// <returns>Id of deleted object.</returns>
+        int DeleteById(int id);
     }
 }
