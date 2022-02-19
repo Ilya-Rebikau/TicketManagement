@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using ThirdPartyEventEditor.Interfaces;
 using ThirdPartyEventEditor.Models;
 
@@ -165,17 +164,6 @@ namespace ThirdPartyEventEditor.Repositories
             catch
             {
                 throw new NullReferenceException("No such event in file.");
-            }
-        }
-
-        private async Task<string> UploadSampleImage(string imageFileName)
-        {
-            var path = Path.Combine(_filesConfig.PathToDirectoryWithFile, imageFileName);
-            using (var memoryStream = new MemoryStream())
-            using (var fileStream = new FileStream(path, FileMode.Open))
-            {
-                await fileStream.CopyToAsync(memoryStream);
-                return "data:image/png;base64," + Convert.ToBase64String(memoryStream.ToArray());
             }
         }
     }

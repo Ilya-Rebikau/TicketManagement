@@ -138,6 +138,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\IEventWebService.cs" />
     <Compile Include="Interfaces\IFilesConfig.cs" />
     <Compile Include="Interfaces\IEntity.cs" />
     <Compile Include="Interfaces\IRepository.cs" />
@@ -147,6 +148,7 @@
     <Compile Include="Repositories\EventRepository.cs" />
     <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\EventService.cs" />
+    <Compile Include="Services\EvenWebService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\poster_circus.png">
