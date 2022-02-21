@@ -20,6 +20,11 @@ namespace ThirdPartyEventEditor.Repositories
         private readonly IFilesConfig _filesConfig;
 
         /// <summary>
+        /// Object for lock.
+        /// </summary>
+        private readonly object locker = new object();
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="EventRepository"/> class.
         /// </summary>
         /// <param name="filesConfig">IFilesConfig object.</param>
@@ -34,7 +39,11 @@ namespace ThirdPartyEventEditor.Repositories
             if (string.IsNullOrWhiteSpace(json))
             {
                 string baseJson = "{\"events\": {}}";
-                File.WriteAllText(_filesConfig.FullPathToFile, baseJson);
+                lock (locker)
+                {
+                    File.WriteAllText(_filesConfig.FullPathToFile, baseJson);
+                }
+
                 json = File.ReadAllText(_filesConfig.FullPathToFile);
             }
 
@@ -50,7 +59,11 @@ namespace ThirdPartyEventEditor.Repositories
             eventsArray.Add(newEvent);
             jsonObj["events"] = eventsArray;
             string newJsonResult = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-            File.WriteAllText(_filesConfig.FullPathToFile, newJsonResult);
+            lock (locker)
+            {
+                File.WriteAllText(_filesConfig.FullPathToFile, newJsonResult);
+            }
+            
             return obj;
         }
 
@@ -64,7 +77,11 @@ namespace ThirdPartyEventEditor.Repositories
                 var deletingEvent = eventsArray.SingleOrDefault(e => e["Id"].Value<int>() == obj.Id);
                 eventsArray.Remove(deletingEvent);
                 string output = JsonConvert.SerializeObject(jObject, Formatting.Indented);
-                File.WriteAllText(_filesConfig.FullPathToFile, output);
+                lock (locker)
+                {
+                    File.WriteAllText(_filesConfig.FullPathToFile, output);
+                }
+
                 return obj;
             }
             catch (Exception)
@@ -83,7 +100,11 @@ namespace ThirdPartyEventEditor.Repositories
                 var deletingEvent = eventsArray.SingleOrDefault(e => e["Id"].Value<int>() == id);
                 eventsArray.Remove(deletingEvent);
                 string output = JsonConvert.SerializeObject(jObject, Formatting.Indented);
-                File.WriteAllText(_filesConfig.FullPathToFile, output);
+                lock (locker)
+                {
+                    File.WriteAllText(_filesConfig.FullPathToFile, output);
+                }
+                
                 return id;
             }
             catch (Exception)
@@ -158,7 +179,11 @@ namespace ThirdPartyEventEditor.Repositories
 
                 jObject["events"] = eventsArray;
                 string output = JsonConvert.SerializeObject(jObject, Formatting.Indented);
-                File.WriteAllText(_filesConfig.FullPathToFile, output);
+                lock (locker)
+                {
+                    File.WriteAllText(_filesConfig.FullPathToFile, output);
+                }
+                
                 return obj;
             }
             catch

@@ -9,7 +9,7 @@ namespace ThirdPartyEventEditor.Services
     /// <summary>
     /// Web service for events.
     /// </summary>
-    internal class EvenWebService : BaseService<ThirdPartyEvent>, IEventWebService
+    internal class EventWebService : BaseService<ThirdPartyEvent>, IEventWebService
     {
         /// <summary>
         /// IFilesConfig object.
@@ -17,11 +17,11 @@ namespace ThirdPartyEventEditor.Services
         private readonly IFilesConfig _filesConfig;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EvenWebService"/> class.
+        /// Initializes a new instance of the <see cref="EventWebService"/> class.
         /// </summary>
         /// <param name="repository">IRepository object with CRUD operations.</param>
         /// <param name="filesConfig">IFilesConfig object.</param>
-        public EvenWebService(IRepository<ThirdPartyEvent> repository, IFilesConfig filesConfig)
+        public EventWebService(IRepository<ThirdPartyEvent> repository, IFilesConfig filesConfig)
             : base(repository)
         {
             Repository = repository;

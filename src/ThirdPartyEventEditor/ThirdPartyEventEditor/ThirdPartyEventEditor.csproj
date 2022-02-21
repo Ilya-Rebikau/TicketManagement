@@ -148,7 +148,7 @@
     <Compile Include="Repositories\EventRepository.cs" />
     <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\EventService.cs" />
-    <Compile Include="Services\EvenWebService.cs" />
+    <Compile Include="Services\EventWebService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\poster_circus.png">

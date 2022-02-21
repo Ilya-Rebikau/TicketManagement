@@ -16,6 +16,7 @@ namespace ThirdPartyEventEditor.App_Start
             Bind<IFilesConfig>().To<FilesConfig>();
             Bind<IRepository<ThirdPartyEvent>>().To<EventRepository>();
             Bind<IService<ThirdPartyEvent>>().To<EventService>();
+            Bind<IEventWebService>().To<EventWebService>();
         }
     }
 }
