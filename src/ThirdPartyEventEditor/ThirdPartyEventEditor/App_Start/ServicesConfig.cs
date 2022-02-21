@@ -1,4 +1,5 @@
 ﻿using Ninject.Modules;
+using System.Web.Mvc;
 using ThirdPartyEventEditor.Interfaces;
 using ThirdPartyEventEditor.Models;
 using ThirdPartyEventEditor.Repositories;
@@ -17,6 +18,7 @@ namespace ThirdPartyEventEditor.App_Start
             Bind<IRepository<ThirdPartyEvent>>().To<EventRepository>();
             Bind<IService<ThirdPartyEvent>>().To<EventService>();
             Bind<IEventWebService>().To<EventWebService>();
+            Unbind<ModelValidatorProvider>();
         }
     }
 }

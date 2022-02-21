@@ -116,32 +116,37 @@ namespace ThirdPartyEventEditor.Repositories
         public IEnumerable<ThirdPartyEvent> GetAll()
         {
             var json = File.ReadAllText(_filesConfig.FullPathToFile);
-            try
+            if (string.IsNullOrWhiteSpace(json))
             {
-                var jsonObj = JObject.Parse(json);
-                var eventsArray = jsonObj.GetValue("events") as JArray;
-                var events = new List<ThirdPartyEvent>();
-                if (eventsArray != null)
+                string baseJson = "{\"events\": {}}";
+                lock (locker)
                 {
-                    foreach (var jsonObject in eventsArray)
-                    {
-                        events.Add(new ThirdPartyEvent
-                        {
-                            Id = (int)jsonObject["Id"],
-                            Name = jsonObject["Name"].ToString(),
-                            Description = jsonObject["Description"].ToString(),
-                            StartDate = (DateTime)jsonObject["StartDate"],
-                            EndDate = (DateTime)jsonObject["EndDate"],
-                            PosterImage = jsonObject["PosterImage"].ToString(),
-                        });
-                    }
+                    File.WriteAllText(_filesConfig.FullPathToFile, baseJson);
                 }
-                return events;
+
+                json = File.ReadAllText(_filesConfig.FullPathToFile);
             }
-            catch
+
+            var jsonObj = JObject.Parse(json);
+            var eventsArray = jsonObj.GetValue("events") as JArray;
+            var events = new List<ThirdPartyEvent>();
+            if (eventsArray != null)
             {
-                throw new NullReferenceException("No events in file.");
+                foreach (var jsonObject in eventsArray)
+                {
+                    events.Add(new ThirdPartyEvent
+                    {
+                        Id = (int)jsonObject["Id"],
+                        Name = jsonObject["Name"].ToString(),
+                        Description = jsonObject["Description"].ToString(),
+                        StartDate = (DateTime)jsonObject["StartDate"],
+                        EndDate = (DateTime)jsonObject["EndDate"],
+                        PosterImage = jsonObject["PosterImage"].ToString(),
+                    });
+                }
             }
+
+            return events;
         }
 
         public ThirdPartyEvent GetById(int id)

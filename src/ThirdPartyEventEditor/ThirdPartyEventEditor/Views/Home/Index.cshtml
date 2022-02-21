@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<ThirdPartyEventEditor.Models.ThirdPartyEvent>
 
 @{
-    ViewBag.Title = "View";
+    ViewBag.Title = "Third party events";
 }
 
 <h2>Events</h2>
@@ -47,9 +47,9 @@
             <img src="@item.PosterImage" alt=""/>
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            @Html.ActionLink("Edit", "Edit", new { item.Id }) |
+            @Html.ActionLink("Details", "Details", new { item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { item.Id })
         </td>
     </tr>
 }
