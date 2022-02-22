@@ -10,6 +10,8 @@ namespace ThirdPartyEventEditor.App_Start
     /// </summary>
     internal class FilesConfig : IFilesConfig
     {
+        public string LogsFileName => ConfigurationManager.AppSettings["LogsFileName"];
+
         public string FileType => ConfigurationManager.AppSettings["FileContentType"];
 
         public string JsonFileName => ConfigurationManager.AppSettings["JsonFileName"];
@@ -17,5 +19,7 @@ namespace ThirdPartyEventEditor.App_Start
         public string PathToAppDataDirectory => HostingEnvironment.MapPath(ConfigurationManager.AppSettings["DirectoryAppData"]);
 
         public string FullPathToJsonFile => Path.Combine(PathToAppDataDirectory, JsonFileName);
+
+        public string FullPathToLogsFile => Path.Combine(PathToAppDataDirectory, LogsFileName);
     }
 }

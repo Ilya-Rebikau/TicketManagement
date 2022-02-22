@@ -9,7 +9,7 @@ namespace ThirdPartyEventEditor.Services
     /// <summary>
     /// Web service for events.
     /// </summary>
-    internal class EventWebService : BaseService<ThirdPartyEvent>, IEventWebService
+    internal class EventWebService : EventService, IEventWebService
     {
         /// <summary>
         /// IFilesConfig object.

@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using ThirdPartyEventEditor.Filters;
 using ThirdPartyEventEditor.Interfaces;
 using ThirdPartyEventEditor.Models;
 
 namespace ThirdPartyEventEditor.Controllers
 {
+    [GlobalExceptionFilter]
+    [LogExecutionTimeFilter]
     public class HomeController : Controller
     {
         /// <summary>

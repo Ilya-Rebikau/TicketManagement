@@ -21,8 +21,19 @@
         string PathToAppDataDirectory { get; }
 
         /// <summary>
-        /// Full path to json file.
+        /// Gets full path to json file.
         /// </summary>
         string FullPathToJsonFile { get; }
+
+        /// <summary>
+        /// Gets name of file with logs.
+        /// </summary>
+        string LogsFileName { get; }
+
+        /// <summary>
+        /// Gets full path with name to logs file.
+        /// </summary>
+
+        string FullPathToLogsFile { get; }
     }
 }

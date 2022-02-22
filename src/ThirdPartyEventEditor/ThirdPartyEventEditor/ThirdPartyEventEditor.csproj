@@ -135,6 +135,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\ServicesConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Filters\GlobalExceptionFilter.cs" />
+    <Compile Include="Filters\LogExecutionTimeFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -152,6 +154,7 @@
     <Compile Include="Services\EventWebService.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\Logs.txt" />
     <Content Include="App_Data\poster_circus.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

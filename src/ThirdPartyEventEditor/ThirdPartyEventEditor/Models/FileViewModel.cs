@@ -2,6 +2,9 @@
 
 namespace ThirdPartyEventEditor.Models
 {
+    /// <summary>
+    /// View model for work with file.
+    /// </summary>
     public class FileViewModel
     {
         /// <summary>
