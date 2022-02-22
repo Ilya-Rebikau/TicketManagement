@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using ThirdPartyEventEditor.Interfaces;
@@ -70,17 +69,16 @@ namespace ThirdPartyEventEditor.Controllers
         /// </summary>
         /// <param name="event">Adding event.</param>
         /// <returns>Task with ActionResult.</returns>
-        [Authorize(Roles = "admin, event manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(ThirdPartyEvent @event, string imageFileName)
+        public async Task<ActionResult> Create(ThirdPartyEvent @event)
         {
             if (!ModelState.IsValid)
             {
                 return View(@event);
             }
 
-            @event.PosterImage = await _service.UploadSampleImage(imageFileName);
+            @event.PosterImage = await _service.UploadSampleImage(@event.PosterImage);
             _service.Create(@event);
             return RedirectToAction(nameof(Index));
         }
@@ -115,7 +113,7 @@ namespace ThirdPartyEventEditor.Controllers
         /// <returns>Task with ActionResult.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, ThirdPartyEvent @event, string imageFileName)
+        public async Task<ActionResult> Edit(int id, ThirdPartyEvent @event)
         {
             if (id != @event.Id)
             {
@@ -127,7 +125,7 @@ namespace ThirdPartyEventEditor.Controllers
                 return View(@event);
             }
 
-            @event.PosterImage = await _service.UploadSampleImage(imageFileName);
+            @event.PosterImage = await _service.UploadSampleImage(@event.PosterImage);
             _service.Update(@event);
 
             return RedirectToAction(nameof(Index));
@@ -166,6 +164,28 @@ namespace ThirdPartyEventEditor.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             _service.DeleteById(id);
+            return RedirectToAction(nameof(Index));
+        }
+
+        /// <summary>
+        /// Download file from server.
+        /// </summary>
+        /// <returns>File.</returns>
+        [HttpGet]
+        public FileResult SaveFile()
+        {
+            var file = _service.GetFileInfo();
+            return File(file.FullPathWithName, file.Type, file.Name);
+        }
+
+        /// <summary>
+        /// Save file on personal computer.
+        /// </summary>
+        /// <param name="file">File.</param>
+        /// <returns>ActionResult.</returns>
+        [HttpPost]
+        public ActionResult SaveFile(FileViewModel file)
+        {
             return RedirectToAction(nameof(Index));
         }
     }

@@ -1,0 +1,11 @@
+﻿@model ThirdPartyEventEditor.Models.FileViewModel
+
+@{
+    ViewBag.Title = "Save file";
+}
+
+<h2>Save file</h2>
+<a href="@Model.FullPathWithName" download="@Model.Name">
+    Download file
+</a>
+@Html.ActionLink("Back to list", "Index");

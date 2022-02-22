@@ -10,10 +10,12 @@ namespace ThirdPartyEventEditor.App_Start
     /// </summary>
     internal class FilesConfig : IFilesConfig
     {
-        public string FileName => ConfigurationManager.AppSettings["JsonFileName"];
+        public string FileType => ConfigurationManager.AppSettings["FileContentType"];
 
-        public string PathToDirectoryWithFile => ConfigurationManager.AppSettings["DirectoryWithJsonFile"];
+        public string JsonFileName => ConfigurationManager.AppSettings["JsonFileName"];
 
-        public string FullPathToFile => Path.Combine(HostingEnvironment.ApplicationPhysicalPath, PathToDirectoryWithFile, FileName);
+        public string PathToAppDataDirectory => HostingEnvironment.MapPath(ConfigurationManager.AppSettings["DirectoryAppData"]);
+
+        public string FullPathToJsonFile => Path.Combine(PathToAppDataDirectory, JsonFileName);
     }
 }

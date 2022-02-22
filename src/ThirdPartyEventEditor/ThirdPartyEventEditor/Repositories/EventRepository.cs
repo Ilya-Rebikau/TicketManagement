@@ -35,16 +35,16 @@ namespace ThirdPartyEventEditor.Repositories
 
         public ThirdPartyEvent Create(ThirdPartyEvent obj)
         {
-            var json = File.ReadAllText(_filesConfig.FullPathToFile);
+            var json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
             if (string.IsNullOrWhiteSpace(json))
             {
                 string baseJson = "{\"events\": {}}";
                 lock (locker)
                 {
-                    File.WriteAllText(_filesConfig.FullPathToFile, baseJson);
+                    File.WriteAllText(_filesConfig.FullPathToJsonFile, baseJson);
                 }
 
-                json = File.ReadAllText(_filesConfig.FullPathToFile);
+                json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
             }
 
             var jsonObj = JObject.Parse(json);
@@ -61,7 +61,7 @@ namespace ThirdPartyEventEditor.Repositories
             string newJsonResult = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
             lock (locker)
             {
-                File.WriteAllText(_filesConfig.FullPathToFile, newJsonResult);
+                File.WriteAllText(_filesConfig.FullPathToJsonFile, newJsonResult);
             }
             
             return obj;
@@ -69,7 +69,7 @@ namespace ThirdPartyEventEditor.Repositories
 
         public ThirdPartyEvent Delete(ThirdPartyEvent obj)
         {
-            var json = File.ReadAllText(_filesConfig.FullPathToFile);
+            var json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
             try
             {
                 var jObject = JObject.Parse(json);
@@ -79,7 +79,7 @@ namespace ThirdPartyEventEditor.Repositories
                 string output = JsonConvert.SerializeObject(jObject, Formatting.Indented);
                 lock (locker)
                 {
-                    File.WriteAllText(_filesConfig.FullPathToFile, output);
+                    File.WriteAllText(_filesConfig.FullPathToJsonFile, output);
                 }
 
                 return obj;
@@ -92,7 +92,7 @@ namespace ThirdPartyEventEditor.Repositories
 
         public int DeleteById(int id)
         {
-            var json = File.ReadAllText(_filesConfig.FullPathToFile);
+            var json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
             try
             {
                 var jObject = JObject.Parse(json);
@@ -102,7 +102,7 @@ namespace ThirdPartyEventEditor.Repositories
                 string output = JsonConvert.SerializeObject(jObject, Formatting.Indented);
                 lock (locker)
                 {
-                    File.WriteAllText(_filesConfig.FullPathToFile, output);
+                    File.WriteAllText(_filesConfig.FullPathToJsonFile, output);
                 }
                 
                 return id;
@@ -115,16 +115,16 @@ namespace ThirdPartyEventEditor.Repositories
 
         public IEnumerable<ThirdPartyEvent> GetAll()
         {
-            var json = File.ReadAllText(_filesConfig.FullPathToFile);
+            var json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
             if (string.IsNullOrWhiteSpace(json))
             {
                 string baseJson = "{\"events\": {}}";
                 lock (locker)
                 {
-                    File.WriteAllText(_filesConfig.FullPathToFile, baseJson);
+                    File.WriteAllText(_filesConfig.FullPathToJsonFile, baseJson);
                 }
 
-                json = File.ReadAllText(_filesConfig.FullPathToFile);
+                json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
             }
 
             var jsonObj = JObject.Parse(json);
@@ -151,7 +151,7 @@ namespace ThirdPartyEventEditor.Repositories
 
         public ThirdPartyEvent GetById(int id)
         {
-            var json = File.ReadAllText(_filesConfig.FullPathToFile);
+            var json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
             try
             {
                 var jObject = JObject.Parse(json);
@@ -168,7 +168,7 @@ namespace ThirdPartyEventEditor.Repositories
 
         public ThirdPartyEvent Update(ThirdPartyEvent obj)
         {
-            string json = File.ReadAllText(_filesConfig.FullPathToFile);
+            string json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
             try
             {
                 var jObject = JObject.Parse(json);
@@ -186,7 +186,7 @@ namespace ThirdPartyEventEditor.Repositories
                 string output = JsonConvert.SerializeObject(jObject, Formatting.Indented);
                 lock (locker)
                 {
-                    File.WriteAllText(_filesConfig.FullPathToFile, output);
+                    File.WriteAllText(_filesConfig.FullPathToJsonFile, output);
                 }
                 
                 return obj;

@@ -28,14 +28,21 @@ namespace ThirdPartyEventEditor.Services
             _filesConfig = filesConfig;
         }
 
-        /// <summary>
-        /// Converting image to base64 string by file name.
-        /// </summary>
-        /// <param name="imageFileName">Image file name.</param>
-        /// <returns>Base64 string image.</returns>
+        public FileViewModel GetFileInfo()
+        {
+            var file = new FileViewModel
+            {
+                Name = _filesConfig.JsonFileName,
+                PathToDirectory = _filesConfig.PathToAppDataDirectory,
+                Type = _filesConfig.FileType
+            };
+
+            return file;
+        }
+
         public async Task<string> UploadSampleImage(string imageFileName)
         {
-            var path = Path.Combine(_filesConfig.PathToDirectoryWithFile, imageFileName);
+            var path = Path.Combine(_filesConfig.PathToAppDataDirectory, imageFileName);
             using (var memoryStream = new MemoryStream())
             using (var fileStream = new FileStream(path, FileMode.Open))
             {

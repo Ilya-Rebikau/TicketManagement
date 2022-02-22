@@ -6,18 +6,23 @@
     public interface IFilesConfig
     {
         /// <summary>
-        /// Name of file.
+        /// Gets content type of file.
         /// </summary>
-        string FileName { get; }
+        string FileType { get; }
 
         /// <summary>
-        /// Path to directory with files.
+        /// Gets name of json file.
         /// </summary>
-        string PathToDirectoryWithFile { get; }
+        string JsonFileName { get; }
 
         /// <summary>
-        /// Full path to json file in folder.
+        /// Gets path to App_Data directory with files.
         /// </summary>
-        string FullPathToFile { get; }
+        string PathToAppDataDirectory { get; }
+
+        /// <summary>
+        /// Full path to json file.
+        /// </summary>
+        string FullPathToJsonFile { get; }
     }
 }
