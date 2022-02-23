@@ -1,61 +1,77 @@
-﻿@model IEnumerable<EventViewModel>
+﻿@model List<EventViewModel>
 @inject IViewLocalizer loc
 @{
     ViewData["Title"] = @loc["Title"];
 }
 
 <h1>@loc["Title"]</h1>
-
-<table class="table">
-    <thead>
+@if (Model.Count > 0)
+{
+    <table class="table">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayNameFor(model => model[0].Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                @Html.DisplayNameFor(model => model[0].Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LayoutId)
+                @Html.DisplayNameFor(model => model[0].LayoutId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TimeStart)
+                @Html.DisplayNameFor(model => model[0].TimeStart)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TimeEnd)
+                @Html.DisplayNameFor(model => model[0].TimeEnd)
             </th>
             <th>
                 @loc["Image"]
             </th>
             <th>
-                @loc["Operations"]
+                @loc["ChooseForSave"]
             </th>
         </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LayoutId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TimeStart)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TimeEnd)
-            </td>
-            <td>
-                <img src="@item.ImageUrl" height="300" width="300" alt="@loc["Picture"]">
-            </td>
-            <td>
-            </td>
-        </tr>
+        <form method="post" asp-action="SaveToDatabase">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr>
+                    <input type="hidden" asp-for="@Model[i].Id">
+                    <td>
+                        @Model[i].Name
+                        <input type="hidden" asp-for="@Model[i].Name">
+                    </td>
+                    <td>
+                        @Model[i].Description
+                        <input type="hidden" asp-for="@Model[i].Description">
+                    </td>
+                    <td>
+                        @Model[i].LayoutId
+                        <input type="hidden" asp-for="@Model[i].LayoutId">
+                    </td>
+                    <td>
+                        @Model[i].TimeStart
+                        <input type="hidden" asp-for="@Model[i].TimeStart">
+                    </td>
+                    <td>
+                        @Model[i].TimeEnd
+                        <input type="hidden" asp-for="@Model[i].TimeEnd">
+                    </td>
+                    <td>
+                        <img src="@Model[i].ImageUrl" height="300" width="300" alt="@loc["Picture"]">
+                        <input type="hidden" asp-for="@Model[i].ImageUrl">
+                    </td>
+                    <td>
+                        <input type="checkbox" asp-for="@Model[i].Checked">
+                    </td>
+                </tr>
+            }
+            <div class="form-group">
+                <input type="submit" value="@loc["Save"]" class="btn btn-success" />
+            </div>
+        </form>
+    </table>
 }
-    </tbody>
-</table>
+else
+{
+    <h2>No events in file!</h2>
+}

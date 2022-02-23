@@ -1,9 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TicketManagement.Web.Extensions;
 using TicketManagement.Web.Infrastructure;
 using TicketManagement.Web.Interfaces;
+using TicketManagement.Web.Models.Events;
 
 namespace TicketManagement.Web.Controllers
 {
@@ -29,6 +32,7 @@ namespace TicketManagement.Web.Controllers
             _service = service;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
@@ -38,6 +42,13 @@ namespace TicketManagement.Web.Controllers
         public async Task<IActionResult> ShowEvents(IFormFile file)
         {
             return View(await _service.GetEventViewModelsFromJson(file));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveToDatabaseAsync(IEnumerable<EventViewModel> events)
+        {
+            await _service.SaveToDatabase(events);
+            return RedirectToAction(nameof(Index), typeof(EventsController).GetControllerName());
         }
     }
 }

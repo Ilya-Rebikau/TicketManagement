@@ -16,5 +16,12 @@ namespace TicketManagement.Web.Interfaces
         /// <param name="file">Json file.</param>
         /// <returns>Collection of event view models.</returns>
         Task<IEnumerable<EventViewModel>> GetEventViewModelsFromJson(IFormFile file);
+
+        /// <summary>
+        /// Save collection of event view models to database.
+        /// </summary>
+        /// <param name="events">Collection of events.</param>
+        /// <returns>Saved collection of events.</returns>
+        Task<IEnumerable<EventViewModel>> SaveToDatabase(IEnumerable<EventViewModel> events);
     }
 }

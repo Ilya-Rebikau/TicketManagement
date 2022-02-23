@@ -136,7 +136,7 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            return View(_eventWebService.GetEventViewModelForEditAndDeleteAsync(updatingEvent, HttpContext));
+            return View(await _eventWebService.GetEventViewModelForEditAndDeleteAsync(updatingEvent, HttpContext));
         }
 
         /// <summary>
@@ -200,7 +200,7 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            return View(_eventWebService.GetEventViewModelForEditAndDeleteAsync(deletingEvent, HttpContext));
+            return View(await _eventWebService.GetEventViewModelForEditAndDeleteAsync(deletingEvent, HttpContext));
         }
 
         /// <summary>
