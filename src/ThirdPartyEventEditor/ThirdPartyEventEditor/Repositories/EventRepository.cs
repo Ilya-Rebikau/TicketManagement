@@ -23,7 +23,7 @@ namespace ThirdPartyEventEditor.Repositories
         /// <summary>
         /// Object for lock.
         /// </summary>
-        private readonly object locker = new object();
+        private readonly object _locker = new object();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EventRepository"/> class.
@@ -42,7 +42,7 @@ namespace ThirdPartyEventEditor.Repositories
                 if (string.IsNullOrWhiteSpace(json))
                 {
                     string baseJson = "{\"events\": {}}";
-                    lock (locker)
+                    lock (_locker)
                     {
                         File.WriteAllText(_filesConfig.FullPathToJsonFile, baseJson);
                     }
@@ -62,7 +62,7 @@ namespace ThirdPartyEventEditor.Repositories
                 eventsArray.Add(newEvent);
                 jsonObj["events"] = eventsArray;
                 string newJsonResult = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-                lock (locker)
+                lock (_locker)
                 {
                     File.WriteAllText(_filesConfig.FullPathToJsonFile, newJsonResult);
                 }
@@ -83,7 +83,7 @@ namespace ThirdPartyEventEditor.Repositories
                     var deletingEvent = eventsArray.SingleOrDefault(e => e["Id"].Value<int>() == obj.Id);
                     eventsArray.Remove(deletingEvent);
                     string output = JsonConvert.SerializeObject(jObject, Formatting.Indented);
-                    lock (locker)
+                    lock (_locker)
                     {
                         File.WriteAllText(_filesConfig.FullPathToJsonFile, output);
                     }
@@ -105,7 +105,7 @@ namespace ThirdPartyEventEditor.Repositories
                 if (string.IsNullOrWhiteSpace(json))
                 {
                     string baseJson = "{\"events\": {}}";
-                    lock (locker)
+                    lock (_locker)
                     {
                         File.WriteAllText(_filesConfig.FullPathToJsonFile, baseJson);
                     }
@@ -178,7 +178,7 @@ namespace ThirdPartyEventEditor.Repositories
 
                     jObject["events"] = eventsArray;
                     string output = JsonConvert.SerializeObject(jObject, Formatting.Indented);
-                    lock (locker)
+                    lock (_locker)
                     {
                         File.WriteAllText(_filesConfig.FullPathToJsonFile, output);
                     }
