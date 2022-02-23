@@ -30,9 +30,9 @@ namespace ThirdPartyEventEditor.Controllers
         /// </summary>
         /// <returns>ActionResult object.</returns>
         [HttpGet]
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            return View(_service.GetAll());
+            return View(await _service.GetAllAsync());
         }
 
         /// <summary>
@@ -41,14 +41,14 @@ namespace ThirdPartyEventEditor.Controllers
         /// <param name="id">Id of event.</param>
         /// <returns>ActionResult object.</returns>
         [HttpGet]
-        public ActionResult Details(int? id)
+        public async Task<ActionResult> Details(int? id)
         {
             if (id == null)
             {
                 throw new ArgumentNullException("Event wasn't found.");
             }
 
-            var @event = _service.GetById((int)id);
+            var @event = await _service.GetByIdAsync((int)id);
             if (@event == null)
             {
                 throw new ArgumentNullException("Event wasn't found.");
@@ -82,7 +82,7 @@ namespace ThirdPartyEventEditor.Controllers
             }
 
             @event.PosterImage = await _service.UploadSampleImage(@event.PosterImage);
-            _service.Create(@event);
+            await _service.CreateAsync(@event);
             return RedirectToAction(nameof(Index));
         }
 
@@ -92,14 +92,14 @@ namespace ThirdPartyEventEditor.Controllers
         /// <param name="id">Id of editing event.</param>
         /// <returns>ActionResult object.</returns>
         [HttpGet]
-        public ActionResult Edit(int? id)
+        public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 throw new ArgumentNullException("Event wasn't found.");
             }
 
-            var updatingEvent = _service.GetById((int)id);
+            var updatingEvent = await _service.GetByIdAsync((int)id);
             if (updatingEvent == null)
             {
                 throw new ArgumentNullException("Event wasn't found.");
@@ -129,7 +129,7 @@ namespace ThirdPartyEventEditor.Controllers
             }
 
             @event.PosterImage = await _service.UploadSampleImage(@event.PosterImage);
-            _service.Update(@event);
+            await _service.UpdateAsync(@event);
 
             return RedirectToAction(nameof(Index));
         }
@@ -140,14 +140,14 @@ namespace ThirdPartyEventEditor.Controllers
         /// <param name="id">Id of deleting event.</param>
         /// <returns>ActionResult object.</returns>
         [HttpGet]
-        public ActionResult Delete(int? id)
+        public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 throw new ArgumentNullException("Event wasn't found.");
             }
 
-            var deletingEvent = _service.GetById((int)id);
+            var deletingEvent = await _service.GetByIdAsync((int)id);
             if (deletingEvent == null)
             {
                 throw new ArgumentNullException("Event wasn't found.");
@@ -164,9 +164,9 @@ namespace ThirdPartyEventEditor.Controllers
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            _service.DeleteById(id);
+            await _service.DeleteByIdAsync(id);
             return RedirectToAction(nameof(Index));
         }
 

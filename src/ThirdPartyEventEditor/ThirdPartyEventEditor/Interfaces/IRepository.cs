@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Threading.Tasks;
 
 namespace ThirdPartyEventEditor.Interfaces
 {
@@ -12,41 +13,34 @@ namespace ThirdPartyEventEditor.Interfaces
         /// Get all objects from json file.
         /// </summary>
         /// <returns>All objects.</returns>
-        IEnumerable<T> GetAll();
+        Task<IQueryable<T>> GetAllAsync();
 
         /// <summary>
         /// Get one object from json file by his id.
         /// </summary>
         /// <param name="id">Id.</param>
         /// <returns>Object.</returns>
-        T GetById(int id);
+        Task<T> GetByIdAsync(int id);
 
         /// <summary>
         /// Add new object to json file.
         /// </summary>
         /// <param name="obj">Adding object.</param>
         /// <returns>Created object.</returns>
-        T Create(T obj);
+        Task<T> CreateAsync(T obj);
 
         /// <summary>
         /// Update one object in json file.
         /// </summary>
         /// <param name="obj">Updating object.</param>
         /// <returns>Updated object.</returns>
-        T Update(T obj);
+        Task<T> UpdateAsync(T obj);
 
         /// <summary>
         /// Delete object from json file.
         /// </summary>
         /// <param name="obj">Deleting object.</param>
         /// <returns>Deleted object.</returns>
-        T Delete(T obj);
-
-        /// <summary>
-        /// Delete object from json file by his id.
-        /// </summary>
-        /// <param name="id">Id of deleting object.</param>
-        /// <returns>Id of deleted object.</returns>
-        int DeleteById(int id);
+        Task<T> DeleteAsync(T obj);
     }
 }

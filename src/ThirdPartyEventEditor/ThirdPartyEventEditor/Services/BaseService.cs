@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using ThirdPartyEventEditor.Interfaces;
 
 namespace ThirdPartyEventEditor.Services
@@ -24,34 +25,36 @@ namespace ThirdPartyEventEditor.Services
             Repository = repository;
         }
 
-        public virtual T Create(T obj)
+        public virtual async Task<T> CreateAsync(T obj)
         {
-            return Repository.Create(obj);
+            return await Repository.CreateAsync(obj);
         }
 
-        public virtual T Delete(T obj)
+        public virtual async Task<T> DeleteAsync(T obj)
         {
-            return Repository.Delete(obj);
+            return await Repository.DeleteAsync(obj);
         }
 
-        public virtual int DeleteById(int id)
+        public virtual async Task<int> DeleteByIdAsync(int id)
         {
-            return Repository.DeleteById(id);
+            var model = await Repository.GetByIdAsync(id);
+            await Repository.DeleteAsync(model);
+            return id;
         }
 
-        public virtual IEnumerable<T> GetAll()
+        public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
-            return Repository.GetAll();
+            return await Repository.GetAllAsync();
         }
 
-        public virtual T GetById(int id)
+        public virtual async Task<T> GetByIdAsync(int id)
         {
-            return Repository.GetById(id);
+            return await Repository.GetByIdAsync(id);
         }
 
-        public virtual T Update(T obj)
+        public virtual async Task<T> UpdateAsync(T obj)
         {
-            return Repository.Update(obj);
+            return await Repository.UpdateAsync(obj);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using ThirdPartyEventEditor.Interfaces;
 using ThirdPartyEventEditor.Models;
 
@@ -20,22 +21,22 @@ namespace ThirdPartyEventEditor.Services
             Repository = repository;
         }
 
-        public override ThirdPartyEvent Create(ThirdPartyEvent obj)
+        public override async Task<ThirdPartyEvent> CreateAsync(ThirdPartyEvent obj)
         {
             ConvertTimeToUtc(obj);
             CheckEventForPastTime(obj);
             CheckForTimeBorders(obj);
-            CheckForSameLayoutInOneTime(obj);
-            return base.Create(obj);
+            await CheckForSameLayoutInOneTime(obj);
+            return await base.CreateAsync(obj);
         }
 
-        public override ThirdPartyEvent Update(ThirdPartyEvent obj)
+        public override async Task<ThirdPartyEvent> UpdateAsync(ThirdPartyEvent obj)
         {
             ConvertTimeToUtc(obj);
             CheckEventForPastTime(obj);
             CheckForTimeBorders(obj);
-            CheckForSameLayoutInOneTime(obj);
-            return base.Update(obj);
+            await CheckForSameLayoutInOneTime(obj);
+            return await base.UpdateAsync(obj);
         }
 
         /// <summary>
@@ -79,9 +80,9 @@ namespace ThirdPartyEventEditor.Services
         /// </summary>
         /// <param name="obj">Adding or updating event.</param>
         /// <exception cref="ArgumentException">Generates exception in case event in this layout and time already exists.</exception>
-        private void CheckForSameLayoutInOneTime(ThirdPartyEvent obj)
+        private async Task CheckForSameLayoutInOneTime(ThirdPartyEvent obj)
         {
-            var events = Repository.GetAll();
+            var events = await Repository.GetAllAsync();
             var eventsInLayout = events.Where(ev => ev.LayoutId == obj.LayoutId && obj.StartDate <= ev.StartDate && obj.EndDate >= ev.EndDate && ev.Id != obj.Id);
             if (eventsInLayout.Any())
             {
