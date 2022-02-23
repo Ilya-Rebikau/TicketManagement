@@ -1,13 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.Web.Infrastructure;
-using TicketManagement.Web.Models.Events;
+using TicketManagement.Web.Interfaces;
 
 namespace TicketManagement.Web.Controllers
 {
@@ -20,17 +16,17 @@ namespace TicketManagement.Web.Controllers
     public class ThirdPartyEventsController : Controller
     {
         /// <summary>
-        /// IReaderService object.
+        /// IThirdPartyEventWebService object.
         /// </summary>
-        private readonly IReaderService<EventDto> _reader;
+        private readonly IThirdPartyEventWebService _service;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ThirdPartyEventsController"/> class.
         /// </summary>
-        /// <param name="reader">IReaderService object.</param>
-        public ThirdPartyEventsController(IReaderService<EventDto> reader)
+        /// <param name="service">IThirdPartyEventWebService object.</param>
+        public ThirdPartyEventsController(IThirdPartyEventWebService service)
         {
-            _reader = reader;
+            _service = service;
         }
 
         public IActionResult Index()
@@ -39,24 +35,9 @@ namespace TicketManagement.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveEvents(IFormFile file)
+        public async Task<IActionResult> ShowEvents(IFormFile file)
         {
-            var json = "";
-            using (var stream = file.OpenReadStream())
-            {
-                byte[] buffer = new byte[stream.Length];
-                await stream.ReadAsync(buffer, 0, buffer.Length);
-                json = Encoding.Default.GetString(buffer);
-            }
-
-            var events = await _reader.GetAllAsync(json);
-            var eventsVm = new List<EventViewModel>();
-            foreach (var @event in events)
-            {
-                eventsVm.Add(@event);
-            }
-
-            return View(eventsVm);
+            return View(await _service.GetEventViewModelsFromJson(file));
         }
     }
 }
