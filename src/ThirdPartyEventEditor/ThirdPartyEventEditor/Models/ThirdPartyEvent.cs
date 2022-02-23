@@ -40,5 +40,12 @@ namespace ThirdPartyEventEditor.Models
         /// </summary>
         [Required(ErrorMessage = "This field is required!")]
         public string PosterImage { get; set; }
+
+        /// <summary>
+        /// Gets or sets id of layout for event.
+        /// </summary>
+        [Required(ErrorMessage = "This field is required!")]
+        [Range(1, int.MaxValue, ErrorMessage = "Layout id can be only positive number!")]
+        public int LayoutId { get; set; }
     }
 }

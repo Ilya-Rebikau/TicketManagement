@@ -142,6 +142,7 @@ namespace ThirdPartyEventEditor.Repositories
                         StartDate = (DateTime)jsonObject["StartDate"],
                         EndDate = (DateTime)jsonObject["EndDate"],
                         PosterImage = jsonObject["PosterImage"].ToString(),
+                        LayoutId = (int)jsonObject["LayoutId"],
                     });
                 }
             }
@@ -180,6 +181,7 @@ namespace ThirdPartyEventEditor.Repositories
                     @event["StartDate"] = obj.StartDate;
                     @event["EndDate"] = obj.EndDate;
                     @event["PosterImage"] = !string.IsNullOrWhiteSpace(obj.PosterImage) ? obj.PosterImage : "";
+                    @event["LayoutId"] = obj.LayoutId;
                 }
 
                 jObject["events"] = eventsArray;

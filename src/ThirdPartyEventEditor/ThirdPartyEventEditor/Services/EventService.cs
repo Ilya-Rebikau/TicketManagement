@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ThirdPartyEventEditor.Interfaces;
 using ThirdPartyEventEditor.Models;
 
@@ -24,6 +25,7 @@ namespace ThirdPartyEventEditor.Services
             ConvertTimeToUtc(obj);
             CheckEventForPastTime(obj);
             CheckForTimeBorders(obj);
+            CheckForSameLayoutInOneTime(obj);
             return base.Create(obj);
         }
 
@@ -32,6 +34,7 @@ namespace ThirdPartyEventEditor.Services
             ConvertTimeToUtc(obj);
             CheckEventForPastTime(obj);
             CheckForTimeBorders(obj);
+            CheckForSameLayoutInOneTime(obj);
             return base.Update(obj);
         }
 
@@ -68,6 +71,21 @@ namespace ThirdPartyEventEditor.Services
             if (obj.StartDate >= obj.EndDate)
             {
                 throw new ArgumentException("Time of start event can't be after event's time of end");
+            }
+        }
+
+        /// <summary>
+        /// Checking that event can't be created in one time in one layout.
+        /// </summary>
+        /// <param name="obj">Adding or updating event.</param>
+        /// <exception cref="ArgumentException">Generates exception in case event in this layout and time already exists.</exception>
+        private void CheckForSameLayoutInOneTime(ThirdPartyEvent obj)
+        {
+            var events = Repository.GetAll();
+            var eventsInLayout = events.Where(ev => ev.LayoutId == obj.LayoutId && obj.StartDate <= ev.StartDate && obj.EndDate >= ev.EndDate && ev.Id != obj.Id);
+            if (eventsInLayout.Any())
+            {
+                throw new ArgumentException("You can't create event in one time in one layout!");
             }
         }
     }

@@ -180,16 +180,5 @@ namespace ThirdPartyEventEditor.Controllers
             var file = _service.GetFileInfo();
             return File(file.FullPathWithName, file.Type, file.Name);
         }
-
-        /// <summary>
-        /// Save file on personal computer.
-        /// </summary>
-        /// <param name="file">File.</param>
-        /// <returns>ActionResult.</returns>
-        [HttpPost]
-        public ActionResult SaveFile(FileViewModel file)
-        {
-            return RedirectToAction(nameof(Index));
-        }
     }
 }
