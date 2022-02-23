@@ -3,6 +3,7 @@ using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.BusinessLogic.Services;
 using TicketManagement.DataAccess.Configuration;
+using TicketManagement.DataAccess.Models;
 
 namespace TicketManagement.BusinessLogic.Configuration
 {
@@ -29,6 +30,7 @@ namespace TicketManagement.BusinessLogic.Configuration
             services.AddScoped(typeof(IService<SeatDto>), typeof(SeatService));
             services.AddScoped(typeof(IService<VenueDto>), typeof(VenueService));
             services.AddScoped(typeof(IService<TicketDto>), typeof(TicketService));
+            services.AddScoped(typeof(IReaderService<EventDto>), typeof(BaseReaderService<ThirdPartyEvent, EventDto>));
             return services;
         }
     }

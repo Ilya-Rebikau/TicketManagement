@@ -12,27 +12,15 @@ namespace TicketManagement.DataAccess.RepositoriesJson
     /// <summary>
     /// Repository for third party events with only read operations.
     /// </summary>
-    internal class ThirdPartyEventRepositoryJson : IRepositoryJson<ThirdPartyEvent>
+    internal class ThirdPartyEventRepositoryJson : IReaderJson<ThirdPartyEvent>
     {
-        /// <summary>
-        /// Object for lock.
-        /// </summary>
-        private readonly object _locker = new object();
-
-        public async Task<IQueryable<ThirdPartyEvent>> GetAllAsync(string path)
+        public async Task<IQueryable<ThirdPartyEvent>> GetAllAsync(string json)
         {
             return await Task.Run(() =>
             {
-                var json = File.ReadAllText(path);
                 if (string.IsNullOrWhiteSpace(json))
                 {
-                    string baseJson = "{\"events\": {}}";
-                    lock (_locker)
-                    {
-                        File.WriteAllText(path, baseJson);
-                    }
-
-                    json = File.ReadAllText(path);
+                    json = "{\"events\": {}}";
                 }
 
                 var jsonObj = JObject.Parse(json);
@@ -59,17 +47,10 @@ namespace TicketManagement.DataAccess.RepositoriesJson
             });
         }
 
-        /// <summary>
-        /// Get third party event from json file by his id.
-        /// </summary>
-        /// <param name="id">Id of third party event.</param>
-        /// <param name="path">Path to json file.</param>
-        /// <returns>Third party event.</returns>
-        public async Task<ThirdPartyEvent> GetByIdAsync(int id, string path)
+        public async Task<ThirdPartyEvent> GetByIdAsync(int id, string json)
         {
             return await Task.Run(() =>
             {
-                var json = File.ReadAllText(path);
                 var jsonObject = JObject.Parse(json);
                 var eventsArray = jsonObject["events"] as JArray;
                 var jsonEvent = eventsArray.SingleOrDefault(e => e["Id"].Value<int>() == id);
