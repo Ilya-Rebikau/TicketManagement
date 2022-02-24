@@ -120,6 +120,9 @@
   <data name="AddNew" xml:space="preserve">
     <value>Добавить событие</value>
   </data>
+  <data name="AddThirdPartyEvents" xml:space="preserve">
+    <value>Добавить сторонние события из файла</value>
+  </data>
   <data name="Delete" xml:space="preserve">
     <value>Удалить</value>
   </data>
