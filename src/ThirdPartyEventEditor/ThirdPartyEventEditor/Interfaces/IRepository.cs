@@ -1,5 +1,8 @@
 ﻿using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+
+[assembly: InternalsVisibleTo("ThirdPartyEventEditor.UnitTests")]
 
 namespace ThirdPartyEventEditor.Interfaces
 {
