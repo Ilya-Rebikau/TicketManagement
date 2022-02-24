@@ -120,6 +120,9 @@
   <data name="AddNew" xml:space="preserve">
     <value>Add event</value>
   </data>
+  <data name="AddThirdPartyEvents" xml:space="preserve">
+    <value>Add third party events from file</value>
+  </data>
   <data name="Delete" xml:space="preserve">
     <value>Delete</value>
   </data>

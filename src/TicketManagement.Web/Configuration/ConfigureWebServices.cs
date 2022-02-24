@@ -31,6 +31,7 @@ namespace TicketManagement.Web.Configuration
             services.AddScoped(typeof(IEventWebService), typeof(EventWebService));
             services.AddScoped(typeof(IAccountWebService), typeof(AccountWebService));
             services.AddScoped(typeof(IUsersWebService), typeof(UsersWebService));
+            services.AddScoped(typeof(IThirdPartyEventWebService), typeof(ThirdPartyEventWebService));
             services.AddScoped(typeof(ConverterForTime));
             services.AddControllersWithViews(options =>
                 options.CacheProfiles.Add("Caching",

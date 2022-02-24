@@ -1,0 +1,80 @@
+You can't create event in past!
+   в ThirdPartyEventEditor.Services.EventService.CheckEventForPastTime(ThirdPartyEvent obj) в D:\Тренинги C#\Внутренняя лаборатория\IlyaRebikau\src\ThirdPartyEventEditor\ThirdPartyEventEditor\Services\EventService.cs:строка 59
+   в ThirdPartyEventEditor.Services.EventService.Create(ThirdPartyEvent obj) в D:\Тренинги C#\Внутренняя лаборатория\IlyaRebikau\src\ThirdPartyEventEditor\ThirdPartyEventEditor\Services\EventService.cs:строка 25
+   в ThirdPartyEventEditor.Controllers.HomeController.<Create>d__5.MoveNext() в D:\Тренинги C#\Внутренняя лаборатория\IlyaRebikau\src\ThirdPartyEventEditor\ThirdPartyEventEditor\Controllers\HomeController.cs:строка 84
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в System.Web.Mvc.Async.TaskAsyncActionDescriptor.EndExecute(IAsyncResult asyncResult)
+   в System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass8_0.<BeginInvokeAsynchronousActionMethod>b__1(IAsyncResult asyncResult)
+   в System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   в System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_0.<InvokeActionMethodFilterAsynchronouslyRecursive>b__0()
+   в System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   в System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   в System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_6.<BeginInvokeAction>b__4()
+   в System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_1.<BeginInvokeAction>b__1(IAsyncResult asyncResult)
+Void CheckEventForPastTime(ThirdPartyEventEditor.Models.ThirdPartyEvent)
+ThirdPartyEventEditor
+________________________________________________________________
+You can't create event in past!
+   в ThirdPartyEventEditor.Services.EventService.CheckEventForPastTime(ThirdPartyEvent obj) в D:\Тренинги C#\Внутренняя лаборатория\IlyaRebikau\src\ThirdPartyEventEditor\ThirdPartyEventEditor\Services\EventService.cs:строка 59
+   в ThirdPartyEventEditor.Services.EventService.Create(ThirdPartyEvent obj) в D:\Тренинги C#\Внутренняя лаборатория\IlyaRebikau\src\ThirdPartyEventEditor\ThirdPartyEventEditor\Services\EventService.cs:строка 25
+   в ThirdPartyEventEditor.Controllers.HomeController.<Create>d__5.MoveNext() в D:\Тренинги C#\Внутренняя лаборатория\IlyaRebikau\src\ThirdPartyEventEditor\ThirdPartyEventEditor\Controllers\HomeController.cs:строка 84
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в System.Web.Mvc.Async.TaskAsyncActionDescriptor.EndExecute(IAsyncResult asyncResult)
+   в System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass8_0.<BeginInvokeAsynchronousActionMethod>b__1(IAsyncResult asyncResult)
+   в System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   в System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_0.<InvokeActionMethodFilterAsynchronouslyRecursive>b__0()
+   в System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   в System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   в System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_6.<BeginInvokeAction>b__4()
+   в System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_1.<BeginInvokeAction>b__1(IAsyncResult asyncResult)
+Void CheckEventForPastTime(ThirdPartyEventEditor.Models.ThirdPartyEvent)
+ThirdPartyEventEditor
+________________________________________________________________
+Action Index in controller Controller executed for: 4851
+______________________________________________________________________________________
+Action Create in controller Controller executed for: 211
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 4
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 4584 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 1 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 1 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 6840 milliseconds
+______________________________________________________________________________________
+Action SaveFile in controller Controller executed for: 22 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 4920 milliseconds
+______________________________________________________________________________________
+Action SaveFile in controller Controller executed for: 17 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 5156 milliseconds
+______________________________________________________________________________________
+Action SaveFile in controller Controller executed for: 15 milliseconds
+______________________________________________________________________________________
+Action SaveFile in controller Controller executed for: 0 milliseconds
+______________________________________________________________________________________
+Action SaveFile in controller Controller executed for: 0 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 6508 milliseconds
+______________________________________________________________________________________
+Action Create in controller Controller executed for: 289 milliseconds
+______________________________________________________________________________________
+Action Create in controller Controller executed for: 400 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 53 milliseconds
+______________________________________________________________________________________
+Action SaveFile in controller Controller executed for: 13 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 8963 milliseconds
+______________________________________________________________________________________
+Action Edit in controller Controller executed for: 395 milliseconds
+______________________________________________________________________________________
+Action Details in controller Controller executed for: 15 milliseconds
+______________________________________________________________________________________

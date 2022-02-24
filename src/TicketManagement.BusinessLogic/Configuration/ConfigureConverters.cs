@@ -26,6 +26,7 @@ namespace TicketManagement.BusinessLogic.Configuration
             services.AddScoped(typeof(IConverter<Seat, SeatDto>), typeof(BaseConverter<Seat, SeatDto>));
             services.AddScoped(typeof(IConverter<Venue, VenueDto>), typeof(BaseConverter<Venue, VenueDto>));
             services.AddScoped(typeof(IConverter<Ticket, TicketDto>), typeof(BaseConverter<Ticket, TicketDto>));
+            services.AddScoped(typeof(IConverter<ThirdPartyEvent, EventDto>), typeof(ThirdPartyEventConverter));
             return services;
         }
     }

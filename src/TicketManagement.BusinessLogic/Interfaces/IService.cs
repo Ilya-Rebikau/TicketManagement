@@ -29,6 +29,7 @@ namespace TicketManagement.BusinessLogic.Interfaces
         /// Add new object to database with validation logic.
         /// </summary>
         /// <param name="obj">Adding object.</param>
+        /// <returns>Create object.</returns>
         Task<TDto> CreateAsync(TDto obj);
 
         /// <summary>
