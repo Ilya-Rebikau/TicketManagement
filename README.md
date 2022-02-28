@@ -20,3 +20,9 @@ There is no need to change path to your sql server in file [appsettings.json](ht
 1. Create test database from project TicketManagement.Database;
 2. Change path to database in file [appsettings.json](https://github.com/EPAM-Gomel-NET-Lab/IlyaRebikau/blob/develop/test/TicketManagement.IntegrationTests/appsettings.json "Test database config") (Server=.\\SQLEXPRESS change to Server=*path to your SQL server*) in TicketManagement.IntegrationTests project;  
 3. Run tests.
+
+# Second solution ThirdPartyEventEditor
+## Giving possibility to work with third party events with json file as database.
+### How to use
+This solution don't have any special things to do before start, just download it and start, but in case you want change path to logs or json file with third party events, then do it in file [Web.config](https://github.com/EPAM-Gomel-NET-Lab/IlyaRebikau/blob/develop/src/ThirdPartyEventEditor/ThirdPartyEventEditor/Web.config "Config file") in section *appsetting*.  
+To test this solution just run tests.
