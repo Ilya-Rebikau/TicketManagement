@@ -1,15 +1,18 @@
-﻿using System.IO;
+﻿using Ninject;
+using System.IO;
 using System.Web.Mvc;
-using ThirdPartyEventEditor.App_Start;
 using ThirdPartyEventEditor.Interfaces;
 
 namespace ThirdPartyEventEditor.Filters
 {
     /// <summary>
-    /// Exception filter.
+    /// IFilesConfig object
     /// </summary>
     public class GlobalExceptionFilter : FilterAttribute, IExceptionFilter
     {
+        [Inject]
+        public IFilesConfig FilesConfig { get; set; }
+
         public void OnException(ExceptionContext filterContext)
         {
             if (!filterContext.ExceptionHandled)
@@ -20,8 +23,7 @@ namespace ThirdPartyEventEditor.Filters
                     ViewData = new ViewDataDictionary<string>(filterContext.Exception.Message),
                 };
 
-                IFilesConfig filesConfig = new FilesConfig();
-                using (StreamWriter writer = new StreamWriter(filesConfig.FullPathToLogsFile, true))
+                using (StreamWriter writer = new StreamWriter(FilesConfig.FullPathToLogsFile, true))
                 {
                     writer.WriteLine(filterContext.Exception.Message);
                     writer.WriteLine(filterContext.Exception.StackTrace);

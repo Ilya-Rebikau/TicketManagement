@@ -1,7 +1,7 @@
-﻿using System.Diagnostics;
+﻿using Ninject;
+using System.Diagnostics;
 using System.IO;
 using System.Web.Mvc;
-using ThirdPartyEventEditor.App_Start;
 using ThirdPartyEventEditor.Interfaces;
 
 namespace ThirdPartyEventEditor.Filters
@@ -11,6 +11,12 @@ namespace ThirdPartyEventEditor.Filters
     /// </summary>
     public class LogExecutionTimeFilter : ActionFilterAttribute
     {
+        /// <summary>
+        /// IFilesConfig object
+        /// </summary>
+        [Inject]
+        public IFilesConfig FilesConfig { get; set; }
+
         /// <summary>
         /// Stopwatch object.
         /// </summary>
@@ -37,8 +43,7 @@ namespace ThirdPartyEventEditor.Filters
         public override void OnResultExecuted(ResultExecutedContext filterContext)
         {
             _stopWatch.Stop();
-            IFilesConfig filesConfig = new FilesConfig();
-            using (StreamWriter writer = new StreamWriter(filesConfig.FullPathToLogsFile, true))
+            using (StreamWriter writer = new StreamWriter(FilesConfig.FullPathToLogsFile, true))
             {
                 writer.WriteLine($"Action {_actionName} in controller {_controllerName} executed for: {_stopWatch.ElapsedMilliseconds} milliseconds");
                 writer.WriteLine("______________________________________________________________________________________");
