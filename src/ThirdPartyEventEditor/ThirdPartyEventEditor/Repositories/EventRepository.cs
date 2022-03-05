@@ -110,19 +110,7 @@ namespace ThirdPartyEventEditor.Repositories
                 var events = new List<ThirdPartyEvent>();
                 if (jsonObj.GetValue("events") is JArray eventsArray)
                 {
-                    foreach (var jsonObject in eventsArray)
-                    {
-                        events.Add(new ThirdPartyEvent
-                        {
-                            Id = (int)jsonObject["Id"],
-                            Name = jsonObject["Name"].ToString(),
-                            Description = jsonObject["Description"].ToString(),
-                            StartDate = (DateTime)jsonObject["StartDate"],
-                            EndDate = (DateTime)jsonObject["EndDate"],
-                            PosterImage = jsonObject["PosterImage"].ToString(),
-                            LayoutId = (int)jsonObject["LayoutId"],
-                        });
-                    }
+                    events = eventsArray.ToObject<List<ThirdPartyEvent>>();
                 }
 
                 return events.AsQueryable();
