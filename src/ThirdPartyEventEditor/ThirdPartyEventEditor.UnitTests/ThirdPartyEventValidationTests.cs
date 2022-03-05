@@ -20,7 +20,6 @@ namespace ThirdPartyEventEditor.UnitTests
         {
             var eventRepositoryMock = new Mock<IRepository<ThirdPartyEvent>>();   
             eventRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEvents());
-            var events = await eventRepositoryMock.Object.GetAllAsync();
             _service = new EventService(eventRepositoryMock.Object);
         }
 
