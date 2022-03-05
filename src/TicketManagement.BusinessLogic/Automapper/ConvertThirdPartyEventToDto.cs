@@ -38,14 +38,28 @@ namespace TicketManagement.BusinessLogic.Automapper
 
         public EventDto Convert(ThirdPartyEvent source, EventDto destination, ResolutionContext context)
         {
-            destination.TimeStart = source.StartDate;
-            destination.TimeEnd = source.EndDate;
-            destination.Id = source.Id;
-            destination.LayoutId = source.LayoutId;
-            destination.Name = source.Name;
-            destination.Description = source.Description;
-            destination.ImageUrl = ConvertBase64ToImageAsync(source.PosterImage, _pathToImagesDirectory, source.Name + ImageFormat);
-            return destination;
+            if (destination != null)
+            {
+                destination.TimeStart = source.StartDate;
+                destination.TimeEnd = source.EndDate;
+                destination.Id = source.Id;
+                destination.LayoutId = source.LayoutId;
+                destination.Name = source.Name;
+                destination.Description = source.Description;
+                destination.ImageUrl = ConvertBase64ToImageAsync(source.PosterImage, _pathToImagesDirectory, source.Name + ImageFormat);
+                return destination;
+            }
+
+            var @event = new EventDto
+            {
+                TimeStart = source.StartDate,
+                Id = source.Id,
+                LayoutId = source.LayoutId,
+                Name = source.Name,
+                Description = source.Description,
+                ImageUrl = ConvertBase64ToImageAsync(source.PosterImage, _pathToImagesDirectory, source.Name + ImageFormat),
+            };
+            return @event;
         }
 
         /// <summary>

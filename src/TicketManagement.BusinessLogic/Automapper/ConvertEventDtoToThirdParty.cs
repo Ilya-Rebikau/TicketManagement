@@ -24,14 +24,30 @@ namespace TicketManagement.BusinessLogic.Automapper
 
         public ThirdPartyEvent Convert(EventDto source, ThirdPartyEvent destination, ResolutionContext context)
         {
-            destination.StartDate = source.TimeStart;
-            destination.EndDate = source.TimeEnd;
-            destination.Id = source.Id;
-            destination.LayoutId = source.LayoutId;
-            destination.Name = source.Name;
-            destination.Description = source.Description;
-            destination.PosterImage = UploadSampleImage(Path.Combine(_webRootPath, source.ImageUrl[1..]));
-            return destination;
+            if (destination != null)
+            {
+                destination.StartDate = source.TimeStart;
+                destination.EndDate = source.TimeEnd;
+                destination.Id = source.Id;
+                destination.LayoutId = source.LayoutId;
+                destination.Name = source.Name;
+                destination.Description = source.Description;
+                destination.PosterImage = UploadSampleImage(Path.Combine(_webRootPath, source.ImageUrl[1..]));
+                return destination;
+            }
+
+            var @event = new ThirdPartyEvent
+            {
+                StartDate = source.TimeStart,
+                EndDate = source.TimeEnd,
+                Id = source.Id,
+                LayoutId = source.LayoutId,
+                Name = source.Name,
+                Description = source.Description,
+                PosterImage = UploadSampleImage(Path.Combine(_webRootPath, source.ImageUrl[1..])),
+            };
+
+            return @event;
         }
 
         /// <summary>
