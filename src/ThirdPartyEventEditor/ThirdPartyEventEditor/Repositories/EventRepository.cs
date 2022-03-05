@@ -76,24 +76,17 @@ namespace ThirdPartyEventEditor.Repositories
             return await Task.Run(() =>
             {
                 var json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
-                try
+                var jObject = JObject.Parse(json);
+                var eventsArray = jObject["events"] as JArray;
+                var deletingEvent = eventsArray.SingleOrDefault(e => e["Id"].Value<int>() == obj.Id);
+                eventsArray.Remove(deletingEvent);
+                string output = JsonConvert.SerializeObject(jObject, Formatting.Indented);
+                lock (_locker)
                 {
-                    var jObject = JObject.Parse(json);
-                    var eventsArray = jObject["events"] as JArray;
-                    var deletingEvent = eventsArray.SingleOrDefault(e => e["Id"].Value<int>() == obj.Id);
-                    eventsArray.Remove(deletingEvent);
-                    string output = JsonConvert.SerializeObject(jObject, Formatting.Indented);
-                    lock (_locker)
-                    {
-                        File.WriteAllText(_filesConfig.FullPathToJsonFile, output);
-                    }
+                    File.WriteAllText(_filesConfig.FullPathToJsonFile, output);
+                }
 
-                    return obj;
-                }
-                catch (Exception)
-                {
-                    throw new NullReferenceException("No such event in file!");
-                }
+                return obj;
             });
         }
 
@@ -114,9 +107,8 @@ namespace ThirdPartyEventEditor.Repositories
                 }
 
                 var jsonObj = JObject.Parse(json);
-                var eventsArray = jsonObj.GetValue("events") as JArray;
                 var events = new List<ThirdPartyEvent>();
-                if (eventsArray != null)
+                if (jsonObj.GetValue("events") is JArray eventsArray)
                 {
                     foreach (var jsonObject in eventsArray)
                     {
@@ -142,18 +134,11 @@ namespace ThirdPartyEventEditor.Repositories
             return await Task.Run(() =>
             {
                 var json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
-                try
-                {
-                    var jObject = JObject.Parse(json);
-                    var eventsArray = jObject["events"] as JArray;
-                    var jEvent = eventsArray.SingleOrDefault(e => e["Id"].Value<int>() == id);
-                    var @event = jEvent.ToObject<ThirdPartyEvent>();
-                    return @event;
-                }
-                catch
-                {
-                    throw new NullReferenceException("No such event in file.");
-                }
+                var jObject = JObject.Parse(json);
+                var eventsArray = jObject["events"] as JArray;
+                var jEvent = eventsArray.SingleOrDefault(e => e["Id"].Value<int>() == id);
+                var @event = jEvent.ToObject<ThirdPartyEvent>();
+                return @event;
             });
         }
 
@@ -162,33 +147,26 @@ namespace ThirdPartyEventEditor.Repositories
             return await Task.Run(() =>
             {
                 string json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
-                try
+                var jObject = JObject.Parse(json);
+                var eventsArray = jObject["events"] as JArray;
+                foreach (var @event in eventsArray.Where(e => e["Id"].Value<int>() == obj.Id))
                 {
-                    var jObject = JObject.Parse(json);
-                    var eventsArray = jObject["events"] as JArray;
-                    foreach (var @event in eventsArray.Where(e => e["Id"].Value<int>() == obj.Id))
-                    {
-                        @event["Name"] = !string.IsNullOrWhiteSpace(obj.Name) ? obj.Name : "";
-                        @event["Description"] = !string.IsNullOrWhiteSpace(obj.Description) ? obj.Description : "";
-                        @event["StartDate"] = obj.StartDate;
-                        @event["EndDate"] = obj.EndDate;
-                        @event["PosterImage"] = !string.IsNullOrWhiteSpace(obj.PosterImage) ? obj.PosterImage : "";
-                        @event["LayoutId"] = obj.LayoutId;
-                    }
-
-                    jObject["events"] = eventsArray;
-                    string output = JsonConvert.SerializeObject(jObject, Formatting.Indented);
-                    lock (_locker)
-                    {
-                        File.WriteAllText(_filesConfig.FullPathToJsonFile, output);
-                    }
-
-                    return obj;
+                    @event["Name"] = !string.IsNullOrWhiteSpace(obj.Name) ? obj.Name : "";
+                    @event["Description"] = !string.IsNullOrWhiteSpace(obj.Description) ? obj.Description : "";
+                    @event["StartDate"] = obj.StartDate;
+                    @event["EndDate"] = obj.EndDate;
+                    @event["PosterImage"] = !string.IsNullOrWhiteSpace(obj.PosterImage) ? obj.PosterImage : "";
+                    @event["LayoutId"] = obj.LayoutId;
                 }
-                catch
+
+                jObject["events"] = eventsArray;
+                string output = JsonConvert.SerializeObject(jObject, Formatting.Indented);
+                lock (_locker)
                 {
-                    throw new NullReferenceException("No such event in file.");
+                    File.WriteAllText(_filesConfig.FullPathToJsonFile, output);
                 }
+
+                return obj;
             });
         }
     }

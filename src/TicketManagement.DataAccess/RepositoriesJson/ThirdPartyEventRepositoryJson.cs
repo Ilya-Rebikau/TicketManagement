@@ -24,9 +24,8 @@ namespace TicketManagement.DataAccess.RepositoriesJson
                 }
 
                 var jsonObj = JObject.Parse(json);
-                var eventsArray = jsonObj.GetValue("events") as JArray;
                 var events = new List<ThirdPartyEvent>();
-                if (eventsArray != null)
+                if (jsonObj.GetValue("events") is JArray eventsArray)
                 {
                     foreach (var jsonObject in eventsArray)
                     {
