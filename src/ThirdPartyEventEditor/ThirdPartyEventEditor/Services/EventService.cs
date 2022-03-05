@@ -82,7 +82,7 @@ namespace ThirdPartyEventEditor.Services
         /// <exception cref="ArgumentException">Generates exception in case event in this layout and time already exists.</exception>
         private async Task CheckForSameLayoutInOneTime(ThirdPartyEvent obj)
         {
-            var events = await Repository.GetAllAsync();
+            var events = await Repository.GetAll();
             var eventsInLayout = events.Where(ev => ev.LayoutId == obj.LayoutId && obj.StartDate <= ev.StartDate && obj.EndDate >= ev.EndDate && ev.Id != obj.Id);
             if (eventsInLayout.Any())
             {

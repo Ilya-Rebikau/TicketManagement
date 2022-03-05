@@ -34,128 +34,81 @@ namespace ThirdPartyEventEditor.Repositories
             _filesConfig = filesConfig;
         }
 
-        public async Task<ThirdPartyEvent> CreateAsync(ThirdPartyEvent obj)
+        public Task<ThirdPartyEvent> Create(ThirdPartyEvent obj)
         {
-            return await Task.Run(() =>
+            var json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
+            var events = JsonConvert.DeserializeObject<List<ThirdPartyEvent>>(json);
+            if (events is null || events.Count == 0)
             {
-                var json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
-                if (string.IsNullOrWhiteSpace(json))
-                {
-                    string baseJson = "{\"events\": {}}";
-                    lock (_locker)
-                    {
-                        File.WriteAllText(_filesConfig.FullPathToJsonFile, baseJson);
-                    }
+                obj.Id = 1;
+                events = new List<ThirdPartyEvent>();
+            }
+            else
+            {
+                obj.Id = events.Last().Id + 1;
+            }
 
-                    json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
-                }
+            events.Add(obj);
+            var jsonEvents = JsonConvert.SerializeObject(events, Formatting.Indented);
+            lock (_locker)
+            {
+                File.WriteAllText(_filesConfig.FullPathToJsonFile, jsonEvents);
+            }
 
-                var jsonObj = JObject.Parse(json);
-                if (!(jsonObj.GetValue("events") is JArray eventsArray))
-                {
-                    eventsArray = new JArray();
-                }
-
-                obj.Id = eventsArray.Count + 1;
-                var newEventJson = JsonConvert.SerializeObject(obj);
-                var newEvent = JObject.Parse(newEventJson);
-                eventsArray.Add(newEvent);
-                jsonObj["events"] = eventsArray;
-                string newJsonResult = JsonConvert.SerializeObject(jsonObj, Formatting.Indented);
-                lock (_locker)
-                {
-                    File.WriteAllText(_filesConfig.FullPathToJsonFile, newJsonResult);
-                }
-
-                return obj;
-            });
+            return Task.FromResult(obj);
         }
 
-        public async Task<ThirdPartyEvent> DeleteAsync(ThirdPartyEvent obj)
+        public Task<ThirdPartyEvent> Delete(ThirdPartyEvent obj)
         {
-            return await Task.Run(() =>
+            var json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
+            var events = JsonConvert.DeserializeObject<List<ThirdPartyEvent>>(json);
+            var deletingEvent = events.SingleOrDefault(e => e.Id == obj.Id);
+            events.Remove(deletingEvent);
+            string output = JsonConvert.SerializeObject(events, Formatting.Indented);
+            lock (_locker)
             {
-                var json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
-                var jObject = JObject.Parse(json);
-                var eventsArray = jObject["events"] as JArray;
-                var deletingEvent = eventsArray.SingleOrDefault(e => e["Id"].Value<int>() == obj.Id);
-                eventsArray.Remove(deletingEvent);
-                string output = JsonConvert.SerializeObject(jObject, Formatting.Indented);
-                lock (_locker)
-                {
-                    File.WriteAllText(_filesConfig.FullPathToJsonFile, output);
-                }
+                File.WriteAllText(_filesConfig.FullPathToJsonFile, output);
+            }
 
-                return obj;
-            });
+            return Task.FromResult(obj);
         }
 
-        public async Task<IQueryable<ThirdPartyEvent>> GetAllAsync()
+        public Task<IQueryable<ThirdPartyEvent>> GetAll()
         {
-            return await Task.Run(() =>
+            var events = new List<ThirdPartyEvent>();
+            var json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
+            if (string.IsNullOrWhiteSpace(json))
             {
-                var json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
-                if (string.IsNullOrWhiteSpace(json))
-                {
-                    string baseJson = "{\"events\": {}}";
-                    lock (_locker)
-                    {
-                        File.WriteAllText(_filesConfig.FullPathToJsonFile, baseJson);
-                    }
+                return Task.FromResult(events.AsQueryable());
+            }
+            events = JsonConvert.DeserializeObject<List<ThirdPartyEvent>>(json);
 
-                    json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
-                }
-
-                var jsonObj = JObject.Parse(json);
-                var events = new List<ThirdPartyEvent>();
-                if (jsonObj.GetValue("events") is JArray eventsArray)
-                {
-                    events = eventsArray.ToObject<List<ThirdPartyEvent>>();
-                }
-
-                return events.AsQueryable();
-            });
+            return Task.FromResult(events.AsQueryable());
         }
 
-        public async Task<ThirdPartyEvent> GetByIdAsync(int id)
+        public Task<ThirdPartyEvent> GetById(int id)
         {
-            return await Task.Run(() =>
-            {
-                var json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
-                var jObject = JObject.Parse(json);
-                var eventsArray = jObject["events"] as JArray;
-                var jEvent = eventsArray.SingleOrDefault(e => e["Id"].Value<int>() == id);
-                var @event = jEvent.ToObject<ThirdPartyEvent>();
-                return @event;
-            });
+            var @event = GetAll().Result.SingleOrDefault(e => e.Id == id);
+            return Task.FromResult(@event);
         }
 
-        public async Task<ThirdPartyEvent> UpdateAsync(ThirdPartyEvent obj)
+        public Task<ThirdPartyEvent> Update(ThirdPartyEvent obj)
         {
-            return await Task.Run(() =>
+            var events = GetAll().Result;
+            var @event = events.SingleOrDefault(e => e.Id == obj.Id);
+            @event.LayoutId = obj.LayoutId;
+            @event.Name = obj.Name;
+            @event.PosterImage = obj.PosterImage;
+            @event.StartDate = obj.StartDate;
+            @event.EndDate = obj.EndDate;
+            @event.Description = obj.Description;
+            string output = JsonConvert.SerializeObject(events, Formatting.Indented);
+            lock (_locker)
             {
-                string json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
-                var jObject = JObject.Parse(json);
-                var eventsArray = jObject["events"] as JArray;
-                foreach (var @event in eventsArray.Where(e => e["Id"].Value<int>() == obj.Id))
-                {
-                    @event["Name"] = !string.IsNullOrWhiteSpace(obj.Name) ? obj.Name : "";
-                    @event["Description"] = !string.IsNullOrWhiteSpace(obj.Description) ? obj.Description : "";
-                    @event["StartDate"] = obj.StartDate;
-                    @event["EndDate"] = obj.EndDate;
-                    @event["PosterImage"] = !string.IsNullOrWhiteSpace(obj.PosterImage) ? obj.PosterImage : "";
-                    @event["LayoutId"] = obj.LayoutId;
-                }
+                File.WriteAllText(_filesConfig.FullPathToJsonFile, output);
+            }
 
-                jObject["events"] = eventsArray;
-                string output = JsonConvert.SerializeObject(jObject, Formatting.Indented);
-                lock (_locker)
-                {
-                    File.WriteAllText(_filesConfig.FullPathToJsonFile, output);
-                }
-
-                return obj;
-            });
+            return Task.FromResult(obj);
         }
     }
 }

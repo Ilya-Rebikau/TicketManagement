@@ -140,3 +140,128 @@ Action Delete in controller Controller executed for: 24 milliseconds
 ______________________________________________________________________________________
 Action Index in controller Controller executed for: 14 milliseconds
 ______________________________________________________________________________________
+Action Index in controller Controller executed for: 3271 milliseconds
+______________________________________________________________________________________
+Action Create in controller Controller executed for: 177 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 2390 milliseconds
+______________________________________________________________________________________
+Action Create in controller Controller executed for: 157 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 2293 milliseconds
+______________________________________________________________________________________
+Action Create in controller Controller executed for: 151 milliseconds
+______________________________________________________________________________________
+Action Create in controller Controller executed for: 19990 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 135 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 2508 milliseconds
+______________________________________________________________________________________
+Action Create in controller Controller executed for: 127 milliseconds
+______________________________________________________________________________________
+Action Create in controller Controller executed for: 95 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 21 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 2486 milliseconds
+______________________________________________________________________________________
+Action Edit in controller Controller executed for: 142 milliseconds
+______________________________________________________________________________________
+Action Edit in controller Controller executed for: 136 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 19 milliseconds
+______________________________________________________________________________________
+Action Edit in controller Controller executed for: 14 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 2596 milliseconds
+______________________________________________________________________________________
+Action Edit in controller Controller executed for: 147 milliseconds
+______________________________________________________________________________________
+Action Edit in controller Controller executed for: 27072 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 16 milliseconds
+______________________________________________________________________________________
+Action Details in controller Controller executed for: 22 milliseconds
+______________________________________________________________________________________
+Action Delete in controller Controller executed for: 20 milliseconds
+______________________________________________________________________________________
+Action Delete in controller Controller executed for: 17 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 23 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 2654 milliseconds
+______________________________________________________________________________________
+Action Delete in controller Controller executed for: 53 milliseconds
+______________________________________________________________________________________
+Action Delete in controller Controller executed for: 84 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 6 milliseconds
+______________________________________________________________________________________
+Action Create in controller Controller executed for: 88 milliseconds
+______________________________________________________________________________________
+Action Create in controller Controller executed for: 64 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 23 milliseconds
+______________________________________________________________________________________
+Action Delete in controller Controller executed for: 8 milliseconds
+______________________________________________________________________________________
+Action Delete in controller Controller executed for: 17 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 10 milliseconds
+______________________________________________________________________________________
+Action Delete in controller Controller executed for: 10 milliseconds
+______________________________________________________________________________________
+Action Delete in controller Controller executed for: 5 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 0 milliseconds
+______________________________________________________________________________________
+Action Create in controller Controller executed for: 4 milliseconds
+______________________________________________________________________________________
+Последовательность не содержит элементов
+   в System.Linq.Enumerable.Last[TSource](IEnumerable`1 source)
+   в ThirdPartyEventEditor.Repositories.EventRepository.Create(ThirdPartyEvent obj) в D:\Тренинги C#\Внутренняя лаборатория\IlyaRebikau\src\ThirdPartyEventEditor\ThirdPartyEventEditor\Repositories\EventRepository.cs:строка 48
+   в ThirdPartyEventEditor.Services.BaseService`1.<CreateAsync>d__5.MoveNext() в D:\Тренинги C#\Внутренняя лаборатория\IlyaRebikau\src\ThirdPartyEventEditor\ThirdPartyEventEditor\Services\BaseService.cs:строка 30
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   в ThirdPartyEventEditor.Services.EventService.<CreateAsync>d__1.MoveNext() в D:\Тренинги C#\Внутренняя лаборатория\IlyaRebikau\src\ThirdPartyEventEditor\ThirdPartyEventEditor\Services\EventService.cs:строка 30
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   в ThirdPartyEventEditor.Controllers.HomeController.<Create>d__5.MoveNext() в D:\Тренинги C#\Внутренняя лаборатория\IlyaRebikau\src\ThirdPartyEventEditor\ThirdPartyEventEditor\Controllers\HomeController.cs:строка 85
+--- Конец трассировка стека из предыдущего расположения, где возникло исключение ---
+   в System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   в System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   в System.Web.Mvc.Async.TaskAsyncActionDescriptor.EndExecute(IAsyncResult asyncResult)
+   в System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass8_0.<BeginInvokeAsynchronousActionMethod>b__1(IAsyncResult asyncResult)
+   в System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethod(IAsyncResult asyncResult)
+   в System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_0.<InvokeActionMethodFilterAsynchronouslyRecursive>b__0()
+   в System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   в System.Web.Mvc.Async.AsyncControllerActionInvoker.AsyncInvocationWithFilters.<>c__DisplayClass11_2.<InvokeActionMethodFilterAsynchronouslyRecursive>b__2()
+   в System.Web.Mvc.Async.AsyncControllerActionInvoker.EndInvokeActionMethodWithFilters(IAsyncResult asyncResult)
+   в System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_6.<BeginInvokeAction>b__4()
+   в System.Web.Mvc.Async.AsyncControllerActionInvoker.<>c__DisplayClass3_1.<BeginInvokeAction>b__1(IAsyncResult asyncResult)
+Method with exception: TSource Last[TSource](System.Collections.Generic.IEnumerable`1[TSource])
+Source: System.Core
+______________________________________________________________________________________
+Action Create in controller Controller executed for: 4 milliseconds
+______________________________________________________________________________________
+Action Create in controller Controller executed for: 11 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 13 milliseconds
+______________________________________________________________________________________
+Action Create in controller Controller executed for: 6 milliseconds
+______________________________________________________________________________________
+Action Create in controller Controller executed for: 10 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 13 milliseconds
+______________________________________________________________________________________
+Action Delete in controller Controller executed for: 7 milliseconds
+______________________________________________________________________________________
+Action Delete in controller Controller executed for: 11 milliseconds
+______________________________________________________________________________________
+Action Index in controller Controller executed for: 1 milliseconds
+______________________________________________________________________________________

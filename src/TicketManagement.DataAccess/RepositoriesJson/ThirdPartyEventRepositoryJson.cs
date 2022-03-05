@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
@@ -14,36 +15,23 @@ namespace TicketManagement.DataAccess.RepositoriesJson
     /// </summary>
     internal class ThirdPartyEventRepositoryJson : IReaderJson<ThirdPartyEvent>
     {
-        public async Task<IQueryable<ThirdPartyEvent>> GetAllAsync(string json)
+        public Task<IQueryable<ThirdPartyEvent>> GetAll(string json)
         {
-            return await Task.Run(() =>
+            var events = new List<ThirdPartyEvent>();
+            if (string.IsNullOrWhiteSpace(json))
             {
-                if (string.IsNullOrWhiteSpace(json))
-                {
-                    json = "{\"events\": {}}";
-                }
+                return Task.FromResult(events.AsQueryable());
+            }
 
-                var jsonObj = JObject.Parse(json);
-                var events = new List<ThirdPartyEvent>();
-                if (jsonObj.GetValue("events") is JArray eventsArray)
-                {
-                    events = eventsArray.ToObject<List<ThirdPartyEvent>>();
-                }
+            events = JsonConvert.DeserializeObject<List<ThirdPartyEvent>>(json);
 
-                return events.AsQueryable();
-            });
+            return Task.FromResult(events.AsQueryable());
         }
 
-        public async Task<ThirdPartyEvent> GetByIdAsync(int id, string json)
+        public Task<ThirdPartyEvent> GetById(int id, string json)
         {
-            return await Task.Run(() =>
-            {
-                var jsonObject = JObject.Parse(json);
-                var eventsArray = jsonObject["events"] as JArray;
-                var jsonEvent = eventsArray.SingleOrDefault(e => e["Id"].Value<int>() == id);
-                var @event = jsonEvent.ToObject<ThirdPartyEvent>();
-                return @event;
-            });
+            var @event = GetAll(json).Result.SingleOrDefault(e => e.Id == id);
+            return Task.FromResult(@event);
         }
     }
 }

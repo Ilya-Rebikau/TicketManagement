@@ -16,34 +16,34 @@ namespace ThirdPartyEventEditor.Interfaces
         /// Get all objects from json file.
         /// </summary>
         /// <returns>All objects.</returns>
-        Task<IQueryable<T>> GetAllAsync();
+        Task<IQueryable<T>> GetAll();
 
         /// <summary>
         /// Get one object from json file by his id.
         /// </summary>
         /// <param name="id">Id.</param>
         /// <returns>Object.</returns>
-        Task<T> GetByIdAsync(int id);
+        Task<T> GetById(int id);
 
         /// <summary>
         /// Add new object to json file.
         /// </summary>
         /// <param name="obj">Adding object.</param>
         /// <returns>Created object.</returns>
-        Task<T> CreateAsync(T obj);
+        Task<T> Create(T obj);
 
         /// <summary>
         /// Update one object in json file.
         /// </summary>
         /// <param name="obj">Updating object.</param>
         /// <returns>Updated object.</returns>
-        Task<T> UpdateAsync(T obj);
+        Task<T> Update(T obj);
 
         /// <summary>
         /// Delete object from json file.
         /// </summary>
         /// <param name="obj">Deleting object.</param>
         /// <returns>Deleted object.</returns>
-        Task<T> DeleteAsync(T obj);
+        Task<T> Delete(T obj);
     }
 }
