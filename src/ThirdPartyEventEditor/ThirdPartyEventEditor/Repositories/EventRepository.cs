@@ -1,6 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,7 +32,7 @@ namespace ThirdPartyEventEditor.Repositories
             _filesConfig = filesConfig;
         }
 
-        public Task<ThirdPartyEvent> Create(ThirdPartyEvent obj)
+        public Task<ThirdPartyEvent> CreateAsync(ThirdPartyEvent obj)
         {
             var json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
             var events = JsonConvert.DeserializeObject<List<ThirdPartyEvent>>(json);
@@ -58,7 +56,7 @@ namespace ThirdPartyEventEditor.Repositories
             return Task.FromResult(obj);
         }
 
-        public Task<ThirdPartyEvent> Delete(ThirdPartyEvent obj)
+        public Task<ThirdPartyEvent> DeleteAsync(ThirdPartyEvent obj)
         {
             var json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
             var events = JsonConvert.DeserializeObject<List<ThirdPartyEvent>>(json);
@@ -73,7 +71,7 @@ namespace ThirdPartyEventEditor.Repositories
             return Task.FromResult(obj);
         }
 
-        public Task<IQueryable<ThirdPartyEvent>> GetAll()
+        public Task<IQueryable<ThirdPartyEvent>> GetAllAsync()
         {
             var events = new List<ThirdPartyEvent>();
             var json = File.ReadAllText(_filesConfig.FullPathToJsonFile);
@@ -86,15 +84,15 @@ namespace ThirdPartyEventEditor.Repositories
             return Task.FromResult(events.AsQueryable());
         }
 
-        public Task<ThirdPartyEvent> GetById(int id)
+        public Task<ThirdPartyEvent> GetByIdAsync(int id)
         {
-            var @event = GetAll().Result.SingleOrDefault(e => e.Id == id);
+            var @event = GetAllAsync().Result.SingleOrDefault(e => e.Id == id);
             return Task.FromResult(@event);
         }
 
-        public Task<ThirdPartyEvent> Update(ThirdPartyEvent obj)
+        public Task<ThirdPartyEvent> UpdateAsync(ThirdPartyEvent obj)
         {
-            var events = GetAll().Result;
+            var events = GetAllAsync().Result;
             var @event = events.SingleOrDefault(e => e.Id == obj.Id);
             @event.LayoutId = obj.LayoutId;
             @event.Name = obj.Name;

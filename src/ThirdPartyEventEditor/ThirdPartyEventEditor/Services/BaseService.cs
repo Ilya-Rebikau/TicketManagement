@@ -27,34 +27,34 @@ namespace ThirdPartyEventEditor.Services
 
         public virtual async Task<T> CreateAsync(T obj)
         {
-            return await Repository.Create(obj);
+            return await Repository.CreateAsync(obj);
         }
 
         public virtual async Task<T> DeleteAsync(T obj)
         {
-            return await Repository.Delete(obj);
+            return await Repository.DeleteAsync(obj);
         }
 
         public virtual async Task<int> DeleteByIdAsync(int id)
         {
-            var model = await Repository.GetById(id);
-            await Repository.Delete(model);
+            var model = await Repository.GetByIdAsync(id);
+            await Repository.DeleteAsync(model);
             return id;
         }
 
         public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
-            return await Repository.GetAll();
+            return await Repository.GetAllAsync();
         }
 
         public virtual async Task<T> GetByIdAsync(int id)
         {
-            return await Repository.GetById(id);
+            return await Repository.GetByIdAsync(id);
         }
 
         public virtual async Task<T> UpdateAsync(T obj)
         {
-            return await Repository.Update(obj);
+            return await Repository.UpdateAsync(obj);
         }
     }
 }

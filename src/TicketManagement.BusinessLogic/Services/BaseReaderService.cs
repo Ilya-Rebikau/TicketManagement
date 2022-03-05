@@ -37,13 +37,13 @@ namespace TicketManagement.BusinessLogic.Services
 
         public virtual async Task<IEnumerable<TDto>> GetAllAsync(string json)
         {
-            var models = await Reader.GetAll(json);
+            var models = await Reader.GetAllAsync(json);
             return await Converter.ConvertModelsRangeToDtos(models);
         }
 
         public virtual async Task<TDto> GetByIdAsync(int id, string json)
         {
-            var model = await Reader.GetById(id, json);
+            var model = await Reader.GetByIdAsync(id, json);
             return await Converter.ConvertModelToDto(model);
         }
     }
