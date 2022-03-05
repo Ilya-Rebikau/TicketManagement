@@ -4,37 +4,41 @@ using AutoMapper;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.DataAccess.Interfaces;
 
-namespace TicketManagement.BusinessLogic.Services
+namespace TicketManagement.BusinessLogic.Automapper
 {
     /// <summary>
     /// Base converting dto to models and models to dto.
     /// </summary>
     /// <typeparam name="TModel">Model.</typeparam>
     /// <typeparam name="TDto">Dto.</typeparam>
-    internal class BaseConverter<TModel, TDto> : IConverter<TModel, TDto>
+    internal class ModelsConverter<TModel, TDto> : IConverter<TModel, TDto>
         where TModel : IEntity
         where TDto : IEntityDto
     {
-        public virtual async Task<TDto> ConvertModelToDto(TModel model)
+        /// <summary>
+        /// IMapper object.
+        /// </summary>
+        private readonly IMapper _mapper;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ModelsConverter{TModel, TDto}"/> class.
+        /// </summary>
+        /// <param name="mapper">IMapper object.</param>
+        public ModelsConverter(IMapper mapper)
         {
-            return await Task.Run(() =>
-            {
-                var config = new MapperConfiguration(cfg => cfg.CreateMap<TModel, TDto>());
-                var mapper = config.CreateMapper();
-                var dto = mapper.Map<TModel, TDto>(model);
-                return dto;
-            });
+            _mapper = mapper;
         }
 
-        public virtual async Task<TModel> ConvertDtoToModel(TDto dto)
+        public virtual Task<TDto> ConvertModelToDto(TModel model)
         {
-            return await Task.Run(() =>
-            {
-                var config = new MapperConfiguration(cfg => cfg.CreateMap<TDto, TModel>());
-                var mapper = config.CreateMapper();
-                var model = mapper.Map<TDto, TModel>(dto);
-                return model;
-            });
+            var dto = _mapper.Map<TModel, TDto>(model);
+            return Task.FromResult(dto);
+        }
+
+        public virtual Task<TModel> ConvertDtoToModel(TDto dto)
+        {
+            var model = _mapper.Map<TDto, TModel>(dto);
+            return Task.FromResult(model);
         }
 
         public async Task<IEnumerable<TDto>> ConvertModelsRangeToDtos(IEnumerable<TModel> models)
