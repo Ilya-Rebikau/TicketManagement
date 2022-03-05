@@ -6,6 +6,9 @@ using TicketManagement.DataAccess.Models;
 
 namespace TicketManagement.BusinessLogic.Automapper
 {
+    /// <summary>
+    /// Convert event dtos to third party events.
+    /// </summary>
     internal class ConvertEventDtoToThirdParty : ITypeConverter<EventDto, ThirdPartyEvent>
     {
         /// <summary>
