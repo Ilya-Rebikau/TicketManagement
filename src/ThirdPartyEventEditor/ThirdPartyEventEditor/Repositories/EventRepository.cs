@@ -84,15 +84,16 @@ namespace ThirdPartyEventEditor.Repositories
             return Task.FromResult(events.AsQueryable());
         }
 
-        public Task<ThirdPartyEvent> GetByIdAsync(int id)
+        public async Task<ThirdPartyEvent> GetByIdAsync(int id)
         {
-            var @event = GetAllAsync().Result.SingleOrDefault(e => e.Id == id);
-            return Task.FromResult(@event);
+            var events = await GetAllAsync();
+            var @event = events.SingleOrDefault(e => e.Id == id);
+            return @event;
         }
 
-        public Task<ThirdPartyEvent> UpdateAsync(ThirdPartyEvent obj)
+        public async Task<ThirdPartyEvent> UpdateAsync(ThirdPartyEvent obj)
         {
-            var events = GetAllAsync().Result;
+            var events = await GetAllAsync();
             var @event = events.SingleOrDefault(e => e.Id == obj.Id);
             @event.LayoutId = obj.LayoutId;
             @event.Name = obj.Name;
@@ -106,7 +107,7 @@ namespace ThirdPartyEventEditor.Repositories
                 File.WriteAllText(_filesConfig.FullPathToJsonFile, output);
             }
 
-            return Task.FromResult(obj);
+            return obj;
         }
     }
 }

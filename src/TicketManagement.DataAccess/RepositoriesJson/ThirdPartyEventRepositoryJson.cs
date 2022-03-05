@@ -28,10 +28,11 @@ namespace TicketManagement.DataAccess.RepositoriesJson
             return Task.FromResult(events.AsQueryable());
         }
 
-        public Task<ThirdPartyEvent> GetByIdAsync(int id, string json)
+        public async Task<ThirdPartyEvent> GetByIdAsync(int id, string json)
         {
-            var @event = GetAllAsync(json).Result.SingleOrDefault(e => e.Id == id);
-            return Task.FromResult(@event);
+            var events = await GetAllAsync(json);
+            var @event = events.SingleOrDefault(e => e.Id == id);
+            return @event;
         }
     }
 }
