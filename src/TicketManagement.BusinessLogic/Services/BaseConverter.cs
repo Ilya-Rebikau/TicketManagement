@@ -20,7 +20,7 @@ namespace TicketManagement.BusinessLogic.Services
             return await Task.Run(() =>
             {
                 var config = new MapperConfiguration(cfg => cfg.CreateMap<TModel, TDto>());
-                var mapper = new Mapper(config);
+                var mapper = config.CreateMapper();
                 var dto = mapper.Map<TModel, TDto>(model);
                 return dto;
             });
@@ -31,7 +31,7 @@ namespace TicketManagement.BusinessLogic.Services
             return await Task.Run(() =>
             {
                 var config = new MapperConfiguration(cfg => cfg.CreateMap<TDto, TModel>());
-                var mapper = new Mapper(config);
+                var mapper = config.CreateMapper();
                 var model = mapper.Map<TDto, TModel>(dto);
                 return model;
             });

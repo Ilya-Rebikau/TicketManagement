@@ -56,7 +56,7 @@ namespace TicketManagement.BusinessLogic.Services
                     .ForMember(tpe => tpe.EndDate, options => options.MapFrom(dto => dto.TimeEnd))
                     .ForMember(tpe => tpe.PosterImage, options => options.MapFrom(dto =>
                         UploadSampleImage(Path.Combine(_webRootPath, url)))));
-                var mapper = new Mapper(config);
+                var mapper = config.CreateMapper();
                 var model = mapper.Map<EventDto, ThirdPartyEvent>(dto);
                 return model;
             });
@@ -71,7 +71,7 @@ namespace TicketManagement.BusinessLogic.Services
                     .ForMember(dto => dto.TimeEnd, options => options.MapFrom(tpe => tpe.EndDate))
                     .ForMember(dto => dto.ImageUrl, options => options.MapFrom(tpe =>
                         ConvertBase64ToImageAsync(tpe.PosterImage, _pathToImagesDirectory, tpe.Name + ImageFormat))));
-                var mapper = new Mapper(config);
+                var mapper = config.CreateMapper();
                 var dto = mapper.Map<ThirdPartyEvent, EventDto>(model);
                 return dto;
             });
@@ -86,7 +86,7 @@ namespace TicketManagement.BusinessLogic.Services
         /// <returns>Path where image was saved.</returns>
         private string ConvertBase64ToImageAsync(string base64String, string path, string fileName)
         {
-            base64String = base64String.Substring(base64String.IndexOf(',') + 1);
+            base64String = base64String[(base64String.IndexOf(',') + 1)..];
             byte[] imageBytes = Convert.FromBase64String(base64String);
             using MemoryStream ms = new MemoryStream(imageBytes, 0, imageBytes.Length);
             ms.Write(imageBytes, 0, imageBytes.Length);
@@ -103,12 +103,10 @@ namespace TicketManagement.BusinessLogic.Services
         /// <returns>Bas64 string image.</returns>
         private string UploadSampleImage(string path)
         {
-            using (var memoryStream = new MemoryStream())
-            using (var fileStream = new FileStream(path, FileMode.Open))
-            {
-                fileStream.CopyTo(memoryStream);
-                return "data:image/png;base64," + Convert.ToBase64String(memoryStream.ToArray());
-            }
+            using var memoryStream = new MemoryStream();
+            using var fileStream = new FileStream(path, FileMode.Open);
+            fileStream.CopyTo(memoryStream);
+            return "data:image/png;base64," + Convert.ToBase64String(memoryStream.ToArray());
         }
     }
 }
