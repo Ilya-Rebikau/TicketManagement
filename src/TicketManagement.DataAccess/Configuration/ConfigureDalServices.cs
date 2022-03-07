@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
 using TicketManagement.DataAccess.RepositoriesEf;
+using TicketManagement.DataAccess.RepositoriesJson;
 
 namespace TicketManagement.DataAccess.Configuration
 {
@@ -28,6 +29,7 @@ namespace TicketManagement.DataAccess.Configuration
             services.AddScoped(typeof(IRepository<Layout>), typeof(LayoutEfRepository));
             services.AddScoped(typeof(IRepository<Venue>), typeof(VenueEfRepository));
             services.AddScoped(typeof(IRepository<EventArea>), typeof(EventAreaEfRepository));
+            services.AddScoped(typeof(IReaderJson<ThirdPartyEvent>), typeof(ThirdPartyEventRepositoryJson));
             return services;
         }
     }

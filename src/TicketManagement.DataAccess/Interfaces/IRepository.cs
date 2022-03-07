@@ -29,6 +29,7 @@ namespace TicketManagement.DataAccess.Interfaces
         /// Add new object to database.
         /// </summary>
         /// <param name="obj">Adding object.</param>
+        /// <returns>Create object.</returns>
         Task<T> CreateAsync(T obj);
 
         /// <summary>

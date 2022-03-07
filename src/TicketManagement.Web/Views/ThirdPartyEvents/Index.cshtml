@@ -1,0 +1,12 @@
+﻿@inject IViewLocalizer loc
+@{
+    ViewData["Title"] = @loc["Title"];
+}
+
+<h1>@loc["Title"]</h1>
+
+<label for="file-input">@loc["ChooseFile"]</label>
+<form asp-action="ShowEvents" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" /><br>
+    <input type="submit" value="@loc["OpenFile"]" />
+</form>

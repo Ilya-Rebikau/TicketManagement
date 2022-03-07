@@ -59,6 +59,11 @@ namespace TicketManagement.Web.Models.Events
         public string ImageUrl { get; set; }
 
         /// <summary>
+        /// Gets or sets state for saving third party event in database.
+        /// </summary>
+        public bool Checked { get; set; }
+
+        /// <summary>
         /// Privately gets or sets list of EventAreaViewModel objects.
         /// EventAreaViewModel objects represents event areas.
         /// </summary>
