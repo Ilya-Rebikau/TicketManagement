@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
-namespace TicketManagement.Web.Models.Roles
+namespace TicketManagement.UserAPI.Models.Users
 {
     /// <summary>
     /// Change role view model.
