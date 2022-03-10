@@ -16,6 +16,9 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using TicketManagement.UserAPI.Infrastructure;
+using TicketManagement.UserAPI.Interfaces;
+using TicketManagement.UserAPI.Models;
+using TicketManagement.UserAPI.Services;
 using UserAPI.Infrastructure;
 using UserAPI.Services;
 
@@ -38,7 +41,7 @@ namespace UserAPI
                             () => HealthCheckResult.Healthy("User API is alive"),
                             new[] { "live" });
             services.AddDbContext<IdentityContext>(options => options.UseSqlServer("UserApiDb"));
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<IdentityContext>()
                 .AddDefaultTokenProviders();
 
@@ -66,7 +69,7 @@ namespace UserAPI
 
             services.Configure<JwtTokenSettings>(tokenSettings);
             services.AddScoped<JwtTokenService>();
-
+            services.AddScoped<IAccountWebService, AccountWebService>();
             services.AddControllers();
 
             services.AddSwaggerGen(options =>

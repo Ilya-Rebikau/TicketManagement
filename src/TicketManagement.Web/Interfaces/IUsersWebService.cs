@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using TicketManagement.Web.Models;
-using TicketManagement.Web.Models.Roles;
 using TicketManagement.Web.Models.Users;
 
 namespace TicketManagement.Web.Interfaces

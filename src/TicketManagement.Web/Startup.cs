@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
@@ -6,7 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RestEase;
 using TicketManagement.Web.Configuration;
+using TicketManagement.Web.Infrastructure;
 
 namespace TicketManagement.Web
 {
@@ -24,6 +27,12 @@ namespace TicketManagement.Web
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddWebServices(connection);
+            services.AddHttpClient();
+            services.AddScoped(scope =>
+            {
+                var baseUrl = Configuration["UserApiAddress"];
+                return RestClient.For<IClient>(baseUrl);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
