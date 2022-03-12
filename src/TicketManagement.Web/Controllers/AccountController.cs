@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -99,6 +100,10 @@ namespace TicketManagement.Web.Controllers
                 HttpOnly = true,
                 SameSite = SameSiteMode.Strict,
             });
+            var handler = new JwtSecurityTokenHandler();
+            var jwtSecurityToken = handler.ReadJwtToken(token);
+            var user = await _userManager.FindByEmailAsync(jwtSecurityToken.Subject);
+            await _signInManager.SignInAsync(user, false);
             return RedirectToAction(nameof(Index));
         }
 
@@ -135,6 +140,10 @@ namespace TicketManagement.Web.Controllers
                     HttpOnly = true,
                     SameSite = SameSiteMode.Strict,
                 });
+                var handler = new JwtSecurityTokenHandler();
+                var jwtSecurityToken = handler.ReadJwtToken(token);
+                var user = await _userManager.FindByEmailAsync(jwtSecurityToken.Subject);
+                await _signInManager.SignInAsync(user, false);
                 if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                 {
                     return Redirect(model.ReturnUrl);
