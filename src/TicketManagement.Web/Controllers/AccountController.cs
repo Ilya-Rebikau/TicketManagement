@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -39,6 +40,11 @@ namespace TicketManagement.Web.Controllers
         private readonly SignInManager<User> _signInManager;
 
         /// <summary>
+        /// IUserClient object.
+        /// </summary>
+        private readonly IUserClient _userClient;
+
+        /// <summary>
         /// Localizer object.
         /// </summary>
         private readonly IStringLocalizer<AccountController> _localizer;
@@ -49,15 +55,18 @@ namespace TicketManagement.Web.Controllers
         /// <param name="service">AccountWebService object.</param>
         /// <param name="userManager">UserManager object.</param>
         /// <param name="signInManager">SignInManager object.</param>
+        /// <param name="userClient">IUserClient object.</param>
         /// <param name="localizer">Localizer object.</param>
         public AccountController(IAccountWebService service,
             UserManager<User> userManager,
             SignInManager<User> signInManager,
+            IUserClient userClient,
             IStringLocalizer<AccountController> localizer)
         {
             _service = service;
             _userManager = userManager;
             _signInManager = signInManager;
+            _userClient = userClient;
             _localizer = localizer;
         }
 
@@ -84,20 +93,13 @@ namespace TicketManagement.Web.Controllers
                 return View(model);
             }
 
-            var result = await _service.RegisterUser(model);
-            if (result.Succeeded)
+            var token = await _userClient.Register(model);
+            HttpContext.Response.Cookies.Append("secret_jwt_key", token, new CookieOptions
             {
-                return RedirectToAction(nameof(Index));
-            }
-            else
-            {
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-            }
-
-            return View(model);
+                HttpOnly = true,
+                SameSite = SameSiteMode.Strict,
+            });
+            return RedirectToAction(nameof(Index));
         }
 
         /// <summary>
@@ -125,9 +127,14 @@ namespace TicketManagement.Web.Controllers
                 return View(model);
             }
 
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
-            if (result.Succeeded)
+            var token = await _userClient.Login(model);
+            if (!string.IsNullOrEmpty(token))
             {
+                HttpContext.Response.Cookies.Append("secret_jwt_key", token, new CookieOptions
+                {
+                    HttpOnly = true,
+                    SameSite = SameSiteMode.Strict,
+                });
                 if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                 {
                     return Redirect(model.ReturnUrl);

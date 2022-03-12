@@ -7,9 +7,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using RestEase;
 using TicketManagement.Web.Configuration;
 using TicketManagement.Web.Infrastructure;
+using TicketManagement.Web.Interfaces;
 
 namespace TicketManagement.Web
 {
@@ -31,7 +33,11 @@ namespace TicketManagement.Web
             services.AddScoped(scope =>
             {
                 var baseUrl = Configuration["UserApiAddress"];
-                return RestClient.For<IClient>(baseUrl);
+                return RestClient.For<IUserClient>(baseUrl);
+            });
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApplication2", Version = "v1" });
             });
         }
 
@@ -70,6 +76,12 @@ namespace TicketManagement.Web
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "User API v1");
+            });
 
             app.UseEndpoints(endpoints =>
             {

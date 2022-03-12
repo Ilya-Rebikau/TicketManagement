@@ -1,18 +1,11 @@
-using System;
-using System.IO;
-using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using TicketManagement.UserAPI.Infrastructure;
@@ -36,14 +29,12 @@ namespace UserAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHealthChecks().AddCheck(
-                            "current_api_check",
-                            () => HealthCheckResult.Healthy("User API is alive"),
-                            new[] { "live" });
-            services.AddDbContext<IdentityContext>(options => options.UseSqlServer("UserApiDb"));
+            var connection = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<IdentityContext>(options => options.UseSqlServer(connection));
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<IdentityContext>()
                 .AddDefaultTokenProviders();
+            services.AddScoped<IAccountService, AccountService>();
 
             var tokenSettings = Configuration.GetSection(nameof(JwtTokenSettings));
             services.AddAuthentication(options =>
@@ -69,44 +60,17 @@ namespace UserAPI
 
             services.Configure<JwtTokenSettings>(tokenSettings);
             services.AddScoped<JwtTokenService>();
-            services.AddScoped<IAccountWebService, AccountWebService>();
+
             services.AddControllers();
 
-            services.AddSwaggerGen(options =>
+            services.AddSwaggerGen(c =>
             {
-                options.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Title = "UserAPI",
-                    Version = "v1",
-                });
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                options.IncludeXmlComments(xmlPath);
-                var jwtSecurityScheme = new OpenApiSecurityScheme
-                {
-                    Description = "Jwt Token is required to access the endpoints",
-                    In = ParameterLocation.Header,
-                    Name = "JWT Authentication",
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "bearer",
-                    BearerFormat = "JWT",
-                    Reference = new OpenApiReference
-                    {
-                        Id = JwtBearerDefaults.AuthenticationScheme,
-                        Type = ReferenceType.SecurityScheme,
-                    },
-                };
-
-                options.AddSecurityDefinition("Bearer", jwtSecurityScheme);
-                options.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    { jwtSecurityScheme, Array.Empty<string>() },
-                });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "UserAPI", Version = "v1" });
             });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
             app.UseRewriter(new RewriteOptions().AddRedirect("^$", "swagger"));
             app.UseSwagger();
@@ -123,10 +87,6 @@ namespace UserAPI
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
-                endpoints.MapHealthChecks("/health/live", new HealthCheckOptions
-                {
-                    Predicate = check => check.Tags.Contains("live"),
-                }).WithMetadata(new AllowAnonymousAttribute());
             });
         }
     }
