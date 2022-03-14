@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.ModelsDTO;
@@ -15,6 +17,11 @@ namespace TicketManagement.Web.WebServices
     /// </summary>
     public class AccountWebService : IAccountWebService
     {
+        /// <summary>
+        /// Cookies name.
+        /// </summary>
+        private const string CookiesKey = "Cookies";
+
         /// <summary>
         /// UserManager object.
         /// </summary>
@@ -51,6 +58,11 @@ namespace TicketManagement.Web.WebServices
         private readonly ConverterForTime _converter;
 
         /// <summary>
+        /// IUserClient object.
+        /// </summary>
+        private readonly IUserClient _userClient;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="AccountWebService"/> class.
         /// </summary>
         /// <param name="userManager">UserManager object.</param>
@@ -60,13 +72,17 @@ namespace TicketManagement.Web.WebServices
         /// <param name="eventAreaService">EventAreaService object.</param>
         /// <param name="eventSeatService">EventSeatService object.</param>
         /// <param name="converter">ConverterForTime object.</param>
+        /// <param name="userClient">IUserClient object.</param>
+#pragma warning disable S107 // Methods should not have too many parameters
         public AccountWebService(UserManager<User> userManager,
             SignInManager<User> signInManager,
             IService<TicketDto> ticketService,
             IService<EventDto> eventService,
             IService<EventAreaDto> eventAreaService,
             IService<EventSeatDto> eventSeatService,
-            ConverterForTime converter)
+            ConverterForTime converter,
+            IUserClient userClient)
+#pragma warning restore S107 // Methods should not have too many parameters
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -75,19 +91,26 @@ namespace TicketManagement.Web.WebServices
             _eventAreaService = eventAreaService;
             _eventSeatService = eventSeatService;
             _converter = converter;
+            _userClient = userClient;
         }
 
-        public async Task<IdentityResult> RegisterUser(RegisterViewModel model)
+        public async Task RegisterUser(RegisterViewModel model, HttpContext httpContext)
         {
-            var user = new User { Email = model.Email, UserName = model.Email };
-            var result = await _userManager.CreateAsync(user, model.Password);
-            await _userManager.AddToRoleAsync(user, "user");
-            if (result.Succeeded)
-            {
-                await _signInManager.SignInAsync(user, false);
-            }
+            var token = await _userClient.Register(model);
+            await SignIn(token, httpContext);
+        }
 
-            return result;
+        public async Task LoginUser(LoginViewModel model, HttpContext httpContext)
+        {
+            var token = await _userClient.Login(model);
+            await SignIn(token, httpContext);
+        }
+
+        public async Task Logout(HttpContext httpContext)
+        {
+            httpContext.Request.Cookies.TryGetValue(CookiesKey, out var token);
+            await _userClient.Logout(token);
+            await _signInManager.SignOutAsync();
         }
 
         public async Task<IdentityResult> UpdateUserInEdit(EditAccountViewModel model, User user)
@@ -137,6 +160,28 @@ namespace TicketManagement.Web.WebServices
                 Tickets = ticketsVm,
             };
             return accountVm;
+        }
+
+        /// <summary>
+        /// Sign in app.
+        /// </summary>
+        /// <param name="token">Jwt token.</param>
+        /// <param name="httpContext">HttpContext object.</param>
+        /// <returns>Task.</returns>
+        private async Task SignIn(string token, HttpContext httpContext)
+        {
+            if (!string.IsNullOrEmpty(token) && httpContext is not null)
+            {
+                httpContext.Response.Cookies.Append(CookiesKey, token, new CookieOptions
+                {
+                    HttpOnly = true,
+                    SameSite = SameSiteMode.Strict,
+                });
+                var handler = new JwtSecurityTokenHandler();
+                var jwtSecurityToken = handler.ReadJwtToken(token);
+                var user = await _userManager.FindByEmailAsync(jwtSecurityToken.Subject);
+                await _signInManager.SignInAsync(user, false);
+            }
         }
     }
 }

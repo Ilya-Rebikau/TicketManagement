@@ -13,7 +13,7 @@ namespace TicketManagement.Web.Interfaces
         [Post("account/login")]
         public Task<string> Login([Body] LoginViewModel userModel, CancellationToken cancellationToken = default);
 
-        [Get("account/validate")]
-        public Task<bool> Validate([Body] string token, CancellationToken cancellationToken = default);
+        [Post("account/logout")]
+        public Task Logout([Header("Authorization")] string token, CancellationToken cancellationToken = default);
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -59,13 +60,34 @@ namespace UserAPI
                 });
 
             services.Configure<JwtTokenSettings>(tokenSettings);
-            services.AddScoped<JwtTokenService>();
+            services.AddTransient<JwtTokenService>();
 
             services.AddControllers();
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "UserAPI", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "JWTToken", Version = "v1" });
+
+                // Include 'SecurityScheme' to use JWT Authentication
+                var jwtSecurityScheme = new OpenApiSecurityScheme
+                {
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    Name = "JWT Authentication",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
+                    Reference = new OpenApiReference
+                    {
+                        Id = JwtBearerDefaults.AuthenticationScheme,
+                        Type = ReferenceType.SecurityScheme,
+                    },
+                };
+                c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    { jwtSecurityScheme, Array.Empty<string>() },
+                });
             });
         }
 
@@ -80,6 +102,8 @@ namespace UserAPI
             });
 
             app.UseRouting();
+
+            app.UseMiddleware<JwtMiddleware>();
 
             app.UseAuthentication();
             app.UseAuthorization();

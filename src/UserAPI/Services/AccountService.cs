@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using TicketManagement.UserAPI.Interfaces;
 using TicketManagement.UserAPI.Models;
@@ -68,7 +69,9 @@ namespace TicketManagement.UserAPI.Services
             };
             if (result.Succeeded)
             {
-                loginResult.User = await _userManager.FindByNameAsync(model.Email);
+                var user = await _userManager.FindByNameAsync(model.Email);
+                loginResult.User = user;
+                loginResult.Roles = await _userManager.GetRolesAsync(user);
             }
 
             return loginResult;
@@ -92,6 +95,11 @@ namespace TicketManagement.UserAPI.Services
             user.Balance += model.Balance;
             var result = await _userManager.UpdateAsync(user);
             return result;
+        }
+
+        public async Task Logout()
+        {
+            await _signInManager.SignOutAsync();
         }
     }
 }

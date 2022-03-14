@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using TicketManagement.Web.Models;
 using TicketManagement.Web.Models.Account;
@@ -14,8 +15,24 @@ namespace TicketManagement.Web.Interfaces
         /// Register user in system.
         /// </summary>
         /// <param name="model">RegisterViewModel object.</param>
+        /// <param name="httpContext">HttpContext object.</param>
         /// <returns>IdentityResult with success or errors.</returns>
-        Task<IdentityResult> RegisterUser(RegisterViewModel model);
+        Task RegisterUser(RegisterViewModel model, HttpContext httpContext);
+
+        /// <summary>
+        /// Login for user in system.
+        /// </summary>
+        /// <param name="model">Login view model.</param>
+        /// <param name="httpContext">HttpContext object.</param>
+        /// <returns>Task.</returns>
+        Task LoginUser(LoginViewModel model, HttpContext httpContext);
+
+        /// <summary>
+        /// Logout user from system.
+        /// </summary>
+        /// <param name="httpContext">HttpContext object.</param>
+        /// <returns>Task.</returns>
+        Task Logout(HttpContext httpContext);
 
         /// <summary>
         /// Update user in edit method.

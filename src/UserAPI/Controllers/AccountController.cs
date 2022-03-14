@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TicketManagement.UserAPI.Interfaces;
 using TicketManagement.UserAPI.Models.Account;
@@ -63,21 +64,18 @@ namespace TicketManagement.UserAPI.Controllers
             var loginResult = await _service.Login(model);
             if (loginResult.SignInResult.Succeeded)
             {
-                return Ok(_jwtTokenService.GetToken(loginResult.User, new List<string>()));
+                return Ok(_jwtTokenService.GetToken(loginResult.User, loginResult.Roles));
             }
 
             return Forbid();
         }
 
-        /// <summary>
-        /// Validate jwt token.
-        /// </summary>
-        /// <param name="token">Jwt token.</param>
-        /// <returns>True if token is valid and false if not.</returns>
-        [HttpGet("validate")]
-        public IActionResult Validate(string token)
+        [HttpPost("logout")]
+        [Authorize(Roles = "admin, user, event manager, venue manager")]
+        public async Task<IActionResult> Logout()
         {
-            return _jwtTokenService.ValidateToken(token) ? Ok() : Forbid();
+            await _service.Logout();
+            return Ok();
         }
     }
 }

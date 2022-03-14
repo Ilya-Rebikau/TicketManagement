@@ -21,11 +21,6 @@ namespace TicketManagement.Web.Controllers
     public class AccountController : Controller
     {
         /// <summary>
-        /// Const for showing error with wrong login or/and password from resource file.
-        /// </summary>
-        private const string WrongLoginPasswordResxKey = "WrongLoginPassword";
-
-        /// <summary>
         /// AccountWebService object.
         /// </summary>
         private readonly IAccountWebService _service;
@@ -36,39 +31,15 @@ namespace TicketManagement.Web.Controllers
         private readonly UserManager<User> _userManager;
 
         /// <summary>
-        /// SignInManager object.
-        /// </summary>
-        private readonly SignInManager<User> _signInManager;
-
-        /// <summary>
-        /// IUserClient object.
-        /// </summary>
-        private readonly IUserClient _userClient;
-
-        /// <summary>
-        /// Localizer object.
-        /// </summary>
-        private readonly IStringLocalizer<AccountController> _localizer;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="AccountController"/> class.
         /// </summary>
         /// <param name="service">AccountWebService object.</param>
         /// <param name="userManager">UserManager object.</param>
-        /// <param name="signInManager">SignInManager object.</param>
-        /// <param name="userClient">IUserClient object.</param>
-        /// <param name="localizer">Localizer object.</param>
         public AccountController(IAccountWebService service,
-            UserManager<User> userManager,
-            SignInManager<User> signInManager,
-            IUserClient userClient,
-            IStringLocalizer<AccountController> localizer)
+            UserManager<User> userManager)
         {
             _service = service;
             _userManager = userManager;
-            _signInManager = signInManager;
-            _userClient = userClient;
-            _localizer = localizer;
         }
 
         /// <summary>
@@ -94,16 +65,7 @@ namespace TicketManagement.Web.Controllers
                 return View(model);
             }
 
-            var token = await _userClient.Register(model);
-            HttpContext.Response.Cookies.Append("secret_jwt_key", token, new CookieOptions
-            {
-                HttpOnly = true,
-                SameSite = SameSiteMode.Strict,
-            });
-            var handler = new JwtSecurityTokenHandler();
-            var jwtSecurityToken = handler.ReadJwtToken(token);
-            var user = await _userManager.FindByEmailAsync(jwtSecurityToken.Subject);
-            await _signInManager.SignInAsync(user, false);
+            await _service.RegisterUser(model, HttpContext);
             return RedirectToAction(nameof(Index));
         }
 
@@ -132,45 +94,27 @@ namespace TicketManagement.Web.Controllers
                 return View(model);
             }
 
-            var token = await _userClient.Login(model);
-            if (!string.IsNullOrEmpty(token))
+            await _service.LoginUser(model, HttpContext);
+            if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
             {
-                HttpContext.Response.Cookies.Append("secret_jwt_key", token, new CookieOptions
-                {
-                    HttpOnly = true,
-                    SameSite = SameSiteMode.Strict,
-                });
-                var handler = new JwtSecurityTokenHandler();
-                var jwtSecurityToken = handler.ReadJwtToken(token);
-                var user = await _userManager.FindByEmailAsync(jwtSecurityToken.Subject);
-                await _signInManager.SignInAsync(user, false);
-                if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                {
-                    return Redirect(model.ReturnUrl);
-                }
-                else
-                {
-                    return RedirectToAction(nameof(Index), typeof(EventsController).GetControllerName());
-                }
+                return Redirect(model.ReturnUrl);
             }
             else
             {
-                ModelState.AddModelError("", _localizer[WrongLoginPasswordResxKey]);
+                return RedirectToAction(nameof(Index), typeof(EventsController).GetControllerName());
             }
-
-            return View(model);
         }
 
         /// <summary>
         /// Logout for user.
         /// </summary>
         /// <returns>Task with IActionResult.</returns>
-        [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin, user, event manager, venue manager")]
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
+            await _service.Logout(HttpContext);
             return RedirectToAction(nameof(Index), typeof(EventsController).GetControllerName());
         }
 
