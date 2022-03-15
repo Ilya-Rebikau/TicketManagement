@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TicketManagement.UserAPI.Interfaces;
 using TicketManagement.UserAPI.Models.Account;
-using UserAPI.Services;
+using TicketManagement.UserAPI.Services;
 
 namespace TicketManagement.UserAPI.Controllers
 {

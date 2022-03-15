@@ -13,11 +13,8 @@ using TicketManagement.UserAPI.Infrastructure;
 using TicketManagement.UserAPI.Interfaces;
 using TicketManagement.UserAPI.Models;
 using TicketManagement.UserAPI.Services;
-using UserAPI.Infrastructure;
-using UserAPI.Models;
-using UserAPI.Services;
 
-namespace UserAPI
+namespace TicketManagement.UserAPI
 {
     public class Startup
     {

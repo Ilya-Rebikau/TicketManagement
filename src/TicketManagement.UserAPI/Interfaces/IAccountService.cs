@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using TicketManagement.UserAPI.Models.Account;
-using UserAPI.Models.Account;
 
 namespace TicketManagement.UserAPI.Interfaces
 {

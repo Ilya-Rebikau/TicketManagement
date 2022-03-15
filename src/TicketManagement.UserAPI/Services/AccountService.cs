@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using TicketManagement.UserAPI.Interfaces;
 using TicketManagement.UserAPI.Models;
 using TicketManagement.UserAPI.Models.Account;
-using UserAPI.Models.Account;
 
 namespace TicketManagement.UserAPI.Services
 {

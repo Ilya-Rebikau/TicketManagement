@@ -1,4 +1,4 @@
-﻿namespace UserAPI.Models
+﻿namespace TicketManagement.UserAPI.Models
 {
     public class JwtTokenSettings
     {

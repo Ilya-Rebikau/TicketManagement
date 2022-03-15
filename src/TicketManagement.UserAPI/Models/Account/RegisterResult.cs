@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using TicketManagement.UserAPI.Models;
 
-namespace UserAPI.Models.Account
+namespace TicketManagement.UserAPI.Models.Account
 {
     public class RegisterResult
     {

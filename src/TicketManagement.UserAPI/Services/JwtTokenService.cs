@@ -6,9 +6,8 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using TicketManagement.UserAPI.Models;
-using UserAPI.Models;
 
-namespace UserAPI.Services
+namespace TicketManagement.UserAPI.Services
 {
     public class JwtTokenService
     {

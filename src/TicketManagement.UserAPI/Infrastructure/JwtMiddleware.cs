@@ -2,9 +2,9 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using UserAPI.Services;
+using TicketManagement.UserAPI.Services;
 
-namespace UserAPI.Infrastructure
+namespace TicketManagement.UserAPI.Infrastructure
 {
     public class JwtMiddleware
     {
