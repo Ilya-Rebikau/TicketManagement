@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using RestEase;
 using TicketManagement.Web.Models.Account;
 
@@ -15,5 +16,11 @@ namespace TicketManagement.Web.Interfaces
 
         [Post("account/logout")]
         public Task Logout([Header("Authorization")] string token, CancellationToken cancellationToken = default);
+
+        [Get("account/edit/{id}")]
+        public Task<EditAccountViewModel> Edit([Header("Authorization")] string token, [Path] string id, CancellationToken cancellationToken = default);
+
+        [Post("account/edit")]
+        public Task<IdentityResult> Edit([Header("Authorization")] string token, [Body] EditAccountViewModel model, CancellationToken cancellationToken = default);
     }
 }

@@ -2,7 +2,6 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using UserAPI.Services;
 
 namespace UserAPI.Infrastructure
@@ -11,13 +10,11 @@ namespace UserAPI.Infrastructure
     {
         private const string AuthorizationKey = "Authorization";
         private readonly RequestDelegate _next;
-        private readonly IConfiguration _configuration;
         private readonly JwtTokenService _jwtTokenService;
 
-        public JwtMiddleware(RequestDelegate next, IConfiguration configuration, JwtTokenService jwtTokenService)
+        public JwtMiddleware(RequestDelegate next, JwtTokenService jwtTokenService)
         {
             _next = next;
-            _configuration = configuration;
             _jwtTokenService = jwtTokenService;
         }
 

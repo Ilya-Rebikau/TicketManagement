@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using TicketManagement.UserAPI.Interfaces;
 using TicketManagement.UserAPI.Models;
@@ -14,7 +13,10 @@ namespace TicketManagement.UserAPI.Services
     /// </summary>
     public class AccountService : IAccountService
     {
-        private const string UserRole = "user";
+        /// <summary>
+        /// Base role for new registering user.
+        /// </summary>
+        private const string BaseRoleForNewUser = "user";
 
         /// <summary>
         /// UserManager object.
@@ -42,7 +44,7 @@ namespace TicketManagement.UserAPI.Services
         {
             var user = new User { Email = model.Email, UserName = model.Email };
             var result = await _userManager.CreateAsync(user, model.Password);
-            await _userManager.AddToRoleAsync(user, UserRole);
+            await _userManager.AddToRoleAsync(user, BaseRoleForNewUser);
             IList<string> roles = new List<string>();
             if (result.Succeeded)
             {
@@ -77,8 +79,25 @@ namespace TicketManagement.UserAPI.Services
             return loginResult;
         }
 
-        public async Task<IdentityResult> UpdateUserInEdit(EditAccountViewModel model, User user)
+        public async Task Logout()
         {
+            await _signInManager.SignOutAsync();
+        }
+
+        public async Task<EditAccountViewModel> GetEditAccountViewModelForEdit(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user is not null)
+            {
+                return user;
+            }
+
+            return null;
+        }
+
+        public async Task<IdentityResult> UpdateUserInEdit(EditAccountViewModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.Id);
             user.Email = model.Email;
             user.UserName = model.Email;
             user.FirstName = model.FirstName;
@@ -87,19 +106,6 @@ namespace TicketManagement.UserAPI.Services
 
             var result = await _userManager.UpdateAsync(user);
             return result;
-        }
-
-        public async Task<IdentityResult> AddBalanceToUser(AddBalanceViewModel model)
-        {
-            var user = await _userManager.FindByIdAsync(model.Id);
-            user.Balance += model.Balance;
-            var result = await _userManager.UpdateAsync(user);
-            return result;
-        }
-
-        public async Task Logout()
-        {
-            await _signInManager.SignOutAsync();
         }
     }
 }

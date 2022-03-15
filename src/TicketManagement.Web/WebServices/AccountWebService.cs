@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
@@ -108,21 +109,19 @@ namespace TicketManagement.Web.WebServices
 
         public async Task Logout(HttpContext httpContext)
         {
-            httpContext.Request.Cookies.TryGetValue(CookiesKey, out var token);
+            string token = GetJwtToken(httpContext);
             await _userClient.Logout(token);
             await _signInManager.SignOutAsync();
         }
 
-        public async Task<IdentityResult> UpdateUserInEdit(EditAccountViewModel model, User user)
+        public async Task<EditAccountViewModel> GetEditAccountViewModelForEdit(HttpContext httpContext, string id)
         {
-            user.Email = model.Email;
-            user.UserName = model.Email;
-            user.FirstName = model.FirstName;
-            user.Surname = model.Surname;
-            user.TimeZone = model.TimeZone;
+            return await _userClient.Edit(GetJwtToken(httpContext), id);
+        }
 
-            var result = await _userManager.UpdateAsync(user);
-            return result;
+        public async Task<IdentityResult> UpdateUserInEdit(HttpContext httpContext, EditAccountViewModel model)
+        {
+            return await _userClient.Edit(GetJwtToken(httpContext), model);
         }
 
         public async Task<IdentityResult> AddBalanceToUser(AddBalanceViewModel model)
@@ -163,6 +162,17 @@ namespace TicketManagement.Web.WebServices
         }
 
         /// <summary>
+        /// Get jwt token from http context.
+        /// </summary>
+        /// <param name="httpContext">HttpContext object.</param>
+        /// <returns>Jwt token.</returns>
+        private static string GetJwtToken(HttpContext httpContext)
+        {
+            httpContext.Request.Cookies.TryGetValue(CookiesKey, out var token);
+            return token;
+        }
+
+        /// <summary>
         /// Sign in app.
         /// </summary>
         /// <param name="token">Jwt token.</param>
@@ -170,18 +180,20 @@ namespace TicketManagement.Web.WebServices
         /// <returns>Task.</returns>
         private async Task SignIn(string token, HttpContext httpContext)
         {
-            if (!string.IsNullOrEmpty(token) && httpContext is not null)
+            if (string.IsNullOrEmpty(token) || httpContext is null)
             {
-                httpContext.Response.Cookies.Append(CookiesKey, token, new CookieOptions
-                {
-                    HttpOnly = true,
-                    SameSite = SameSiteMode.Strict,
-                });
-                var handler = new JwtSecurityTokenHandler();
-                var jwtSecurityToken = handler.ReadJwtToken(token);
-                var user = await _userManager.FindByEmailAsync(jwtSecurityToken.Subject);
-                await _signInManager.SignInAsync(user, false);
+                throw new InvalidOperationException("Wrong jwt token or http context");
             }
+
+            httpContext.Response.Cookies.Append(CookiesKey, token, new CookieOptions
+            {
+                HttpOnly = true,
+                SameSite = SameSiteMode.Strict,
+            });
+            var handler = new JwtSecurityTokenHandler();
+            var jwtSecurityToken = handler.ReadJwtToken(token);
+            var user = await _userManager.FindByEmailAsync(jwtSecurityToken.Subject);
+            await _signInManager.SignInAsync(user, false);
         }
     }
 }

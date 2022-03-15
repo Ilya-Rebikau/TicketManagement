@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TicketManagement.UserAPI.Interfaces;
@@ -70,12 +69,40 @@ namespace TicketManagement.UserAPI.Controllers
             return Forbid();
         }
 
-        [HttpPost("logout")]
+        /// <summary>
+        /// Logout for user.
+        /// </summary>
+        /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, user, event manager, venue manager")]
+        [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
             await _service.Logout();
             return Ok();
+        }
+
+        /// <summary>
+        /// Edit account.
+        /// </summary>
+        /// <param name="id">User id.</param>
+        /// <returns>Task with IActionResult.</returns>
+        [Authorize(Roles = "admin, user, event manager, venue manager")]
+        [HttpGet("edit/{id}")]
+        public async Task<IActionResult> Edit([FromRoute] string id)
+        {
+            return Ok(await _service.GetEditAccountViewModelForEdit(id));
+        }
+
+        /// <summary>
+        /// Edit user.
+        /// </summary>
+        /// <param name="model">EditAccountViewModel object.</param>
+        /// <returns>Task with IActionResult.</returns>
+        [Authorize(Roles = "admin, user, event manager, venue manager")]
+        [HttpPost("edit")]
+        public async Task<IActionResult> Edit([FromBody] EditAccountViewModel model)
+        {
+            return Ok(await _service.UpdateUserInEdit(model));
         }
     }
 }

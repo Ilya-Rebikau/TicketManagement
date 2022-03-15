@@ -1,4 +1,4 @@
-﻿namespace UserAPI.Infrastructure
+﻿namespace UserAPI.Models
 {
     public class JwtTokenSettings
     {

@@ -6,7 +6,7 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using TicketManagement.UserAPI.Models;
-using UserAPI.Infrastructure;
+using UserAPI.Models;
 
 namespace UserAPI.Services
 {

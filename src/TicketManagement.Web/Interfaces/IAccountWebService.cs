@@ -35,14 +35,6 @@ namespace TicketManagement.Web.Interfaces
         Task Logout(HttpContext httpContext);
 
         /// <summary>
-        /// Update user in edit method.
-        /// </summary>
-        /// <param name="model">EditAccountViewModel object.</param>
-        /// <param name="user">User.</param>
-        /// <returns>IdentityResult object.</returns>
-        Task<IdentityResult> UpdateUserInEdit(EditAccountViewModel model, User user);
-
-        /// <summary>
         /// Add balance to user.
         /// </summary>
         /// <param name="model">AddBalanceViewModel object.</param>
@@ -55,5 +47,21 @@ namespace TicketManagement.Web.Interfaces
         /// <param name="user">User.</param>
         /// <returns>Account view model.</returns>
         Task<AccountViewModel> GetAccountViewModelInIndex(User user);
+
+        /// <summary>
+        /// Gets edit account view model for edit httpget method.
+        /// </summary>
+        /// <param name="id">Id of user.</param>
+        /// <param name="httpContext">HttpContext object.</param>
+        /// <returns>EditAccountViewModel object.</returns>
+        Task<EditAccountViewModel> GetEditAccountViewModelForEdit(HttpContext httpContext, string id);
+
+        /// <summary>
+        /// Update user in edit httppost method.
+        /// </summary>
+        /// <param name="model">EditAccountViewModel object.</param>
+        /// <param name="httpContext">HttpContext object.</param>
+        /// <returns>IdentityResult object.</returns>
+        Task<IdentityResult> UpdateUserInEdit(HttpContext httpContext, EditAccountViewModel model);
     }
 }

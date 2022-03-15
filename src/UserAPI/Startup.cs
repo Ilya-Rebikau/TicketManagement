@@ -14,6 +14,7 @@ using TicketManagement.UserAPI.Interfaces;
 using TicketManagement.UserAPI.Models;
 using TicketManagement.UserAPI.Services;
 using UserAPI.Infrastructure;
+using UserAPI.Models;
 using UserAPI.Services;
 
 namespace UserAPI

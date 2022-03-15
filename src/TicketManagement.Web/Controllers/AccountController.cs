@@ -1,10 +1,9 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using TicketManagement.Web.Extensions;
 using TicketManagement.Web.Infrastructure;
 using TicketManagement.Web.Interfaces;
@@ -127,14 +126,13 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
+            var accountViewModel = await _service.GetEditAccountViewModelForEdit(HttpContext, id);
+            if (accountViewModel == null)
             {
                 return NotFound();
             }
 
-            EditAccountViewModel model = user;
-            return View(model);
+            return View(accountViewModel);
         }
 
         /// <summary>
@@ -151,19 +149,15 @@ namespace TicketManagement.Web.Controllers
                 return View(model);
             }
 
-            var user = await _userManager.FindByIdAsync(model.Id);
-            if (user != null)
+            var result = await _service.UpdateUserInEdit(HttpContext, model);
+            if (!result.Errors.Any())
             {
-                var result = await _service.UpdateUserInEdit(model, user);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
+                return RedirectToAction(nameof(Index));
+            }
 
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
             }
 
             return View(model);
