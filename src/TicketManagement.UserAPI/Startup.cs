@@ -34,6 +34,7 @@ namespace TicketManagement.UserAPI
                 .AddEntityFrameworkStores<IdentityContext>()
                 .AddDefaultTokenProviders();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IUsersService, UsersService>();
 
             var tokenSettings = Configuration.GetSection(nameof(JwtTokenSettings));
             services.AddAuthentication(options =>

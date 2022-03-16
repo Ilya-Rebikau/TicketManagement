@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
-using TicketManagement.UserAPI.Models;
 
 namespace TicketManagement.UserAPI.Models.Account
 {

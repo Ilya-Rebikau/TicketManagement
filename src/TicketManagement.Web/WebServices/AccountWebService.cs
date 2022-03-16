@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.ModelsDTO;
+using TicketManagement.Web.Extensions;
 using TicketManagement.Web.Interfaces;
+using TicketManagement.Web.Interfaces.HttpClients;
 using TicketManagement.Web.Models;
 using TicketManagement.Web.Models.Account;
 
@@ -18,11 +20,6 @@ namespace TicketManagement.Web.WebServices
     /// </summary>
     public class AccountWebService : IAccountWebService
     {
-        /// <summary>
-        /// Cookies name.
-        /// </summary>
-        private const string CookiesKey = "Cookies";
-
         /// <summary>
         /// UserManager object.
         /// </summary>
@@ -61,7 +58,7 @@ namespace TicketManagement.Web.WebServices
         /// <summary>
         /// IUserClient object.
         /// </summary>
-        private readonly IUserClient _userClient;
+        private readonly IUsersClient _userClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AccountWebService"/> class.
@@ -82,7 +79,7 @@ namespace TicketManagement.Web.WebServices
             IService<EventAreaDto> eventAreaService,
             IService<EventSeatDto> eventSeatService,
             ConverterForTime converter,
-            IUserClient userClient)
+            IUsersClient userClient)
 #pragma warning restore S107 // Methods should not have too many parameters
         {
             _userManager = userManager;
@@ -109,19 +106,18 @@ namespace TicketManagement.Web.WebServices
 
         public async Task Logout(HttpContext httpContext)
         {
-            string token = GetJwtToken(httpContext);
-            await _userClient.Logout(token);
+            await _userClient.Logout(httpContext.GetJwtToken());
             await _signInManager.SignOutAsync();
         }
 
         public async Task<EditAccountViewModel> GetEditAccountViewModelForEdit(HttpContext httpContext, string id)
         {
-            return await _userClient.Edit(GetJwtToken(httpContext), id);
+            return await _userClient.Edit(httpContext.GetJwtToken(), id);
         }
 
         public async Task<IdentityResult> UpdateUserInEdit(HttpContext httpContext, EditAccountViewModel model)
         {
-            return await _userClient.Edit(GetJwtToken(httpContext), model);
+            return await _userClient.Edit(httpContext.GetJwtToken(), model);
         }
 
         public async Task<IdentityResult> AddBalanceToUser(AddBalanceViewModel model)
@@ -162,17 +158,6 @@ namespace TicketManagement.Web.WebServices
         }
 
         /// <summary>
-        /// Get jwt token from http context.
-        /// </summary>
-        /// <param name="httpContext">HttpContext object.</param>
-        /// <returns>Jwt token.</returns>
-        private static string GetJwtToken(HttpContext httpContext)
-        {
-            httpContext.Request.Cookies.TryGetValue(CookiesKey, out var token);
-            return token;
-        }
-
-        /// <summary>
         /// Sign in app.
         /// </summary>
         /// <param name="token">Jwt token.</param>
@@ -185,11 +170,7 @@ namespace TicketManagement.Web.WebServices
                 throw new InvalidOperationException("Wrong jwt token or http context");
             }
 
-            httpContext.Response.Cookies.Append(CookiesKey, token, new CookieOptions
-            {
-                HttpOnly = true,
-                SameSite = SameSiteMode.Strict,
-            });
+            httpContext.AppendCookies(token);
             var handler = new JwtSecurityTokenHandler();
             var jwtSecurityToken = handler.ReadJwtToken(token);
             var user = await _userManager.FindByEmailAsync(jwtSecurityToken.Subject);

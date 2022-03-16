@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
@@ -10,8 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using RestEase;
 using TicketManagement.Web.Configuration;
-using TicketManagement.Web.Infrastructure;
-using TicketManagement.Web.Interfaces;
+using TicketManagement.Web.Interfaces.HttpClients;
 
 namespace TicketManagement.Web
 {
@@ -33,7 +31,7 @@ namespace TicketManagement.Web
             services.AddScoped(scope =>
             {
                 var baseUrl = Configuration["UserApiAddress"];
-                return RestClient.For<IUserClient>(baseUrl);
+                return RestClient.For<IUsersClient>(baseUrl);
             });
             services.AddSwaggerGen(c =>
             {
