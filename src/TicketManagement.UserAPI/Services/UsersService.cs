@@ -58,28 +58,24 @@ namespace TicketManagement.UserAPI.Services
         public async Task<string> DeleteUserAsync(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
+            if (user is null)
+            {
+                return null;
+            }
+
             var userRoles = await _userManager.GetRolesAsync(user);
             if (userRoles.Contains("admin"))
             {
                 throw new InvalidOperationException("You can't delete admin account.");
             }
 
-            if (user != null)
-            {
-                await _userManager.DeleteAsync(user);
-            }
-
+            await _userManager.DeleteAsync(user);
             return id;
         }
 
         public async Task<ChangeRoleViewModel> GetChangeRoleViewModel(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if (user is null)
-            {
-                throw new InvalidOperationException("User not found");
-            }
-
             var userRoles = await _userManager.GetRolesAsync(user);
             var allRoles = _roleManager.Roles.ToList();
             var model = new ChangeRoleViewModel
@@ -123,11 +119,6 @@ namespace TicketManagement.UserAPI.Services
         public async Task<EditUserViewModel> GetEditUserViewModel(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if (user is null)
-            {
-                throw new InvalidOperationException("User not found");
-            }
-
             var model = new EditUserViewModel
             {
                 Id = user.Id,

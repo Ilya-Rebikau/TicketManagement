@@ -88,12 +88,7 @@ namespace TicketManagement.UserAPI.Services
         public async Task<EditAccountViewModel> GetEditAccountViewModelForEdit(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if (user is not null)
-            {
-                return user;
-            }
-
-            return null;
+            return user;
         }
 
         public async Task<IdentityResult> UpdateUserInEdit(EditAccountViewModel model)
@@ -110,11 +105,6 @@ namespace TicketManagement.UserAPI.Services
         public async Task<AddBalanceViewModel> GetBalanceViewModel(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
-            {
-                throw new InvalidOperationException("User not found.");
-            }
-
             var model = new AddBalanceViewModel
             {
                 Id = user.Id,

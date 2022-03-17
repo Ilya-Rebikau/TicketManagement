@@ -15,6 +15,11 @@ namespace TicketManagement.UserAPI.Controllers
     public class AccountController : ControllerBase
     {
         /// <summary>
+        /// Key for jwt token in header.
+        /// </summary>
+        private const string AuthorizationKey = "Authorization";
+
+        /// <summary>
         /// AccountWebService object.
         /// </summary>
         private readonly IAccountService _service;
@@ -90,7 +95,13 @@ namespace TicketManagement.UserAPI.Controllers
         [HttpGet("edit/{id}")]
         public async Task<IActionResult> Edit([FromRoute] string id)
         {
-            return Ok(await _service.GetEditAccountViewModelForEdit(id));
+            var model = await _service.GetEditAccountViewModelForEdit(id);
+            if (model is not null)
+            {
+                return Ok(model);
+            }
+
+            return NotFound();
         }
 
         /// <summary>
@@ -114,7 +125,13 @@ namespace TicketManagement.UserAPI.Controllers
         [HttpGet("addbalance/{id}")]
         public async Task<IActionResult> AddBalance([FromRoute] string id)
         {
-            return Ok(await _service.GetBalanceViewModel(id));
+            var model = await _service.GetBalanceViewModel(id);
+            if (model is not null)
+            {
+                return Ok(model);
+            }
+
+            return NotFound();
         }
 
         /// <summary>
@@ -127,6 +144,17 @@ namespace TicketManagement.UserAPI.Controllers
         public async Task<IActionResult> AddBalanceAsync(AddBalanceViewModel model)
         {
             return Ok(await _service.AddBalance(model));
+        }
+
+        /// <summary>
+        /// Validate jwt token.
+        /// </summary>
+        /// <param name="token">Jwt token.</param>
+        /// <returns>True if token is valid and false if not.</returns>
+        [HttpPost("validatetoken")]
+        public ActionResult<bool> ValidateToken([FromHeader(Name = AuthorizationKey)] string token)
+        {
+            return _jwtTokenService.ValidateToken(token);
         }
     }
 }

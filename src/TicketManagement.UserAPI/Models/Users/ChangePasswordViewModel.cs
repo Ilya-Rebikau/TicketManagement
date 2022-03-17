@@ -15,15 +15,11 @@ namespace TicketManagement.UserAPI.Models.Users
         /// <summary>
         /// Gets or sets user email.
         /// </summary>
-        [Display(Name ="Email")]
         public string Email { get; set; }
 
         /// <summary>
         /// Gets or sets new password for user.
         /// </summary>
-        [Required(ErrorMessage = "FieldRequired")]
-        [DataType(DataType.Password)]
-        [Display(Name = "Password")]
         public string NewPassword { get; set; }
     }
 }

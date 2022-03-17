@@ -1,7 +1,7 @@
 ﻿using System;
-using TicketManagement.UserAPI.Interfaces;
+using TicketManagement.EventManagerAPI.Interfaces;
 
-namespace TicketManagement.UserAPI.Models
+namespace TicketManagement.EventManagerAPI.ModelsDTO
 {
     /// <summary>
     /// Represent event's dto model.

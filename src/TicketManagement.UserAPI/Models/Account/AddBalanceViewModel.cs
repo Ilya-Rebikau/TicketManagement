@@ -15,8 +15,6 @@ namespace TicketManagement.UserAPI.Models.Account
         /// <summary>
         /// Gets or sets balance for account.
         /// </summary>
-        [Range(0, double.MaxValue)]
-        [Display(Name = "Balance")]
         public double Balance { get; set; }
     }
 }

@@ -3,7 +3,6 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using TicketManagement.UserAPI.Infrastructure;
 using TicketManagement.UserAPI.Interfaces;
+using TicketManagement.UserAPI.Middlewares;
 using TicketManagement.UserAPI.Models;
 using TicketManagement.UserAPI.Services;
 
@@ -65,9 +65,7 @@ namespace TicketManagement.UserAPI
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "JWTToken", Version = "v1" });
-
-                // Include 'SecurityScheme' to use JWT Authentication
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "UsersAPI", Version = "v1" });
                 var jwtSecurityScheme = new OpenApiSecurityScheme
                 {
                     Scheme = "bearer",
@@ -93,11 +91,10 @@ namespace TicketManagement.UserAPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
-            app.UseRewriter(new RewriteOptions().AddRedirect("^$", "swagger"));
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "User API v1");
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Users API v1");
             });
 
             app.UseRouting();

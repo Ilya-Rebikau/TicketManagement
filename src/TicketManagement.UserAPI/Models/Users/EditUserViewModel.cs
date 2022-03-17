@@ -18,32 +18,26 @@ namespace TicketManagement.UserAPI.Models.Users
         /// <summary>
         /// Gets or sets user email.
         /// </summary>
-        [Display(Name="Email")]
         public string Email { get; set; }
 
         /// <summary>
         /// Gets or sets first name.
         /// </summary>
-        [Display(Name = "FirstName")]
         public string FirstName { get; set; }
 
         /// <summary>
         /// Gets or sets surname.
         /// </summary>
-        [Display(Name = "Surname")]
         public string Surname { get; set; }
 
         /// <summary>
         /// Gets or sets balance.
         /// </summary>
-        [Display(Name = "Balance")]
-        [Range(0, double.MaxValue)]
         public double Balance { get; set; }
 
         /// <summary>
         /// Gets or sets time zone.
         /// </summary>
-        [Display(Name = "TimeZone")]
         public string TimeZone { get; set; }
 
         /// <summary>

@@ -1,4 +1,4 @@
-﻿namespace TicketManagement.UserAPI.Interfaces
+﻿namespace TicketManagement.EventManagerAPI.Interfaces
 {
     /// <summary>
     /// Dto entity.

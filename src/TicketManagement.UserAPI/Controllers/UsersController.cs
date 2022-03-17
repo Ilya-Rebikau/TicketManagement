@@ -32,7 +32,7 @@ namespace TicketManagement.UserAPI.Controllers
         /// Get all users.
         /// </summary>
         /// <returns>Task with IActionResult.</returns>
-        [HttpGet]
+        [HttpGet("getusers")]
         public async Task<IActionResult> GetUsers()
         {
             return Ok(await _service.GetUsers());
@@ -57,7 +57,13 @@ namespace TicketManagement.UserAPI.Controllers
         [HttpGet("edit/{id}")]
         public async Task<IActionResult> Edit([FromRoute] string id)
         {
-            return Ok(await _service.GetEditUserViewModel(id));
+            var model = await _service.GetEditUserViewModel(id);
+            if (model is not null)
+            {
+                return Ok(model);
+            }
+
+            return NotFound();
         }
 
         /// <summary>
@@ -79,7 +85,13 @@ namespace TicketManagement.UserAPI.Controllers
         [HttpPost("delete/{id}")]
         public async Task<ActionResult> Delete([FromRoute] string id)
         {
-            return Ok(await _service.DeleteUserAsync(id));
+            var deletedId = await _service.DeleteUserAsync(id);
+            if (!string.IsNullOrEmpty(deletedId))
+            {
+                return Ok(deletedId);
+            }
+
+            return NotFound();
         }
 
         /// <summary>
@@ -90,7 +102,13 @@ namespace TicketManagement.UserAPI.Controllers
         [HttpGet("changepassword/{id}")]
         public async Task<IActionResult> ChangePassword([FromRoute] string id)
         {
-            return Ok(await _service.GetChangePasswordViewModel(id));
+            var model = await _service.GetChangePasswordViewModel(id);
+            if (model is not null)
+            {
+                return Ok(model);
+            }
+
+            return NotFound();
         }
 
         /// <summary>
@@ -112,7 +130,13 @@ namespace TicketManagement.UserAPI.Controllers
         [HttpGet("editroles/{id}")]
         public async Task<IActionResult> EditRoles([FromRoute] string id)
         {
-            return Ok(await _service.GetChangeRoleViewModel(id));
+            var model = await _service.GetChangeRoleViewModel(id);
+            if (model is not null)
+            {
+                return Ok(model);
+            }
+
+            return NotFound();
         }
 
         /// <summary>

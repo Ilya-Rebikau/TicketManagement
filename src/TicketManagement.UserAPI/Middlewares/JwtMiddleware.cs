@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using TicketManagement.UserAPI.Services;
 
-namespace TicketManagement.UserAPI.Infrastructure
+namespace TicketManagement.UserAPI.Middlewares
 {
     public class JwtMiddleware
     {
