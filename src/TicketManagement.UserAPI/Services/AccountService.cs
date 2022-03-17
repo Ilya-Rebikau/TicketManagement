@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using TicketManagement.UserAPI.Interfaces;
@@ -102,9 +104,30 @@ namespace TicketManagement.UserAPI.Services
             user.FirstName = model.FirstName;
             user.Surname = model.Surname;
             user.TimeZone = model.TimeZone;
+            return await _userManager.UpdateAsync(user);
+        }
 
-            var result = await _userManager.UpdateAsync(user);
-            return result;
+        public async Task<AddBalanceViewModel> GetBalanceViewModel(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                throw new InvalidOperationException("User not found.");
+            }
+
+            var model = new AddBalanceViewModel
+            {
+                Id = user.Id,
+                Balance = user.Balance,
+            };
+            return model;
+        }
+
+        public async Task<IdentityResult> AddBalance(AddBalanceViewModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.Id);
+            user.Balance += model.Balance;
+            return await _userManager.UpdateAsync(user);
         }
     }
 }

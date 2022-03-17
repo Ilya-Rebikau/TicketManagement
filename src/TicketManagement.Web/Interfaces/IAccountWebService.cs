@@ -12,6 +12,22 @@ namespace TicketManagement.Web.Interfaces
     public interface IAccountWebService
     {
         /// <summary>
+        /// Get AddBalanceViewModel.
+        /// </summary>
+        /// <param name="httpContext">HttpContext object.</param>
+        /// <param name="id">User id.</param>
+        /// <returns>AddBalanceViewModel object.</returns>
+        Task<AddBalanceViewModel> GetAddBalanceViewModel(HttpContext httpContext, string id);
+
+        /// <summary>
+        /// Add balance to user.
+        /// </summary>
+        /// <param name="httpContext">HttpContext object.</param>
+        /// <param name="model">AddBalanceViewModel object.</param>
+        /// <returns>IdentityResult.</returns>
+        Task<IdentityResult> AddBalanceToUser(HttpContext httpContext, AddBalanceViewModel model);
+
+        /// <summary>
         /// Register user in system.
         /// </summary>
         /// <param name="model">RegisterViewModel object.</param>
@@ -33,13 +49,6 @@ namespace TicketManagement.Web.Interfaces
         /// <param name="httpContext">HttpContext object.</param>
         /// <returns>Task.</returns>
         Task Logout(HttpContext httpContext);
-
-        /// <summary>
-        /// Add balance to user.
-        /// </summary>
-        /// <param name="model">AddBalanceViewModel object.</param>
-        /// <returns>IdentityResult object.</returns>
-        Task<IdentityResult> AddBalanceToUser(AddBalanceViewModel model);
 
         /// <summary>
         /// Get account view model for index method.

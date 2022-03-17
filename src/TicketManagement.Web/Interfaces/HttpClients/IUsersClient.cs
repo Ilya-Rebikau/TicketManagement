@@ -26,6 +26,12 @@ namespace TicketManagement.Web.Interfaces.HttpClients
         [Post("account/edit")]
         public Task<IdentityResult> Edit([Header("Authorization")] string token, [Body] EditAccountViewModel model, CancellationToken cancellationToken = default);
 
+        [Get("account/addbalance/{id}")]
+        public Task<AddBalanceViewModel> GetAddBalanceViewModel([Header("Authorization")] string token, [Path] string id, CancellationToken cancellationToken = default);
+
+        [Post("account/addbalance")]
+        public Task<IdentityResult> AddBalance([Header("Authorization")] string token, [Body] AddBalanceViewModel model, CancellationToken cancellationToken = default);
+
         [Get("users")]
         public Task<IEnumerable<User>> GetUsers([Header("Authorization")] string token, CancellationToken cancellationToken = default);
 

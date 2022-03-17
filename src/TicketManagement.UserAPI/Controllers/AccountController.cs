@@ -104,5 +104,29 @@ namespace TicketManagement.UserAPI.Controllers
         {
             return Ok(await _service.UpdateUserInEdit(model));
         }
+
+        /// <summary>
+        /// Add balance on account.
+        /// </summary>
+        /// <param name="id">User id.</param>
+        /// <returns>Task with IActionResult.</returns>
+        [Authorize(Roles = "admin, user, event manager, venue manager")]
+        [HttpGet("addbalance/{id}")]
+        public async Task<IActionResult> AddBalance([FromRoute] string id)
+        {
+            return Ok(await _service.GetBalanceViewModel(id));
+        }
+
+        /// <summary>
+        /// Add balance on account.
+        /// </summary>
+        /// <param name="model">AddBalanceViewModel object.</param>
+        /// <returns>Task with IActionResult.</returns>
+        [Authorize(Roles = "admin, user, event manager, venue manager")]
+        [HttpPost("addbalance")]
+        public async Task<IActionResult> AddBalanceAsync(AddBalanceViewModel model)
+        {
+            return Ok(await _service.AddBalance(model));
+        }
     }
 }

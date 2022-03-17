@@ -120,12 +120,14 @@ namespace TicketManagement.Web.WebServices
             return await _userClient.Edit(httpContext.GetJwtToken(), model);
         }
 
-        public async Task<IdentityResult> AddBalanceToUser(AddBalanceViewModel model)
+        public async Task<AddBalanceViewModel> GetAddBalanceViewModel(HttpContext httpContext, string id)
         {
-            var user = await _userManager.FindByIdAsync(model.Id);
-            user.Balance += model.Balance;
-            var result = await _userManager.UpdateAsync(user);
-            return result;
+            return await _userClient.GetAddBalanceViewModel(httpContext.GetJwtToken(), id);
+        }
+
+        public async Task<IdentityResult> AddBalanceToUser(HttpContext httpContext, AddBalanceViewModel model)
+        {
+            return await _userClient.AddBalance(httpContext.GetJwtToken(), model);
         }
 
         public async Task<AccountViewModel> GetAccountViewModelInIndex(User user)

@@ -10,6 +10,20 @@ namespace TicketManagement.UserAPI.Interfaces
     public interface IAccountService
     {
         /// <summary>
+        /// Add balance to account.
+        /// </summary>
+        /// <param name="model">AddBalanceViewModel object.</param>
+        /// <returns>IdentityResult.</returns>
+        Task<IdentityResult> AddBalance(AddBalanceViewModel model);
+
+        /// <summary>
+        /// Get AddBalanceViewModel.
+        /// </summary>
+        /// <param name="id">Id of user.</param>
+        /// <returns>AddBalanceViewModel object.</returns>
+        Task<AddBalanceViewModel> GetBalanceViewModel(string id);
+
+        /// <summary>
         /// Register user in system.
         /// </summary>
         /// <param name="model">RegisterViewModel object.</param>

@@ -172,14 +172,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> AddBalance(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            AddBalanceViewModel model = new () { Id = user.Id, Balance = user.Balance };
-            return View(model);
+            return View(await _service.GetAddBalanceViewModel(HttpContext, id));
         }
 
         /// <summary>
@@ -196,8 +189,8 @@ namespace TicketManagement.Web.Controllers
                 return View(model);
             }
 
-            var result = await _service.AddBalanceToUser(model);
-            if (result.Succeeded)
+            var result = await _service.AddBalanceToUser(HttpContext, model);
+            if (!result.Errors.Any())
             {
                 return RedirectToAction(nameof(Index));
             }
