@@ -6,7 +6,7 @@ using TicketManagement.EventManagerAPI.Models.Events;
 namespace TicketManagement.EventManagerAPI.Interfaces
 {
     /// <summary>
-    /// Web service for third party event controller.
+    /// Service for third party event controller.
     /// </summary>
     public interface IThirdPartyEventService
     {

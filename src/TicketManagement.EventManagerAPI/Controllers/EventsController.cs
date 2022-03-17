@@ -1,9 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 using TicketManagement.EventManagerAPI.Interfaces;
 using TicketManagement.EventManagerAPI.Models.Events;
 using TicketManagement.EventManagerAPI.ModelsDTO;
@@ -18,11 +16,6 @@ namespace TicketManagement.EventManagerAPI.Controllers
     public class EventsController : Controller
     {
         /// <summary>
-        /// Const for showing error with low balance for buying ticket from resource file.
-        /// </summary>
-        private const string NoBalance = "NoBalance";
-
-        /// <summary>
         /// EventService object.
         /// </summary>
         private readonly IService<EventDto> _eventService;
@@ -33,21 +26,14 @@ namespace TicketManagement.EventManagerAPI.Controllers
         private readonly IEventService _eventWebService;
 
         /// <summary>
-        /// Localizer object.
-        /// </summary>
-        private readonly IStringLocalizer<EventsController> _localizer;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="EventsController"/> class.
         /// </summary>
         /// <param name="eventService">EventService object.</param>
         /// <param name="eventWebService">EventWebService object.</param>
-        /// <param name="localizer">Localizer object.</param>
-        public EventsController(IService<EventDto> eventService, IEventService eventWebService, IStringLocalizer<EventsController> localizer)
+        public EventsController(IService<EventDto> eventService, IEventService eventWebService)
         {
             _eventService = eventService;
             _eventWebService = eventWebService;
-            _localizer = localizer;
         }
 
         /// <summary>
@@ -213,42 +199,6 @@ namespace TicketManagement.EventManagerAPI.Controllers
         {
             await _eventService.DeleteById(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        /// <summary>
-        /// Buy ticket.
-        /// </summary>
-        /// <param name="eventSeatId">EventSeat id.</param>
-        /// <param name="price">Price for ticket.</param>
-        /// <returns>Task with IActionResult.</returns>
-        [Authorize(Roles = "admin, user, event manager, venue manager")]
-        [HttpGet]
-        public async Task<IActionResult> Buy(int? eventSeatId, double? price)
-        {
-            if (eventSeatId == null || price == null)
-            {
-                return NotFound();
-            }
-
-            return View(await _eventWebService.GetTicketViewModelForBuyAsync(eventSeatId, price, HttpContext));
-        }
-
-        /// <summary>
-        /// Buy confirmation.
-        /// </summary>
-        /// <param name="ticketVm">TicketViewModel object.</param>
-        /// <returns>Task with IActionResult.</returns>
-        [Authorize(Roles = "admin, user, event manager, venue manager")]
-        [HttpPost]
-        [ActionName("Buy")]
-        public async Task<IActionResult> BuyConfirmed(TicketViewModel ticketVm)
-        {
-            if (await _eventWebService.UpdateEventSeatStateAfterBuyingTicket(ticketVm))
-            {
-                return RedirectToAction(nameof(Index));
-            }
-
-            throw new InvalidOperationException(_localizer[NoBalance]);
         }
 
         /// <summary>

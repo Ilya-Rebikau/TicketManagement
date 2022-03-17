@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using RestEase;
-using TicketManagement.DataAccess.Configuration;
+using TicketManagement.EventManagerAPI.Configuration;
 using TicketManagement.EventManagerAPI.Interfaces;
 using TicketManagement.EventManagerAPI.Middlewares;
 
@@ -25,7 +25,7 @@ namespace TicketManagement.EventManagerAPI
         {
             services.AddControllers();
             var connection = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDalServices(connection);
+            services.AddBllServices(connection);
             services.AddHttpClient();
             services.AddTransient(scope =>
             {
@@ -34,7 +34,7 @@ namespace TicketManagement.EventManagerAPI
             });
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "UserManagerAPI", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "EventManagerAPI", Version = "v1" });
                 var jwtSecurityScheme = new OpenApiSecurityScheme
                 {
                     Scheme = "bearer",

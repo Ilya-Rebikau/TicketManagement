@@ -6,7 +6,7 @@ using TicketManagement.EventManagerAPI.Interfaces;
 using TicketManagement.EventManagerAPI.Models.Events;
 using TicketManagement.EventManagerAPI.ModelsDTO;
 
-namespace TicketManagement.EventManagerAPI.WebServices
+namespace TicketManagement.EventManagerAPI.Services
 {
     public class ThirdPartyEventService : IThirdPartyEventService
     {

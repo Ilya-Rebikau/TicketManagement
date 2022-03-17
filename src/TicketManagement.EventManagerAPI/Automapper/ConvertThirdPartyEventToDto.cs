@@ -69,6 +69,7 @@ namespace TicketManagement.EventManagerAPI.Automapper
         /// <param name="path">Path for saving image.</param>
         /// <param name="fileName">Name of saving image.</param>
         /// <returns>Path where image was saved.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Проверка совместимости платформы", Justification = "<Ожидание>")]
         private string ConvertBase64ToImageAsync(string base64String, string path, string fileName)
         {
             base64String = base64String[(base64String.IndexOf(',') + 1)..];

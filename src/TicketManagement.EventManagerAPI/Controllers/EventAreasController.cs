@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +12,9 @@ namespace TicketManagement.EventManagerAPI.Controllers
     /// <summary>
     /// Controller for event areas.
     /// </summary>
+    [Authorize(Roles = "admin, event manager")]
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = "admin, event manager")]
     public class EventAreasController : ControllerBase
     {
         /// <summary>
@@ -58,7 +57,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         public async Task<IActionResult> Details([FromRoute] int id)
         {
             var eventArea = await _service.GetByIdAsync(id);
-            if (eventArea == null)
+            if (eventArea is null)
             {
                 return NotFound();
             }
@@ -73,8 +72,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// <param name="eventAreaVm">Adding event area.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost("create")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(EventAreaViewModel eventAreaVm)
+        public async Task<IActionResult> Create([FromBody] EventAreaViewModel eventAreaVm)
         {
             EventAreaDto eventArea = eventAreaVm;
             await _service.CreateAsync(eventArea);
@@ -90,7 +88,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         public async Task<IActionResult> Edit([FromRoute] int id)
         {
             var updatingEventArea = await _service.GetByIdAsync(id);
-            if (updatingEventArea == null)
+            if (updatingEventArea is null)
             {
                 return NotFound();
             }
@@ -102,16 +100,22 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// <summary>
         /// Edit event area.
         /// </summary>
+        /// <param name="id">Id of editing event area.</param>
         /// <param name="eventAreaVm">Edited event area.</param>
         /// <returns>Task with IActionResult.</returns>
-        [HttpPost("edit")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(EventAreaViewModel eventAreaVm)
+        [HttpPost("edit/{id}")]
+        public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] EventAreaViewModel eventAreaVm)
         {
+            if (id != eventAreaVm.Id)
+            {
+                return NotFound();
+            }
+
             EventAreaDto eventArea = eventAreaVm;
             try
             {
                 await _service.UpdateAsync(eventArea);
+                return Ok();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -124,8 +128,6 @@ namespace TicketManagement.EventManagerAPI.Controllers
                     throw;
                 }
             }
-
-            return Conflict();
         }
 
         /// <summary>
@@ -133,22 +135,17 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// </summary>
         /// <param name="id">Id of deleting event area.</param>
         /// <returns>Task with IActionResult.</returns>
-        [HttpGet]
-        public async Task<IActionResult> Delete(int? id)
+        [HttpGet("delete/{id}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var deletingEventArea = await _service.GetByIdAsync((int)id);
-            if (deletingEventArea == null)
+            var deletingEventArea = await _service.GetByIdAsync(id);
+            if (deletingEventArea is null)
             {
                 return NotFound();
             }
 
             EventAreaViewModel eventAreaVm = deletingEventArea;
-            return View(eventAreaVm);
+            return Ok(eventAreaVm);
         }
 
         /// <summary>
@@ -156,13 +153,12 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// </summary>
         /// <param name="id">Id of deleting event area.</param>
         /// <returns>Task with IActionResult.</returns>
-        [HttpPost]
+        [HttpPost("delete/{id}")]
         [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed([FromRoute] int id)
         {
             await _service.DeleteById(id);
-            return RedirectToAction(nameof(GetEventAreaViewModels));
+            return Ok();
         }
 
         /// <summary>
