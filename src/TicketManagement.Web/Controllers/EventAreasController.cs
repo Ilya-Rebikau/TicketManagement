@@ -62,7 +62,7 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var eventArea = await _eventManagerClient.Details(HttpContext.GetJwtToken(), (int)id);
+            var eventArea = await _eventManagerClient.EventAreaDetails(HttpContext.GetJwtToken(), (int)id);
             if (eventArea == null)
             {
                 return NotFound();
@@ -97,7 +97,7 @@ namespace TicketManagement.Web.Controllers
             }
 
             EventAreaDto eventArea = eventAreaVm;
-            await _eventManagerClient.Create(HttpContext.GetJwtToken(), eventArea);
+            await _eventManagerClient.CreateEventArea(HttpContext.GetJwtToken(), eventArea);
             return RedirectToAction(nameof(Index));
         }
 
@@ -138,14 +138,13 @@ namespace TicketManagement.Web.Controllers
                 return View(eventAreaVm);
             }
 
-            EventAreaDto eventArea = eventAreaVm;
             try
             {
-                await _eventManagerClient.Edit(HttpContext.GetJwtToken(), id, eventArea);
+                await _eventManagerClient.EditEventArea(HttpContext.GetJwtToken(), id, eventAreaVm);
             }
             catch (DbUpdateConcurrencyException)
             {
-                return NotFound();
+                return Conflict();
             }
 
             return RedirectToAction(nameof(Index));
@@ -178,7 +177,7 @@ namespace TicketManagement.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _eventManagerClient.Delete(HttpContext.GetJwtToken(), id);
+            await _eventManagerClient.DeleteEventArea(HttpContext.GetJwtToken(), id);
             return RedirectToAction(nameof(Index));
         }
     }

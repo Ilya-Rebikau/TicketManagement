@@ -35,8 +35,8 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// Get all event seats.
         /// </summary>
         /// <returns>Task with IActionResult.</returns>
-        [HttpGet]
-        public async Task<IActionResult> Index()
+        [HttpGet("geteventseats")]
+        public async Task<IActionResult> GetEventSeats()
         {
             var eventSeats = await _service.GetAllAsync();
             var eventSeatsVm = new List<EventSeatViewModel>();
@@ -45,7 +45,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
                 eventSeatsVm.Add(eventSeat);
             }
 
-            return View(eventSeatsVm);
+            return Ok(eventSeatsVm);
         }
 
         /// <summary>
@@ -53,32 +53,17 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// </summary>
         /// <param name="id">Id of event seat.</param>
         /// <returns>Task with IActionResult.</returns>
-        [HttpGet]
-        public async Task<IActionResult> Details(int? id)
+        [HttpGet("details/{id}")]
+        public async Task<IActionResult> Details([FromRoute] int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var eventSeat = await _service.GetByIdAsync((int)id);
+            var eventSeat = await _service.GetByIdAsync(id);
             if (eventSeat == null)
             {
                 return NotFound();
             }
 
             EventSeatViewModel eventSeatVm = eventSeat;
-            return View(eventSeatVm);
-        }
-
-        /// <summary>
-        /// Create event seat.
-        /// </summary>
-        /// <returns>IActionResult.</returns>
-        [HttpGet]
-        public IActionResult Create()
-        {
-            return View();
+            return Ok(eventSeatVm);
         }
 
         /// <summary>
@@ -86,18 +71,12 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// </summary>
         /// <param name="eventSeatVm">Adding event seat.</param>
         /// <returns>Task with IActionResult.</returns>
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(EventSeatViewModel eventSeatVm)
+        [HttpPost("create")]
+        public async Task<IActionResult> Create([FromBody] EventSeatViewModel eventSeatVm)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(eventSeatVm);
-            }
-
             EventSeatDto eventSeat = eventSeatVm;
             await _service.CreateAsync(eventSeat);
-            return RedirectToAction(nameof(Index));
+            return Ok();
         }
 
         /// <summary>
@@ -105,22 +84,17 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// </summary>
         /// <param name="id">Id of editing event seat.</param>
         /// <returns>Task with IActionResult.</returns>
-        [HttpGet]
-        public async Task<IActionResult> Edit(int? id)
+        [HttpGet("edit/{id}")]
+        public async Task<IActionResult> Edit([FromRoute] int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var updatingEventSeat = await _service.GetByIdAsync((int)id);
+            var updatingEventSeat = await _service.GetByIdAsync(id);
             if (updatingEventSeat == null)
             {
                 return NotFound();
             }
 
             EventSeatViewModel eventSeatVm = updatingEventSeat;
-            return View(eventSeatVm);
+            return Ok(eventSeatVm);
         }
 
         /// <summary>
@@ -129,24 +103,19 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// <param name="id">Id of editing event seat.</param>
         /// <param name="eventSeatVm">Edited event seat.</param>
         /// <returns>Task with IActionResult.</returns>
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, EventSeatViewModel eventSeatVm)
+        [HttpPost("edit/{id}")]
+        public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] EventSeatViewModel eventSeatVm)
         {
             if (id != eventSeatVm.Id)
             {
                 return NotFound();
             }
 
-            if (!ModelState.IsValid)
-            {
-                return View(eventSeatVm);
-            }
-
             EventSeatDto eventSeat = eventSeatVm;
             try
             {
                 await _service.UpdateAsync(eventSeat);
+                return Ok();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -156,11 +125,9 @@ namespace TicketManagement.EventManagerAPI.Controllers
                 }
                 else
                 {
-                    throw;
+                    return Conflict();
                 }
             }
-
-            return RedirectToAction(nameof(Index));
         }
 
         /// <summary>
@@ -168,22 +135,17 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// </summary>
         /// <param name="id">Id of deleting event seat.</param>
         /// <returns>Task with IActionResult.</returns>
-        [HttpGet]
-        public async Task<IActionResult> Delete(int? id)
+        [HttpGet("delete/{id}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var deletingEventSeat = await _service.GetByIdAsync((int)id);
+            var deletingEventSeat = await _service.GetByIdAsync(id);
             if (deletingEventSeat == null)
             {
                 return NotFound();
             }
 
             EventSeatViewModel eventSeatVm = deletingEventSeat;
-            return View(eventSeatVm);
+            return Ok(eventSeatVm);
         }
 
         /// <summary>
@@ -191,13 +153,12 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// </summary>
         /// <param name="id">Id of deleting event seat.</param>
         /// <returns>Task with IActionResult.</returns>
-        [HttpPost]
+        [HttpPost("delete/{id}")]
         [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed([FromRoute] int id)
         {
             await _service.DeleteById(id);
-            return RedirectToAction(nameof(Index));
+            return Ok();
         }
 
         /// <summary>

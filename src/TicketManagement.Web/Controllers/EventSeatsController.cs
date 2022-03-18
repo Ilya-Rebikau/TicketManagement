@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.BusinessLogic.ModelsDTO;
+using TicketManagement.Web.Extensions;
 using TicketManagement.Web.Infrastructure;
+using TicketManagement.Web.Interfaces.HttpClients;
 using TicketManagement.Web.Models.EventSeats;
 
 namespace TicketManagement.Web.Controllers
@@ -19,17 +21,17 @@ namespace TicketManagement.Web.Controllers
     public class EventSeatsController : Controller
     {
         /// <summary>
-        /// EventSeatService object.
+        /// IEventManagerClient object.
         /// </summary>
-        private readonly IService<EventSeatDto> _service;
+        private readonly IEventManagerClient _eventManagerClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EventSeatsController"/> class.
         /// </summary>
-        /// <param name="service">EventSeatService object.</param>
-        public EventSeatsController(IService<EventSeatDto> service)
+        /// <param name="eventManagerClient">IEventManagerClient object.</param>
+        public EventSeatsController(IEventManagerClient eventManagerClient)
         {
-            _service = service;
+            _eventManagerClient = eventManagerClient;
         }
 
         /// <summary>
@@ -39,13 +41,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var eventSeats = await _service.GetAllAsync();
-            var eventSeatsVm = new List<EventSeatViewModel>();
-            foreach (var eventSeat in eventSeats)
-            {
-                eventSeatsVm.Add(eventSeat);
-            }
-
+            var eventSeatsVm = await _eventManagerClient.GetEventSeatsViewModels(HttpContext.GetJwtToken());
             return View(eventSeatsVm);
         }
 
@@ -62,7 +58,7 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var eventSeat = await _service.GetByIdAsync((int)id);
+            var eventSeat = await _eventManagerClient.EventSeatDetails(HttpContext.GetJwtToken(), (int)id);
             if (eventSeat == null)
             {
                 return NotFound();
@@ -97,7 +93,7 @@ namespace TicketManagement.Web.Controllers
             }
 
             EventSeatDto eventSeat = eventSeatVm;
-            await _service.CreateAsync(eventSeat);
+            await _eventManagerClient.CreateEventSeat(HttpContext.GetJwtToken(), eventSeat);
             return RedirectToAction(nameof(Index));
         }
 
@@ -114,7 +110,7 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var updatingEventSeat = await _service.GetByIdAsync((int)id);
+            var updatingEventSeat = await _eventManagerClient.GetEventSeatViewModelForEdit(HttpContext.GetJwtToken(), (int)id);
             if (updatingEventSeat == null)
             {
                 return NotFound();
@@ -144,21 +140,13 @@ namespace TicketManagement.Web.Controllers
                 return View(eventSeatVm);
             }
 
-            EventSeatDto eventSeat = eventSeatVm;
             try
             {
-                await _service.UpdateAsync(eventSeat);
+                await _eventManagerClient.EditEventSeat(HttpContext.GetJwtToken(), id, eventSeatVm);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await EventSeatExists(eventSeat.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return Conflict();
             }
 
             return RedirectToAction(nameof(Index));
@@ -177,7 +165,7 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var deletingEventSeat = await _service.GetByIdAsync((int)id);
+            var deletingEventSeat = await _eventManagerClient.GetEventSeatViewModelForDelete(HttpContext.GetJwtToken(), (int)id);
             if (deletingEventSeat == null)
             {
                 return NotFound();
@@ -197,18 +185,8 @@ namespace TicketManagement.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _service.DeleteById(id);
+            await _eventManagerClient.DeleteEventSeat(HttpContext.GetJwtToken(), id);
             return RedirectToAction(nameof(Index));
-        }
-
-        /// <summary>
-        /// Check that event seat exist.
-        /// </summary>
-        /// <param name="id">Id of event seat.</param>
-        /// <returns>True if exist and false if not.</returns>
-        private async Task<bool> EventSeatExists(int id)
-        {
-            return await _service.GetByIdAsync(id) is not null;
         }
     }
 }

@@ -125,7 +125,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
                 }
                 else
                 {
-                    throw;
+                    return Conflict();
                 }
             }
         }
