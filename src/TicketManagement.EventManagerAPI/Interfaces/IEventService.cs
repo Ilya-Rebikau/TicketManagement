@@ -9,7 +9,7 @@ namespace TicketManagement.EventManagerAPI.Interfaces
     /// <summary>
     /// Ыervice for event controller.
     /// </summary>
-    public interface IEventService
+    public interface IEventService : IService<EventDto>
     {
         /// <summary>
         /// Get all event view models.
@@ -21,16 +21,14 @@ namespace TicketManagement.EventManagerAPI.Interfaces
         /// Get event view model for details method.
         /// </summary>
         /// <param name="event">Event dto model for convertations.</param>
-        /// <param name="httpContext">HttpContext object.</param>
         /// <returns>Event view model.</returns>
-        Task<EventViewModel> GetEventViewModelForDetailsAsync(EventDto @event, HttpContext httpContext);
+        Task<EventViewModel> GetEventViewModelForDetailsAsync(EventDto @event);
 
         /// <summary>
         /// Get event view model for edit and delete methods.
         /// </summary>
         /// <param name="event">Event.</param>
-        /// <param name="httpContext">HttpContext object.</param>
         /// <returns>Event view model.</returns>
-        Task<EventViewModel> GetEventViewModelForEditAndDeleteAsync(EventDto @event, HttpContext httpContext);
+        Task<EventViewModel> GetEventViewModelForEditAndDeleteAsync(EventDto @event);
     }
 }

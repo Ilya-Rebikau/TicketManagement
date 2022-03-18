@@ -1,7 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TicketManagement.UserAPI.Interfaces;
+using TicketManagement.UserAPI.Models;
 using TicketManagement.UserAPI.Models.Account;
 using TicketManagement.UserAPI.Services;
 
@@ -30,14 +33,21 @@ namespace TicketManagement.UserAPI.Controllers
         private readonly JwtTokenService _jwtTokenService;
 
         /// <summary>
+        /// ConverterForTime object.
+        /// </summary>
+        private readonly ConverterForTime _converterForTime;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="AccountController"/> class.
         /// </summary>
         /// <param name="service">AccountService object.</param>
         /// <param name="jwtTokenService">JwtTokenService object.</param>
-        public AccountController(IAccountService service, JwtTokenService jwtTokenService)
+        /// <param name="converterForTime">ConverterForTime object.</param>
+        public AccountController(IAccountService service, JwtTokenService jwtTokenService, ConverterForTime converterForTime)
         {
             _service = service;
             _jwtTokenService = jwtTokenService;
+            _converterForTime = converterForTime;
         }
 
         /// <summary>
@@ -155,6 +165,12 @@ namespace TicketManagement.UserAPI.Controllers
         public ActionResult<bool> ValidateToken([FromHeader(Name = AuthorizationKey)] string token)
         {
             return _jwtTokenService.ValidateToken(token);
+        }
+
+        [HttpPost("converttime")]
+        public async Task<EventDto> ConvertTimeFromUtcToUsers([FromBody] EventDto eventDto)
+        {
+            return await _converterForTime.ConvertTimeForUser(eventDto, HttpContext.User);
         }
     }
 }

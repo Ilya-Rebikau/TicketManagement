@@ -60,7 +60,7 @@ namespace TicketManagement.UserAPI
 
             services.Configure<JwtTokenSettings>(tokenSettings);
             services.AddTransient<JwtTokenService>();
-
+            services.AddScoped<ConverterForTime>();
             services.AddControllers();
 
             services.AddSwaggerGen(c =>

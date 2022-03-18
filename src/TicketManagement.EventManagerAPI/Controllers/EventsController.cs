@@ -11,6 +11,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
     /// <summary>
     /// Controller for events.
     /// </summary>
+    [Authorize(Roles = "admin, event manager")]
     [Route("[controller]")]
     [ApiController]
     public class EventsController : Controller
@@ -18,32 +19,25 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// <summary>
         /// EventService object.
         /// </summary>
-        private readonly IService<EventDto> _eventService;
-
-        /// <summary>
-        /// EventWebService object.
-        /// </summary>
-        private readonly IEventService _eventWebService;
+        private readonly IEventService _eventService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EventsController"/> class.
         /// </summary>
         /// <param name="eventService">EventService object.</param>
-        /// <param name="eventWebService">EventWebService object.</param>
-        public EventsController(IService<EventDto> eventService, IEventService eventWebService)
+        public EventsController(IEventService eventService)
         {
             _eventService = eventService;
-            _eventWebService = eventWebService;
         }
 
         /// <summary>
         /// Get all events.
         /// </summary>
         /// <returns>Task with IActionResult.</returns>
-        [HttpGet]
-        public async Task<IActionResult> Index()
+        [HttpGet("getevents")]
+        public async Task<IActionResult> GetEvents()
         {
-            return View(await _eventWebService.GetAllEventViewModelsAsync());
+            return Ok(await _eventService.GetAllEventViewModelsAsync());
         }
 
         /// <summary>
@@ -51,32 +45,16 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// </summary>
         /// <param name="id">Id of event.</param>
         /// <returns>Task with IActionResult.</returns>
-        [HttpGet]
-        public async Task<IActionResult> Details(int? id)
+        [HttpGet("details/{id}")]
+        public async Task<IActionResult> Details([FromRoute] int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var @event = await _eventService.GetByIdAsync((int)id);
+            var @event = await _eventService.GetByIdAsync(id);
             if (@event == null)
             {
                 return NotFound();
             }
 
-            return View(await _eventWebService.GetEventViewModelForDetailsAsync(@event, HttpContext));
-        }
-
-        /// <summary>
-        /// Create event.
-        /// </summary>
-        /// <returns>IActionResult.</returns>
-        [Authorize(Roles = "admin, event manager")]
-        [HttpGet]
-        public IActionResult Create()
-        {
-            return View();
+            return Ok(await _eventService.GetEventViewModelForDetailsAsync(@event));
         }
 
         /// <summary>
@@ -85,9 +63,8 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// <param name="eventVm">Adding event.</param>
         /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, event manager")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(EventViewModel eventVm)
+        [HttpPost("create")]
+        public async Task<IActionResult> Create([FromBody] EventViewModel eventVm)
         {
             if (!ModelState.IsValid)
             {
@@ -96,7 +73,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
 
             EventDto @event = eventVm;
             await _eventService.CreateAsync(@event);
-            return RedirectToAction(nameof(Index));
+            return Ok();
         }
 
         /// <summary>
@@ -105,21 +82,16 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// <param name="id">Id of editing event.</param>
         /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, event manager")]
-        [HttpGet]
-        public async Task<IActionResult> Edit(int? id)
+        [HttpGet("edit/{id}")]
+        public async Task<IActionResult> Edit([FromRoute] int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var updatingEvent = await _eventService.GetByIdAsync((int)id);
+            var updatingEvent = await _eventService.GetByIdAsync(id);
             if (updatingEvent == null)
             {
                 return NotFound();
             }
 
-            return View(await _eventWebService.GetEventViewModelForEditAndDeleteAsync(updatingEvent, HttpContext));
+            return Ok(await _eventService.GetEventViewModelForEditAndDeleteAsync(updatingEvent));
         }
 
         /// <summary>
@@ -129,38 +101,30 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// <param name="eventVm">Edited event.</param>
         /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, event manager")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, EventViewModel eventVm)
+        [HttpPost("edit/{id}")]
+        public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] EventViewModel eventVm)
         {
             if (id != eventVm.Id)
             {
                 return NotFound();
             }
 
-            if (!ModelState.IsValid)
-            {
-                return View(eventVm);
-            }
-
-            EventDto @event = eventVm;
             try
             {
-                await _eventService.UpdateAsync(@event);
+                await _eventService.UpdateAsync(eventVm);
+                return Ok();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await EventExists(@event.Id))
+                if (!await EventExists(eventVm.Id))
                 {
                     return NotFound();
                 }
                 else
                 {
-                    throw;
+                    return Conflict();
                 }
             }
-
-            return RedirectToAction(nameof(Index));
         }
 
         /// <summary>
@@ -169,21 +133,16 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// <param name="id">Id of deleting event.</param>
         /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, event manager")]
-        [HttpGet]
-        public async Task<IActionResult> Delete(int? id)
+        [HttpGet("delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var deletingEvent = await _eventService.GetByIdAsync((int)id);
+            var deletingEvent = await _eventService.GetByIdAsync(id);
             if (deletingEvent == null)
             {
                 return NotFound();
             }
 
-            return View(await _eventWebService.GetEventViewModelForEditAndDeleteAsync(deletingEvent, HttpContext));
+            return Ok(await _eventService.GetEventViewModelForEditAndDeleteAsync(deletingEvent));
         }
 
         /// <summary>
@@ -192,13 +151,12 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// <param name="id">Id of deleting event.</param>
         /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, event manager")]
-        [HttpPost]
+        [HttpPost("delete/{id}")]
         [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _eventService.DeleteById(id);
-            return RedirectToAction(nameof(Index));
+            return Ok();
         }
 
         /// <summary>

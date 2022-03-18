@@ -24,7 +24,8 @@ namespace TicketManagement.EventManagerAPI.Configuration
             services.AddConverters();
             services.AddScoped<IService<EventAreaDto>, EventAreaService>();
             services.AddScoped<IService<EventSeatDto>, EventSeatService>();
-            services.AddScoped<IService<EventDto>, EventService>();
+            services.AddScoped<IService<EventDto>, EventCrudService>();
+            services.AddScoped<IEventService, EventService>();
             services.AddScoped<IReaderService<EventDto>, BaseReaderService<ThirdPartyEvent, EventDto>>();
             return services;
         }

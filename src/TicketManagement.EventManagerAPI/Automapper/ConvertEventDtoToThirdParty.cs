@@ -58,7 +58,7 @@ namespace TicketManagement.EventManagerAPI.Automapper
         /// </summary>
         /// <param name="path">Path to image.</param>
         /// <returns>Bas64 string image.</returns>
-        private string UploadSampleImage(string path)
+        private static string UploadSampleImage(string path)
         {
             using var memoryStream = new MemoryStream();
             using var fileStream = new FileStream(path, FileMode.Open);

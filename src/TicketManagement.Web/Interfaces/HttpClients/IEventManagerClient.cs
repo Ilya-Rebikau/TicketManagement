@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using RestEase;
 using TicketManagement.Web.Models.EventAreas;
+using TicketManagement.Web.Models.Events;
 using TicketManagement.Web.Models.EventSeats;
 
 namespace TicketManagement.Web.Interfaces.HttpClients
@@ -50,5 +51,26 @@ namespace TicketManagement.Web.Interfaces.HttpClients
 
         [Post("eventseats/delete/{id}")]
         public Task DeleteEventSeat([Header("Authorization")] string token, [Path] int id, CancellationToken cancellationToken = default);
+
+        [Get("events/getevents")]
+        public Task<IEnumerable<EventViewModel>> GetEventViewModels([Header("Authorization")] string token, CancellationToken cancellationToken = default);
+
+        [Get("events/details/{id}")]
+        public Task<EventViewModel> EventDetails([Header("Authorization")] string token, [Path] int id, CancellationToken cancellationToken = default);
+
+        [Post("events/create")]
+        public Task CreateEvent([Header("Authorization")] string token, [Body] EventViewModel model, CancellationToken cancellationToken = default);
+
+        [Get("events/edit/{id}")]
+        public Task<EventViewModel> GetEventViewModelForEdit([Header("Authorization")] string token, [Path] int id, CancellationToken cancellationToken = default);
+
+        [Post("events/edit/{id}")]
+        public Task EditEvent([Header("Authorization")] string token, [Path] int id, [Body] EventViewModel model, CancellationToken cancellationToken = default);
+
+        [Get("events/delete/{id}")]
+        public Task<EventViewModel> GetEventViewModelForDelete([Header("Authorization")] string token, [Path] int id, CancellationToken cancellationToken = default);
+
+        [Post("events/delete/{id}")]
+        public Task DeleteEvent([Header("Authorization")] string token, [Path] int id, CancellationToken cancellationToken = default);
     }
 }
