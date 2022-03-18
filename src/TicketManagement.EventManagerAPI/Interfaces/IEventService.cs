@@ -21,14 +21,16 @@ namespace TicketManagement.EventManagerAPI.Interfaces
         /// Get event view model for details method.
         /// </summary>
         /// <param name="event">Event dto model for convertations.</param>
+        /// <param name="token">Jwt token of user.</param>
         /// <returns>Event view model.</returns>
-        Task<EventViewModel> GetEventViewModelForDetailsAsync(EventDto @event);
+        Task<EventViewModel> GetEventViewModelForDetailsAsync(EventDto @event, string token);
 
         /// <summary>
         /// Get event view model for edit and delete methods.
         /// </summary>
         /// <param name="event">Event.</param>
+        /// <param name="token">Jwt token of user.</param>
         /// <returns>Event view model.</returns>
-        Task<EventViewModel> GetEventViewModelForEditAndDeleteAsync(EventDto @event);
+        Task<EventViewModel> GetEventViewModelForEditAndDeleteAsync(EventDto @event, string token);
     }
 }

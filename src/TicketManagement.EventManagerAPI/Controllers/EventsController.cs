@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using TicketManagement.EventManagerAPI.Interfaces;
 using TicketManagement.EventManagerAPI.Models.Events;
 using TicketManagement.EventManagerAPI.ModelsDTO;
+using TicketManagement.Web.Extensions;
 
 namespace TicketManagement.EventManagerAPI.Controllers
 {
@@ -54,7 +55,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(await _eventService.GetEventViewModelForDetailsAsync(@event));
+            return Ok(await _eventService.GetEventViewModelForDetailsAsync(@event, HttpContext.GetJwtToken()));
         }
 
         /// <summary>
@@ -91,7 +92,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(await _eventService.GetEventViewModelForEditAndDeleteAsync(updatingEvent));
+            return Ok(await _eventService.GetEventViewModelForEditAndDeleteAsync(updatingEvent, HttpContext.GetJwtToken()));
         }
 
         /// <summary>
@@ -142,7 +143,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(await _eventService.GetEventViewModelForEditAndDeleteAsync(deletingEvent));
+            return Ok(await _eventService.GetEventViewModelForEditAndDeleteAsync(deletingEvent, HttpContext.GetJwtToken()));
         }
 
         /// <summary>

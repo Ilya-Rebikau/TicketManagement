@@ -168,9 +168,9 @@ namespace TicketManagement.UserAPI.Controllers
         }
 
         [HttpPost("converttime")]
-        public async Task<EventDto> ConvertTimeFromUtcToUsers([FromBody] EventDto eventDto)
+        public async Task<EventDto> ConvertTimeFromUtcToUsers([FromHeader(Name = AuthorizationKey)] string token, [FromBody] EventDto eventDto)
         {
-            return await _converterForTime.ConvertTimeForUser(eventDto, HttpContext.User);
+            return await _converterForTime.ConvertTimeForUser(eventDto, token);
         }
     }
 }

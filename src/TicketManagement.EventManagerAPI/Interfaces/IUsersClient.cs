@@ -12,6 +12,6 @@ namespace TicketManagement.EventManagerAPI.Interfaces
         public Task<bool> ValidateToken([Header("Authorization")] string token);
 
         [Post("account/converttime")]
-        public Task<EventDto> ConvertTimeFromUtcToUsers([Body] EventDto @event);
+        public Task<EventDto> ConvertTimeFromUtcToUsers([Header("Authorization")] string token, [Body] EventDto @event);
     }
 }

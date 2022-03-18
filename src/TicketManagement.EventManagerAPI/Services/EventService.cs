@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
 using TicketManagement.EventManagerAPI.Interfaces;
@@ -68,9 +66,9 @@ namespace TicketManagement.EventManagerAPI.
             return eventsVm;
         }
 
-        public async Task<EventViewModel> GetEventViewModelForDetailsAsync(EventDto @event)
+        public async Task<EventViewModel> GetEventViewModelForDetailsAsync(EventDto @event, string token)
         {
-            await _usersClient.ConvertTimeFromUtcToUsers(@event);
+            @event = await _usersClient.ConvertTimeFromUtcToUsers(token, @event);
             var eventAreas = await _eventAreaService.GetAllAsync();
             var eventAreasForEvent = eventAreas.Where(x => x.EventId == @event.Id);
             var eventSeats = await _eventSeatService.GetAllAsync();
@@ -92,9 +90,9 @@ namespace TicketManagement.EventManagerAPI.
             return eventViewModel;
         }
 
-        public async Task<EventViewModel> GetEventViewModelForEditAndDeleteAsync(EventDto @event)
+        public async Task<EventViewModel> GetEventViewModelForEditAndDeleteAsync(EventDto @event, string token)
         {
-            await _usersClient.ConvertTimeFromUtcToUsers(@event);
+            @event = await _usersClient.ConvertTimeFromUtcToUsers(token, @event);
             EventViewModel eventVm = @event;
             return eventVm;
         }
