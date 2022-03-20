@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace TicketManagement.EventManagerAPI.Extensions
+namespace TicketManagement.PurchaseFlowAPI.Extensions
 {
     /// <summary>
     /// Extensions for HttpContext.

@@ -1,16 +1,15 @@
 using System;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using RestEase;
-using TicketManagement.EventManagerAPI.Configuration;
-using TicketManagement.EventManagerAPI.Interfaces;
-using TicketManagement.EventManagerAPI.Middlewares;
+using TicketManagement.PurchaseFlowAPI.Configuration;
+using TicketManagement.PurchaseFlowAPI.Interfaces;
+using TicketManagement.PurchaseFlowAPI.Middlewares;
 
-namespace TicketManagement.EventManagerAPI
+namespace TicketManagement.PurchaseFlowAPI
 {
     public class Startup
     {
@@ -35,7 +34,7 @@ namespace TicketManagement.EventManagerAPI
             });
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "EventManagerAPI", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "PurchaseFlowAPI", Version = "v1" });
                 var jwtSecurityScheme = new OpenApiSecurityScheme
                 {
                     Scheme = "bearer",
@@ -64,7 +63,7 @@ namespace TicketManagement.EventManagerAPI
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Event Manager API v1");
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Purchase Flow API v1");
             });
 
             app.UseRouting();
@@ -76,7 +75,7 @@ namespace TicketManagement.EventManagerAPI
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllers();
             });
         }
     }
