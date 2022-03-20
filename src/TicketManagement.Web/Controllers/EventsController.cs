@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,7 @@ using TicketManagement.Web.Extensions;
 using TicketManagement.Web.Infrastructure;
 using TicketManagement.Web.Interfaces.HttpClients;
 using TicketManagement.Web.Models.Events;
+using TicketManagement.Web.Models.Tickets;
 
 namespace TicketManagement.Web.Controllers
 {
@@ -22,12 +24,19 @@ namespace TicketManagement.Web.Controllers
         private readonly IEventManagerClient _eventManagerClient;
 
         /// <summary>
+        /// IPurchaseClient object.
+        /// </summary>
+        private readonly IPurchaseClient _purchaseClient;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="EventsController"/> class.
         /// </summary>
         /// <param name="eventManagerClient">IEventManagerClient object.</param>
-        public EventsController(IEventManagerClient eventManagerClient)
+        /// <param name="purchaseClient">IPurchaseClient object.</param>
+        public EventsController(IEventManagerClient eventManagerClient, IPurchaseClient purchaseClient)
         {
             _eventManagerClient = eventManagerClient;
+            _purchaseClient = purchaseClient;
         }
 
         /// <summary>
@@ -184,6 +193,34 @@ namespace TicketManagement.Web.Controllers
         {
             await _eventManagerClient.DeleteEvent(HttpContext.GetJwtToken(), id);
             return RedirectToAction(nameof(Index));
+        }
+
+        /// <summary>
+        /// Buy ticket.
+        /// </summary>
+        /// <param name="eventSeatId">Event seat id.</param>
+        /// <param name="price">Price for place.</param>
+        /// <returns>TicketViewModel.</returns>
+        [HttpGet("events/buy")]
+        public async Task<IActionResult> Buy(int eventSeatId, double price)
+        {
+            var eventSeatIdAndPrice = new Dictionary<int, double>
+            {
+                { eventSeatId, price },
+            };
+            return View(await _purchaseClient.GetTicketViewModelForBuy(HttpContext.GetJwtToken(), eventSeatIdAndPrice));
+        }
+
+        /// <summary>
+        /// Buy ticket.
+        /// </summary>
+        /// <param name="ticketVm">Ticket view model.</param>
+        /// <returns>IActionResult.</returns>
+        [HttpPost("events/buy")]
+        public async Task<IActionResult> Buy(TicketViewModel ticketVm)
+        {
+            await _purchaseClient.UpdateEventSeatStateAfterBuyingTicket(HttpContext.GetJwtToken(), ticketVm);
+            return RedirectToAction(nameof(Index), typeof(EventsController).GetControllerName());
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TicketManagement.Web.Models.Account
+namespace TicketManagement.PurchaseFlowAPI.Models
 {
     /// <summary>
     /// Account view model.

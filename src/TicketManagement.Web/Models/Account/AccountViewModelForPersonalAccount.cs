@@ -3,14 +3,14 @@
 namespace TicketManagement.Web.Models.Account
 {
     /// <summary>
-    /// Account view model.
+    /// Account view model for personal account.
     /// </summary>
-    public class AccountViewModel
+    public class AccountViewModelForPersonalAccount
     {
         /// <summary>
-        /// Gets or sets jwt token.
+        /// Gets or sets User.
         /// </summary>
-        public string JwtToken { get; set; }
+        public User User { get; set; }
 
         /// <summary>
         /// Gets or sets list of AccountTicketViewModel objects.

@@ -1,7 +1,5 @@
-﻿using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TicketManagement.UserAPI.Interfaces;
 using TicketManagement.UserAPI.Models;
@@ -161,16 +159,42 @@ namespace TicketManagement.UserAPI.Controllers
         /// </summary>
         /// <param name="token">Jwt token.</param>
         /// <returns>True if token is valid and false if not.</returns>
+        [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpPost("validatetoken")]
-        public ActionResult<bool> ValidateToken([FromHeader(Name = AuthorizationKey)] string token)
+        public IActionResult ValidateToken([FromHeader(Name = AuthorizationKey)] string token)
         {
-            return _jwtTokenService.ValidateToken(token);
+            return Ok(_jwtTokenService.ValidateToken(token));
         }
 
+        [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpPost("converttime")]
-        public async Task<EventDto> ConvertTimeFromUtcToUsers([FromHeader(Name = AuthorizationKey)] string token, [FromBody] EventDto eventDto)
+        public async Task<IActionResult> ConvertTimeFromUtcToUsers([FromHeader(Name = AuthorizationKey)] string token, [FromBody] EventDto eventDto)
         {
-            return await _converterForTime.ConvertTimeForUser(eventDto, token);
+            if (_jwtTokenService.ValidateToken(token))
+            {
+                return Ok(await _converterForTime.ConvertTimeForUser(eventDto, token));
+            }
+
+            return NotFound();
+        }
+
+        [Authorize(Roles = "admin, user, event manager, venue manager")]
+        [HttpPost("getuserid")]
+        public async Task<IActionResult> GetUserId([FromHeader(Name = AuthorizationKey)] string token)
+        {
+            if (_jwtTokenService.ValidateToken(token))
+            {
+                return Ok(await _service.GetUserId(token));
+            }
+
+            return NotFound();
+        }
+
+        [Authorize(Roles = "admin, user, event manager, venue manager")]
+        [HttpPost("changebalance")]
+        public async Task<IActionResult> ChangeBalanceForUser([FromHeader(Name = AuthorizationKey)] string token, [FromBody] double price)
+        {
+            return Ok(await _service.ChangeBalanceForUser(token, price));
         }
     }
 }

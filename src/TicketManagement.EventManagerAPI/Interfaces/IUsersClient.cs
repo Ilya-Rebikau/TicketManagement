@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using RestEase;
 using TicketManagement.EventManagerAPI.ModelsDTO;
 

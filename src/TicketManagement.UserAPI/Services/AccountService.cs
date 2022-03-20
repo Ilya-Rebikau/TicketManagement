@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using TicketManagement.UserAPI.Interfaces;
@@ -118,6 +118,40 @@ namespace TicketManagement.UserAPI.Services
             var user = await _userManager.FindByIdAsync(model.Id);
             user.Balance += model.Balance;
             return await _userManager.UpdateAsync(user);
+        }
+
+        public async Task<string> GetUserId(string token)
+        {
+            var user = await _userManager.FindByEmailAsync(GetUserEmail(token));
+            return user.Id;
+        }
+
+        public async Task<bool> ChangeBalanceForUser(string token, double price)
+        {
+            var user = await _userManager.FindByEmailAsync(GetUserEmail(token));
+            if (user.Balance >= price)
+            {
+                user.Balance -= price;
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Get user email from jwt token.
+        /// </summary>
+        /// <param name="token">Jwt token.</param>
+        /// <returns>Email of user.</returns>
+        private static string GetUserEmail(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jwtSecurityToken = handler.ReadJwtToken(token);
+            var claims = jwtSecurityToken.Claims;
+            var identity = new ClaimsIdentity(claims);
+            var principalClaims = new ClaimsPrincipal(identity);
+            var email = principalClaims.FindFirst(JwtRegisteredClaimNames.Sub).Value;
+            return email;
         }
     }
 }

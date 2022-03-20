@@ -25,6 +25,7 @@ namespace TicketManagement.PurchaseFlowAPI.Configuration
             services.AddScoped<IService<EventSeatDto>, EventSeatService>();
             services.AddScoped<IService<EventDto>, EventService>();
             services.AddScoped<IService<TicketDto>, TicketService>();
+            services.AddScoped<IPurchaseService, PurchaseService>();
             return services;
         }
     }

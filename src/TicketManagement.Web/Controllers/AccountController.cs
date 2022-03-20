@@ -2,12 +2,11 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TicketManagement.Web.Extensions;
 using TicketManagement.Web.Infrastructure;
 using TicketManagement.Web.Interfaces;
-using TicketManagement.Web.Models;
+using TicketManagement.Web.Interfaces.HttpClients;
 using TicketManagement.Web.Models.Account;
 
 namespace TicketManagement.Web.Controllers
@@ -25,20 +24,20 @@ namespace TicketManagement.Web.Controllers
         private readonly IAccountWebService _service;
 
         /// <summary>
-        /// UserManager object.
+        /// IPurchaseClient object.
         /// </summary>
-        private readonly UserManager<User> _userManager;
+        private readonly IPurchaseClient _purchaseClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AccountController"/> class.
         /// </summary>
         /// <param name="service">AccountWebService object.</param>
-        /// <param name="userManager">UserManager object.</param>
+        /// <param name="purchaseClient">IPurchaseClient object.</param>
         public AccountController(IAccountWebService service,
-            UserManager<User> userManager)
+            IPurchaseClient purchaseClient)
         {
             _service = service;
-            _userManager = userManager;
+            _purchaseClient = purchaseClient;
         }
 
         /// <summary>
@@ -211,13 +210,14 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            if (user == null)
+            var accountVm = await _purchaseClient.GetAccountViewModelForPersonalAccount(HttpContext.GetJwtToken());
+            var user = await _service.GetUserFromJwt(accountVm.JwtToken);
+            var accountVmForPersonalAccout = new AccountViewModelForPersonalAccount
             {
-                return NotFound();
-            }
-
-            return View(await _service.GetAccountViewModelInIndex(user));
+                User = user,
+                Tickets = accountVm.Tickets,
+            };
+            return View(accountVmForPersonalAccout);
         }
     }
 }

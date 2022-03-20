@@ -53,9 +53,9 @@ namespace TicketManagement.Web.Interfaces
         /// <summary>
         /// Get account view model for index method.
         /// </summary>
-        /// <param name="user">User.</param>
-        /// <returns>Account view model.</returns>
-        Task<AccountViewModel> GetAccountViewModelInIndex(User user);
+        /// <param name="token">Jwt token.</param>
+        /// <returns>User.</returns>
+        Task<User> GetUserFromJwt(string token);
 
         /// <summary>
         /// Gets edit account view model for edit httpget method.

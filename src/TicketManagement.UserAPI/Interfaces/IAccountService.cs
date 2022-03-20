@@ -56,5 +56,20 @@ namespace TicketManagement.UserAPI.Interfaces
         /// <param name="model">EditAccountViewModel object.</param>
         /// <returns>IdentityResult object.</returns>
         Task<IdentityResult> UpdateUserInEdit(EditAccountViewModel model);
+
+        /// <summary>
+        /// Get user id by jwt token.
+        /// </summary>
+        /// <param name="token">Jwt token.</param>
+        /// <returns>User id.</returns>
+        Task<string> GetUserId(string token);
+
+        /// <summary>
+        /// Remove from user balance price of ticket.
+        /// </summary>
+        /// <param name="token">Jwt token of user.</param>
+        /// <param name="price">Price of ticket.</param>
+        /// <returns>True if balance changed and false if not.</returns>
+        Task<bool> ChangeBalanceForUser(string token, double price);
     }
 }
