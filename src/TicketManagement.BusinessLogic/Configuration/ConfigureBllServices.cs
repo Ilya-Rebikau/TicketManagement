@@ -23,14 +23,9 @@ namespace TicketManagement.BusinessLogic.Configuration
             services.AddDalServices(connection);
             services.AddConverters();
             services.AddScoped(typeof(IService<AreaDto>), typeof(AreaService));
-            services.AddScoped(typeof(IService<EventAreaDto>), typeof(EventAreaService));
-            services.AddScoped(typeof(IService<EventSeatDto>), typeof(EventSeatService));
-            services.AddScoped(typeof(IService<EventDto>), typeof(EventService));
             services.AddScoped(typeof(IService<LayoutDto>), typeof(LayoutService));
             services.AddScoped(typeof(IService<SeatDto>), typeof(SeatService));
             services.AddScoped(typeof(IService<VenueDto>), typeof(VenueService));
-            services.AddScoped(typeof(IService<TicketDto>), typeof(TicketService));
-            services.AddScoped(typeof(IReaderService<EventDto>), typeof(BaseReaderService<ThirdPartyEvent, EventDto>));
             return services;
         }
     }
