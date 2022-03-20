@@ -22,6 +22,7 @@ namespace TicketManagement.EventManagerAPI.Configuration
             services.AddScoped<IConverter<EventArea, EventAreaDto>, ModelsConverter<EventArea, EventAreaDto>>();
             services.AddScoped<IConverter<EventSeat, EventSeatDto>, ModelsConverter<EventSeat, EventSeatDto>>();
             services.AddScoped<IConverter<Event, EventDto>, ModelsConverter<Event, EventDto>>();
+            services.AddScoped<IConverter<Ticket, TicketDto>, ModelsConverter<Ticket, TicketDto>>();
             services.AddScoped<IConverter<ThirdPartyEvent, EventDto>, ModelsConverter<ThirdPartyEvent, EventDto>>();
             return services;
         }

@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.IO;
 using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +13,16 @@ namespace TicketManagement.EventManagerAPI.Automapper
     /// </summary>
     internal class ConvertThirdPartyEventToDto : ITypeConverter<ThirdPartyEvent, EventDto>
     {
+        /// <summary>
+        /// Name of MVC project with wwwroot folder.
+        /// </summary>
+        private const string MvcProjectName = "TicketManagement.Web";
+
+        /// <summary>
+        /// Name of wwwroot folder.
+        /// </summary>
+        private const string WwwRootFolder = "wwwroot";
+
         /// <summary>
         /// Name of folder with images.
         /// </summary>
@@ -33,7 +44,8 @@ namespace TicketManagement.EventManagerAPI.Automapper
         /// <param name="hostingEnvironment">IWebHostEnvironment object.</param>
         public ConvertThirdPartyEventToDto(IWebHostEnvironment hostingEnvironment)
         {
-            _pathToImagesDirectory = Path.Combine(hostingEnvironment.WebRootPath, ImageFolder);
+            var parentDirectory = Directory.GetParent(hostingEnvironment.ContentRootPath);
+            _pathToImagesDirectory = Path.Combine(parentDirectory.FullName, MvcProjectName, WwwRootFolder, ImageFolder);
         }
 
         public EventDto Convert(ThirdPartyEvent source, EventDto destination, ResolutionContext context)
@@ -53,6 +65,7 @@ namespace TicketManagement.EventManagerAPI.Automapper
             var @event = new EventDto
             {
                 TimeStart = source.StartDate,
+                TimeEnd = source.EndDate,
                 Id = source.Id,
                 LayoutId = source.LayoutId,
                 Name = source.Name,

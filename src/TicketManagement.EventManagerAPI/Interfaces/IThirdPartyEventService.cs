@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using TicketManagement.EventManagerAPI.Models.Events;
@@ -11,11 +12,11 @@ namespace TicketManagement.EventManagerAPI.Interfaces
     public interface IThirdPartyEventService
     {
         /// <summary>
-        /// Get event view models from json file.
+        /// Get event view models.
         /// </summary>
-        /// <param name="file">Json file.</param>
+        /// <param name="fileData">Json file in byte array format.</param>
         /// <returns>Collection of event view models.</returns>
-        Task<IEnumerable<EventViewModel>> GetEventViewModelsFromJson(IFormFile file);
+        Task<IEnumerable<EventViewModel>> GetEventViewModelsFromJson(byte[] fileData);
 
         /// <summary>
         /// Save collection of event view models to database.

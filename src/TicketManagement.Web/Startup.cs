@@ -43,7 +43,7 @@ namespace TicketManagement.Web
             services.AddScoped(scope =>
             {
                 var baseUrl = Configuration["PurchaseFlowApiAddress"];
-                return RestClient.For<IPurchaseClient>(baseUrl);
+                return RestClient.For<IPurchaseFlowClient>(baseUrl);
             });
             services.AddSwaggerGen(c =>
             {

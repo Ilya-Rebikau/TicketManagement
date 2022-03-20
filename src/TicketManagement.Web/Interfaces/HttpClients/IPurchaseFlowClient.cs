@@ -7,7 +7,7 @@ using TicketManagement.Web.Models.Tickets;
 
 namespace TicketManagement.Web.Interfaces.HttpClients
 {
-    public interface IPurchaseClient
+    public interface IPurchaseFlowClient
     {
         [Get("account/personalaccount")]
         public Task<AccountViewModel> GetAccountViewModelForPersonalAccount([Header("Authorization")] string token, CancellationToken cancellationToken = default);

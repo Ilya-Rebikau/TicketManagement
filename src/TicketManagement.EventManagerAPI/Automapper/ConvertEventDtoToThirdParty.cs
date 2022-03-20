@@ -12,9 +12,19 @@ namespace TicketManagement.EventManagerAPI.Automapper
     internal class ConvertEventDtoToThirdParty : ITypeConverter<EventDto, ThirdPartyEvent>
     {
         /// <summary>
+        /// Name of MVC project with wwwroot folder.
+        /// </summary>
+        private const string MvcProjectName = "TicketManagement.Web";
+
+        /// <summary>
+        /// Name of wwwroot folder.
+        /// </summary>
+        private const string WwwRootFolder = "wwwroot";
+
+        /// <summary>
         /// Path to wwwroot folder.
         /// </summary>
-        private readonly string _webRootPath;
+        private readonly string _contentRootPath;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConvertEventDtoToThirdParty"/> class.
@@ -22,7 +32,8 @@ namespace TicketManagement.EventManagerAPI.Automapper
         /// <param name="hostingEnvironment">IWebHostEnvironment object.</param>
         public ConvertEventDtoToThirdParty(IWebHostEnvironment hostingEnvironment)
         {
-            _webRootPath = hostingEnvironment.WebRootPath;
+            var parentDirectory = Directory.GetParent(hostingEnvironment.ContentRootPath);
+            _contentRootPath = Path.Combine(parentDirectory.FullName, MvcProjectName, WwwRootFolder);
         }
 
         public ThirdPartyEvent Convert(EventDto source, ThirdPartyEvent destination, ResolutionContext context)
@@ -35,7 +46,7 @@ namespace TicketManagement.EventManagerAPI.Automapper
                 destination.LayoutId = source.LayoutId;
                 destination.Name = source.Name;
                 destination.Description = source.Description;
-                destination.PosterImage = UploadSampleImage(Path.Combine(_webRootPath, source.ImageUrl[1..]));
+                destination.PosterImage = UploadSampleImage(Path.Combine(_contentRootPath, source.ImageUrl[1..]));
                 return destination;
             }
 
@@ -47,7 +58,7 @@ namespace TicketManagement.EventManagerAPI.Automapper
                 LayoutId = source.LayoutId,
                 Name = source.Name,
                 Description = source.Description,
-                PosterImage = UploadSampleImage(Path.Combine(_webRootPath, source.ImageUrl[1..])),
+                PosterImage = UploadSampleImage(Path.Combine(_contentRootPath, source.ImageUrl[1..])),
             };
 
             return @event;

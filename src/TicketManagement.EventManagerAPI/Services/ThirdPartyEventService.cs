@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using TicketManagement.EventManagerAPI.Interfaces;
 using TicketManagement.EventManagerAPI.Models.Events;
 using TicketManagement.EventManagerAPI.ModelsDTO;
@@ -31,16 +30,9 @@ namespace TicketManagement.EventManagerAPI.Services
             _service = service;
         }
 
-        public async Task<IEnumerable<EventViewModel>> GetEventViewModelsFromJson(IFormFile file)
+        public async Task<IEnumerable<EventViewModel>> GetEventViewModelsFromJson(byte[] fileData)
         {
-            var json = "";
-            using (var stream = file.OpenReadStream())
-            {
-                byte[] buffer = new byte[stream.Length];
-                await stream.ReadAsync(buffer);
-                json = Encoding.Default.GetString(buffer);
-            }
-
+            var json = Encoding.Default.GetString(fileData);
             var events = await _reader.GetAllAsync(json);
             var eventsVm = new List<EventViewModel>();
             foreach (var @event in events)

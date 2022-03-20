@@ -26,7 +26,7 @@ namespace TicketManagement.Web.Controllers
         /// <summary>
         /// IPurchaseClient object.
         /// </summary>
-        private readonly IPurchaseClient _purchaseClient;
+        private readonly IPurchaseFlowClient _purchaseClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AccountController"/> class.
@@ -34,7 +34,7 @@ namespace TicketManagement.Web.Controllers
         /// <param name="service">AccountWebService object.</param>
         /// <param name="purchaseClient">IPurchaseClient object.</param>
         public AccountController(IAccountWebService service,
-            IPurchaseClient purchaseClient)
+            IPurchaseFlowClient purchaseClient)
         {
             _service = service;
             _purchaseClient = purchaseClient;

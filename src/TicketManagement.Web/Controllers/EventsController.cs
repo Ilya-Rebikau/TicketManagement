@@ -26,14 +26,14 @@ namespace TicketManagement.Web.Controllers
         /// <summary>
         /// IPurchaseClient object.
         /// </summary>
-        private readonly IPurchaseClient _purchaseClient;
+        private readonly IPurchaseFlowClient _purchaseClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EventsController"/> class.
         /// </summary>
         /// <param name="eventManagerClient">IEventManagerClient object.</param>
         /// <param name="purchaseClient">IPurchaseClient object.</param>
-        public EventsController(IEventManagerClient eventManagerClient, IPurchaseClient purchaseClient)
+        public EventsController(IEventManagerClient eventManagerClient, IPurchaseFlowClient purchaseClient)
         {
             _eventManagerClient = eventManagerClient;
             _purchaseClient = purchaseClient;

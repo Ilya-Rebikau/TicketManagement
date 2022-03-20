@@ -30,7 +30,6 @@ namespace TicketManagement.Web.Configuration
             services.AddBllServices(connection);
             services.AddScoped(typeof(IAccountWebService), typeof(AccountWebService));
             services.AddScoped(typeof(IUsersWebService), typeof(UsersWebService));
-            services.AddScoped(typeof(IThirdPartyEventWebService), typeof(ThirdPartyEventWebService));
             services.AddControllersWithViews(options =>
                 options.CacheProfiles.Add("Caching",
                 new CacheProfile
