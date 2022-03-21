@@ -18,6 +18,7 @@ namespace TicketManagement.EventManagerAPI.Automapper
             CreateMap<EventDto, ThirdPartyEvent>().ConvertUsing<ConvertEventDtoToThirdParty>();
             CreateMap<EventArea, EventAreaDto>().ReverseMap();
             CreateMap<EventSeat, EventSeatDto>().ReverseMap();
+            CreateMap<Ticket, TicketDto>().ReverseMap();
             CreateMap<Event, EventDto>().ReverseMap();
         }
     }

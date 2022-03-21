@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using TicketManagement.BusinessLogic.Configuration;
 using TicketManagement.Web.Infrastructure;
 using TicketManagement.Web.Interfaces;
 using TicketManagement.Web.Models;
@@ -27,7 +26,6 @@ namespace TicketManagement.Web.Configuration
         /// <returns>Added services.</returns>
         public static IServiceCollection AddWebServices(this IServiceCollection services, string connection)
         {
-            services.AddBllServices(connection);
             services.AddScoped(typeof(IAccountWebService), typeof(AccountWebService));
             services.AddScoped(typeof(IUsersWebService), typeof(UsersWebService));
             services.AddControllersWithViews(options =>

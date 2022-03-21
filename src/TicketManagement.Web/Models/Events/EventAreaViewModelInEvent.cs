@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using TicketManagement.BusinessLogic.ModelsDTO;
+using TicketManagement.Web.ModelsDTO;
 
 namespace TicketManagement.Web.Models.Events
 {

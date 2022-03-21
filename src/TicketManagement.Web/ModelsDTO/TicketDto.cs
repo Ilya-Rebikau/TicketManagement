@@ -1,6 +1,6 @@
-﻿using TicketManagement.BusinessLogic.Interfaces;
+﻿using TicketManagement.Web.Interfaces;
 
-namespace TicketManagement.BusinessLogic.ModelsDTO
+namespace TicketManagement.Web.ModelsDTO
 {
     /// <summary>
     /// Represent ticket's dto model.

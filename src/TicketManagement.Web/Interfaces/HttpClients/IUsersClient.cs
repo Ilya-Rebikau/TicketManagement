@@ -23,13 +23,13 @@ namespace TicketManagement.Web.Interfaces.HttpClients
         [Get("account/edit/{id}")]
         public Task<EditAccountViewModel> Edit([Header("Authorization")] string token, [Path] string id, CancellationToken cancellationToken = default);
 
-        [Post("account/edit")]
+        [Put("account/edit")]
         public Task<IdentityResult> Edit([Header("Authorization")] string token, [Body] EditAccountViewModel model, CancellationToken cancellationToken = default);
 
         [Get("account/addbalance/{id}")]
         public Task<AddBalanceViewModel> GetAddBalanceViewModel([Header("Authorization")] string token, [Path] string id, CancellationToken cancellationToken = default);
 
-        [Post("account/addbalance")]
+        [Put("account/addbalance")]
         public Task<IdentityResult> AddBalance([Header("Authorization")] string token, [Body] AddBalanceViewModel model, CancellationToken cancellationToken = default);
 
         [Post("account/getuserid")]
@@ -44,22 +44,22 @@ namespace TicketManagement.Web.Interfaces.HttpClients
         [Get("users/edit/{id}")]
         public Task<EditUserViewModel> GetEditUserViewModel([Header("Authorization")] string token, [Path] string id, CancellationToken cancellationToken = default);
 
-        [Post("users/edit")]
+        [Put("users/edit")]
         public Task<IdentityResult> EditUser([Header("Authorization")] string token, [Body] EditUserViewModel model, CancellationToken cancellationToken = default);
 
-        [Post("users/delete/{id}")]
+        [Delete("users/delete/{id}")]
         public Task<string> DeleteUser([Header("Authorization")] string token, [Path] string id, CancellationToken cancellationToken = default);
 
         [Get("users/changepassword/{id}")]
         public Task<ChangePasswordViewModel> GetChangePasswordViewModel([Header("Authorization")] string token, [Path] string id, CancellationToken cancellationToken = default);
 
-        [Post("users/changepassword")]
+        [Put("users/changepassword")]
         public Task<IdentityResult> ChangePassword([Header("Authorization")] string token, [Body] ChangePasswordViewModel model, CancellationToken cancellationToken = default);
 
         [Get("users/editroles/{id}")]
         public Task<ChangeRoleViewModel> GetChangeRoleViewModel([Header("Authorization")] string token, [Path] string id, CancellationToken cancellationToken = default);
 
-        [Post("users/editroles")]
+        [Put("users/editroles")]
         public Task ChangeRoles([Header("Authorization")] string token, [Body] ChangeRoleViewModel model, CancellationToken cancellationToken = default);
     }
 }

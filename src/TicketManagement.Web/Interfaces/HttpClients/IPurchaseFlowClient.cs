@@ -16,7 +16,7 @@ namespace TicketManagement.Web.Interfaces.HttpClients
         public Task<TicketViewModel> GetTicketViewModelForBuy([Header("Authorization")] string token, [Body] Dictionary<int, double> eventSeatIdAndPrice,
             CancellationToken cancellationToken = default);
 
-        [Post("events/buy")]
+        [Put("events/buy")]
         public Task UpdateEventSeatStateAfterBuyingTicket([Header("Authorization")] string token, [Body] TicketViewModel ticketVm,
             CancellationToken cancellationToken = default);
     }

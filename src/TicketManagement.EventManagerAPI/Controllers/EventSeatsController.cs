@@ -103,7 +103,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// <param name="id">Id of editing event seat.</param>
         /// <param name="eventSeatVm">Edited event seat.</param>
         /// <returns>Task with IActionResult.</returns>
-        [HttpPost("edit/{id}")]
+        [HttpPut("edit/{id}")]
         public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] EventSeatViewModel eventSeatVm)
         {
             if (id != eventSeatVm.Id)
@@ -153,7 +153,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// </summary>
         /// <param name="id">Id of deleting event seat.</param>
         /// <returns>Task with IActionResult.</returns>
-        [HttpPost("delete/{id}")]
+        [HttpDelete("delete/{id}")]
         [ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed([FromRoute] int id)
         {

@@ -1,18 +1,18 @@
-﻿using TicketManagement.BusinessLogic.Interfaces;
+﻿using TicketManagement.Web.Interfaces;
 
-namespace TicketManagement.BusinessLogic.ModelsDTO
+namespace TicketManagement.Web.ModelsDTO
 {
     /// <summary>
-    /// Represent area's model dto during event.
+    /// Represent area's dto model.
     /// </summary>
-    public class EventAreaDto : IEntityDto
+    public class AreaDto : IEntityDto
     {
         public int Id { get; set; }
 
         /// <summary>
-        /// Gets or sets event's id.
+        /// Gets or sets layout's id.
         /// </summary>
-        public int EventId { get; set; }
+        public int LayoutId { get; set; }
 
         /// <summary>
         /// Gets or sets description.
@@ -30,8 +30,8 @@ namespace TicketManagement.BusinessLogic.ModelsDTO
         public int CoordY { get; set; }
 
         /// <summary>
-        /// Gets or sets price.
+        /// Gets or sets base price for area.
         /// </summary>
-        public double Price { get; set; }
+        public double BasePrice { get; set; }
     }
 }

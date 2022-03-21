@@ -71,7 +71,7 @@ namespace TicketManagement.UserAPI.Controllers
         /// </summary>
         /// <param name="model">EditUserViewModel object.</param>
         /// <returns>Task with IActionResult.</returns>
-        [HttpPost("edit")]
+        [HttpPut("edit")]
         public async Task<IActionResult> Edit([FromBody] EditUserViewModel model)
         {
             return Ok(await _service.UpdateUserInEditAsync(model));
@@ -82,7 +82,7 @@ namespace TicketManagement.UserAPI.Controllers
         /// </summary>
         /// <param name="id">Id of deleting object.</param>
         /// <returns>Task with IActionResult.</returns>
-        [HttpPost("delete/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<ActionResult> Delete([FromRoute] string id)
         {
             var deletedId = await _service.DeleteUserAsync(id);
@@ -116,7 +116,7 @@ namespace TicketManagement.UserAPI.Controllers
         /// </summary>
         /// <param name="model">ChangePasswordViewModel object.</param>
         /// <returns>Task with IActionResult.</returns>
-        [HttpPost("changepassword")]
+        [HttpPut("changepassword")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordViewModel model)
         {
             return Ok(await _service.ChangePassword(model, HttpContext));
@@ -144,7 +144,7 @@ namespace TicketManagement.UserAPI.Controllers
         /// </summary>
         /// <param name="model">ChangeRoleViewModel.</param>
         /// <returns>Task with IActionResult.</returns>
-        [HttpPost("editroles")]
+        [HttpPut("editroles")]
         public async Task<IActionResult> EditRoles([FromBody] ChangeRoleViewModel model)
         {
             await _service.EditRoles(model);

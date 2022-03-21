@@ -1,7 +1,7 @@
 ﻿using System;
-using TicketManagement.BusinessLogic.Interfaces;
+using TicketManagement.Web.Interfaces;
 
-namespace TicketManagement.BusinessLogic.ModelsDTO
+namespace TicketManagement.Web.ModelsDTO
 {
     /// <summary>
     /// Represent event's dto model.

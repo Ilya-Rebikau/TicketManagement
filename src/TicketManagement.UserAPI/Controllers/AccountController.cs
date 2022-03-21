@@ -118,7 +118,7 @@ namespace TicketManagement.UserAPI.Controllers
         /// <param name="model">EditAccountViewModel object.</param>
         /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, user, event manager, venue manager")]
-        [HttpPost("edit")]
+        [HttpPut("edit")]
         public async Task<IActionResult> Edit([FromBody] EditAccountViewModel model)
         {
             return Ok(await _service.UpdateUserInEdit(model));
@@ -148,8 +148,8 @@ namespace TicketManagement.UserAPI.Controllers
         /// <param name="model">AddBalanceViewModel object.</param>
         /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, user, event manager, venue manager")]
-        [HttpPost("addbalance")]
-        public async Task<IActionResult> AddBalanceAsync(AddBalanceViewModel model)
+        [HttpPut("addbalance")]
+        public async Task<IActionResult> AddBalance(AddBalanceViewModel model)
         {
             return Ok(await _service.AddBalance(model));
         }

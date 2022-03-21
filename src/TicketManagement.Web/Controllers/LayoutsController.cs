@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.Web.Infrastructure;
+using TicketManagement.Web.Interfaces;
 using TicketManagement.Web.Models.Layouts;
+using TicketManagement.Web.ModelsDTO;
 
 namespace TicketManagement.Web.Controllers
 {

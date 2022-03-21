@@ -63,7 +63,7 @@ namespace TicketManagement.PurchaseFlowAPI.Controllers
         /// <param name="token">Jwt token.</param>
         /// <param name="ticketVm">Ticket view model.</param>
         /// <returns>True if state was changed and false if not because of low balance.</returns>
-        [HttpPost("events/buy")]
+        [HttpPut("events/buy")]
         public async Task<IActionResult> UpdateEventSeatStateAfterBuyingTicket([FromHeader(Name = AuthorizationKey)] string token, [FromBody] TicketViewModel ticketVm)
         {
             if (await _service.UpdateEventSeatStateAfterBuyingTicket(token, ticketVm))
