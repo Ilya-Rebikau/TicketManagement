@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using TicketManagement.UserAPI.Infrastructure;
 using TicketManagement.UserAPI.Interfaces;
 using TicketManagement.UserAPI.Middlewares;
@@ -91,6 +92,8 @@ namespace TicketManagement.UserAPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
+            app.UseSerilogRequestLogging();
+
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {

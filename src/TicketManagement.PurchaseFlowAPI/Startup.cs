@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using RestEase;
+using Serilog;
 using TicketManagement.PurchaseFlowAPI.Configuration;
 using TicketManagement.PurchaseFlowAPI.Interfaces;
 using TicketManagement.PurchaseFlowAPI.Middlewares;
@@ -60,6 +61,8 @@ namespace TicketManagement.PurchaseFlowAPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
+            app.UseSerilogRequestLogging();
+
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {

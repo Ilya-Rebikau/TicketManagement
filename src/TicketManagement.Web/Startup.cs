@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
+using Serilog.Events;
 using TicketManagement.Web.Configuration;
 
 namespace TicketManagement.Web
@@ -38,6 +40,8 @@ namespace TicketManagement.Web
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
+
+            app.UseSerilogRequestLogging();
 
             var supportedCultures = new[]
             {

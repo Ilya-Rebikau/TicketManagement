@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using RestEase;
+using Serilog;
 using TicketManagement.VenueManagerAPI.Configuration;
 using TicketManagement.VenueManagerAPI.Interfaces;
 using TicketManagement.VenueManagerAPI.Middlewares;
@@ -34,7 +35,7 @@ namespace TicketManagement.VenueManagerAPI
             });
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "EventManagerAPI", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "VenueManagerAPI", Version = "v1" });
                 var jwtSecurityScheme = new OpenApiSecurityScheme
                 {
                     Scheme = "bearer",
@@ -60,10 +61,12 @@ namespace TicketManagement.VenueManagerAPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
+            app.UseSerilogRequestLogging();
+
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Event Manager API v1");
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Venue Manager API v1");
             });
 
             app.UseRouting();
