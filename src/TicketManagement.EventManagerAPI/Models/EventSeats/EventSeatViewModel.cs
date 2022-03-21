@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using TicketManagement.EventManagerAPI.ModelsDTO;
+﻿using TicketManagement.EventManagerAPI.ModelsDTO;
 
 namespace TicketManagement.EventManagerAPI.Models.EventSeats
 {

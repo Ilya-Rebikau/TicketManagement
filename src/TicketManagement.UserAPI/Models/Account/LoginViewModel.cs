@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace TicketManagement.UserAPI.Models.Account
+﻿namespace TicketManagement.UserAPI.Models.Account
 {
     /// <summary>
     /// Login view model.

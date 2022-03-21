@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using TicketManagement.EventManagerAPI.Models.Events;
 using TicketManagement.EventManagerAPI.ModelsDTO;
 

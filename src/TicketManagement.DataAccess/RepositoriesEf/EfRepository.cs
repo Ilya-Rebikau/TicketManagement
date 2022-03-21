@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using TicketManagement.DataAccess.Interfaces;
 
 namespace TicketManagement.DataAccess.RepositoriesEf
@@ -10,7 +9,7 @@ namespace TicketManagement.DataAccess.RepositoriesEf
     /// Entity framework repository.
     /// </summary>
     /// <typeparam name="T">Entity.</typeparam>
-   internal class EfRepository<T> : IRepository<T>
+    internal class EfRepository<T> : IRepository<T>
         where T : class, IEntity
     {
         /// <summary>

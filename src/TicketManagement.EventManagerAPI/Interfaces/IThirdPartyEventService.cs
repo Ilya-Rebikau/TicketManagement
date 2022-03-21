@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using TicketManagement.EventManagerAPI.Models.Events;
 
 namespace TicketManagement.EventManagerAPI.Interfaces

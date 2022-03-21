@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace TicketManagement.UserAPI.Models.Users
+﻿namespace TicketManagement.UserAPI.Models.Users
 {
     /// <summary>
     /// Change password for user view model.

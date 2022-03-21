@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace TicketManagement.UserAPI.Models.Users
+﻿namespace TicketManagement.UserAPI.Models.Users
 {
     /// <summary>
     /// Create user view model.
