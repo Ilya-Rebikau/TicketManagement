@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.VenueManagerAPI.Interfaces;
+using TicketManagement.VenueManagerAPI.ModelsDTO;
 
-namespace TicketManagement.BusinessLogic.Services
+namespace TicketManagement.VenueManagerAPI.Services
 {
     /// <summary>
     /// Service with CRUD operations and validations for seat.
@@ -39,6 +38,19 @@ namespace TicketManagement.BusinessLogic.Services
         }
 
         /// <summary>
+        /// Checking that seat has positive row and number.
+        /// </summary>
+        /// <param name="obj">Adding or updating seat.</param>
+        /// <exception cref="ArgumentException">Generates exception in case row or number are not positive.</exception>
+        private static void CheckForPositiveRowAndNumber(SeatDto obj)
+        {
+            if (obj.Row <= 0 || obj.Number <= 0)
+            {
+                throw new ArgumentException("Row and number must be positive!");
+            }
+        }
+
+        /// <summary>
         /// Checking that all seats in area have unique row and number.
         /// </summary>
         /// <param name="obj">Adding or updating seat.</param>
@@ -50,19 +62,6 @@ namespace TicketManagement.BusinessLogic.Services
             if (seatsInArea.Any())
             {
                 throw new ArgumentException("One of seats in this area already has such row and number!");
-            }
-        }
-
-        /// <summary>
-        /// Checking that seat has positive row and number.
-        /// </summary>
-        /// <param name="obj">Adding or updating seat.</param>
-        /// <exception cref="ArgumentException">Generates exception in case row or number are not positive.</exception>
-        private void CheckForPositiveRowAndNumber(SeatDto obj)
-        {
-            if (obj.Row <= 0 || obj.Number <= 0)
-            {
-                throw new ArgumentException("Row and number must be positive!");
             }
         }
     }

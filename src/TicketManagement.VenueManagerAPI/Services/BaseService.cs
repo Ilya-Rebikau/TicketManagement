@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.DataAccess.Interfaces;
+using TicketManagement.VenueManagerAPI.Interfaces;
 
-namespace TicketManagement.BusinessLogic.Services
+namespace TicketManagement.VenueManagerAPI.Services
 {
     /// <summary>
     /// Service with base realization for CRUD operations for models.

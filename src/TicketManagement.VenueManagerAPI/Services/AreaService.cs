@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.VenueManagerAPI.Interfaces;
+using TicketManagement.VenueManagerAPI.ModelsDTO;
 
-namespace TicketManagement.BusinessLogic.Services
+namespace TicketManagement.VenueManagerAPI.Services
 {
     /// <summary>
     /// Service with CRUD operations and validations for area.
@@ -43,6 +42,32 @@ namespace TicketManagement.BusinessLogic.Services
         }
 
         /// <summary>
+        /// Checking that area has positive price.
+        /// </summary>
+        /// <param name="obj">Adding or updating area.</param>
+        /// <exception cref="ArgumentException">Generates exception in case positive isnt positive.</exception>
+        private static void CheckForPositivePrice(AreaDto obj)
+        {
+            if (obj.BasePrice <= 0)
+            {
+                throw new ArgumentException("Price must be positive!");
+            }
+        }
+
+        /// <summary>
+        /// Checking that area has positive coords.
+        /// </summary>
+        /// <param name="obj">Adding or updating area.</param>
+        /// <exception cref="ArgumentException">Generates exception in case coords aren't positive.</exception>
+        private static void CheckForPositiveCoords(AreaDto obj)
+        {
+            if (obj.CoordX <= 0 || obj.CoordY <= 0)
+            {
+                throw new ArgumentException("Coords can be only positive numbers!");
+            }
+        }
+
+        /// <summary>
         /// Checking that all areas in layout have unique description.
         /// </summary>
         /// <param name="obj">Adding or updating area.</param>
@@ -58,19 +83,6 @@ namespace TicketManagement.BusinessLogic.Services
         }
 
         /// <summary>
-        /// Checking that area has positive coords.
-        /// </summary>
-        /// <param name="obj">Adding or updating area.</param>
-        /// <exception cref="ArgumentException">Generates exception in case coords aren't positive.</exception>
-        private void CheckForPositiveCoords(AreaDto obj)
-        {
-            if (obj.CoordX <= 0 || obj.CoordY <= 0)
-            {
-                throw new ArgumentException("Coords can be only positive numbers!");
-            }
-        }
-
-        /// <summary>
         /// Checking that area has unique coords in layout.
         /// </summary>
         /// <param name="obj">Adding or updating area.</param>
@@ -82,19 +94,6 @@ namespace TicketManagement.BusinessLogic.Services
             if (areasInLayout.Any())
             {
                 throw new ArgumentException("CoordX and CoordY must be unique for areas in one layout!");
-            }
-        }
-
-        /// <summary>
-        /// Checking that area has positive price.
-        /// </summary>
-        /// <param name="obj">Adding or updating area.</param>
-        /// <exception cref="ArgumentException">Generates exception in case positive isnt positive.</exception>
-        private void CheckForPositivePrice(AreaDto obj)
-        {
-            if (obj.BasePrice <= 0)
-            {
-                throw new ArgumentException("Price must be positive!");
             }
         }
     }

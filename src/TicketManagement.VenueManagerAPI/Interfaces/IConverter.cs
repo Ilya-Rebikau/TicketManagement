@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using TicketManagement.DataAccess.Interfaces;
 
-namespace TicketManagement.BusinessLogic.Interfaces
+namespace TicketManagement.VenueManagerAPI.Interfaces
 {
     /// <summary>
     /// Service to convert models and dto.

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using TicketManagement.BusinessLogic.Interfaces;
 using TicketManagement.DataAccess.Interfaces;
+using TicketManagement.VenueManagerAPI.Interfaces;
 
-namespace TicketManagement.BusinessLogic.Automapper
+namespace TicketManagement.VenueManagerAPI.Automapper
 {
     /// <summary>
     /// Base converting dto to models and models to dto.

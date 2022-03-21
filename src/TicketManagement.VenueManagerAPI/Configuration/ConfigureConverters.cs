@@ -1,11 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using TicketManagement.BusinessLogic.Automapper;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.ModelsDTO;
-using TicketManagement.BusinessLogic.Services;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.VenueManagerAPI.Automapper;
+using TicketManagement.VenueManagerAPI.Interfaces;
+using TicketManagement.VenueManagerAPI.ModelsDTO;
 
-namespace TicketManagement.BusinessLogic.Configuration
+namespace TicketManagement.VenueManagerAPI.Configuration
 {
     /// <summary>
     /// Configure converters from BLL.

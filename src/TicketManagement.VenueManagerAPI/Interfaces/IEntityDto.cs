@@ -1,4 +1,4 @@
-﻿namespace TicketManagement.BusinessLogic.Interfaces
+﻿namespace TicketManagement.VenueManagerAPI.Interfaces
 {
     /// <summary>
     /// Dto entity.

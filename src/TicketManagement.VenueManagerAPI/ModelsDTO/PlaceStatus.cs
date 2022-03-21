@@ -1,4 +1,4 @@
-﻿namespace TicketManagement.BusinessLogic.ModelsDTO
+﻿namespace TicketManagement.VenueManagerAPI.ModelsDTO
 {
     /// <summary>
     /// Enum to set state for event seats.

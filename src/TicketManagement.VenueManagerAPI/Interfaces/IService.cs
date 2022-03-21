@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 [assembly: InternalsVisibleTo("TicketManagement.IntegrationTests")]
 [assembly: InternalsVisibleTo("TicketManagement.UnitTests")]
 
-namespace TicketManagement.BusinessLogic.Interfaces
+namespace TicketManagement.VenueManagerAPI.Interfaces
 {
     /// <summary>
     /// Services with CRUD operations for models.

@@ -1,6 +1,6 @@
-﻿using TicketManagement.BusinessLogic.Interfaces;
+﻿using TicketManagement.VenueManagerAPI.Interfaces;
 
-namespace TicketManagement.BusinessLogic.ModelsDTO
+namespace TicketManagement.VenueManagerAPI.ModelsDTO
 {
     /// <summary>
     /// Represent area's dto model.

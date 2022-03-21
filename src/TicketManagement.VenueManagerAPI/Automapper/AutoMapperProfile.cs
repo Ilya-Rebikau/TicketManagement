@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using TicketManagement.BusinessLogic.ModelsDTO;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.VenueManagerAPI.ModelsDTO;
 
-namespace TicketManagement.BusinessLogic.Automapper
+namespace TicketManagement.VenueManagerAPI.Automapper
 {
     /// <summary>
     /// Profile for automapper.
