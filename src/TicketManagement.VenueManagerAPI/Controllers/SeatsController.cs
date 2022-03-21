@@ -135,7 +135,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         /// <param name="id">Id of deleting seat.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpGet("delete/{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var deletingSeat = await _service.GetByIdAsync(id);
             if (deletingSeat == null)
@@ -144,7 +144,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
             }
 
             SeatViewModel seatVm = deletingSeat;
-            return View(seatVm);
+            return Ok(seatVm);
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         /// <returns>Task with IActionResult.</returns>
         [HttpDelete("delete/{id}")]
         [ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed([FromRoute] int id)
         {
             await _service.DeleteById(id);
             return Ok();

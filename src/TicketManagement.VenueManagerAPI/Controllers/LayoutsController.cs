@@ -89,7 +89,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         /// <param name="id">Id of editing layout.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpGet("edit/{id}")]
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit([FromRoute] int id)
         {
             var updatingLayout = await _service.GetByIdAsync(id);
             if (updatingLayout == null)
@@ -98,7 +98,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
             }
 
             LayoutViewModel layoutVm = updatingLayout;
-            return View(layoutVm);
+            return Ok(layoutVm);
         }
 
         /// <summary>

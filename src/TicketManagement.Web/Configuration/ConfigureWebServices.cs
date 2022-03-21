@@ -83,6 +83,11 @@ namespace TicketManagement.Web.Configuration
                 var baseUrl = configuration["PurchaseFlowApiAddress"];
                 return RestClient.For<IPurchaseFlowClient>(baseUrl);
             });
+            services.AddScoped(scope =>
+            {
+                var baseUrl = configuration["VenueManagerApiAddress"];
+                return RestClient.For<IVenueManagerClient>(baseUrl);
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MVC", Version = "v1" });
