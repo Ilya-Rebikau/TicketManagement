@@ -9,15 +9,31 @@ using TicketManagement.UserAPI.Models;
 
 namespace TicketManagement.UserAPI.Services
 {
+    /// <summary>
+    /// Jwt token service.
+    /// </summary>
     public class JwtTokenService
     {
+        /// <summary>
+        /// JwtTokenSettings object.
+        /// </summary>
         private readonly JwtTokenSettings _settings;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JwtTokenService"/> class.
+        /// </summary>
+        /// <param name="options">IOptions with JwtTokenSettings.</param>
         public JwtTokenService(IOptions<JwtTokenSettings> options)
         {
             _settings = options.Value;
         }
 
+        /// <summary>
+        /// Get jwt token for user.
+        /// </summary>
+        /// <param name="user">User.</param>
+        /// <param name="roles">Roles.</param>
+        /// <returns>Jwt token.</returns>
         public string GetToken(User user, IList<string> roles)
         {
             var roleClaims = roles.Select(role => new Claim(ClaimTypes.Role, role)).ToList();
@@ -38,6 +54,11 @@ namespace TicketManagement.UserAPI.Services
             return encodedJwt;
         }
 
+        /// <summary>
+        /// Validate user jwt token.
+        /// </summary>
+        /// <param name="token">Jwt token.</param>
+        /// <returns>True if token valid and false if not.</returns>
         public bool ValidateToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

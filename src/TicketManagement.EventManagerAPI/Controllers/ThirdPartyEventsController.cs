@@ -27,12 +27,22 @@ namespace TicketManagement.EventManagerAPI.Controllers
             _service = service;
         }
 
+        /// <summary>
+        /// Get third party events.
+        /// </summary>
+        /// <param name="data">Data with third party events.</param>
+        /// <returns>Third party events.</returns>
         [HttpPost("getevents")]
         public async Task<IActionResult> GetEvents([FromBody] ThirdPartyEventData data)
         {
             return Ok(await _service.GetEventViewModelsFromJson(data.BytesData));
         }
 
+        /// <summary>
+        /// Save third party events to database.
+        /// </summary>
+        /// <param name="events">Third party events.</param>
+        /// <returns>Task with IActionResult.</returns>
         [HttpPost("save")]
         public async Task<IActionResult> SaveToDatabaseAsync([FromBody] IEnumerable<EventViewModel> events)
         {
