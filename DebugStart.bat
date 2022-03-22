@@ -10,7 +10,7 @@ start "Run TicketManagement.EventManagerAPI" /D"%~dp0src\TicketManagement.EventM
 start "Run TicketManagement.VenueManagerAPI" /D"%~dp0src\TicketManagement.VenueManagerAPI" dotnet run --launch-profile "TicketManagement.VenueManagerAPI.Debug"
 start "Run TicketManagement.PurchaseFlowAPI" /D"%~dp0src\TicketManagement.PurchaseFlowAPI" dotnet run --launch-profile "TicketManagement.PurchaseFlowAPI.Debug"
 TIMEOUT 5
-explorer "https://localhost:5000/swagger"
+explorer "https://localhost:5000"
 explorer "https://localhost:5001/swagger"
 explorer "https://localhost:5002/swagger"
 explorer "https://localhost:5003/swagger"
