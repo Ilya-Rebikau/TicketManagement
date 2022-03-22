@@ -1,8 +1,10 @@
 using System;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using RestEase;
 using Serilog;
@@ -59,15 +61,18 @@ namespace TicketManagement.PurchaseFlowAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseSerilogRequestLogging();
-
-            app.UseSwagger();
-            app.UseSwaggerUI(options =>
+            if (env.IsDevelopment())
             {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Purchase Flow API v1");
-            });
+                app.UseSwagger();
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Purchase Flow API v1");
+                });
+            }
+
+            app.UseSerilogRequestLogging();
 
             app.UseRouting();
 

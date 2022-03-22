@@ -34,6 +34,11 @@ namespace TicketManagement.Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "MVC v1");
+                });
             }
             else
             {
@@ -58,12 +63,6 @@ namespace TicketManagement.Web
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
-            app.UseSwagger();
-            app.UseSwaggerUI(options =>
-            {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "MVC v1");
-            });
 
             app.UseRouting();
 
