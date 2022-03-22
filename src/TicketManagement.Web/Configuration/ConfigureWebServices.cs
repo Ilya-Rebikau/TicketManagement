@@ -1,14 +1,19 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Reflection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TicketManagement.BusinessLogic.Configuration;
+using Microsoft.OpenApi.Models;
+using RestEase;
 using TicketManagement.Web.Infrastructure;
 using TicketManagement.Web.Interfaces;
+using TicketManagement.Web.Interfaces.HttpClients;
 using TicketManagement.Web.Models;
 using TicketManagement.Web.WebServices;
 
@@ -24,15 +29,12 @@ namespace TicketManagement.Web.Configuration
         /// </summary>
         /// <param name="services">Services.</param>
         /// <param name="connection">Connection string to database.</param>
+        /// <param name="configuration">IConfiguration object.</param>
         /// <returns>Added services.</returns>
-        public static IServiceCollection AddWebServices(this IServiceCollection services, string connection)
+        public static IServiceCollection AddWebServices(this IServiceCollection services, string connection, IConfiguration configuration)
         {
-            services.AddBllServices(connection);
-            services.AddScoped(typeof(IEventWebService), typeof(EventWebService));
             services.AddScoped(typeof(IAccountWebService), typeof(AccountWebService));
             services.AddScoped(typeof(IUsersWebService), typeof(UsersWebService));
-            services.AddScoped(typeof(IThirdPartyEventWebService), typeof(ThirdPartyEventWebService));
-            services.AddScoped(typeof(ConverterForTime));
             services.AddControllersWithViews(options =>
                 options.CacheProfiles.Add("Caching",
                 new CacheProfile
@@ -65,6 +67,50 @@ namespace TicketManagement.Web.Configuration
             });
             services.AddDbContext<IdentityContext>(options => options.UseSqlServer(connection));
             services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<IdentityContext>();
+            services.AddHttpClient();
+            services.AddScoped(scope =>
+            {
+                var baseUrl = configuration["UsersApiAddress"];
+                return RestClient.For<IUsersClient>(baseUrl);
+            });
+            services.AddScoped(scope =>
+            {
+                var baseUrl = configuration["EventManagerApiAddress"];
+                return RestClient.For<IEventManagerClient>(baseUrl);
+            });
+            services.AddScoped(scope =>
+            {
+                var baseUrl = configuration["PurchaseFlowApiAddress"];
+                return RestClient.For<IPurchaseFlowClient>(baseUrl);
+            });
+            services.AddScoped(scope =>
+            {
+                var baseUrl = configuration["VenueManagerApiAddress"];
+                return RestClient.For<IVenueManagerClient>(baseUrl);
+            });
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "MVC", Version = "v1" });
+                var jwtSecurityScheme = new OpenApiSecurityScheme
+                {
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    Name = "JWT Authentication",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
+                    Reference = new OpenApiReference
+                    {
+                        Id = JwtBearerDefaults.AuthenticationScheme,
+                        Type = ReferenceType.SecurityScheme,
+                    },
+                };
+                c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    { jwtSecurityScheme, Array.Empty<string>() },
+                });
+            });
             return services;
         }
     }

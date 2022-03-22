@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.ModelsDTO;
+using TicketManagement.Web.Extensions;
 using TicketManagement.Web.Infrastructure;
+using TicketManagement.Web.Interfaces.HttpClients;
 using TicketManagement.Web.Models.Layouts;
+using TicketManagement.Web.ModelsDTO;
 
 namespace TicketManagement.Web.Controllers
 {
@@ -19,17 +19,17 @@ namespace TicketManagement.Web.Controllers
     public class LayoutsController : Controller
     {
         /// <summary>
-        /// LayoutService object.
+        /// IVenueManagerClient object.
         /// </summary>
-        private readonly IService<LayoutDto> _service;
+        private readonly IVenueManagerClient _venueManagerClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LayoutsController"/> class.
         /// </summary>
-        /// <param name="service">LayoutService object.</param>
-        public LayoutsController(IService<LayoutDto> service)
+        /// <param name="venueManagerClient">IVenueManagerClient object.</param>
+        public LayoutsController(IVenueManagerClient venueManagerClient)
         {
-            _service = service;
+            _venueManagerClient = venueManagerClient;
         }
 
         /// <summary>
@@ -39,14 +39,8 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var layouts = await _service.GetAllAsync();
-            var layoutsVm = new List<LayoutViewModel>();
-            foreach (var layout in layouts)
-            {
-                layoutsVm.Add(layout);
-            }
-
-            return View(layoutsVm);
+            var layouts = await _venueManagerClient.GetLayoutViewModels(HttpContext.GetJwtToken());
+            return View(layouts);
         }
 
         /// <summary>
@@ -62,13 +56,12 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var layout = await _service.GetByIdAsync((int)id);
-            if (layout == null)
+            var layoutVm = await _venueManagerClient.LayoutDetails(HttpContext.GetJwtToken(), (int)id);
+            if (layoutVm == null)
             {
                 return NotFound();
             }
 
-            LayoutViewModel layoutVm = layout;
             return View(layoutVm);
         }
 
@@ -96,8 +89,7 @@ namespace TicketManagement.Web.Controllers
                 return View(layoutVm);
             }
 
-            LayoutDto layout = layoutVm;
-            await _service.CreateAsync(layout);
+            await _venueManagerClient.CreateLayout(HttpContext.GetJwtToken(), layoutVm);
             return RedirectToAction(nameof(Index));
         }
 
@@ -114,13 +106,12 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var updatingLayout = await _service.GetByIdAsync((int)id);
-            if (updatingLayout == null)
+            var layoutVm = await _venueManagerClient.GetLayoutViewModelForEdit(HttpContext.GetJwtToken(), (int)id);
+            if (layoutVm == null)
             {
                 return NotFound();
             }
 
-            LayoutViewModel layoutVm = updatingLayout;
             return View(layoutVm);
         }
 
@@ -147,18 +138,11 @@ namespace TicketManagement.Web.Controllers
             LayoutDto layout = layoutVm;
             try
             {
-                await _service.UpdateAsync(layout);
+                await _venueManagerClient.EditLayout(HttpContext.GetJwtToken(), id, layout);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await LayoutExists(layout.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return Conflict();
             }
 
             return RedirectToAction(nameof(Index));
@@ -177,13 +161,12 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var deletingLayout = await _service.GetByIdAsync((int)id);
-            if (deletingLayout == null)
+            var layoutVm = await _venueManagerClient.GetLayoutViewModelForDelete(HttpContext.GetJwtToken(), (int)id);
+            if (layoutVm == null)
             {
                 return NotFound();
             }
 
-            LayoutViewModel layoutVm = deletingLayout;
             return View(layoutVm);
         }
 
@@ -197,18 +180,8 @@ namespace TicketManagement.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _service.DeleteById(id);
+            await _venueManagerClient.DeleteLayout(HttpContext.GetJwtToken(), id);
             return RedirectToAction(nameof(Index));
-        }
-
-        /// <summary>
-        /// Check that layout exist.
-        /// </summary>
-        /// <param name="id">Id of layout.</param>
-        /// <returns>True if exists and false if not.</returns>
-        private async Task<bool> LayoutExists(int id)
-        {
-            return await _service.GetByIdAsync(id) is not null;
         }
     }
 }

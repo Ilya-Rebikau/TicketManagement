@@ -15,7 +15,6 @@ namespace TicketManagement.ControllersIntegrationTests
         }
 
         [Theory]
-        [InlineData("/")]
         [InlineData("/Layouts/Index")]
         [InlineData("/Layouts/Create")]
         [InlineData("/Layouts/Edit")]

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using TicketManagement.BusinessLogic.ModelsDTO;
+using TicketManagement.Web.ModelsDTO;
 
 namespace TicketManagement.Web.Models.Events
 {
@@ -64,10 +64,10 @@ namespace TicketManagement.Web.Models.Events
         public bool Checked { get; set; }
 
         /// <summary>
-        /// Privately gets or sets list of EventAreaViewModel objects.
+        /// Gets or sets list of EventAreaViewModel objects.
         /// EventAreaViewModel objects represents event areas.
         /// </summary>
-        public IList<EventAreaViewModelInEvent> EventAreas { private get; set; }
+        public IList<EventAreaViewModelInEvent> EventAreas { get; set; }
 
         /// <summary>
         /// Gets max X coordinate from event areas in event.

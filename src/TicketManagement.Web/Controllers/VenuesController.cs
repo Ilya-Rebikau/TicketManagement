@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.ModelsDTO;
+using TicketManagement.Web.Extensions;
 using TicketManagement.Web.Infrastructure;
+using TicketManagement.Web.Interfaces.HttpClients;
 using TicketManagement.Web.Models.Venues;
 
 namespace TicketManagement.Web.Controllers
@@ -19,17 +18,17 @@ namespace TicketManagement.Web.Controllers
     public class VenuesController : Controller
     {
         /// <summary>
-        /// VenueService object.
+        /// IVenueManagerClient object.
         /// </summary>
-        private readonly IService<VenueDto> _service;
+        private readonly IVenueManagerClient _venueManagerClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VenuesController"/> class.
         /// </summary>
-        /// <param name="service">VenueService object.</param>
-        public VenuesController(IService<VenueDto> service)
+        /// <param name="venueManagerClient">IVenueManagerClient object.</param>
+        public VenuesController(IVenueManagerClient venueManagerClient)
         {
-            _service = service;
+            _venueManagerClient = venueManagerClient;
         }
 
         /// <summary>
@@ -39,13 +38,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var venues = await _service.GetAllAsync();
-            var venuesVm = new List<VenueViewModel>();
-            foreach (var venue in venues)
-            {
-                venuesVm.Add(venue);
-            }
-
+            var venuesVm = await _venueManagerClient.GetVenueViewModels(HttpContext.GetJwtToken());
             return View(venuesVm);
         }
 
@@ -62,13 +55,12 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var venue = await _service.GetByIdAsync((int)id);
-            if (venue == null)
+            var venueVm = await _venueManagerClient.VenueDetails(HttpContext.GetJwtToken(), (int)id);
+            if (venueVm == null)
             {
                 return NotFound();
             }
 
-            VenueViewModel venueVm = venue;
             return View(venueVm);
         }
 
@@ -96,8 +88,7 @@ namespace TicketManagement.Web.Controllers
                 return View(venueVm);
             }
 
-            VenueDto venue = venueVm;
-            await _service.CreateAsync(venue);
+            await _venueManagerClient.CreateVenue(HttpContext.GetJwtToken(), venueVm);
             return RedirectToAction(nameof(Index));
         }
 
@@ -114,13 +105,12 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var updatingVenue = await _service.GetByIdAsync((int)id);
-            if (updatingVenue == null)
+            var venueVm = await _venueManagerClient.GetVenueViewModelForEdit(HttpContext.GetJwtToken(), (int)id);
+            if (venueVm == null)
             {
                 return NotFound();
             }
 
-            VenueViewModel venueVm = updatingVenue;
             return View(venueVm);
         }
 
@@ -144,21 +134,13 @@ namespace TicketManagement.Web.Controllers
                 return View(venueVm);
             }
 
-            VenueDto venue = venueVm;
             try
             {
-                await _service.UpdateAsync(venue);
+                await _venueManagerClient.EditVenue(HttpContext.GetJwtToken(), id, venueVm);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await VenueExists(venue.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return Conflict();
             }
 
             return RedirectToAction(nameof(Index));
@@ -177,13 +159,12 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var deletingVenue = await _service.GetByIdAsync((int)id);
-            if (deletingVenue == null)
+            var venueVm = await _venueManagerClient.GetVenueViewModelForDelete(HttpContext.GetJwtToken(), (int)id);
+            if (venueVm == null)
             {
                 return NotFound();
             }
 
-            VenueViewModel venueVm = deletingVenue;
             return View(venueVm);
         }
 
@@ -197,18 +178,8 @@ namespace TicketManagement.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _service.DeleteById(id);
+            await _venueManagerClient.DeleteVenue(HttpContext.GetJwtToken(), id);
             return RedirectToAction(nameof(Index));
-        }
-
-        /// <summary>
-        /// Check that venue exists.
-        /// </summary>
-        /// <param name="id">Id of venue.</param>
-        /// <returns>True if exists and false if not.</returns>
-        private async Task<bool> VenueExists(int id)
-        {
-            return await _service.GetByIdAsync(id) is not null;
         }
     }
 }

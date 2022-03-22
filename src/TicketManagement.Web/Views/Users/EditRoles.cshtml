@@ -6,11 +6,12 @@
 <h2>@loc["ChangePermissions"] @Model.UserEmail</h2>
 <hr />
 <form asp-action="EditRoles" method="post">
-    <input type="hidden" name="userId" value="@Model.UserId" />
+    <input type="hidden" asp-for="UserId" />
+    <input type="hidden" asp-for="UserEmail" />
     <div class="form-group">
         @foreach (IdentityRole role in Model.AllRoles)
         {
-            <input type="checkbox" class="form-check-input" name="roles" value="@role.Name"
+            <input type="checkbox" class="form-check-input" name="UserRoles" value="@role.Name"
                    @(Model.UserRoles.Contains(role.Name) ? "checked=\"checked\"" : "") />@role.Name <br />
         }
     </div>

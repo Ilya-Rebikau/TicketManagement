@@ -46,12 +46,12 @@
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-area="" asp-controller="EventAreas" asp-action="Index">@loc["EventAreas"]</a>
                             </li>
-                        }
-                        @if (User.IsInRole("admin"))
-                        {
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-area="" asp-controller="Tickets" asp-action="Index">@loc["Tickets"]</a>
                             </li>
+                        }
+                        @if (User.IsInRole("admin"))
+                        {
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-area="" asp-controller="Users" asp-action="Index">@loc["Users"]</a>
                             </li>

@@ -15,13 +15,9 @@ namespace TicketManagement.ControllersIntegrationTests
         }
 
         [Theory]
-        [InlineData("/")]
-        [InlineData("/Events/Index")]
         [InlineData("/Events/Create")]
         [InlineData("/Events/Edit")]
         [InlineData("/Events/Delete")]
-        [InlineData("/Events/Details/1")]
-        [InlineData("/Events/Buy")]
         public async Task Get_EndpointsReturnSuccessAndCorrectContentType(string url)
         {
             // Arrange

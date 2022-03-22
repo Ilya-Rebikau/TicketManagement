@@ -8,9 +8,9 @@ namespace TicketManagement.Web.Models.Account
     public class AccountViewModel
     {
         /// <summary>
-        /// Gets or sets user.
+        /// Gets or sets jwt token.
         /// </summary>
-        public User User { get; set; }
+        public string JwtToken { get; set; }
 
         /// <summary>
         /// Gets or sets list of AccountTicketViewModel objects.

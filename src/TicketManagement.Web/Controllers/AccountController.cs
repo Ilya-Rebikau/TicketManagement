@@ -1,12 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using TicketManagement.Web.Extensions;
 using TicketManagement.Web.Infrastructure;
 using TicketManagement.Web.Interfaces;
-using TicketManagement.Web.Models;
+using TicketManagement.Web.Interfaces.HttpClients;
 using TicketManagement.Web.Models.Account;
 
 namespace TicketManagement.Web.Controllers
@@ -19,46 +19,25 @@ namespace TicketManagement.Web.Controllers
     public class AccountController : Controller
     {
         /// <summary>
-        /// Const for showing error with wrong login or/and password from resource file.
-        /// </summary>
-        private const string WrongLoginPasswordResxKey = "WrongLoginPassword";
-
-        /// <summary>
         /// AccountWebService object.
         /// </summary>
         private readonly IAccountWebService _service;
 
         /// <summary>
-        /// UserManager object.
+        /// IPurchaseClient object.
         /// </summary>
-        private readonly UserManager<User> _userManager;
-
-        /// <summary>
-        /// SignInManager object.
-        /// </summary>
-        private readonly SignInManager<User> _signInManager;
-
-        /// <summary>
-        /// Localizer object.
-        /// </summary>
-        private readonly IStringLocalizer<AccountController> _localizer;
+        private readonly IPurchaseFlowClient _purchaseClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AccountController"/> class.
         /// </summary>
         /// <param name="service">AccountWebService object.</param>
-        /// <param name="userManager">UserManager object.</param>
-        /// <param name="signInManager">SignInManager object.</param>
-        /// <param name="localizer">Localizer object.</param>
+        /// <param name="purchaseClient">IPurchaseClient object.</param>
         public AccountController(IAccountWebService service,
-            UserManager<User> userManager,
-            SignInManager<User> signInManager,
-            IStringLocalizer<AccountController> localizer)
+            IPurchaseFlowClient purchaseClient)
         {
             _service = service;
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _localizer = localizer;
+            _purchaseClient = purchaseClient;
         }
 
         /// <summary>
@@ -84,20 +63,8 @@ namespace TicketManagement.Web.Controllers
                 return View(model);
             }
 
-            var result = await _service.RegisterUser(model);
-            if (result.Succeeded)
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            else
-            {
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-            }
-
-            return View(model);
+            await _service.RegisterUser(model, HttpContext);
+            return RedirectToAction(nameof(Index));
         }
 
         /// <summary>
@@ -125,36 +92,27 @@ namespace TicketManagement.Web.Controllers
                 return View(model);
             }
 
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
-            if (result.Succeeded)
+            await _service.LoginUser(model, HttpContext);
+            if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
             {
-                if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                {
-                    return Redirect(model.ReturnUrl);
-                }
-                else
-                {
-                    return RedirectToAction(nameof(Index), typeof(EventsController).GetControllerName());
-                }
+                return Redirect(model.ReturnUrl);
             }
             else
             {
-                ModelState.AddModelError("", _localizer[WrongLoginPasswordResxKey]);
+                return RedirectToAction(nameof(Index), typeof(EventsController).GetControllerName());
             }
-
-            return View(model);
         }
 
         /// <summary>
         /// Logout for user.
         /// </summary>
         /// <returns>Task with IActionResult.</returns>
-        [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin, user, event manager, venue manager")]
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
+            await _service.Logout(HttpContext);
             return RedirectToAction(nameof(Index), typeof(EventsController).GetControllerName());
         }
 
@@ -167,14 +125,13 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
+            var accountViewModel = await _service.GetEditAccountViewModelForEdit(HttpContext, id);
+            if (accountViewModel == null)
             {
                 return NotFound();
             }
 
-            EditAccountViewModel model = user;
-            return View(model);
+            return View(accountViewModel);
         }
 
         /// <summary>
@@ -191,19 +148,15 @@ namespace TicketManagement.Web.Controllers
                 return View(model);
             }
 
-            var user = await _userManager.FindByIdAsync(model.Id);
-            if (user != null)
+            var result = await _service.UpdateUserInEdit(HttpContext, model);
+            if (!result.Errors.Any())
             {
-                var result = await _service.UpdateUserInEdit(model, user);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
+                return RedirectToAction(nameof(Index));
+            }
 
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
             }
 
             return View(model);
@@ -218,14 +171,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> AddBalance(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            AddBalanceViewModel model = new () { Id = user.Id, Balance = user.Balance };
-            return View(model);
+            return View(await _service.GetAddBalanceViewModel(HttpContext, id));
         }
 
         /// <summary>
@@ -242,8 +188,8 @@ namespace TicketManagement.Web.Controllers
                 return View(model);
             }
 
-            var result = await _service.AddBalanceToUser(model);
-            if (result.Succeeded)
+            var result = await _service.AddBalanceToUser(HttpContext, model);
+            if (!result.Errors.Any())
             {
                 return RedirectToAction(nameof(Index));
             }
@@ -264,13 +210,14 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            if (user == null)
+            var accountVm = await _purchaseClient.GetAccountViewModelForPersonalAccount(HttpContext.GetJwtToken());
+            var user = await _service.GetUserFromJwt(accountVm.JwtToken);
+            var accountVmForPersonalAccout = new AccountViewModelForPersonalAccount
             {
-                return NotFound();
-            }
-
-            return View(await _service.GetAccountViewModelInIndex(user));
+                User = user,
+                Tickets = accountVm.Tickets,
+            };
+            return View(accountVmForPersonalAccout);
         }
     }
 }

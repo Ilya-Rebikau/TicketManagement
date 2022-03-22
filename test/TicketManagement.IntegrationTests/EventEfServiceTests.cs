@@ -1,17 +1,21 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.ModelsDTO;
-using TicketManagement.BusinessLogic.Services;
 using TicketManagement.DataAccess;
 using TicketManagement.DataAccess.Models;
 using TicketManagement.DataAccess.RepositoriesEf;
+using TicketManagement.EventManagerAPI.Automapper;
+using TicketManagement.EventManagerAPI.Interfaces;
+using TicketManagement.EventManagerAPI.ModelsDTO;
+using TicketManagement.EventManagerAPI.Services;
+using TicketManagement.VenueManagerAPI.ModelsDTO;
+using TicketManagement.VenueManagerAPI.Services;
 
 namespace TicketManagement.IntegrationTests
 {
@@ -20,7 +24,7 @@ namespace TicketManagement.IntegrationTests
     {
         private IService<EventDto> _service;
         private IService<EventAreaDto> _eventAreaService;
-        private IService<AreaDto> _areaService;
+        private VenueManagerAPI.Interfaces.IService<AreaDto> _areaService;
 
         [SetUp]
         public void Setup()
@@ -33,16 +37,25 @@ namespace TicketManagement.IntegrationTests
 
             builder.UseSqlServer(DbConnection.GetStringConnection())
                     .UseInternalServiceProvider(serviceProvider);
-
+            var configVenue = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new VenueManagerAPI.Automapper.AutoMapperProfile());
+            });
+            var mapperVenue = configVenue.CreateMapper();
+            var configEvent = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new AutoMapperProfile());
+            });
+            var mapperEvent = configEvent.CreateMapper();
             var context = new TicketManagementContext(builder.Options);
             var eventRepository = new EventEfRepository(context);
-            var converter = new BaseConverter<Event, EventDto>();
+            var converter = new ModelsConverter<Event, EventDto>(mapperEvent);
             var eventAreaRepository = new EventAreaEfRepository(context);
             var eventSeatRepository = new EfRepository<EventSeat>(context);
             var areaRepository = new AreaEfRepository(context);
-            _areaService = new AreaService(areaRepository, new BaseConverter<Area, AreaDto>());
-            _eventAreaService = new EventAreaService(eventAreaRepository, new BaseConverter<EventArea, EventAreaDto>(), eventSeatRepository);
-            _service = new EventService(eventRepository, converter, eventAreaRepository, eventSeatRepository);
+            _areaService = new AreaService(areaRepository, new VenueManagerAPI.Automapper.ModelsConverter<Area, AreaDto>(mapperVenue));
+            _eventAreaService = new EventAreaService(eventAreaRepository, new ModelsConverter<EventArea, EventAreaDto>(mapperEvent), eventSeatRepository);
+            _service = new EventCrudService(eventRepository, converter, eventAreaRepository, eventSeatRepository);
         }
 
         [Test]

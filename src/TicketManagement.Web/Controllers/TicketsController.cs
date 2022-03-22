@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.ModelsDTO;
+using TicketManagement.Web.Extensions;
 using TicketManagement.Web.Infrastructure;
+using TicketManagement.Web.Interfaces.HttpClients;
 using TicketManagement.Web.Models.Tickets;
 
 namespace TicketManagement.Web.Controllers
@@ -13,23 +12,23 @@ namespace TicketManagement.Web.Controllers
     /// <summary>
     /// Controller for tickets.
     /// </summary>
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin, event manager")]
     [ResponseCache(CacheProfileName = "Caching")]
     [ExceptionFilter]
     public class TicketsController : Controller
     {
         /// <summary>
-        /// TicketService object.
+        /// IEventManagerClient object.
         /// </summary>
-        private readonly IService<TicketDto> _service;
+        private readonly IEventManagerClient _eventManagerClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TicketsController"/> class.
         /// </summary>
-        /// <param name="service">TicketService object.</param>
-        public TicketsController(IService<TicketDto> service)
+        /// <param name="eventManagerClient">IEventManagerClient object.</param>
+        public TicketsController(IEventManagerClient eventManagerClient)
         {
-            _service = service;
+            _eventManagerClient = eventManagerClient;
         }
 
         /// <summary>
@@ -39,14 +38,8 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var tickets = await _service.GetAllAsync();
-            var ticketVm = new List<TicketViewModel>();
-            foreach (var ticket in tickets)
-            {
-                ticketVm.Add(ticket);
-            }
-
-            return View(ticketVm);
+            var ticketsVm = await _eventManagerClient.GetTicketViewModels(HttpContext.GetJwtToken());
+            return View(ticketsVm);
         }
 
         /// <summary>
@@ -62,13 +55,12 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var ticket = await _service.GetByIdAsync((int)id);
-            if (ticket == null)
+            var ticketVm = await _eventManagerClient.TicketDetails(HttpContext.GetJwtToken(), (int)id);
+            if (ticketVm is null)
             {
                 return NotFound();
             }
 
-            TicketViewModel ticketVm = ticket;
             return View(ticketVm);
         }
 
@@ -96,8 +88,7 @@ namespace TicketManagement.Web.Controllers
                 return View(ticketVm);
             }
 
-            TicketDto ticket = ticketVm;
-            await _service.CreateAsync(ticket);
+            await _eventManagerClient.CreateTicket(HttpContext.GetJwtToken(), ticketVm);
             return RedirectToAction(nameof(Index));
         }
 
@@ -114,13 +105,12 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var updatingTicket = await _service.GetByIdAsync((int)id);
-            if (updatingTicket == null)
+            var ticketVm = await _eventManagerClient.GetTicketViewModelForEdit(HttpContext.GetJwtToken(), (int)id);
+            if (ticketVm == null)
             {
                 return NotFound();
             }
 
-            TicketViewModel ticketVm = updatingTicket;
             return View(ticketVm);
         }
 
@@ -144,21 +134,13 @@ namespace TicketManagement.Web.Controllers
                 return View(ticketVm);
             }
 
-            TicketDto ticket = ticketVm;
             try
             {
-                await _service.UpdateAsync(ticket);
+                await _eventManagerClient.EditTicket(HttpContext.GetJwtToken(), id, ticketVm);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await TicketExists(ticket.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return Conflict();
             }
 
             return RedirectToAction(nameof(Index));
@@ -177,13 +159,12 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var deletingTicket = await _service.GetByIdAsync((int)id);
-            if (deletingTicket == null)
+            var ticketVm = await _eventManagerClient.GetTicketViewModelForDelete(HttpContext.GetJwtToken(), (int)id);
+            if (ticketVm == null)
             {
                 return NotFound();
             }
 
-            TicketViewModel ticketVm = deletingTicket;
             return View(ticketVm);
         }
 
@@ -197,18 +178,8 @@ namespace TicketManagement.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _service.DeleteById(id);
+            await _eventManagerClient.DeleteTicket(HttpContext.GetJwtToken(), id);
             return RedirectToAction(nameof(Index));
-        }
-
-        /// <summary>
-        /// Check that ticket exists.
-        /// </summary>
-        /// <param name="id">Id of ticket.</param>
-        /// <returns>True if exists and false if not.</returns>
-        private async Task<bool> TicketExists(int id)
-        {
-            return await _service.GetByIdAsync(id) is not null;
         }
     }
 }

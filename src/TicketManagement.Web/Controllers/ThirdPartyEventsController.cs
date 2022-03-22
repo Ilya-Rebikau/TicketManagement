@@ -5,8 +5,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TicketManagement.Web.Extensions;
 using TicketManagement.Web.Infrastructure;
-using TicketManagement.Web.Interfaces;
+using TicketManagement.Web.Interfaces.HttpClients;
 using TicketManagement.Web.Models.Events;
+using TicketManagement.Web.Models.ThirdPartyEvents;
 
 namespace TicketManagement.Web.Controllers
 {
@@ -19,17 +20,17 @@ namespace TicketManagement.Web.Controllers
     public class ThirdPartyEventsController : Controller
     {
         /// <summary>
-        /// IThirdPartyEventWebService object.
+        /// IEventManagerClient object.
         /// </summary>
-        private readonly IThirdPartyEventWebService _service;
+        private readonly IEventManagerClient _eventManagerClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ThirdPartyEventsController"/> class.
         /// </summary>
-        /// <param name="service">IThirdPartyEventWebService object.</param>
-        public ThirdPartyEventsController(IThirdPartyEventWebService service)
+        /// <param name="eventManagerClient">IEventManagerClient object.</param>
+        public ThirdPartyEventsController(IEventManagerClient eventManagerClient)
         {
-            _service = service;
+            _eventManagerClient = eventManagerClient;
         }
 
         [HttpGet]
@@ -41,13 +42,20 @@ namespace TicketManagement.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ShowEvents(IFormFile file)
         {
-            return View(await _service.GetEventViewModelsFromJson(file));
+            using var stream = file.OpenReadStream();
+            byte[] fileData = new byte[stream.Length];
+            await stream.ReadAsync(fileData);
+            var data = new ThirdPartyEventData
+            {
+                BytesData = fileData,
+            };
+            return View(await _eventManagerClient.GetThirdPartyEventViewModels(HttpContext.GetJwtToken(), data));
         }
 
         [HttpPost]
         public async Task<IActionResult> SaveToDatabaseAsync(IEnumerable<EventViewModel> events)
         {
-            await _service.SaveToDatabase(events);
+            await _eventManagerClient.SaveThirdPartyEventsToDatabase(HttpContext.GetJwtToken(), events);
             return RedirectToAction(nameof(Index), typeof(EventsController).GetControllerName());
         }
     }

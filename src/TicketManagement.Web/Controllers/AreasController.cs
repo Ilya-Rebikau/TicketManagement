@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.ModelsDTO;
+using TicketManagement.Web.Extensions;
 using TicketManagement.Web.Infrastructure;
+using TicketManagement.Web.Interfaces.HttpClients;
 using TicketManagement.Web.Models.Areas;
 
 namespace TicketManagement.Web.Controllers
@@ -19,17 +18,17 @@ namespace TicketManagement.Web.Controllers
     public class AreasController : Controller
     {
         /// <summary>
-        /// AreaService object.
+        /// IVenueManagerClient object.
         /// </summary>
-        private readonly IService<AreaDto> _service;
+        private readonly IVenueManagerClient _venueManagerClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AreasController"/> class.
         /// </summary>
-        /// <param name="service">AreaService object.</param>
-        public AreasController(IService<AreaDto> service)
+        /// <param name="venueManagerClient">IVenueManagerClient object.</param>
+        public AreasController(IVenueManagerClient venueManagerClient)
         {
-            _service = service;
+            _venueManagerClient = venueManagerClient;
         }
 
         /// <summary>
@@ -39,14 +38,8 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var areas = await _service.GetAllAsync();
-            var areasVm = new List<AreaViewModel>();
-            foreach (var area in areas)
-            {
-                areasVm.Add(area);
-            }
-
-            return View(areasVm);
+            var areas = await _venueManagerClient.GetAreaViewModels(HttpContext.GetJwtToken());
+            return View(areas);
         }
 
         /// <summary>
@@ -62,13 +55,12 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var area = await _service.GetByIdAsync((int)id);
-            if (area == null)
+            var areaVm = await _venueManagerClient.AreaDetails(HttpContext.GetJwtToken(), (int)id);
+            if (areaVm == null)
             {
                 return NotFound();
             }
 
-            AreaViewModel areaVm = area;
             return View(areaVm);
         }
 
@@ -96,8 +88,7 @@ namespace TicketManagement.Web.Controllers
                 return View(areaVm);
             }
 
-            AreaDto area = areaVm;
-            await _service.CreateAsync(area);
+            await _venueManagerClient.CreateArea(HttpContext.GetJwtToken(), areaVm);
             return RedirectToAction(nameof(Index));
         }
 
@@ -114,13 +105,12 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var updatingArea = await _service.GetByIdAsync((int)id);
-            if (updatingArea == null)
+            var areaVm = await _venueManagerClient.GetAreaViewModelForEdit(HttpContext.GetJwtToken(), (int)id);
+            if (areaVm == null)
             {
                 return NotFound();
             }
 
-            AreaViewModel areaVm = updatingArea;
             return View(areaVm);
         }
 
@@ -144,21 +134,13 @@ namespace TicketManagement.Web.Controllers
                 return View(areaVm);
             }
 
-            AreaDto area = areaVm;
             try
             {
-                await _service.UpdateAsync(area);
+                await _venueManagerClient.EditArea(HttpContext.GetJwtToken(), id, areaVm);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await AreaExists(area.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return Conflict();
             }
 
             return RedirectToAction(nameof(Index));
@@ -177,13 +159,12 @@ namespace TicketManagement.Web.Controllers
                 return NotFound();
             }
 
-            var deletingArea = await _service.GetByIdAsync((int)id);
-            if (deletingArea == null)
+            var areaVm = await _venueManagerClient.GetAreaViewModelForDelete(HttpContext.GetJwtToken(), (int)id);
+            if (areaVm == null)
             {
                 return NotFound();
             }
 
-            AreaViewModel areaVm = deletingArea;
             return View(areaVm);
         }
 
@@ -197,18 +178,8 @@ namespace TicketManagement.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _service.DeleteById(id);
+            await _venueManagerClient.DeleteArea(HttpContext.GetJwtToken(), id);
             return RedirectToAction(nameof(Index));
-        }
-
-        /// <summary>
-        /// Check that area exist.
-        /// </summary>
-        /// <param name="id">Id of deleting area.</param>
-        /// <returns>True if exists and false if not.</returns>
-        private async Task<bool> AreaExists(int id)
-        {
-            return await _service.GetByIdAsync(id) is not null;
         }
     }
 }
