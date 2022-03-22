@@ -15,7 +15,6 @@ namespace TicketManagement.ControllersIntegrationTests
         }
 
         [Theory]
-        [InlineData("/")]
         [InlineData("/EventSeats/Index")]
         [InlineData("/EventSeats/Create")]
         [InlineData("/EventSeats/Edit")]

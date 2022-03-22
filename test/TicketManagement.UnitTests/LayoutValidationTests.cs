@@ -4,11 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.ModelsDTO;
-using TicketManagement.BusinessLogic.Services;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.VenueManagerAPI.Interfaces;
+using TicketManagement.VenueManagerAPI.ModelsDTO;
+using TicketManagement.VenueManagerAPI.Services;
 
 namespace TicketManagement.UnitTests
 {

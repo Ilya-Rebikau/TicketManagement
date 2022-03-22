@@ -1,16 +1,17 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.ModelsDTO;
-using TicketManagement.BusinessLogic.Services;
 using TicketManagement.DataAccess;
 using TicketManagement.DataAccess.Models;
 using TicketManagement.DataAccess.RepositoriesEf;
+using TicketManagement.EventManagerAPI.Automapper;
+using TicketManagement.EventManagerAPI.Interfaces;
+using TicketManagement.EventManagerAPI.ModelsDTO;
+using TicketManagement.EventManagerAPI.Services;
 
 namespace TicketManagement.IntegrationTests
 {
@@ -31,12 +32,16 @@ namespace TicketManagement.IntegrationTests
 
             builder.UseSqlServer(DbConnection.GetStringConnection())
                     .UseInternalServiceProvider(serviceProvider);
-
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new AutoMapperProfile());
+            });
+            var mapper = config.CreateMapper();
             var context = new TicketManagementContext(builder.Options);
             var eventAreaRepository = new EventAreaEfRepository(context);
-            var converter = new BaseConverter<EventArea, EventAreaDto>();
+            var converter = new ModelsConverter<EventArea, EventAreaDto>(mapper);
             var eventSeatRepository = new EfRepository<EventSeat>(context);
-            _eventSeatService = new EventSeatService(eventSeatRepository, new BaseConverter<EventSeat, EventSeatDto>());
+            _eventSeatService = new EventSeatService(eventSeatRepository, new ModelsConverter<EventSeat, EventSeatDto>(mapper));
             _service = new EventAreaService(eventAreaRepository, converter, eventSeatRepository);
         }
 

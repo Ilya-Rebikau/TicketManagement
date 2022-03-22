@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using NUnit.Framework;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.ModelsDTO;
-using TicketManagement.BusinessLogic.Services;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.EventManagerAPI.Interfaces;
+using TicketManagement.EventManagerAPI.ModelsDTO;
+using TicketManagement.EventManagerAPI.Services;
 
 namespace TicketManagement.UnitTests
 {

@@ -1,16 +1,17 @@
-﻿using System.Data.SqlClient;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.ModelsDTO;
-using TicketManagement.BusinessLogic.Services;
 using TicketManagement.DataAccess;
 using TicketManagement.DataAccess.Models;
 using TicketManagement.DataAccess.RepositoriesEf;
+using TicketManagement.VenueManagerAPI.Automapper;
+using TicketManagement.VenueManagerAPI.Interfaces;
+using TicketManagement.VenueManagerAPI.ModelsDTO;
+using TicketManagement.VenueManagerAPI.Services;
 
 namespace TicketManagement.IntegrationTests
 {
@@ -31,15 +32,19 @@ namespace TicketManagement.IntegrationTests
 
             builder.UseSqlServer(DbConnection.GetStringConnection())
                     .UseInternalServiceProvider(serviceProvider);
-
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new AutoMapperProfile());
+            });
+            var mapper = config.CreateMapper();
             var context = new TicketManagementContext(builder.Options);
             var layoutRepository = new LayoutEfRepository(context);
             var eventRepository = new EventEfRepository(context);
             var eventAreaRepository = new EventAreaEfRepository(context);
             var eventSeatRepository = new EfRepository<EventSeat>(context);
             var venueRepository = new VenueEfRepository(context);
-            var venueConverter = new BaseConverter<Venue, VenueDto>();
-            var layoutConverter = new BaseConverter<Layout, LayoutDto>();
+            var venueConverter = new ModelsConverter<Venue, VenueDto>(mapper);
+            var layoutConverter = new ModelsConverter<Layout, LayoutDto>(mapper);
             _service = new VenueService(venueRepository, venueConverter, layoutRepository, eventRepository,
                 eventAreaRepository, eventSeatRepository);
             _layoutService = new LayoutService(layoutRepository, layoutConverter, eventRepository, eventAreaRepository, eventSeatRepository);
