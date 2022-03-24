@@ -4,9 +4,9 @@ using TicketManagement.VenueManagerAPI.ModelsDTO;
 namespace TicketManagement.VenueManagerAPI.Models.Areas
 {
     /// <summary>
-    /// Area view model.
+    /// Area model.
     /// </summary>
-    public class AreaViewModel
+    public class AreaModel
     {
         /// <summary>
         /// Gets or sets id.
@@ -52,9 +52,9 @@ namespace TicketManagement.VenueManagerAPI.Models.Areas
         /// Convert area dto to area view model.
         /// </summary>
         /// <param name="area">Area dto.</param>
-        public static implicit operator AreaViewModel(AreaDto area)
+        public static implicit operator AreaModel(AreaDto area)
         {
-            return new AreaViewModel
+            return new AreaModel
             {
                 Id = area.Id,
                 LayoutId = area.LayoutId,
@@ -69,7 +69,7 @@ namespace TicketManagement.VenueManagerAPI.Models.Areas
         /// Convert area view model to area dto.
         /// </summary>
         /// <param name="areaVm">Area view model.</param>
-        public static implicit operator AreaDto(AreaViewModel areaVm)
+        public static implicit operator AreaDto(AreaModel areaVm)
         {
             return new AreaDto
             {

@@ -30,11 +30,11 @@ namespace TicketManagement.EventManagerAPI.Services
             _service = service;
         }
 
-        public async Task<IEnumerable<EventViewModel>> GetEventViewModelsFromJson(byte[] fileData)
+        public async Task<IEnumerable<EventModel>> GetEventViewModelsFromJson(byte[] fileData)
         {
             var json = Encoding.Default.GetString(fileData);
             var events = await _reader.GetAllAsync(json);
-            var eventsVm = new List<EventViewModel>();
+            var eventsVm = new List<EventModel>();
             foreach (var @event in events)
             {
                 eventsVm.Add(@event);
@@ -43,15 +43,15 @@ namespace TicketManagement.EventManagerAPI.Services
             return eventsVm;
         }
 
-        public async Task<IEnumerable<EventViewModel>> SaveToDatabase(IEnumerable<EventViewModel> events)
+        public async Task<IEnumerable<EventModel>> SaveToDatabase(IEnumerable<EventModel> events)
         {
-            var savedEvents = new List<EventViewModel>();
+            var savedEvents = new List<EventModel>();
             foreach (var @event in events)
             {
                 if (@event.Checked is true)
                 {
                     await _service.CreateAsync(@event);
-                    EventViewModel eventVm = @event;
+                    EventModel eventVm = @event;
                     savedEvents.Add(eventVm);
                 }
             }

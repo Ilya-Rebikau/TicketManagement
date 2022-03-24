@@ -50,18 +50,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var areaVm = await _venueManagerClient.AreaDetails(HttpContext.GetJwtToken(), (int)id);
-            if (areaVm == null)
-            {
-                return NotFound();
-            }
-
-            return View(areaVm);
+            return id is null ? NotFound() : View(await _venueManagerClient.AreaDetails(HttpContext.GetJwtToken(), (int)id));
         }
 
         /// <summary>
@@ -100,18 +89,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var areaVm = await _venueManagerClient.GetAreaViewModelForEdit(HttpContext.GetJwtToken(), (int)id);
-            if (areaVm == null)
-            {
-                return NotFound();
-            }
-
-            return View(areaVm);
+            return id is null ? NotFound() : View(await _venueManagerClient.GetAreaViewModelForEdit(HttpContext.GetJwtToken(), (int)id));
         }
 
         /// <summary>
@@ -154,18 +132,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var areaVm = await _venueManagerClient.GetAreaViewModelForDelete(HttpContext.GetJwtToken(), (int)id);
-            if (areaVm == null)
-            {
-                return NotFound();
-            }
-
-            return View(areaVm);
+            return id is null ? NotFound() : View(await _venueManagerClient.GetAreaViewModelForDelete(HttpContext.GetJwtToken(), (int)id));
         }
 
         /// <summary>

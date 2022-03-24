@@ -126,12 +126,7 @@ namespace TicketManagement.Web.Controllers
         public async Task<IActionResult> Edit(string id)
         {
             var accountViewModel = await _service.GetEditAccountViewModelForEdit(HttpContext, id);
-            if (accountViewModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(accountViewModel);
+            return accountViewModel is null ? NotFound() : View(accountViewModel);
         }
 
         /// <summary>

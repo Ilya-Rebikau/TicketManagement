@@ -1,9 +1,9 @@
 ﻿namespace TicketManagement.UserAPI.Models.Users
 {
     /// <summary>
-    /// Create user view model.
+    /// Create user model.
     /// </summary>
-    public class CreateUserViewModel
+    public class CreateUserModel
     {
         /// <summary>
         /// Gets or sets user email.

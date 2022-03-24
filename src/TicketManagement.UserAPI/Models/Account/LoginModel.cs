@@ -1,9 +1,9 @@
 ﻿namespace TicketManagement.UserAPI.Models.Account
 {
     /// <summary>
-    /// Register view model.
+    /// Login view model.
     /// </summary>
-    public class RegisterViewModel
+    public class LoginModel
     {
         /// <summary>
         /// Gets or sets email.
@@ -16,8 +16,14 @@
         public string Password { get; set; }
 
         /// <summary>
-        /// Gets or sets password confirmation.
+        /// Gets or sets state about remember user or no.
         /// </summary>
-        public string PasswordConfirm { get; set; }
+        public bool RememberMe { get; set; }
+
+        /// <summary>
+        /// Gets or sets url.
+        /// Url with place after login.
+        /// </summary>
+        public string ReturnUrl { get; set; }
     }
 }

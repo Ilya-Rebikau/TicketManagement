@@ -5,9 +5,9 @@ using TicketManagement.EventManagerAPI.ModelsDTO;
 namespace TicketManagement.EventManagerAPI.Models.Events
 {
     /// <summary>
-    /// EventArea view model.
+    /// Event area model in event.
     /// </summary>
-    public class EventAreaViewModelInEvent
+    public class EventAreaModelInEvent
     {
         /// <summary>
         /// Gets or sets EventArea.
@@ -22,7 +22,7 @@ namespace TicketManagement.EventManagerAPI.Models.Events
         {
             get
             {
-                return EventSeats.Count > 0 ? EventSeats.Max(x => x.Row) : 0;
+                return EventSeats.Count > 0 || EventSeats is not null ? EventSeats.Max(x => x.Row) : 0;
             }
         }
 
@@ -34,7 +34,7 @@ namespace TicketManagement.EventManagerAPI.Models.Events
         {
             get
             {
-                return EventSeats.Count > 0 ? EventSeats.Max(x => x.Number) : 0;
+                return EventSeats.Count > 0 || EventSeats is not null ? EventSeats.Max(x => x.Number) : 0;
             }
         }
 
@@ -51,13 +51,7 @@ namespace TicketManagement.EventManagerAPI.Models.Events
         /// <returns>True if exists and false if does not.</returns>
         public bool CheckSeatForExist(int x, int y)
         {
-            var seat = EventSeats.FirstOrDefault(e => e.Row == x && e.Number == y);
-            if (seat is not null)
-            {
-                return true;
-            }
-
-            return false;
+            return EventSeats.FirstOrDefault(e => e.Row == x && e.Number == y) is not null;
         }
     }
 }

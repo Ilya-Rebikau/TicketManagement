@@ -51,19 +51,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var eventSeat = await _eventManagerClient.EventSeatDetails(HttpContext.GetJwtToken(), (int)id);
-            if (eventSeat == null)
-            {
-                return NotFound();
-            }
-
-            EventSeatViewModel eventSeatVm = eventSeat;
-            return View(eventSeatVm);
+            return id is null ? NotFound() : View(await _eventManagerClient.EventSeatDetails(HttpContext.GetJwtToken(), (int)id));
         }
 
         /// <summary>
@@ -103,19 +91,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var updatingEventSeat = await _eventManagerClient.GetEventSeatViewModelForEdit(HttpContext.GetJwtToken(), (int)id);
-            if (updatingEventSeat == null)
-            {
-                return NotFound();
-            }
-
-            EventSeatViewModel eventSeatVm = updatingEventSeat;
-            return View(eventSeatVm);
+            return id is null ? NotFound() : View(await _eventManagerClient.GetEventSeatViewModelForEdit(HttpContext.GetJwtToken(), (int)id));
         }
 
         /// <summary>
@@ -158,19 +134,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var deletingEventSeat = await _eventManagerClient.GetEventSeatViewModelForDelete(HttpContext.GetJwtToken(), (int)id);
-            if (deletingEventSeat == null)
-            {
-                return NotFound();
-            }
-
-            EventSeatViewModel eventSeatVm = deletingEventSeat;
-            return View(eventSeatVm);
+            return id is null ? NotFound() : View(await _eventManagerClient.GetEventSeatViewModelForDelete(HttpContext.GetJwtToken(), (int)id));
         }
 
         /// <summary>

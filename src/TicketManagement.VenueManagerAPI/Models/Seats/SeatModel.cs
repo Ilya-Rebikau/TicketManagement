@@ -4,9 +4,9 @@ using TicketManagement.VenueManagerAPI.ModelsDTO;
 namespace TicketManagement.VenueManagerAPI.Models.Seats
 {
     /// <summary>
-    /// Seat view model.
+    /// Seat model.
     /// </summary>
-    public class SeatViewModel
+    public class SeatModel
     {
         /// <summary>
         /// Gets or sets id.
@@ -38,9 +38,9 @@ namespace TicketManagement.VenueManagerAPI.Models.Seats
         /// Convert seat dto to seat view model.
         /// </summary>
         /// <param name="seat">Seat dto.</param>
-        public static implicit operator SeatViewModel(SeatDto seat)
+        public static implicit operator SeatModel(SeatDto seat)
         {
-            return new SeatViewModel
+            return new SeatModel
             {
                 Id = seat.Id,
                 AreaId = seat.AreaId,
@@ -53,7 +53,7 @@ namespace TicketManagement.VenueManagerAPI.Models.Seats
         /// Convert seat view model to seat dto.
         /// </summary>
         /// <param name="seatVm">Seat view model.</param>
-        public static implicit operator SeatDto(SeatViewModel seatVm)
+        public static implicit operator SeatDto(SeatModel seatVm)
         {
             return new SeatDto
             {

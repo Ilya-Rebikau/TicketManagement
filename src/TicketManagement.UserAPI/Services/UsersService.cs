@@ -44,7 +44,7 @@ namespace TicketManagement.UserAPI.Services
             _baseUserRole = configuration.GetValue<string>("BaseRole");
         }
 
-        public async Task<IdentityResult> UpdateUserInEditAsync(EditUserViewModel model)
+        public async Task<IdentityResult> UpdateUserInEditAsync(EditUserModel model)
         {
             var user = await _userManager.FindByIdAsync(model.Id);
             user.Email = model.Email;
@@ -76,12 +76,12 @@ namespace TicketManagement.UserAPI.Services
             return id;
         }
 
-        public async Task<ChangeRoleViewModel> GetChangeRoleViewModel(string id)
+        public async Task<ChangeRoleModel> GetChangeRoleViewModel(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
             var userRoles = await _userManager.GetRolesAsync(user);
             var allRoles = _roleManager.Roles.ToList();
-            var model = new ChangeRoleViewModel
+            var model = new ChangeRoleModel
             {
                 UserId = user.Id,
                 UserEmail = user.UserName,
@@ -91,7 +91,7 @@ namespace TicketManagement.UserAPI.Services
             return model;
         }
 
-        public async Task EditRoles(ChangeRoleViewModel model)
+        public async Task EditRoles(ChangeRoleModel model)
         {
             model.AllRoles = _roleManager.Roles.ToList();
             var user = await _userManager.FindByIdAsync(model.UserId);
@@ -107,7 +107,7 @@ namespace TicketManagement.UserAPI.Services
             return Task.FromResult(_userManager.Users.AsEnumerable());
         }
 
-        public async Task<IdentityResult> CreateUser(CreateUserViewModel model)
+        public async Task<IdentityResult> CreateUser(CreateUserModel model)
         {
             var user = new User { Email = model.Email, UserName = model.Email };
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -119,10 +119,10 @@ namespace TicketManagement.UserAPI.Services
             return result;
         }
 
-        public async Task<EditUserViewModel> GetEditUserViewModel(string id)
+        public async Task<EditUserModel> GetEditUserViewModel(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            var model = new EditUserViewModel
+            var model = new EditUserModel
             {
                 Id = user.Id,
                 Email = user.Email,
@@ -134,10 +134,10 @@ namespace TicketManagement.UserAPI.Services
             return model;
         }
 
-        public async Task<ChangePasswordViewModel> GetChangePasswordViewModel(string id)
+        public async Task<ChangePasswordModel> GetChangePasswordViewModel(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            var model = new ChangePasswordViewModel
+            var model = new ChangePasswordModel
             {
                 Id = user.Id,
                 Email = user.Email,
@@ -145,7 +145,7 @@ namespace TicketManagement.UserAPI.Services
             return model;
         }
 
-        public async Task<IdentityResult> ChangePassword(ChangePasswordViewModel model, HttpContext httpContext)
+        public async Task<IdentityResult> ChangePassword(ChangePasswordModel model, HttpContext httpContext)
         {
             var user = await _userManager.FindByIdAsync(model.Id);
             if (user is null)

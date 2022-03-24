@@ -39,13 +39,13 @@ namespace TicketManagement.EventManagerAPI.Controllers
         public async Task<IActionResult> GetEventAreaViewModels()
         {
             var eventAreas = await _service.GetAllAsync();
-            var eventAreasVm = new List<EventAreaViewModel>();
+            var eventAreaModels = new List<EventAreaModel>();
             foreach (var eventArea in eventAreas)
             {
-                eventAreasVm.Add(eventArea);
+                eventAreaModels.Add(eventArea);
             }
 
-            return Ok(eventAreasVm);
+            return Ok(eventAreaModels);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// <param name="eventAreaVm">Adding event area.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost("create")]
-        public async Task<IActionResult> Create([FromBody] EventAreaViewModel eventAreaVm)
+        public async Task<IActionResult> Create([FromBody] EventAreaModel eventAreaVm)
         {
             EventAreaDto eventArea = eventAreaVm;
             await _service.CreateAsync(eventArea);
@@ -82,30 +82,23 @@ namespace TicketManagement.EventManagerAPI.Controllers
         public async Task<IActionResult> Edit([FromRoute] int id)
         {
             var updatingEventArea = await _service.GetByIdAsync(id);
-            if (updatingEventArea is null)
-            {
-                return NotFound();
-            }
-
-            EventAreaViewModel eventAreaVm = updatingEventArea;
-            return Ok(eventAreaVm);
+            return updatingEventArea is null ? NotFound() : Ok(updatingEventArea);
         }
 
         /// <summary>
         /// Edit event area.
         /// </summary>
         /// <param name="id">Id of editing event area.</param>
-        /// <param name="eventAreaVm">Edited event area.</param>
+        /// <param name="eventArea">Edited event area.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPut("edit/{id}")]
-        public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] EventAreaViewModel eventAreaVm)
+        public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] EventAreaModel eventArea)
         {
-            if (id != eventAreaVm.Id)
+            if (id != eventArea.Id)
             {
                 return NotFound();
             }
 
-            EventAreaDto eventArea = eventAreaVm;
             try
             {
                 await _service.UpdateAsync(eventArea);
@@ -133,13 +126,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var deletingEventArea = await _service.GetByIdAsync(id);
-            if (deletingEventArea is null)
-            {
-                return NotFound();
-            }
-
-            EventAreaViewModel eventAreaVm = deletingEventArea;
-            return Ok(eventAreaVm);
+            return deletingEventArea is null ? NotFound() : Ok(deletingEventArea);
         }
 
         /// <summary>

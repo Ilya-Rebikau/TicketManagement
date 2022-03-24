@@ -57,19 +57,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var eventArea = await _eventManagerClient.EventAreaDetails(HttpContext.GetJwtToken(), (int)id);
-            if (eventArea == null)
-            {
-                return NotFound();
-            }
-
-            EventAreaViewModel eventAreaVm = eventArea;
-            return View(eventAreaVm);
+            return id is null ? NotFound() : View(await _eventManagerClient.EventAreaDetails(HttpContext.GetJwtToken(), (int)id));
         }
 
         /// <summary>
@@ -96,8 +84,7 @@ namespace TicketManagement.Web.Controllers
                 return View(eventAreaVm);
             }
 
-            EventAreaDto eventArea = eventAreaVm;
-            await _eventManagerClient.CreateEventArea(HttpContext.GetJwtToken(), eventArea);
+            await _eventManagerClient.CreateEventArea(HttpContext.GetJwtToken(), eventAreaVm);
             return RedirectToAction(nameof(Index));
         }
 
@@ -109,13 +96,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var eventAreaVm = await _eventManagerClient.GetEventAreaViewModelForEdit(HttpContext.GetJwtToken(), (int)id);
-            return View(eventAreaVm);
+            return id is null ? NotFound() : View(await _eventManagerClient.GetEventAreaViewModelForEdit(HttpContext.GetJwtToken(), (int)id));
         }
 
         /// <summary>
@@ -158,13 +139,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var eventAreaVm = await _eventManagerClient.GetEventAreaViewModelForDelete(HttpContext.GetJwtToken(), (int)id);
-            return View(eventAreaVm);
+            return id is null ? NotFound() : View(await _eventManagerClient.GetEventAreaViewModelForDelete(HttpContext.GetJwtToken(), (int)id));
         }
 
         /// <summary>

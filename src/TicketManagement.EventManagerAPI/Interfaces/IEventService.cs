@@ -14,7 +14,7 @@ namespace TicketManagement.EventManagerAPI.Interfaces
         /// Get all event view models.
         /// </summary>
         /// <returns>Collection of event view models.</returns>
-        Task<IEnumerable<EventViewModel>> GetAllEventViewModelsAsync();
+        Task<IEnumerable<EventModel>> GetAllEventViewModelsAsync();
 
         /// <summary>
         /// Get event view model for details method.
@@ -22,7 +22,7 @@ namespace TicketManagement.EventManagerAPI.Interfaces
         /// <param name="event">Event dto model for convertations.</param>
         /// <param name="token">Jwt token of user.</param>
         /// <returns>Event view model.</returns>
-        Task<EventViewModel> GetEventViewModelForDetailsAsync(EventDto @event, string token);
+        Task<EventModel> GetEventViewModelForDetailsAsync(EventDto @event, string token);
 
         /// <summary>
         /// Get event view model for edit and delete methods.
@@ -30,6 +30,6 @@ namespace TicketManagement.EventManagerAPI.Interfaces
         /// <param name="event">Event.</param>
         /// <param name="token">Jwt token of user.</param>
         /// <returns>Event view model.</returns>
-        Task<EventViewModel> GetEventViewModelForEditAndDeleteAsync(EventDto @event, string token);
+        Task<EventModel> GetEventViewModelForEditAndDeleteAsync(EventDto @event, string token);
     }
 }

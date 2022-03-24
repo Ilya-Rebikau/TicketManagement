@@ -3,9 +3,9 @@
 namespace TicketManagement.EventManagerAPI.Models.EventSeats
 {
     /// <summary>
-    /// Event seat view model.
+    /// Event seat model.
     /// </summary>
-    public class EventSeatViewModel
+    public class EventSeatModel
     {
         /// <summary>
         /// Gets or sets id.
@@ -36,9 +36,9 @@ namespace TicketManagement.EventManagerAPI.Models.EventSeats
         /// Convert event seat dto to event seat view model.
         /// </summary>
         /// <param name="eventSeat">Event seat dto.</param>
-        public static implicit operator EventSeatViewModel(EventSeatDto eventSeat)
+        public static implicit operator EventSeatModel(EventSeatDto eventSeat)
         {
-            return new EventSeatViewModel
+            return new EventSeatModel
             {
                 Id = eventSeat.Id,
                 EventAreaId = eventSeat.EventAreaId,
@@ -52,7 +52,7 @@ namespace TicketManagement.EventManagerAPI.Models.EventSeats
         /// Convert event seat view model to event seat dto.
         /// </summary>
         /// <param name="eventSeatVm">Event seat view model.</param>
-        public static implicit operator EventSeatDto(EventSeatViewModel eventSeatVm)
+        public static implicit operator EventSeatDto(EventSeatModel eventSeatVm)
         {
             return new EventSeatDto
             {

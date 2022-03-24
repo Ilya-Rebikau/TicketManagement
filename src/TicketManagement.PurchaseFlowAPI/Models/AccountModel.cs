@@ -3,9 +3,9 @@
 namespace TicketManagement.PurchaseFlowAPI.Models
 {
     /// <summary>
-    /// Account view model.
+    /// Account model.
     /// </summary>
-    public class AccountViewModel
+    public class AccountModel
     {
         /// <summary>
         /// Gets or sets jwt token.
@@ -16,6 +16,6 @@ namespace TicketManagement.PurchaseFlowAPI.Models
         /// Gets or sets list of AccountTicketViewModel objects.
         /// Represent tickets.
         /// </summary>
-        public IList<AccountTicketViewModel> Tickets { get; set; }
+        public IList<AccountTicketModel> Tickets { get; set; }
     }
 }

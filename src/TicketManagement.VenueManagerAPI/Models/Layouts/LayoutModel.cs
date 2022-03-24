@@ -4,9 +4,9 @@ using TicketManagement.VenueManagerAPI.ModelsDTO;
 namespace TicketManagement.VenueManagerAPI.Models.Layouts
 {
     /// <summary>
-    /// Layout view model.
+    /// Layout model.
     /// </summary>
-    public class LayoutViewModel
+    public class LayoutModel
     {
         /// <summary>
         /// Gets or sets id.
@@ -38,9 +38,9 @@ namespace TicketManagement.VenueManagerAPI.Models.Layouts
         /// Convert layout dto to layout view model.
         /// </summary>
         /// <param name="layout">Layout dto.</param>
-        public static implicit operator LayoutViewModel(LayoutDto layout)
+        public static implicit operator LayoutModel(LayoutDto layout)
         {
-            return new LayoutViewModel
+            return new LayoutModel
             {
                 Id = layout.Id,
                 Name = layout.Name,
@@ -53,7 +53,7 @@ namespace TicketManagement.VenueManagerAPI.Models.Layouts
         /// Convert layout view model to layout dto.
         /// </summary>
         /// <param name="layoutVm">Layout view model.</param>
-        public static implicit operator LayoutDto(LayoutViewModel layoutVm)
+        public static implicit operator LayoutDto(LayoutModel layoutVm)
         {
             return new LayoutDto
             {

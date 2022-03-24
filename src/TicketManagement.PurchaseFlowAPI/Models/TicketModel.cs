@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using TicketManagement.EventManagerAPI.ModelsDTO;
+using TicketManagement.PurchaseFlowAPI.ModelsDTO;
 
-namespace TicketManagement.EventManagerAPI.Models.Tickets
+namespace TicketManagement.PurchaseFlowAPI.Models
 {
     /// <summary>
-    /// Ticket view model for events.
+    /// Ticket model for events.
     /// </summary>
-    public class TicketViewModel
+    public class TicketModel
     {
         /// <summary>
         /// Gets or sets id.
@@ -36,9 +36,9 @@ namespace TicketManagement.EventManagerAPI.Models.Tickets
         /// Convert ticket dto to ticket view model.
         /// </summary>
         /// <param name="ticket">ticket dto.</param>
-        public static implicit operator TicketViewModel(TicketDto ticket)
+        public static implicit operator TicketModel(TicketDto ticket)
         {
-            return new TicketViewModel
+            return new TicketModel
             {
                 Id = ticket.Id,
                 EventSeatId = ticket.EventSeatId,
@@ -50,7 +50,7 @@ namespace TicketManagement.EventManagerAPI.Models.Tickets
         /// Convert ticket view model to ticket dto.
         /// </summary>
         /// <param name="ticketVm">ticket view model.</param>
-        public static implicit operator TicketDto(TicketViewModel ticketVm)
+        public static implicit operator TicketDto(TicketModel ticketVm)
         {
             return new TicketDto
             {

@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace TicketManagement.UserAPI.Models.Account
 {
-    public class EditAccountViewModel
+    /// <summary>
+    /// Edit account model.
+    /// </summary>
+    public class EditAccountModel
     {
         /// <summary>
         /// Gets or sets user id.
@@ -40,9 +43,9 @@ namespace TicketManagement.UserAPI.Models.Account
         /// Convert user to edit account view model.
         /// </summary>
         /// <param name="user">User.</param>
-        public static implicit operator EditAccountViewModel(User user)
+        public static implicit operator EditAccountModel(User user)
         {
-            return new EditAccountViewModel
+            return new EditAccountModel
             {
                 Id = user.Id,
                 Email = user.Email,

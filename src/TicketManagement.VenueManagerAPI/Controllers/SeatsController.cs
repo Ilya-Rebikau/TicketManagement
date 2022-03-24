@@ -39,13 +39,13 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         public async Task<IActionResult> GetSeats()
         {
             var seats = await _service.GetAllAsync();
-            var seatsVm = new List<SeatViewModel>();
+            var seatModels = new List<SeatModel>();
             foreach (var seat in seats)
             {
-                seatsVm.Add(seat);
+                seatModels.Add(seat);
             }
 
-            return Ok(seatsVm);
+            return Ok(seatModels);
         }
 
         /// <summary>
@@ -57,24 +57,17 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         public async Task<IActionResult> Details([FromRoute] int id)
         {
             var seat = await _service.GetByIdAsync(id);
-            if (seat == null)
-            {
-                return NotFound();
-            }
-
-            SeatViewModel seatVm = seat;
-            return Ok(seatVm);
+            return seat is null ? NotFound() : Ok(seat);
         }
 
         /// <summary>
         /// Create seat.
         /// </summary>
-        /// <param name="seatVm">Adding seat.</param>
+        /// <param name="seat">Adding seat.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost("create")]
-        public async Task<IActionResult> Create([FromBody] SeatViewModel seatVm)
+        public async Task<IActionResult> Create([FromBody] SeatModel seat)
         {
-            SeatDto seat = seatVm;
             await _service.CreateAsync(seat);
             return Ok();
         }
@@ -88,13 +81,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         public async Task<IActionResult> Edit([FromRoute] int id)
         {
             var updatingSeat = await _service.GetByIdAsync(id);
-            if (updatingSeat == null)
-            {
-                return NotFound();
-            }
-
-            SeatViewModel seatVm = updatingSeat;
-            return Ok(seatVm);
+            return updatingSeat is null ? NotFound() : Ok(updatingSeat);
         }
 
         /// <summary>
@@ -104,7 +91,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         /// <param name="seatVm">Edited seat.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPut("edit/{id}")]
-        public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] SeatViewModel seatVm)
+        public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] SeatModel seatVm)
         {
             if (id != seatVm.Id)
             {
@@ -138,13 +125,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var deletingSeat = await _service.GetByIdAsync(id);
-            if (deletingSeat == null)
-            {
-                return NotFound();
-            }
-
-            SeatViewModel seatVm = deletingSeat;
-            return Ok(seatVm);
+            return deletingSeat is null ? NotFound() : Ok(deletingSeat);
         }
 
         /// <summary>

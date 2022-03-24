@@ -39,13 +39,13 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         public async Task<IActionResult> GetLayouts()
         {
             var layouts = await _service.GetAllAsync();
-            var layoutsVm = new List<LayoutViewModel>();
+            var layoutModels = new List<LayoutModel>();
             foreach (var layout in layouts)
             {
-                layoutsVm.Add(layout);
+                layoutModels.Add(layout);
             }
 
-            return Ok(layoutsVm);
+            return Ok(layoutModels);
         }
 
         /// <summary>
@@ -57,13 +57,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         public async Task<IActionResult> Details([FromRoute] int id)
         {
             var layout = await _service.GetByIdAsync(id);
-            if (layout == null)
-            {
-                return NotFound();
-            }
-
-            LayoutViewModel layoutVm = layout;
-            return Ok(layoutVm);
+            return layout is null ? NotFound() : Ok(layout);
         }
 
         /// <summary>
@@ -72,13 +66,8 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         /// <param name="layoutVm">Adding layout.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost("create")]
-        public async Task<IActionResult> Create([FromBody] LayoutViewModel layoutVm)
+        public async Task<IActionResult> Create([FromBody] LayoutModel layoutVm)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(layoutVm);
-            }
-
             await _service.CreateAsync(layoutVm);
             return Ok();
         }
@@ -92,13 +81,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         public async Task<IActionResult> Edit([FromRoute] int id)
         {
             var updatingLayout = await _service.GetByIdAsync(id);
-            if (updatingLayout == null)
-            {
-                return NotFound();
-            }
-
-            LayoutViewModel layoutVm = updatingLayout;
-            return Ok(layoutVm);
+            return updatingLayout is null ? NotFound() : Ok(updatingLayout);
         }
 
         /// <summary>
@@ -108,7 +91,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         /// <param name="layoutVm">Edited layout.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPut("edit/{id}")]
-        public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] LayoutViewModel layoutVm)
+        public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] LayoutModel layoutVm)
         {
             if (id != layoutVm.Id)
             {
@@ -142,13 +125,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var deletingLayout = await _service.GetByIdAsync(id);
-            if (deletingLayout == null)
-            {
-                return NotFound();
-            }
-
-            LayoutViewModel layoutVm = deletingLayout;
-            return Ok(layoutVm);
+            return deletingLayout is null ? NotFound() : Ok(deletingLayout);
         }
 
         /// <summary>

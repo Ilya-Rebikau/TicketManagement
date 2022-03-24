@@ -4,14 +4,14 @@ using Microsoft.AspNetCore.Identity;
 namespace TicketManagement.UserAPI.Models.Users
 {
     /// <summary>
-    /// Change role view model.
+    /// Change role model.
     /// </summary>
-    public class ChangeRoleViewModel
+    public class ChangeRoleModel
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ChangeRoleViewModel"/> class.
+        /// Initializes a new instance of the <see cref="ChangeRoleModel"/> class.
         /// </summary>
-        public ChangeRoleViewModel()
+        public ChangeRoleModel()
         {
             AllRoles = new List<IdentityRole>();
             UserRoles = new List<string>();

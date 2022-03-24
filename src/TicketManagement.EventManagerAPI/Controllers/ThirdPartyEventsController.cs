@@ -44,7 +44,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// <param name="events">Third party events.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost("save")]
-        public async Task<IActionResult> SaveToDatabaseAsync([FromBody] IEnumerable<EventViewModel> events)
+        public async Task<IActionResult> SaveToDatabaseAsync([FromBody] IEnumerable<EventModel> events)
         {
             await _service.SaveToDatabase(events);
             return Ok();

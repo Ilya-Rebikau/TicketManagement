@@ -1,9 +1,9 @@
 ﻿namespace TicketManagement.UserAPI.Models.Users
 {
     /// <summary>
-    /// Change password for user view model.
+    /// Change password for user model.
     /// </summary>
-    public class ChangePasswordViewModel
+    public class ChangePasswordModel
     {
         /// <summary>
         /// Gets or sets user id.

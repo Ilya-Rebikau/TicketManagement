@@ -6,7 +6,7 @@ namespace TicketManagement.UserAPI.Models.Account
     /// <summary>
     /// Register result in app.
     /// </summary>
-    public class RegisterResult
+    public class RegisterResultModel
     {
         /// <summary>
         /// Gets or sets IdentityResult.

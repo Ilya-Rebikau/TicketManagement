@@ -50,29 +50,18 @@ namespace TicketManagement.EventManagerAPI.Controllers
         public async Task<IActionResult> Details([FromRoute] int id)
         {
             var @event = await _eventService.GetByIdAsync(id);
-            if (@event == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(await _eventService.GetEventViewModelForDetailsAsync(@event, HttpContext.GetJwtToken()));
+            return @event is null ? NotFound() : Ok(await _eventService.GetEventViewModelForDetailsAsync(@event, HttpContext.GetJwtToken()));
         }
 
         /// <summary>
         /// Create event.
         /// </summary>
-        /// <param name="eventVm">Adding event.</param>
+        /// <param name="event">Adding event.</param>
         /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, event manager")]
         [HttpPost("create")]
-        public async Task<IActionResult> Create([FromBody] EventViewModel eventVm)
+        public async Task<IActionResult> Create([FromBody] EventModel @event)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(eventVm);
-            }
-
-            EventDto @event = eventVm;
             await _eventService.CreateAsync(@event);
             return Ok();
         }
@@ -87,37 +76,32 @@ namespace TicketManagement.EventManagerAPI.Controllers
         public async Task<IActionResult> Edit([FromRoute] int id)
         {
             var updatingEvent = await _eventService.GetByIdAsync(id);
-            if (updatingEvent == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(await _eventService.GetEventViewModelForEditAndDeleteAsync(updatingEvent, HttpContext.GetJwtToken()));
+            return updatingEvent is null ? NotFound() : Ok(await _eventService.GetEventViewModelForEditAndDeleteAsync(updatingEvent, HttpContext.GetJwtToken()));
         }
 
         /// <summary>
         /// Edit event.
         /// </summary>
         /// <param name="id">Id of editing event.</param>
-        /// <param name="eventVm">Edited event.</param>
+        /// <param name="event">Edited event.</param>
         /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, event manager")]
         [HttpPut("edit/{id}")]
-        public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] EventViewModel eventVm)
+        public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] EventModel @event)
         {
-            if (id != eventVm.Id)
+            if (id != @event.Id)
             {
                 return NotFound();
             }
 
             try
             {
-                await _eventService.UpdateAsync(eventVm);
+                await _eventService.UpdateAsync(@event);
                 return Ok();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await EventExists(eventVm.Id))
+                if (!await EventExists(@event.Id))
                 {
                     return NotFound();
                 }
@@ -138,12 +122,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var deletingEvent = await _eventService.GetByIdAsync(id);
-            if (deletingEvent == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(await _eventService.GetEventViewModelForEditAndDeleteAsync(deletingEvent, HttpContext.GetJwtToken()));
+            return deletingEvent is null ? NotFound() : Ok(await _eventService.GetEventViewModelForEditAndDeleteAsync(deletingEvent, HttpContext.GetJwtToken()));
         }
 
         /// <summary>

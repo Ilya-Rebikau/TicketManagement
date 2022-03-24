@@ -14,13 +14,13 @@ namespace TicketManagement.EventManagerAPI.Interfaces
         /// </summary>
         /// <param name="fileData">Json file in byte array format.</param>
         /// <returns>Collection of event view models.</returns>
-        Task<IEnumerable<EventViewModel>> GetEventViewModelsFromJson(byte[] fileData);
+        Task<IEnumerable<EventModel>> GetEventViewModelsFromJson(byte[] fileData);
 
         /// <summary>
         /// Save collection of event view models to database.
         /// </summary>
         /// <param name="events">Collection of events.</param>
         /// <returns>Saved collection of events.</returns>
-        Task<IEnumerable<EventViewModel>> SaveToDatabase(IEnumerable<EventViewModel> events);
+        Task<IEnumerable<EventModel>> SaveToDatabase(IEnumerable<EventModel> events);
     }
 }

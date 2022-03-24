@@ -6,7 +6,7 @@ namespace TicketManagement.UserAPI.Models.Account
     /// <summary>
     /// Login result to app.
     /// </summary>
-    public class LoginResult
+    public class LoginResultModel
     {
         /// <summary>
         /// Gets or sets User.

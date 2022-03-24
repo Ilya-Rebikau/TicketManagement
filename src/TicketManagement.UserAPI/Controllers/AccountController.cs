@@ -54,15 +54,11 @@ namespace TicketManagement.UserAPI.Controllers
         /// <param name="model">RegisterViewModel object.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
+        public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
             var registerResult = await _service.RegisterUser(model);
-            if (registerResult.IdentityResult.Succeeded)
-            {
-                return Ok(_jwtTokenService.GetToken(registerResult.User, registerResult.Roles));
-            }
-
-            return BadRequest(registerResult.IdentityResult.Errors);
+            return registerResult.IdentityResult.Succeeded ? Ok(_jwtTokenService.GetToken(registerResult.User, registerResult.Roles))
+                : BadRequest(registerResult.IdentityResult.Errors);
         }
 
         /// <summary>
@@ -71,15 +67,11 @@ namespace TicketManagement.UserAPI.Controllers
         /// <param name="model">LoginViewModel object.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginViewModel model)
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var loginResult = await _service.Login(model);
-            if (loginResult.SignInResult.Succeeded)
-            {
-                return Ok(_jwtTokenService.GetToken(loginResult.User, loginResult.Roles));
-            }
-
-            return Forbid();
+            return loginResult.SignInResult.Succeeded ? Ok(_jwtTokenService.GetToken(loginResult.User, loginResult.Roles))
+                : Forbid();
         }
 
         /// <summary>
@@ -104,12 +96,7 @@ namespace TicketManagement.UserAPI.Controllers
         public async Task<IActionResult> Edit([FromRoute] string id)
         {
             var model = await _service.GetEditAccountViewModelForEdit(id);
-            if (model is not null)
-            {
-                return Ok(model);
-            }
-
-            return NotFound();
+            return model is null ? NotFound() : Ok(model);
         }
 
         /// <summary>
@@ -119,7 +106,7 @@ namespace TicketManagement.UserAPI.Controllers
         /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpPut("edit")]
-        public async Task<IActionResult> Edit([FromBody] EditAccountViewModel model)
+        public async Task<IActionResult> Edit([FromBody] EditAccountModel model)
         {
             return Ok(await _service.UpdateUserInEdit(model));
         }
@@ -134,12 +121,7 @@ namespace TicketManagement.UserAPI.Controllers
         public async Task<IActionResult> AddBalance([FromRoute] string id)
         {
             var model = await _service.GetBalanceViewModel(id);
-            if (model is not null)
-            {
-                return Ok(model);
-            }
-
-            return NotFound();
+            return model is null ? NotFound() : Ok(model);
         }
 
         /// <summary>
@@ -149,7 +131,7 @@ namespace TicketManagement.UserAPI.Controllers
         /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpPut("addbalance")]
-        public async Task<IActionResult> AddBalance(AddBalanceViewModel model)
+        public async Task<IActionResult> AddBalance(AddBalanceModel model)
         {
             return Ok(await _service.AddBalance(model));
         }
@@ -170,24 +152,15 @@ namespace TicketManagement.UserAPI.Controllers
         [HttpPost("converttime")]
         public async Task<IActionResult> ConvertTimeFromUtcToUsers([FromHeader(Name = AuthorizationKey)] string token, [FromBody] EventDto eventDto)
         {
-            if (_jwtTokenService.ValidateToken(token))
-            {
-                return Ok(await _converterForTime.ConvertTimeForUser(eventDto, token));
-            }
-
-            return NotFound();
+            return _jwtTokenService.ValidateToken(token) ? Ok(await _converterForTime.ConvertTimeForUser(eventDto, token))
+                : NotFound();
         }
 
         [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpPost("getuserid")]
         public async Task<IActionResult> GetUserId([FromHeader(Name = AuthorizationKey)] string token)
         {
-            if (_jwtTokenService.ValidateToken(token))
-            {
-                return Ok(await _service.GetUserId(token));
-            }
-
-            return NotFound();
+            return _jwtTokenService.ValidateToken(token) ? Ok(await _service.GetUserId(token)) : NotFound();
         }
 
         [Authorize(Roles = "admin, user, event manager, venue manager")]

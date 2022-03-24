@@ -54,10 +54,10 @@ namespace TicketManagement.EventManagerAPI.
             _usersClient = usersClient;
         }
 
-        public async Task<IEnumerable<EventViewModel>> GetAllEventViewModelsAsync()
+        public async Task<IEnumerable<EventModel>> GetAllEventViewModelsAsync()
         {
             var events = await GetAllAsync();
-            var eventsVm = new List<EventViewModel>();
+            var eventsVm = new List<EventModel>();
             foreach (var @event in events)
             {
                 eventsVm.Add(@event);
@@ -66,17 +66,17 @@ namespace TicketManagement.EventManagerAPI.
             return eventsVm;
         }
 
-        public async Task<EventViewModel> GetEventViewModelForDetailsAsync(EventDto @event, string token)
+        public async Task<EventModel> GetEventViewModelForDetailsAsync(EventDto @event, string token)
         {
             @event = await _usersClient.ConvertTimeFromUtcToUsers(token, @event);
             var eventAreas = await _eventAreaService.GetAllAsync();
             var eventAreasForEvent = eventAreas.Where(x => x.EventId == @event.Id);
             var eventSeats = await _eventSeatService.GetAllAsync();
-            var eventAreaViewModels = new List<EventAreaViewModelInEvent>();
+            var eventAreaViewModels = new List<EventAreaModelInEvent>();
             foreach (var eventArea in eventAreasForEvent)
             {
                 var eventSeatsInArea = eventSeats.Where(x => x.EventAreaId == eventArea.Id).ToList();
-                var eventAreaViewModel = new EventAreaViewModelInEvent
+                var eventAreaViewModel = new EventAreaModelInEvent
                 {
                     EventArea = eventArea,
                     EventSeats = eventSeatsInArea,
@@ -85,15 +85,15 @@ namespace TicketManagement.EventManagerAPI.
                 eventAreaViewModels.Add(eventAreaViewModel);
             }
 
-            EventViewModel eventViewModel = @event;
+            EventModel eventViewModel = @event;
             eventViewModel.EventAreas = eventAreaViewModels;
             return eventViewModel;
         }
 
-        public async Task<EventViewModel> GetEventViewModelForEditAndDeleteAsync(EventDto @event, string token)
+        public async Task<EventModel> GetEventViewModelForEditAndDeleteAsync(EventDto @event, string token)
         {
             @event = await _usersClient.ConvertTimeFromUtcToUsers(token, @event);
-            EventViewModel eventVm = @event;
+            EventModel eventVm = @event;
             return eventVm;
         }
     }

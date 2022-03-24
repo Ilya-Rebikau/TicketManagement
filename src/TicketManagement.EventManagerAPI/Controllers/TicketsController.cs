@@ -36,13 +36,13 @@ namespace TicketManagement.EventManagerAPI.Controllers
         public async Task<IActionResult> GetTickets()
         {
             var tickets = await _service.GetAllAsync();
-            var ticketVm = new List<TicketViewModel>();
+            var ticketModels = new List<TicketModel>();
             foreach (var ticket in tickets)
             {
-                ticketVm.Add(ticket);
+                ticketModels.Add(ticket);
             }
 
-            return Ok(ticketVm);
+            return Ok(ticketModels);
         }
 
         /// <summary>
@@ -54,25 +54,18 @@ namespace TicketManagement.EventManagerAPI.Controllers
         public async Task<IActionResult> Details([FromRoute] int id)
         {
             var ticket = await _service.GetByIdAsync(id);
-            if (ticket == null)
-            {
-                return NotFound();
-            }
-
-            TicketViewModel ticketVm = ticket;
-            return Ok(ticketVm);
+            return ticket is null ? NotFound() : Ok(ticket);
         }
 
         /// <summary>
         /// Create ticket.
         /// </summary>
-        /// <param name="ticketVm">Adding ticket.</param>
+        /// <param name="ticketModel">Adding ticket.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost("create")]
-        public async Task<IActionResult> Create([FromBody] TicketViewModel ticketVm)
+        public async Task<IActionResult> Create([FromBody] TicketModel ticketModel)
         {
-            TicketDto ticket = ticketVm;
-            await _service.CreateAsync(ticket);
+            await _service.CreateAsync(ticketModel);
             return Ok();
         }
 
@@ -85,13 +78,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         public async Task<IActionResult> Edit([FromRoute] int id)
         {
             var updatingTicket = await _service.GetByIdAsync(id);
-            if (updatingTicket == null)
-            {
-                return NotFound();
-            }
-
-            TicketViewModel ticketVm = updatingTicket;
-            return Ok(ticketVm);
+            return updatingTicket is null ? NotFound() : Ok(updatingTicket);
         }
 
         /// <summary>
@@ -101,7 +88,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// <param name="ticketVm">Edited ticket.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPut("edit/{id}")]
-        public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] TicketViewModel ticketVm)
+        public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] TicketModel ticketVm)
         {
             if (id != ticketVm.Id)
             {
@@ -135,13 +122,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var deletingTicket = await _service.GetByIdAsync(id);
-            if (deletingTicket == null)
-            {
-                return NotFound();
-            }
-
-            TicketViewModel ticketVm = deletingTicket;
-            return Ok(ticketVm);
+            return deletingTicket is null ? NotFound() : Ok(deletingTicket);
         }
 
         /// <summary>

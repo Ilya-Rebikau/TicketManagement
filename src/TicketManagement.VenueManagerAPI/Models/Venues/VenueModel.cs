@@ -4,9 +4,9 @@ using TicketManagement.VenueManagerAPI.ModelsDTO;
 namespace TicketManagement.VenueManagerAPI.Models.Venues
 {
     /// <summary>
-    /// Venue view model.
+    /// Venue model.
     /// </summary>
-    public class VenueViewModel
+    public class VenueModel
     {
         /// <summary>
         /// Gets or sets id.
@@ -44,9 +44,9 @@ namespace TicketManagement.VenueManagerAPI.Models.Venues
         /// Convert venue dto to venue view model.
         /// </summary>
         /// <param name="venue">Venue dto.</param>
-        public static implicit operator VenueViewModel(VenueDto venue)
+        public static implicit operator VenueModel(VenueDto venue)
         {
-            return new VenueViewModel
+            return new VenueModel
             {
                 Id = venue.Id,
                 Description = venue.Description,
@@ -60,7 +60,7 @@ namespace TicketManagement.VenueManagerAPI.Models.Venues
         /// Convert venue view model to venue dto.
         /// </summary>
         /// <param name="venueVm">Venue view model.</param>
-        public static implicit operator VenueDto(VenueViewModel venueVm)
+        public static implicit operator VenueDto(VenueModel venueVm)
         {
             return new VenueDto
             {

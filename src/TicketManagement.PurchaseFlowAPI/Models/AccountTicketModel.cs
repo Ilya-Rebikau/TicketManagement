@@ -4,9 +4,9 @@ using TicketManagement.PurchaseFlowAPI.ModelsDTO;
 namespace TicketManagement.PurchaseFlowAPI.Models
 {
     /// <summary>
-    /// Account view model.
+    /// Account model for personal account.
     /// </summary>
-    public class AccountTicketViewModel
+    public class AccountTicketModel
     {
         /// <summary>
         /// Gets or sets event.

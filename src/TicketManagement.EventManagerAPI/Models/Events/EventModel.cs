@@ -6,9 +6,9 @@ using TicketManagement.EventManagerAPI.ModelsDTO;
 namespace TicketManagement.EventManagerAPI.Models.Events
 {
     /// <summary>
-    /// Event view model.
+    /// Event model.
     /// </summary>
-    public class EventViewModel
+    public class EventModel
     {
         /// <summary>
         /// Gets or sets id.
@@ -54,7 +54,7 @@ namespace TicketManagement.EventManagerAPI.Models.Events
         /// Gets or sets list of EventAreaViewModel objects.
         /// EventAreaViewModel objects represents event areas.
         /// </summary>
-        public IList<EventAreaViewModelInEvent> EventAreas { get; set; }
+        public IList<EventAreaModelInEvent> EventAreas { get; set; }
 
         /// <summary>
         /// Gets max X coordinate from event areas in event.
@@ -64,11 +64,6 @@ namespace TicketManagement.EventManagerAPI.Models.Events
         {
             get
             {
-                if (EventAreas is null)
-                {
-                    return 0;
-                }
-
                 return EventAreas.Count > 0 || EventAreas is not null ? EventAreas.Max(x => x.EventArea.CoordX) : 0;
             }
         }
@@ -81,11 +76,6 @@ namespace TicketManagement.EventManagerAPI.Models.Events
         {
             get
             {
-                if (EventAreas is null)
-                {
-                    return 0;
-                }
-
                 return EventAreas.Count > 0 || EventAreas is not null ? EventAreas.Max(x => x.EventArea.CoordY) : 0;
             }
         }
@@ -94,9 +84,9 @@ namespace TicketManagement.EventManagerAPI.Models.Events
         /// Convert event dto to event view model.
         /// </summary>
         /// <param name="event">Event dto.</param>
-        public static implicit operator EventViewModel(EventDto @event)
+        public static implicit operator EventModel(EventDto @event)
         {
-            return new EventViewModel
+            return new EventModel
             {
                 Id = @event.Id,
                 Name = @event.Name,
@@ -112,7 +102,7 @@ namespace TicketManagement.EventManagerAPI.Models.Events
         /// Convert event view model to event dto.
         /// </summary>
         /// <param name="eventVm">Event view model.</param>
-        public static implicit operator EventDto(EventViewModel eventVm)
+        public static implicit operator EventDto(EventModel eventVm)
         {
             return new EventDto
             {
@@ -130,7 +120,7 @@ namespace TicketManagement.EventManagerAPI.Models.Events
         /// Sorting event areas by X and Y coordinates.
         /// </summary>
         /// <returns>Sorted event areas.</returns>
-        public List<EventAreaViewModelInEvent> SortedEventAreas() => EventAreas.OrderBy(x => x.EventArea.CoordX).ThenBy(y => y.EventArea.CoordY).ToList();
+        public List<EventAreaModelInEvent> SortedEventAreas() => EventAreas.OrderBy(x => x.EventArea.CoordX).ThenBy(y => y.EventArea.CoordY).ToList();
 
         /// <summary>
         /// Check that event area with X and Y coordinate exist.

@@ -1,9 +1,9 @@
 ﻿namespace TicketManagement.UserAPI.Models.Account
 {
     /// <summary>
-    /// Add balance to account view model.
+    /// Add balance to account model.
     /// </summary>
-    public class AddBalanceViewModel
+    public class AddBalanceModel
     {
         /// <summary>
         /// Gets or sets account id.

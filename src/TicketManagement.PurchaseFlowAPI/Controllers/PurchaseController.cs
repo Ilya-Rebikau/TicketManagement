@@ -64,14 +64,9 @@ namespace TicketManagement.PurchaseFlowAPI.Controllers
         /// <param name="ticketVm">Ticket view model.</param>
         /// <returns>True if state was changed and false if not because of low balance.</returns>
         [HttpPut("events/buy")]
-        public async Task<IActionResult> UpdateEventSeatStateAfterBuyingTicket([FromHeader(Name = AuthorizationKey)] string token, [FromBody] TicketViewModel ticketVm)
+        public async Task<IActionResult> UpdateEventSeatStateAfterBuyingTicket([FromHeader(Name = AuthorizationKey)] string token, [FromBody] TicketModel ticketVm)
         {
-            if (await _service.UpdateEventSeatStateAfterBuyingTicket(token, ticketVm))
-            {
-                return Ok();
-            }
-
-            return BadRequest();
+            return await _service.UpdateEventSeatStateAfterBuyingTicket(token, ticketVm) ? Ok() : BadRequest();
         }
     }
 }

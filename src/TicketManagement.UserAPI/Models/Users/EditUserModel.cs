@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace TicketManagement.UserAPI.Models.Users
 {
     /// <summary>
-    /// Edit user view model.
+    /// Edit user model.
     /// </summary>
-    public class EditUserViewModel
+    public class EditUserModel
     {
         /// <summary>
         /// Get or sets user id.

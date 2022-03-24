@@ -3,9 +3,9 @@
 namespace TicketManagement.EventManagerAPI.Models.EventAreas
 {
     /// <summary>
-    /// Event area view model.
+    /// Event area model.
     /// </summary>
-    public class EventAreaViewModel
+    public class EventAreaModel
     {
         /// <summary>
         /// Gets or sets id.
@@ -41,9 +41,9 @@ namespace TicketManagement.EventManagerAPI.Models.EventAreas
         /// Convert event area dto to event area view model.
         /// </summary>
         /// <param name="eventArea">Event area dto.</param>
-        public static implicit operator EventAreaViewModel(EventAreaDto eventArea)
+        public static implicit operator EventAreaModel(EventAreaDto eventArea)
         {
-            return new EventAreaViewModel
+            return new EventAreaModel
             {
                 Id = eventArea.Id,
                 EventId = eventArea.EventId,
@@ -58,7 +58,7 @@ namespace TicketManagement.EventManagerAPI.Models.EventAreas
         /// Convert event area view model to event area dto.
         /// </summary>
         /// <param name="eventAreaVm">Event area view model.</param>
-        public static implicit operator EventAreaDto(EventAreaViewModel eventAreaVm)
+        public static implicit operator EventAreaDto(EventAreaModel eventAreaVm)
         {
             return new EventAreaDto
             {

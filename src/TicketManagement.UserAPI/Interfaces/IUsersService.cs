@@ -23,14 +23,14 @@ namespace TicketManagement.UserAPI.Interfaces
         /// </summary>
         /// <param name="model">CreateUserViewModel object.</param>
         /// <returns>IdentityResult.</returns>
-        Task<IdentityResult> CreateUser(CreateUserViewModel model);
+        Task<IdentityResult> CreateUser(CreateUserModel model);
 
         /// <summary>
         /// Get change password view model.
         /// </summary>
         /// <param name="id">Id of user.</param>
         /// <returns>ChangePasswordViewModel.</returns>
-        Task<ChangePasswordViewModel> GetChangePasswordViewModel(string id);
+        Task<ChangePasswordModel> GetChangePasswordViewModel(string id);
 
         /// <summary>
         /// Change password for user.
@@ -38,21 +38,21 @@ namespace TicketManagement.UserAPI.Interfaces
         /// <param name="model">ChangePasswordViewModel.</param>
         /// <param name="httpContext">HttpContext object.</param>
         /// <returns>IdentityResult.</returns>
-        Task<IdentityResult> ChangePassword(ChangePasswordViewModel model, HttpContext httpContext);
+        Task<IdentityResult> ChangePassword(ChangePasswordModel model, HttpContext httpContext);
 
         /// <summary>
         /// Get edit user view model.
         /// </summary>
         /// <param name="id">Id of user.</param>
         /// <returns>EditUserViewModel object.</returns>
-        Task<EditUserViewModel> GetEditUserViewModel(string id);
+        Task<EditUserModel> GetEditUserViewModel(string id);
 
         /// <summary>
         /// Update user in edit method.
         /// </summary>
         /// <param name="model">EditUserViewModel object.</param>
         /// <returns>IdentityResult object.</returns>
-        Task<IdentityResult> UpdateUserInEditAsync(EditUserViewModel model);
+        Task<IdentityResult> UpdateUserInEditAsync(EditUserModel model);
 
         /// <summary>
         /// Delete user.
@@ -66,13 +66,13 @@ namespace TicketManagement.UserAPI.Interfaces
         /// </summary>
         /// <param name="id">Id of user.</param>
         /// <returns>ChangeRoleViewModel object.</returns>
-        Task<ChangeRoleViewModel> GetChangeRoleViewModel(string id);
+        Task<ChangeRoleModel> GetChangeRoleViewModel(string id);
 
         /// <summary>
         /// Edit roles for user.
         /// </summary>
         /// <param name="model">ChangeRoleViewModel.</param>
         /// <returns>Task.</returns>
-        Task EditRoles(ChangeRoleViewModel model);
+        Task EditRoles(ChangeRoleModel model);
     }
 }

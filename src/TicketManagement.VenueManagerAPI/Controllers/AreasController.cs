@@ -39,13 +39,13 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         public async Task<IActionResult> GetAreas()
         {
             var areas = await _service.GetAllAsync();
-            var areasVm = new List<AreaViewModel>();
+            var areaModels = new List<AreaModel>();
             foreach (var area in areas)
             {
-                areasVm.Add(area);
+                areaModels.Add(area);
             }
 
-            return Ok(areasVm);
+            return Ok(areaModels);
         }
 
         /// <summary>
@@ -57,13 +57,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         public async Task<IActionResult> Details([FromRoute] int id)
         {
             var area = await _service.GetByIdAsync(id);
-            if (area == null)
-            {
-                return NotFound();
-            }
-
-            AreaViewModel areaVm = area;
-            return Ok(areaVm);
+            return area is null ? NotFound() : Ok(area);
         }
 
         /// <summary>
@@ -72,7 +66,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         /// <param name="areaVm">Creating area.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost("create")]
-        public async Task<IActionResult> Create([FromBody] AreaViewModel areaVm)
+        public async Task<IActionResult> Create([FromBody] AreaModel areaVm)
         {
             await _service.CreateAsync(areaVm);
             return Ok();
@@ -87,13 +81,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         public async Task<IActionResult> Edit([FromRoute] int id)
         {
             var updatingArea = await _service.GetByIdAsync(id);
-            if (updatingArea == null)
-            {
-                return NotFound();
-            }
-
-            AreaViewModel areaVm = updatingArea;
-            return Ok(areaVm);
+            return updatingArea is null ? NotFound() : Ok(updatingArea);
         }
 
         /// <summary>
@@ -103,7 +91,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         /// <param name="areaVm">Editing area.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPut("edit/{id}")]
-        public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] AreaViewModel areaVm)
+        public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] AreaModel areaVm)
         {
             if (id != areaVm.Id)
             {
@@ -137,13 +125,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var deletingArea = await _service.GetByIdAsync(id);
-            if (deletingArea == null)
-            {
-                return NotFound();
-            }
-
-            AreaViewModel areaVm = deletingArea;
-            return Ok(areaVm);
+            return deletingArea is null ? NotFound() : Ok(deletingArea);
         }
 
         /// <summary>

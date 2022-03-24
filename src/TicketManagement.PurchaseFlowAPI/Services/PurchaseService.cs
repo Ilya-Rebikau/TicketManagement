@@ -58,21 +58,21 @@ namespace TicketManagement.PurchaseFlowAPI.Services
             _usersClient = usersClient;
         }
 
-        public async Task<AccountViewModel> GetAccountViewModelForPersonalAccount(string token)
+        public async Task<AccountModel> GetAccountViewModelForPersonalAccount(string token)
         {
             var tickets = await _ticketService.GetAllAsync();
             var userId = await _usersClient.GetUserId(token);
             var usersTickets = tickets.Where(t => t.UserId == userId).ToList();
             var eventSeats = await _eventSeatService.GetAllAsync();
             var eventAreas = await _eventAreaService.GetAllAsync();
-            var ticketsVm = new List<AccountTicketViewModel>();
+            var ticketsVm = new List<AccountTicketModel>();
             foreach (var ticket in usersTickets)
             {
                 var ticketEventSeat = eventSeats.FirstOrDefault(s => s.Id == ticket.EventSeatId);
                 var eventArea = eventAreas.FirstOrDefault(a => a.Id == ticketEventSeat.EventAreaId);
                 var @event = await _eventService.GetByIdAsync(eventArea.EventId);
                 @event = await _usersClient.ConvertTimeFromUtcToUsers(token, @event);
-                var ticketVm = new AccountTicketViewModel
+                var ticketVm = new AccountTicketModel
                 {
                     Price = eventArea.Price,
                     Event = @event,
@@ -80,7 +80,7 @@ namespace TicketManagement.PurchaseFlowAPI.Services
                 ticketsVm.Add(ticketVm);
             }
 
-            var accountVm = new AccountViewModel
+            var accountVm = new AccountModel
             {
                 JwtToken = token,
                 Tickets = ticketsVm,
@@ -88,7 +88,7 @@ namespace TicketManagement.PurchaseFlowAPI.Services
             return accountVm;
         }
 
-        public async Task<TicketViewModel> GetTicketViewModelForBuyAsync(int eventSeatId, double price, string token)
+        public async Task<TicketModel> GetTicketViewModelForBuyAsync(int eventSeatId, double price, string token)
         {
             var userId = await _usersClient.GetUserId(token);
             var ticket = new TicketDto
@@ -97,12 +97,12 @@ namespace TicketManagement.PurchaseFlowAPI.Services
                 EventSeatId = eventSeatId,
             };
 
-            TicketViewModel ticketVm = ticket;
+            TicketModel ticketVm = ticket;
             ticketVm.Price = price;
             return ticketVm;
         }
 
-        public async Task<bool> UpdateEventSeatStateAfterBuyingTicket(string token, TicketViewModel ticketVm)
+        public async Task<bool> UpdateEventSeatStateAfterBuyingTicket(string token, TicketModel ticketVm)
         {
             TicketDto ticket = ticketVm;
             if (await _usersClient.ChangeBalanceForUser(token, ticketVm.Price))

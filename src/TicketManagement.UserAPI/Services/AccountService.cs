@@ -45,7 +45,7 @@ namespace TicketManagement.UserAPI.Services
             _baseRoleForNewUser = configuration.GetValue<string>("BaseRole");
         }
 
-        public async Task<RegisterResult> RegisterUser(RegisterViewModel model)
+        public async Task<RegisterResultModel> RegisterUser(RegisterModel model)
         {
             var user = new User { Email = model.Email, UserName = model.Email };
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -58,7 +58,7 @@ namespace TicketManagement.UserAPI.Services
                 await _signInManager.SignInAsync(user, false);
             }
 
-            var registerResult = new RegisterResult
+            var registerResult = new RegisterResultModel
             {
                 User = user,
                 Roles = roles,
@@ -67,10 +67,10 @@ namespace TicketManagement.UserAPI.Services
             return registerResult;
         }
 
-        public async Task<LoginResult> Login(LoginViewModel model)
+        public async Task<LoginResultModel> Login(LoginModel model)
         {
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
-            var loginResult = new LoginResult
+            var loginResult = new LoginResultModel
             {
                 SignInResult = result,
             };
@@ -89,13 +89,13 @@ namespace TicketManagement.UserAPI.Services
             await _signInManager.SignOutAsync();
         }
 
-        public async Task<EditAccountViewModel> GetEditAccountViewModelForEdit(string id)
+        public async Task<EditAccountModel> GetEditAccountViewModelForEdit(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
             return user;
         }
 
-        public async Task<IdentityResult> UpdateUserInEdit(EditAccountViewModel model)
+        public async Task<IdentityResult> UpdateUserInEdit(EditAccountModel model)
         {
             var user = await _userManager.FindByIdAsync(model.Id);
             user.Email = model.Email;
@@ -106,10 +106,10 @@ namespace TicketManagement.UserAPI.Services
             return await _userManager.UpdateAsync(user);
         }
 
-        public async Task<AddBalanceViewModel> GetBalanceViewModel(string id)
+        public async Task<AddBalanceModel> GetBalanceViewModel(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            var model = new AddBalanceViewModel
+            var model = new AddBalanceModel
             {
                 Id = user.Id,
                 Balance = user.Balance,
@@ -117,7 +117,7 @@ namespace TicketManagement.UserAPI.Services
             return model;
         }
 
-        public async Task<IdentityResult> AddBalance(AddBalanceViewModel model)
+        public async Task<IdentityResult> AddBalance(AddBalanceModel model)
         {
             var user = await _userManager.FindByIdAsync(model.Id);
             user.Balance += model.Balance;

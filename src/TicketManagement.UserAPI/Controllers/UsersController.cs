@@ -44,7 +44,7 @@ namespace TicketManagement.UserAPI.Controllers
         /// <param name="model">CreateUserViewModel object.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost("create")]
-        public async Task<IActionResult> Create([FromBody] CreateUserViewModel model)
+        public async Task<IActionResult> Create([FromBody] CreateUserModel model)
         {
             return Ok(await _service.CreateUser(model));
         }
@@ -58,12 +58,7 @@ namespace TicketManagement.UserAPI.Controllers
         public async Task<IActionResult> Edit([FromRoute] string id)
         {
             var model = await _service.GetEditUserViewModel(id);
-            if (model is not null)
-            {
-                return Ok(model);
-            }
-
-            return NotFound();
+            return model is null ? NotFound() : Ok(model);
         }
 
         /// <summary>
@@ -72,7 +67,7 @@ namespace TicketManagement.UserAPI.Controllers
         /// <param name="model">EditUserViewModel object.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPut("edit")]
-        public async Task<IActionResult> Edit([FromBody] EditUserViewModel model)
+        public async Task<IActionResult> Edit([FromBody] EditUserModel model)
         {
             return Ok(await _service.UpdateUserInEditAsync(model));
         }
@@ -86,12 +81,7 @@ namespace TicketManagement.UserAPI.Controllers
         public async Task<ActionResult> Delete([FromRoute] string id)
         {
             var deletedId = await _service.DeleteUserAsync(id);
-            if (!string.IsNullOrEmpty(deletedId))
-            {
-                return Ok(deletedId);
-            }
-
-            return NotFound();
+            return string.IsNullOrEmpty(deletedId) ? NotFound() : Ok(deletedId);
         }
 
         /// <summary>
@@ -103,12 +93,7 @@ namespace TicketManagement.UserAPI.Controllers
         public async Task<IActionResult> ChangePassword([FromRoute] string id)
         {
             var model = await _service.GetChangePasswordViewModel(id);
-            if (model is not null)
-            {
-                return Ok(model);
-            }
-
-            return NotFound();
+            return model is null ? NotFound() : Ok(model);
         }
 
         /// <summary>
@@ -117,7 +102,7 @@ namespace TicketManagement.UserAPI.Controllers
         /// <param name="model">ChangePasswordViewModel object.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPut("changepassword")]
-        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordViewModel model)
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel model)
         {
             return Ok(await _service.ChangePassword(model, HttpContext));
         }
@@ -131,12 +116,7 @@ namespace TicketManagement.UserAPI.Controllers
         public async Task<IActionResult> EditRoles([FromRoute] string id)
         {
             var model = await _service.GetChangeRoleViewModel(id);
-            if (model is not null)
-            {
-                return Ok(model);
-            }
-
-            return NotFound();
+            return model is null ? NotFound() : Ok(model);
         }
 
         /// <summary>
@@ -145,7 +125,7 @@ namespace TicketManagement.UserAPI.Controllers
         /// <param name="model">ChangeRoleViewModel.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPut("editroles")]
-        public async Task<IActionResult> EditRoles([FromBody] ChangeRoleViewModel model)
+        public async Task<IActionResult> EditRoles([FromBody] ChangeRoleModel model)
         {
             await _service.EditRoles(model);
             return Ok();
