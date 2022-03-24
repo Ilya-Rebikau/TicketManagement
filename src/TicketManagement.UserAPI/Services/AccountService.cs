@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using TicketManagement.UserAPI.Interfaces;
 using TicketManagement.UserAPI.Models;
 using TicketManagement.UserAPI.Models.Account;
@@ -17,7 +18,7 @@ namespace TicketManagement.UserAPI.Services
         /// <summary>
         /// Base role for new registering user.
         /// </summary>
-        private const string BaseRoleForNewUser = "user";
+        private readonly string _baseRoleForNewUser;
 
         /// <summary>
         /// UserManager object.
@@ -34,18 +35,21 @@ namespace TicketManagement.UserAPI.Services
         /// </summary>
         /// <param name="userManager">UserManager object.</param>
         /// <param name="signInManager">SignInManager object.</param>
+        /// <param name="configuration">IConfiguration object.</param>
         public AccountService(UserManager<User> userManager,
-            SignInManager<User> signInManager)
+            SignInManager<User> signInManager,
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _baseRoleForNewUser = configuration.GetValue<string>("BaseRole");
         }
 
         public async Task<RegisterResult> RegisterUser(RegisterViewModel model)
         {
             var user = new User { Email = model.Email, UserName = model.Email };
             var result = await _userManager.CreateAsync(user, model.Password);
-            await _userManager.AddToRoleAsync(user, BaseRoleForNewUser);
+            await _userManager.AddToRoleAsync(user, _baseRoleForNewUser);
             IList<string> roles = new List<string>();
             if (result.Succeeded)
             {

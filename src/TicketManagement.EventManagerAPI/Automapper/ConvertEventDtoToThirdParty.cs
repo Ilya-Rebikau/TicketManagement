@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using TicketManagement.DataAccess.Models;
 using TicketManagement.EventManagerAPI.ModelsDTO;
 
@@ -12,16 +13,6 @@ namespace TicketManagement.EventManagerAPI.Automapper
     internal class ConvertEventDtoToThirdParty : ITypeConverter<EventDto, ThirdPartyEvent>
     {
         /// <summary>
-        /// Name of MVC project with wwwroot folder.
-        /// </summary>
-        private const string MvcProjectName = "TicketManagement.Web";
-
-        /// <summary>
-        /// Name of wwwroot folder.
-        /// </summary>
-        private const string WwwRootFolder = "wwwroot";
-
-        /// <summary>
         /// Path to wwwroot folder.
         /// </summary>
         private readonly string _contentRootPath;
@@ -30,10 +21,12 @@ namespace TicketManagement.EventManagerAPI.Automapper
         /// Initializes a new instance of the <see cref="ConvertEventDtoToThirdParty"/> class.
         /// </summary>
         /// <param name="hostingEnvironment">IWebHostEnvironment object.</param>
-        public ConvertEventDtoToThirdParty(IWebHostEnvironment hostingEnvironment)
+        /// <param name="configuration">IConfiguration object.</param>
+        public ConvertEventDtoToThirdParty(IWebHostEnvironment hostingEnvironment, IConfiguration configuration)
         {
             var parentDirectory = Directory.GetParent(hostingEnvironment.ContentRootPath);
-            _contentRootPath = Path.Combine(parentDirectory.FullName, MvcProjectName, WwwRootFolder);
+            _contentRootPath = Path.Combine(parentDirectory.FullName, configuration.GetValue<string>("MvcProjectName"),
+                configuration.GetValue<string>("wwwrootFolderName"));
         }
 
         public ThirdPartyEvent Convert(EventDto source, ThirdPartyEvent destination, ResolutionContext context)

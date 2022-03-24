@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using TicketManagement.UserAPI.Interfaces;
 using TicketManagement.UserAPI.Models;
 using TicketManagement.UserAPI.Models.Users;
@@ -18,7 +19,7 @@ namespace TicketManagement.UserAPI.Services
         /// <summary>
         /// Base role for creating user.
         /// </summary>
-        private const string BaseUserRole = "user";
+        private readonly string _baseUserRole;
 
         /// <summary>
         /// UserManager object.
@@ -35,10 +36,12 @@ namespace TicketManagement.UserAPI.Services
         /// </summary>
         /// <param name="userManager">UserManager object.</param>
         /// <param name="roleManager">RoleManager object.</param>
-        public UsersService(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        /// <param name="configuration">IConfiguration object.</param>
+        public UsersService(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _baseUserRole = configuration.GetValue<string>("BaseRole");
         }
 
         public async Task<IdentityResult> UpdateUserInEditAsync(EditUserViewModel model)
@@ -110,7 +113,7 @@ namespace TicketManagement.UserAPI.Services
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(user, BaseUserRole);
+                await _userManager.AddToRoleAsync(user, _baseUserRole);
             }
 
             return result;

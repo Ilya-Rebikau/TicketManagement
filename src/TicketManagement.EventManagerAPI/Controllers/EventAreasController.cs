@@ -57,13 +57,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         public async Task<IActionResult> Details([FromRoute] int id)
         {
             var eventArea = await _service.GetByIdAsync(id);
-            if (eventArea is null)
-            {
-                return NotFound();
-            }
-
-            EventAreaViewModel eventAreaVm = eventArea;
-            return Ok(eventAreaVm);
+            return eventArea is null ? NotFound() : Ok(eventArea);
         }
 
         /// <summary>

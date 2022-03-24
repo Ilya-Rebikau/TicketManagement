@@ -2,6 +2,7 @@
 using System.IO;
 using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using TicketManagement.DataAccess.Models;
 using TicketManagement.EventManagerAPI.ModelsDTO;
 
@@ -13,24 +14,14 @@ namespace TicketManagement.EventManagerAPI.Automapper
     internal class ConvertThirdPartyEventToDto : ITypeConverter<ThirdPartyEvent, EventDto>
     {
         /// <summary>
-        /// Name of MVC project with wwwroot folder.
-        /// </summary>
-        private const string MvcProjectName = "TicketManagement.Web";
-
-        /// <summary>
-        /// Name of wwwroot folder.
-        /// </summary>
-        private const string WwwRootFolder = "wwwroot";
-
-        /// <summary>
         /// Name of folder with images.
         /// </summary>
-        private const string ImageFolder = "images";
+        private readonly string _imageFolder;
 
         /// <summary>
         /// Format of images.
         /// </summary>
-        private const string ImageFormat = ".png";
+        private readonly string _imageFormat;
 
         /// <summary>
         /// Path to folder with images.
@@ -41,10 +32,14 @@ namespace TicketManagement.EventManagerAPI.Automapper
         /// Initializes a new instance of the <see cref="ConvertThirdPartyEventToDto"/> class.
         /// </summary>
         /// <param name="hostingEnvironment">IWebHostEnvironment object.</param>
-        public ConvertThirdPartyEventToDto(IWebHostEnvironment hostingEnvironment)
+        /// <param name="configuration">IConfiguration object.</param>
+        public ConvertThirdPartyEventToDto(IWebHostEnvironment hostingEnvironment, IConfiguration configuration)
         {
             var parentDirectory = Directory.GetParent(hostingEnvironment.ContentRootPath);
-            _pathToImagesDirectory = Path.Combine(parentDirectory.FullName, MvcProjectName, WwwRootFolder, ImageFolder);
+            _imageFolder = configuration.GetValue<string>("ImageFolderName");
+            _imageFormat = configuration.GetValue<string>("ImageFormat");
+            _pathToImagesDirectory = Path.Combine(parentDirectory.FullName, configuration.GetValue<string>("MvcProjectName"),
+                configuration.GetValue<string>("wwwrootFolderName"), _imageFolder);
         }
 
         public EventDto Convert(ThirdPartyEvent source, EventDto destination, ResolutionContext context)
@@ -57,7 +52,7 @@ namespace TicketManagement.EventManagerAPI.Automapper
                 destination.LayoutId = source.LayoutId;
                 destination.Name = source.Name;
                 destination.Description = source.Description;
-                destination.ImageUrl = ConvertBase64ToImageAsync(source.PosterImage, _pathToImagesDirectory, source.Name + ImageFormat);
+                destination.ImageUrl = ConvertBase64ToImageAsync(source.PosterImage, _pathToImagesDirectory, source.Name + _imageFormat);
                 return destination;
             }
 
@@ -69,7 +64,7 @@ namespace TicketManagement.EventManagerAPI.Automapper
                 LayoutId = source.LayoutId,
                 Name = source.Name,
                 Description = source.Description,
-                ImageUrl = ConvertBase64ToImageAsync(source.PosterImage, _pathToImagesDirectory, source.Name + ImageFormat),
+                ImageUrl = ConvertBase64ToImageAsync(source.PosterImage, _pathToImagesDirectory, source.Name + _imageFormat),
             };
             return @event;
         }
@@ -91,7 +86,7 @@ namespace TicketManagement.EventManagerAPI.Automapper
             Image image = Image.FromStream(ms, true);
             image.Save(Path.Combine(path, fileName));
             image.Dispose();
-            return Path.Combine("\\", ImageFolder, fileName);
+            return Path.Combine("\\", _imageFolder, fileName);
         }
     }
 }
