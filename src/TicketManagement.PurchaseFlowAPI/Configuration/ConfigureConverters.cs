@@ -2,6 +2,7 @@
 using TicketManagement.DataAccess.Models;
 using TicketManagement.PurchaseFlowAPI.Automapper;
 using TicketManagement.PurchaseFlowAPI.Interfaces;
+using TicketManagement.PurchaseFlowAPI.Models;
 using TicketManagement.PurchaseFlowAPI.ModelsDTO;
 
 namespace TicketManagement.PurchaseFlowAPI.Configuration
@@ -23,6 +24,7 @@ namespace TicketManagement.PurchaseFlowAPI.Configuration
             services.AddScoped<IConverter<EventSeat, EventSeatDto>, ModelsConverter<EventSeat, EventSeatDto>>();
             services.AddScoped<IConverter<Event, EventDto>, ModelsConverter<Event, EventDto>>();
             services.AddScoped<IConverter<Ticket, TicketDto>, ModelsConverter<Ticket, TicketDto>>();
+            services.AddScoped<IConverter<TicketDto, TicketModel>, ModelsConverter<TicketDto, TicketModel>>();
             return services;
         }
     }

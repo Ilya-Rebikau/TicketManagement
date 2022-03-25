@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.PurchaseFlowAPI.Models;
 using TicketManagement.PurchaseFlowAPI.ModelsDTO;
 
 namespace TicketManagement.PurchaseFlowAPI.Automapper
@@ -18,6 +19,7 @@ namespace TicketManagement.PurchaseFlowAPI.Automapper
             CreateMap<EventSeat, EventSeatDto>().ReverseMap();
             CreateMap<Event, EventDto>().ReverseMap();
             CreateMap<Ticket, TicketDto>().ReverseMap();
+            CreateMap<TicketDto, TicketModel>().ReverseMap();
         }
     }
 }

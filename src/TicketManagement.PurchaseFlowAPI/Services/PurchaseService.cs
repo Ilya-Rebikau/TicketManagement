@@ -38,6 +38,11 @@ namespace TicketManagement.PurchaseFlowAPI.Services
         private readonly IUsersClient _usersClient;
 
         /// <summary>
+        /// Converter object.
+        /// </summary>
+        private readonly IConverter<TicketDto, TicketModel> _converter;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="PurchaseService"/> class.
         /// </summary>
         /// <param name="ticketService">TicketService object.</param>
@@ -45,17 +50,20 @@ namespace TicketManagement.PurchaseFlowAPI.Services
         /// <param name="eventAreaService">EventAreaService object.</param>
         /// <param name="eventSeatService">EventSeatService object.</param>
         /// <param name="usersClient">IUsersClient object.</param>
+        /// <param name="converter">Converter object.</param>
         public PurchaseService(IService<TicketDto> ticketService,
             IService<EventDto> eventService,
             IService<EventAreaDto> eventAreaService,
             IService<EventSeatDto> eventSeatService,
-            IUsersClient usersClient)
+            IUsersClient usersClient,
+            IConverter<TicketDto, TicketModel> converter)
         {
             _ticketService = ticketService;
             _eventService = eventService;
             _eventAreaService = eventAreaService;
             _eventSeatService = eventSeatService;
             _usersClient = usersClient;
+            _converter = converter;
         }
 
         public async Task<AccountModel> GetAccountViewModelForPersonalAccount(string token)
@@ -97,20 +105,19 @@ namespace TicketManagement.PurchaseFlowAPI.Services
                 EventSeatId = eventSeatId,
             };
 
-            TicketModel ticketVm = ticket;
+            var ticketVm = await _converter.ConvertSourceToDestination(ticket);
             ticketVm.Price = price;
             return ticketVm;
         }
 
         public async Task<bool> UpdateEventSeatStateAfterBuyingTicket(string token, TicketModel ticketVm)
         {
-            TicketDto ticket = ticketVm;
             if (await _usersClient.ChangeBalanceForUser(token, ticketVm.Price))
             {
-                var seat = await _eventSeatService.GetByIdAsync(ticket.EventSeatId);
+                var seat = await _eventSeatService.GetByIdAsync(ticketVm.EventSeatId);
                 seat.State = PlaceStatus.Occupied;
                 await _eventSeatService.UpdateAsync(seat);
-                await _ticketService.CreateAsync(ticket);
+                await _ticketService.CreateAsync(await _converter.ConvertDestinationToSource(ticketVm));
                 return true;
             }
 

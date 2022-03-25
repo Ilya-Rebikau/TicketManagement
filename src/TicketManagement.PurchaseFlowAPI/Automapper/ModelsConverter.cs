@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.PurchaseFlowAPI.Interfaces;
 
 namespace TicketManagement.PurchaseFlowAPI.Automapper
@@ -9,11 +8,9 @@ namespace TicketManagement.PurchaseFlowAPI.Automapper
     /// <summary>
     /// Base converting dto to models and models to dto.
     /// </summary>
-    /// <typeparam name="TModel">Model.</typeparam>
-    /// <typeparam name="TDto">Dto.</typeparam>
-    internal class ModelsConverter<TModel, TDto> : IConverter<TModel, TDto>
-        where TModel : IEntity
-        where TDto : IEntityDto
+    /// <typeparam name="TSource">Source model.</typeparam>
+    /// <typeparam name="TDestination">Destination model.</typeparam>
+    internal class ModelsConverter<TSource, TDestination> : IConverter<TSource, TDestination>
     {
         /// <summary>
         /// IMapper object.
@@ -29,35 +26,35 @@ namespace TicketManagement.PurchaseFlowAPI.Automapper
             _mapper = mapper;
         }
 
-        public virtual Task<TDto> ConvertModelToDto(TModel model)
+        public virtual Task<TDestination> ConvertSourceToDestination(TSource source)
         {
-            var dto = _mapper.Map<TModel, TDto>(model);
+            var dto = _mapper.Map<TSource, TDestination>(source);
             return Task.FromResult(dto);
         }
 
-        public virtual Task<TModel> ConvertDtoToModel(TDto dto)
+        public virtual Task<TSource> ConvertDestinationToSource(TDestination destination)
         {
-            var model = _mapper.Map<TDto, TModel>(dto);
+            var model = _mapper.Map<TDestination, TSource>(destination);
             return Task.FromResult(model);
         }
 
-        public async Task<IEnumerable<TDto>> ConvertModelsRangeToDtos(IEnumerable<TModel> models)
+        public async Task<IEnumerable<TDestination>> ConvertSourceModelRangeToDestinationModelRange(IEnumerable<TSource> sourceModels)
         {
-            var dtos = new List<TDto>();
-            foreach (var model in models)
+            var dtos = new List<TDestination>();
+            foreach (var model in sourceModels)
             {
-                dtos.Add(await ConvertModelToDto(model));
+                dtos.Add(await ConvertSourceToDestination(model));
             }
 
             return dtos;
         }
 
-        public async Task<IEnumerable<TModel>> ConvertDtosRangeToModels(IEnumerable<TDto> dtos)
+        public async Task<IEnumerable<TSource>> ConvertDestinationModelRangeToSourceModelRange(IEnumerable<TDestination> destinationModels)
         {
-            var models = new List<TModel>();
-            foreach (var dto in dtos)
+            var models = new List<TSource>();
+            foreach (var dto in destinationModels)
             {
-                models.Add(await ConvertDtoToModel(dto));
+                models.Add(await ConvertDestinationToSource(dto));
             }
 
             return models;

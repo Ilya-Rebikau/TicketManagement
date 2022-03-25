@@ -77,7 +77,7 @@ namespace TicketManagement.Web.Models.Events
         {
             get
             {
-                return EventAreas.Count > 0 && EventAreas is not null ? EventAreas.Max(x => x.EventArea.CoordX) : 0;
+                return EventAreas is null || EventAreas.Count <= 0 ? 0 : EventAreas.Max(x => x.EventArea.CoordX);
             }
         }
 
@@ -89,7 +89,7 @@ namespace TicketManagement.Web.Models.Events
         {
             get
             {
-                return EventAreas.Count > 0 && EventAreas is not null ? EventAreas.Max(x => x.EventArea.CoordY) : 0;
+                return EventAreas is null || EventAreas.Count <= 0 ? 0 : EventAreas.Max(x => x.EventArea.CoordY);
             }
         }
 
