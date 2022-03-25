@@ -23,12 +23,19 @@ namespace TicketManagement.EventManagerAPI.Controllers
         private readonly IService<EventSeatDto> _service;
 
         /// <summary>
+        /// IConverter object.
+        /// </summary>
+        private readonly IConverter<EventSeatDto, EventSeatModel> _converter;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="EventSeatsController"/> class.
         /// </summary>
         /// <param name="service">EventSeatService object.</param>
-        public EventSeatsController(IService<EventSeatDto> service)
+        /// <param name="converter">IConverter object.</param>
+        public EventSeatsController(IService<EventSeatDto> service, IConverter<EventSeatDto, EventSeatModel> converter)
         {
             _service = service;
+            _converter = converter;
         }
 
         /// <summary>
@@ -39,13 +46,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         public async Task<IActionResult> GetEventSeats()
         {
             var eventSeats = await _service.GetAllAsync();
-            var eventSeatsModels = new List<EventSeatModel>();
-            foreach (var eventSeat in eventSeats)
-            {
-                eventSeatsModels.Add(eventSeat);
-            }
-
-            return Ok(eventSeatsModels);
+            return Ok(await _converter.ConvertSourceModelRangeToDestinationModelRange(eventSeats));
         }
 
         /// <summary>
@@ -68,7 +69,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] EventSeatModel eventSeat)
         {
-            await _service.CreateAsync(eventSeat);
+            await _service.CreateAsync(await _converter.ConvertDestinationToSource(eventSeat));
             return Ok();
         }
 
@@ -100,7 +101,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
 
             try
             {
-                await _service.UpdateAsync(eventSeat);
+                await _service.UpdateAsync(await _converter.ConvertDestinationToSource(eventSeat));
                 return Ok();
             }
             catch (DbUpdateConcurrencyException)

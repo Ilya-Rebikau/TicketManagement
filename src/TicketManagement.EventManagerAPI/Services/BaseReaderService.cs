@@ -38,13 +38,13 @@ namespace TicketManagement.EventManagerAPI.Services
         public virtual async Task<IEnumerable<TDto>> GetAllAsync(string json)
         {
             var models = await Reader.GetAllAsync(json);
-            return await Converter.ConvertModelsRangeToDtos(models);
+            return await Converter.ConvertSourceModelRangeToDestinationModelRange(models);
         }
 
         public virtual async Task<TDto> GetByIdAsync(int id, string json)
         {
             var model = await Reader.GetByIdAsync(id, json);
-            return await Converter.ConvertModelToDto(model);
+            return await Converter.ConvertSourceToDestination(model);
         }
     }
 }

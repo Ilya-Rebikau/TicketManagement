@@ -1,5 +1,9 @@
 ﻿using AutoMapper;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.EventManagerAPI.Models.EventAreas;
+using TicketManagement.EventManagerAPI.Models.Events;
+using TicketManagement.EventManagerAPI.Models.EventSeats;
+using TicketManagement.EventManagerAPI.Models.Tickets;
 using TicketManagement.EventManagerAPI.ModelsDTO;
 
 namespace TicketManagement.EventManagerAPI.Automapper
@@ -20,6 +24,10 @@ namespace TicketManagement.EventManagerAPI.Automapper
             CreateMap<EventSeat, EventSeatDto>().ReverseMap();
             CreateMap<Ticket, TicketDto>().ReverseMap();
             CreateMap<Event, EventDto>().ReverseMap();
+            CreateMap<EventAreaDto, EventAreaModel>().ReverseMap();
+            CreateMap<EventDto, EventModel>().ReverseMap();
+            CreateMap<EventSeatDto, EventSeatModel>().ReverseMap();
+            CreateMap<TicketDto, TicketModel>().ReverseMap();
         }
     }
 }

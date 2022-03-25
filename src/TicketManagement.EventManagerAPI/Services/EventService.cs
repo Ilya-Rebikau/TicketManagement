@@ -16,6 +16,11 @@ namespace TicketManagement.EventManagerAPI.
     internal class EventService : EventCrudService, IEventService
     {
         /// <summary>
+        /// Converter for dto and api models.
+        /// </summary>
+        private readonly IConverter<EventDto, EventModel> _converterDtoApi;
+
+        /// <summary>
         /// EventAreaService object.
         /// </summary>
         private readonly IService<EventAreaDto> _eventAreaService;
@@ -34,36 +39,45 @@ namespace TicketManagement.EventManagerAPI.
         /// Initializes a new instance of the <see cref="EventService"/> class.
         /// </summary>
         /// <param name="repository">EventRepository object.</param>
-        /// <param name="converter">Converter object for events.</param>
+        /// <param name="converterDbDto">Converter for database and dto models.</param>
+        /// <param name="converterDtoApi">Converter for dto and api models.</param>
         /// <param name="eventAreaRepository">EventAreaRepository object.</param>
         /// <param name="eventSeatRepository">EventSeatRepository object.</param>
         /// <param name="eventAreaService">EventAreaService object.</param>
         /// <param name="eventSeatService">EventSeatService object.</param>
         /// <param name="usersClient">ConverterForTime object.</param>
         public EventService(IRepository<Event> repository,
-            IConverter<Event, EventDto> converter,
+            IConverter<Event, EventDto> converterDbDto,
+            IConverter<EventDto, EventModel> converterDtoApi,
             IRepository<EventArea> eventAreaRepository,
             IRepository<EventSeat> eventSeatRepository,
             IService<EventAreaDto> eventAreaService,
             IService<EventSeatDto> eventSeatService,
             IUsersClient usersClient)
-            : base(repository, converter, eventAreaRepository, eventSeatRepository)
+            : base(repository, converterDbDto, eventAreaRepository, eventSeatRepository)
         {
+            _converterDtoApi = converterDtoApi;
             _eventAreaService = eventAreaService;
             _eventSeatService = eventSeatService;
             _usersClient = usersClient;
         }
 
+        public async Task<EventModel> UpdateAsync(EventModel obj)
+        {
+            var @event = await UpdateAsync(await _converterDtoApi.ConvertDestinationToSource(obj));
+            return await _converterDtoApi.ConvertSourceToDestination(@event);
+        }
+
+        public async Task<EventModel> CreateAsync(EventModel obj)
+        {
+            var @event = await CreateAsync(await _converterDtoApi.ConvertDestinationToSource(obj));
+            return await _converterDtoApi.ConvertSourceToDestination(@event);
+        }
+
         public async Task<IEnumerable<EventModel>> GetAllEventViewModelsAsync()
         {
             var events = await GetAllAsync();
-            var eventsVm = new List<EventModel>();
-            foreach (var @event in events)
-            {
-                eventsVm.Add(@event);
-            }
-
-            return eventsVm;
+            return await _converterDtoApi.ConvertSourceModelRangeToDestinationModelRange(events);
         }
 
         public async Task<EventModel> GetEventViewModelForDetailsAsync(EventDto @event, string token)
@@ -85,7 +99,7 @@ namespace TicketManagement.EventManagerAPI.
                 eventAreaViewModels.Add(eventAreaViewModel);
             }
 
-            EventModel eventViewModel = @event;
+            EventModel eventViewModel = await _converterDtoApi.ConvertSourceToDestination(@event);
             eventViewModel.EventAreas = eventAreaViewModels;
             return eventViewModel;
         }
@@ -93,8 +107,7 @@ namespace TicketManagement.EventManagerAPI.
         public async Task<EventModel> GetEventViewModelForEditAndDeleteAsync(EventDto @event, string token)
         {
             @event = await _usersClient.ConvertTimeFromUtcToUsers(token, @event);
-            EventModel eventVm = @event;
-            return eventVm;
+            return await _converterDtoApi.ConvertSourceToDestination(@event);
         }
     }
 }

@@ -20,27 +20,28 @@ namespace TicketManagement.EventManagerAPI.Services
         private readonly IReaderService<EventDto> _reader;
 
         /// <summary>
+        /// IConverter object.
+        /// </summary>
+        private readonly IConverter<EventDto, EventModel> _converter;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ThirdPartyEventService"/> class.
         /// </summary>
         /// <param name="reader">IReaderService object.</param>
         /// <param name="service">Event service object.</param>
-        public ThirdPartyEventService(IReaderService<EventDto> reader, IService<EventDto> service)
+        /// <param name="converter">IConverter object.</param>
+        public ThirdPartyEventService(IReaderService<EventDto> reader, IService<EventDto> service, IConverter<EventDto, EventModel> converter)
         {
             _reader = reader;
             _service = service;
+            _converter = converter;
         }
 
         public async Task<IEnumerable<EventModel>> GetEventViewModelsFromJson(byte[] fileData)
         {
             var json = Encoding.Default.GetString(fileData);
             var events = await _reader.GetAllAsync(json);
-            var eventsVm = new List<EventModel>();
-            foreach (var @event in events)
-            {
-                eventsVm.Add(@event);
-            }
-
-            return eventsVm;
+            return await _converter.ConvertSourceModelRangeToDestinationModelRange(events);
         }
 
         public async Task<IEnumerable<EventModel>> SaveToDatabase(IEnumerable<EventModel> events)
@@ -50,7 +51,7 @@ namespace TicketManagement.EventManagerAPI.Services
             {
                 if (@event.Checked is true)
                 {
-                    await _service.CreateAsync(@event);
+                    await _service.CreateAsync(await _converter.ConvertDestinationToSource(@event));
                     EventModel eventVm = @event;
                     savedEvents.Add(eventVm);
                 }

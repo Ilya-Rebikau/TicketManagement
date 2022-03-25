@@ -81,42 +81,6 @@ namespace TicketManagement.EventManagerAPI.Models.Events
         }
 
         /// <summary>
-        /// Convert event dto to event view model.
-        /// </summary>
-        /// <param name="event">Event dto.</param>
-        public static implicit operator EventModel(EventDto @event)
-        {
-            return new EventModel
-            {
-                Id = @event.Id,
-                Name = @event.Name,
-                Description = @event.Description,
-                LayoutId = @event.LayoutId,
-                TimeStart = @event.TimeStart,
-                TimeEnd = @event.TimeEnd,
-                ImageUrl = @event.ImageUrl,
-            };
-        }
-
-        /// <summary>
-        /// Convert event view model to event dto.
-        /// </summary>
-        /// <param name="eventVm">Event view model.</param>
-        public static implicit operator EventDto(EventModel eventVm)
-        {
-            return new EventDto
-            {
-                Id = eventVm.Id,
-                Name = eventVm.Name,
-                Description = eventVm.Description,
-                LayoutId = eventVm.LayoutId,
-                TimeStart = eventVm.TimeStart,
-                TimeEnd = eventVm.TimeEnd,
-                ImageUrl = eventVm.ImageUrl,
-            };
-        }
-
-        /// <summary>
         /// Sorting event areas by X and Y coordinates.
         /// </summary>
         /// <returns>Sorted event areas.</returns>

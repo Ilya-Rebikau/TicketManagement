@@ -23,12 +23,19 @@ namespace TicketManagement.EventManagerAPI.Controllers
         private readonly IService<EventAreaDto> _service;
 
         /// <summary>
+        /// IConverter object.
+        /// </summary>
+        private readonly IConverter<EventAreaDto, EventAreaModel> _converter;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="EventAreasController"/> class.
         /// </summary>
         /// <param name="service">EventAreaService object.</param>
-        public EventAreasController(IService<EventAreaDto> service)
+        /// <param name="converter">IConverter object.</param>
+        public EventAreasController(IService<EventAreaDto> service, IConverter<EventAreaDto, EventAreaModel> converter)
         {
             _service = service;
+            _converter = converter;
         }
 
         /// <summary>
@@ -39,13 +46,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         public async Task<IActionResult> GetEventAreaViewModels()
         {
             var eventAreas = await _service.GetAllAsync();
-            var eventAreaModels = new List<EventAreaModel>();
-            foreach (var eventArea in eventAreas)
-            {
-                eventAreaModels.Add(eventArea);
-            }
-
-            return Ok(eventAreaModels);
+            return Ok(await _converter.ConvertSourceModelRangeToDestinationModelRange(eventAreas));
         }
 
         /// <summary>
@@ -63,13 +64,12 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// <summary>
         /// Create event area.
         /// </summary>
-        /// <param name="eventAreaVm">Adding event area.</param>
+        /// <param name="eventArea">Adding event area.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost("create")]
-        public async Task<IActionResult> Create([FromBody] EventAreaModel eventAreaVm)
+        public async Task<IActionResult> Create([FromBody] EventAreaModel eventArea)
         {
-            EventAreaDto eventArea = eventAreaVm;
-            await _service.CreateAsync(eventArea);
+            await _service.CreateAsync(await _converter.ConvertDestinationToSource(eventArea));
             return Ok();
         }
 
@@ -101,7 +101,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
 
             try
             {
-                await _service.UpdateAsync(eventArea);
+                await _service.UpdateAsync(await _converter.ConvertDestinationToSource(eventArea));
                 return Ok();
             }
             catch (DbUpdateConcurrencyException)

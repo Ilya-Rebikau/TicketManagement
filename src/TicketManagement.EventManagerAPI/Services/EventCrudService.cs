@@ -131,7 +131,7 @@ namespace TicketManagement.EventManagerAPI.Services
         /// <exception cref="ArgumentException">Generates exception in case event in this layout and time already exists.</exception>
         private async Task CheckForSameLayoutInOneTime(EventDto obj)
         {
-            var events = await Converter.ConvertModelsRangeToDtos(await Repository.GetAllAsync());
+            var events = await Converter.ConvertSourceModelRangeToDestinationModelRange(await Repository.GetAllAsync());
             var eventsInLayout = events.Where(ev => ev.LayoutId == obj.LayoutId && obj.TimeStart <= ev.TimeStart && obj.TimeEnd >= ev.TimeEnd && ev.Id != obj.Id);
             if (eventsInLayout.Any())
             {

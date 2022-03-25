@@ -2,6 +2,10 @@
 using TicketManagement.DataAccess.Models;
 using TicketManagement.EventManagerAPI.Automapper;
 using TicketManagement.EventManagerAPI.Interfaces;
+using TicketManagement.EventManagerAPI.Models.EventAreas;
+using TicketManagement.EventManagerAPI.Models.Events;
+using TicketManagement.EventManagerAPI.Models.EventSeats;
+using TicketManagement.EventManagerAPI.Models.Tickets;
 using TicketManagement.EventManagerAPI.ModelsDTO;
 
 namespace TicketManagement.EventManagerAPI.Configuration
@@ -24,6 +28,10 @@ namespace TicketManagement.EventManagerAPI.Configuration
             services.AddScoped<IConverter<Event, EventDto>, ModelsConverter<Event, EventDto>>();
             services.AddScoped<IConverter<Ticket, TicketDto>, ModelsConverter<Ticket, TicketDto>>();
             services.AddScoped<IConverter<ThirdPartyEvent, EventDto>, ModelsConverter<ThirdPartyEvent, EventDto>>();
+            services.AddScoped<IConverter<EventDto, EventModel>, ModelsConverter<EventDto, EventModel>>();
+            services.AddScoped<IConverter<EventSeatDto, EventSeatModel>, ModelsConverter<EventSeatDto, EventSeatModel>>();
+            services.AddScoped<IConverter<EventAreaDto, EventAreaModel>, ModelsConverter<EventAreaDto, EventAreaModel>>();
+            services.AddScoped<IConverter<TicketDto, TicketModel>, ModelsConverter<TicketDto, TicketModel>>();
             return services;
         }
     }

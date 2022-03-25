@@ -11,6 +11,20 @@ namespace TicketManagement.EventManagerAPI.Interfaces
     public interface IEventService : IService<EventDto>
     {
         /// <summary>
+        /// Update event.
+        /// </summary>
+        /// <param name="obj">Updating event.</param>
+        /// <returns>Updated event.</returns>
+        Task<EventModel> UpdateAsync(EventModel obj);
+
+        /// <summary>
+        /// Create event.
+        /// </summary>
+        /// <param name="obj">Creating event.</param>
+        /// <returns>Created event.</returns>
+        Task<EventModel> CreateAsync(EventModel obj);
+
+        /// <summary>
         /// Get all event view models.
         /// </summary>
         /// <returns>Collection of event view models.</returns>

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,12 +19,19 @@ namespace TicketManagement.EventManagerAPI.Controllers
         private readonly IService<TicketDto> _service;
 
         /// <summary>
+        /// IConverter object.
+        /// </summary>
+        private readonly IConverter<TicketDto, TicketModel> _converter;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="TicketsController"/> class.
         /// </summary>
         /// <param name="service">TicketService object.</param>
-        public TicketsController(IService<TicketDto> service)
+        /// <param name="converter">IConverter object.</param>
+        public TicketsController(IService<TicketDto> service, IConverter<TicketDto, TicketModel> converter)
         {
             _service = service;
+            _converter = converter;
         }
 
         /// <summary>
@@ -36,13 +42,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         public async Task<IActionResult> GetTickets()
         {
             var tickets = await _service.GetAllAsync();
-            var ticketModels = new List<TicketModel>();
-            foreach (var ticket in tickets)
-            {
-                ticketModels.Add(ticket);
-            }
-
-            return Ok(ticketModels);
+            return Ok(await _converter.ConvertSourceModelRangeToDestinationModelRange(tickets));
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] TicketModel ticketModel)
         {
-            await _service.CreateAsync(ticketModel);
+            await _service.CreateAsync(await _converter.ConvertDestinationToSource(ticketModel));
             return Ok();
         }
 
@@ -85,24 +85,24 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// Edit ticket.
         /// </summary>
         /// <param name="id">Id of editing ticket.</param>
-        /// <param name="ticketVm">Edited ticket.</param>
+        /// <param name="ticket">Edited ticket.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPut("edit/{id}")]
-        public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] TicketModel ticketVm)
+        public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] TicketModel ticket)
         {
-            if (id != ticketVm.Id)
+            if (id != ticket.Id)
             {
                 return NotFound();
             }
 
             try
             {
-                await _service.UpdateAsync(ticketVm);
+                await _service.UpdateAsync(await _converter.ConvertDestinationToSource(ticket));
                 return Ok();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await TicketExists(ticketVm.Id))
+                if (!await TicketExists(ticket.Id))
                 {
                     return NotFound();
                 }

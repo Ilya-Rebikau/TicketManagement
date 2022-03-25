@@ -1,44 +1,41 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using TicketManagement.DataAccess.Interfaces;
 
 namespace TicketManagement.EventManagerAPI.Interfaces
 {
     /// <summary>
     /// Service to convert models and dto.
     /// </summary>
-    /// <typeparam name="TModel">Model.</typeparam>
-    /// <typeparam name="TDto">Dto.</typeparam>
-    public interface IConverter<TModel, TDto>
-        where TModel : IEntity
-        where TDto : IEntityDto
+    /// <typeparam name="TSource">Model.</typeparam>
+    /// <typeparam name="TDestination">Api model or dto.</typeparam>
+    public interface IConverter<TSource, TDestination>
     {
         /// <summary>
-        /// Convert model object to dto.
+        /// Convert source model to destination model.
         /// </summary>
-        /// <param name="model">Model.</param>
-        /// <returns>Dto.</returns>
-        Task<TDto> ConvertModelToDto(TModel model);
+        /// <param name="source">Source model.</param>
+        /// <returns>Destination model.</returns>
+        Task<TDestination> ConvertSourceToDestination(TSource source);
 
         /// <summary>
-        /// Convert dto to model object.
+        /// Convert destination models to source model.
         /// </summary>
-        /// <param name="dto">Dto.</param>
-        /// <returns>Model.</returns>
-        Task<TModel> ConvertDtoToModel(TDto dto);
+        /// <param name="destination">Destination model.</param>
+        /// <returns>Source model.</returns>
+        Task<TSource> ConvertDestinationToSource(TDestination destination);
 
         /// <summary>
-        /// Convert range of models to range of dtos.
+        /// Convert range of source models to range of destination models.
         /// </summary>
-        /// <param name="models">Range of models.</param>
-        /// <returns>Range of dtos.</returns>
-        Task<IEnumerable<TDto>> ConvertModelsRangeToDtos(IEnumerable<TModel> models);
+        /// <param name="sourceModels">Range of source models.</param>
+        /// <returns>Range of destination models.</returns>
+        Task<IEnumerable<TDestination>> ConvertSourceModelRangeToDestinationModelRange(IEnumerable<TSource> sourceModels);
 
         /// <summary>
-        /// Convert range of dtos to range of models.
+        /// Convert range of destination models to range of source models.
         /// </summary>
-        /// <param name="dtos">Range of dtos.</param>
-        /// <returns>Range of models.</returns>
-        Task<IEnumerable<TModel>> ConvertDtosRangeToModels(IEnumerable<TDto> dtos);
+        /// <param name="destinationModels">Range of destination models.</param>
+        /// <returns>Range of source models.</returns>
+        Task<IEnumerable<TSource>> ConvertDestinationModelRangeToSourceModelRange(IEnumerable<TDestination> destinationModels);
     }
 }
