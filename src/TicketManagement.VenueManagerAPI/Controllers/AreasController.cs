@@ -23,12 +23,19 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         private readonly IService<AreaDto> _service;
 
         /// <summary>
+        /// IConverter object.
+        /// </summary>
+        private readonly IConverter<AreaDto, AreaModel> _converter;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="AreasController"/> class.
         /// </summary>
         /// <param name="service">AreaService object.</param>
-        public AreasController(IService<AreaDto> service)
+        /// <param name="converter">IConverter object.</param>
+        public AreasController(IService<AreaDto> service, IConverter<AreaDto, AreaModel> converter)
         {
             _service = service;
+            _converter = converter;
         }
 
         /// <summary>
@@ -39,13 +46,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         public async Task<IActionResult> GetAreas()
         {
             var areas = await _service.GetAllAsync();
-            var areaModels = new List<AreaModel>();
-            foreach (var area in areas)
-            {
-                areaModels.Add(area);
-            }
-
-            return Ok(areaModels);
+            return Ok(await _converter.ConvertSourceModelRangeToDestinationModelRange(areas));
         }
 
         /// <summary>
@@ -68,7 +69,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] AreaModel areaVm)
         {
-            await _service.CreateAsync(areaVm);
+            await _service.CreateAsync(await _converter.ConvertDestinationToSource(areaVm));
             return Ok();
         }
 
@@ -100,7 +101,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
 
             try
             {
-                await _service.UpdateAsync(areaVm);
+                await _service.UpdateAsync(await _converter.ConvertDestinationToSource(areaVm));
                 return Ok();
             }
             catch (DbUpdateConcurrencyException)

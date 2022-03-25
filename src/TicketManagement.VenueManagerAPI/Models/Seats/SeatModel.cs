@@ -33,35 +33,5 @@ namespace TicketManagement.VenueManagerAPI.Models.Seats
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "Number")]
         public int Number { get; set; }
-
-        /// <summary>
-        /// Convert seat dto to seat view model.
-        /// </summary>
-        /// <param name="seat">Seat dto.</param>
-        public static implicit operator SeatModel(SeatDto seat)
-        {
-            return new SeatModel
-            {
-                Id = seat.Id,
-                AreaId = seat.AreaId,
-                Row = seat.Row,
-                Number = seat.Number,
-            };
-        }
-
-        /// <summary>
-        /// Convert seat view model to seat dto.
-        /// </summary>
-        /// <param name="seatVm">Seat view model.</param>
-        public static implicit operator SeatDto(SeatModel seatVm)
-        {
-            return new SeatDto
-            {
-                Id = seatVm.Id,
-                AreaId = seatVm.AreaId,
-                Row = seatVm.Row,
-                Number = seatVm.Number,
-            };
-        }
     }
 }

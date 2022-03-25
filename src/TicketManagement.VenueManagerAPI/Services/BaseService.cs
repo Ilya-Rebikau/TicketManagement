@@ -38,31 +38,31 @@ namespace TicketManagement.VenueManagerAPI.Services
         public async virtual Task<IEnumerable<TDto>> GetAllAsync()
         {
             var models = await Repository.GetAllAsync();
-            return await Converter.ConvertModelsRangeToDtos(models);
+            return await Converter.ConvertSourceModelRangeToDestinationModelRange(models);
         }
 
         public async virtual Task<TDto> GetByIdAsync(int id)
         {
             var model = await Repository.GetByIdAsync(id);
-            return await Converter.ConvertModelToDto(model);
+            return await Converter.ConvertSourceToDestination(model);
         }
 
         public async virtual Task<TDto> CreateAsync(TDto obj)
         {
-            var model = await Repository.CreateAsync(await Converter.ConvertDtoToModel(obj));
-            return await Converter.ConvertModelToDto(model);
+            var model = await Repository.CreateAsync(await Converter.ConvertDestinationToSource(obj));
+            return await Converter.ConvertSourceToDestination(model);
         }
 
         public async virtual Task<TDto> UpdateAsync(TDto obj)
         {
-            var model = await Repository.UpdateAsync(await Converter.ConvertDtoToModel(obj));
-            return await Converter.ConvertModelToDto(model);
+            var model = await Repository.UpdateAsync(await Converter.ConvertDestinationToSource(obj));
+            return await Converter.ConvertSourceToDestination(model);
         }
 
         public async virtual Task<TDto> DeleteAsync(TDto obj)
         {
-            var model = await Repository.DeleteAsync(await Converter.ConvertDtoToModel(obj));
-            return await Converter.ConvertModelToDto(model);
+            var model = await Repository.DeleteAsync(await Converter.ConvertDestinationToSource(obj));
+            return await Converter.ConvertSourceToDestination(model);
         }
 
         public async virtual Task<int> DeleteById(int id)

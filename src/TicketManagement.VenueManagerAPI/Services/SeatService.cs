@@ -57,7 +57,7 @@ namespace TicketManagement.VenueManagerAPI.Services
         /// <exception cref="ArgumentException">Generates exception in case row and number are not unique.</exception>
         private async Task CheckForUniqueRowAndNumber(SeatDto obj)
         {
-            var seats = await Converter.ConvertModelsRangeToDtos(await Repository.GetAllAsync());
+            var seats = await Converter.ConvertSourceModelRangeToDestinationModelRange(await Repository.GetAllAsync());
             var seatsInArea = seats.Where(seat => seat.AreaId == obj.AreaId && seat.Row == obj.Row && seat.Number == obj.Number && seat.Id != obj.Id);
             if (seatsInArea.Any())
             {

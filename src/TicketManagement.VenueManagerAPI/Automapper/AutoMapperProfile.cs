@@ -1,5 +1,9 @@
 ﻿using AutoMapper;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.VenueManagerAPI.Models.Areas;
+using TicketManagement.VenueManagerAPI.Models.Layouts;
+using TicketManagement.VenueManagerAPI.Models.Seats;
+using TicketManagement.VenueManagerAPI.Models.Venues;
 using TicketManagement.VenueManagerAPI.ModelsDTO;
 
 namespace TicketManagement.VenueManagerAPI.Automapper
@@ -18,6 +22,10 @@ namespace TicketManagement.VenueManagerAPI.Automapper
             CreateMap<Layout, LayoutDto>().ReverseMap();
             CreateMap<Seat, SeatDto>().ReverseMap();
             CreateMap<Venue, VenueDto>().ReverseMap();
+            CreateMap<VenueDto, VenueModel>().ReverseMap();
+            CreateMap<AreaDto, AreaModel>().ReverseMap();
+            CreateMap<LayoutDto, LayoutModel>().ReverseMap();
+            CreateMap<SeatDto, SeatModel>().ReverseMap();
         }
     }
 }

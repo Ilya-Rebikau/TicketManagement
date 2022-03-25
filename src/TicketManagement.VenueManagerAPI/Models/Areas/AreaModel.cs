@@ -47,39 +47,5 @@ namespace TicketManagement.VenueManagerAPI.Models.Areas
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "Price")]
         public double BasePrice { get; set; }
-
-        /// <summary>
-        /// Convert area dto to area view model.
-        /// </summary>
-        /// <param name="area">Area dto.</param>
-        public static implicit operator AreaModel(AreaDto area)
-        {
-            return new AreaModel
-            {
-                Id = area.Id,
-                LayoutId = area.LayoutId,
-                Description = area.Description,
-                CoordX = area.CoordX,
-                CoordY = area.CoordY,
-                BasePrice = area.BasePrice,
-            };
-        }
-
-        /// <summary>
-        /// Convert area view model to area dto.
-        /// </summary>
-        /// <param name="areaVm">Area view model.</param>
-        public static implicit operator AreaDto(AreaModel areaVm)
-        {
-            return new AreaDto
-            {
-                Id = areaVm.Id,
-                LayoutId = areaVm.LayoutId,
-                Description = areaVm.Description,
-                CoordX = areaVm.CoordX,
-                CoordY = areaVm.CoordY,
-                BasePrice = areaVm.BasePrice,
-            };
-        }
     }
 }

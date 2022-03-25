@@ -23,12 +23,19 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         private readonly IService<LayoutDto> _service;
 
         /// <summary>
+        /// IConverter object.
+        /// </summary>
+        private readonly IConverter<LayoutDto, LayoutModel> _converter;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="LayoutsController"/> class.
         /// </summary>
         /// <param name="service">LayoutService object.</param>
-        public LayoutsController(IService<LayoutDto> service)
+        /// <param name="converter">IConverter object.</param>
+        public LayoutsController(IService<LayoutDto> service, IConverter<LayoutDto, LayoutModel> converter)
         {
             _service = service;
+            _converter = converter;
         }
 
         /// <summary>
@@ -39,13 +46,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         public async Task<IActionResult> GetLayouts()
         {
             var layouts = await _service.GetAllAsync();
-            var layoutModels = new List<LayoutModel>();
-            foreach (var layout in layouts)
-            {
-                layoutModels.Add(layout);
-            }
-
-            return Ok(layoutModels);
+            return Ok(await _converter.ConvertSourceModelRangeToDestinationModelRange(layouts));
         }
 
         /// <summary>
@@ -68,7 +69,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] LayoutModel layoutVm)
         {
-            await _service.CreateAsync(layoutVm);
+            await _service.CreateAsync(await _converter.ConvertDestinationToSource(layoutVm));
             return Ok();
         }
 
@@ -100,7 +101,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
 
             try
             {
-                await _service.UpdateAsync(layoutVm);
+                await _service.UpdateAsync(await _converter.ConvertDestinationToSource(layoutVm));
                 return Ok();
             }
             catch (DbUpdateConcurrencyException)

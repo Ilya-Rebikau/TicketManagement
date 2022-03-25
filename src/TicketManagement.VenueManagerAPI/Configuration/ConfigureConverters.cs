@@ -2,6 +2,10 @@
 using TicketManagement.DataAccess.Models;
 using TicketManagement.VenueManagerAPI.Automapper;
 using TicketManagement.VenueManagerAPI.Interfaces;
+using TicketManagement.VenueManagerAPI.Models.Areas;
+using TicketManagement.VenueManagerAPI.Models.Layouts;
+using TicketManagement.VenueManagerAPI.Models.Seats;
+using TicketManagement.VenueManagerAPI.Models.Venues;
 using TicketManagement.VenueManagerAPI.ModelsDTO;
 
 namespace TicketManagement.VenueManagerAPI.Configuration
@@ -19,10 +23,14 @@ namespace TicketManagement.VenueManagerAPI.Configuration
         public static IServiceCollection AddConverters(this IServiceCollection services)
         {
             services.AddAutoMapper(typeof(AutoMapperProfile));
-            services.AddScoped(typeof(IConverter<Area, AreaDto>), typeof(ModelsConverter<Area, AreaDto>));
-            services.AddScoped(typeof(IConverter<Layout, LayoutDto>), typeof(ModelsConverter<Layout, LayoutDto>));
-            services.AddScoped(typeof(IConverter<Seat, SeatDto>), typeof(ModelsConverter<Seat, SeatDto>));
-            services.AddScoped(typeof(IConverter<Venue, VenueDto>), typeof(ModelsConverter<Venue, VenueDto>));
+            services.AddScoped<IConverter<Area, AreaDto>, ModelsConverter<Area, AreaDto>>();
+            services.AddScoped<IConverter<Layout, LayoutDto>, ModelsConverter<Layout, LayoutDto>>();
+            services.AddScoped<IConverter<Seat, SeatDto>, ModelsConverter<Seat, SeatDto>>();
+            services.AddScoped<IConverter<Venue, VenueDto>, ModelsConverter<Venue, VenueDto>>();
+            services.AddScoped<IConverter<VenueDto, VenueModel>, ModelsConverter<VenueDto, VenueModel>>();
+            services.AddScoped<IConverter<AreaDto, AreaModel>, ModelsConverter<AreaDto, AreaModel>>();
+            services.AddScoped<IConverter<LayoutDto, LayoutModel>, ModelsConverter<LayoutDto, LayoutModel>>();
+            services.AddScoped<IConverter<SeatDto, SeatModel>, ModelsConverter<SeatDto, SeatModel>>();
             return services;
         }
     }

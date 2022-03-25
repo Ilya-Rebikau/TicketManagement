@@ -23,12 +23,19 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         private readonly IService<SeatDto> _service;
 
         /// <summary>
+        /// IConverter object.
+        /// </summary>
+        private readonly IConverter<SeatDto, SeatModel> _converter;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="SeatsController"/> class.
         /// </summary>
         /// <param name="service">SeatService object.</param>
-        public SeatsController(IService<SeatDto> service)
+        /// <param name="converter">IConverter object.</param>
+        public SeatsController(IService<SeatDto> service, IConverter<SeatDto, SeatModel> converter)
         {
             _service = service;
+            _converter = converter;
         }
 
         /// <summary>
@@ -39,13 +46,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         public async Task<IActionResult> GetSeats()
         {
             var seats = await _service.GetAllAsync();
-            var seatModels = new List<SeatModel>();
-            foreach (var seat in seats)
-            {
-                seatModels.Add(seat);
-            }
-
-            return Ok(seatModels);
+            return Ok(await _converter.ConvertSourceModelRangeToDestinationModelRange(seats));
         }
 
         /// <summary>
@@ -68,7 +69,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] SeatModel seat)
         {
-            await _service.CreateAsync(seat);
+            await _service.CreateAsync(await _converter.ConvertDestinationToSource(seat));
             return Ok();
         }
 
@@ -88,24 +89,24 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         /// Edit seat.
         /// </summary>
         /// <param name="id">Id of editing seat.</param>
-        /// <param name="seatVm">Edited seat.</param>
+        /// <param name="seat">Edited seat.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPut("edit/{id}")]
-        public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] SeatModel seatVm)
+        public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] SeatModel seat)
         {
-            if (id != seatVm.Id)
+            if (id != seat.Id)
             {
                 return NotFound();
             }
 
             try
             {
-                await _service.UpdateAsync(seatVm);
+                await _service.UpdateAsync(await _converter.ConvertDestinationToSource(seat));
                 return Ok();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await SeatExists(seatVm.Id))
+                if (!await SeatExists(seat.Id))
                 {
                     return NotFound();
                 }

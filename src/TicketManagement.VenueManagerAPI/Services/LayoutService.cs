@@ -71,7 +71,7 @@ namespace TicketManagement.VenueManagerAPI.Services
         /// <exception cref="ArgumentException">Generates exception in case there are layouts in venue with such name.</exception>
         private async Task CheckForUniqueNameInVenue(LayoutDto obj)
         {
-            var layouts = await Converter.ConvertModelsRangeToDtos(await Repository.GetAllAsync());
+            var layouts = await Converter.ConvertSourceModelRangeToDestinationModelRange(await Repository.GetAllAsync());
             var layoutsInVenue = layouts.Where(layout => layout.Name == obj.Name && layout.VenueId == obj.VenueId && layout.Id != obj.Id);
             if (layoutsInVenue.Any())
             {

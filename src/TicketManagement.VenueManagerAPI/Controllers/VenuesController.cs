@@ -23,12 +23,19 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         private readonly IService<VenueDto> _service;
 
         /// <summary>
+        /// IConverter object.
+        /// </summary>
+        private readonly IConverter<VenueDto, VenueModel> _converter;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="VenuesController"/> class.
         /// </summary>
         /// <param name="service">VenueService object.</param>
-        public VenuesController(IService<VenueDto> service)
+        /// <param name="converter">IConverter object.</param>
+        public VenuesController(IService<VenueDto> service, IConverter<VenueDto, VenueModel> converter)
         {
             _service = service;
+            _converter = converter;
         }
 
         /// <summary>
@@ -39,13 +46,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         public async Task<IActionResult> GetVenues()
         {
             var venues = await _service.GetAllAsync();
-            var venueModels = new List<VenueModel>();
-            foreach (var venue in venues)
-            {
-                venueModels.Add(venue);
-            }
-
-            return Ok(venueModels);
+            return Ok(await _converter.ConvertSourceModelRangeToDestinationModelRange(venues));
         }
 
         /// <summary>
@@ -68,7 +69,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] VenueModel venue)
         {
-            await _service.CreateAsync(venue);
+            await _service.CreateAsync(await _converter.ConvertDestinationToSource(venue));
             return Ok();
         }
 
@@ -88,24 +89,24 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         /// Edit venue.
         /// </summary>
         /// <param name="id">Id of editing venue.</param>
-        /// <param name="venueVm">Edited venue.</param>
+        /// <param name="venue">Edited venue.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPut("edit/{id}")]
-        public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] VenueModel venueVm)
+        public async Task<IActionResult> Edit([FromRoute] int id, [FromBody] VenueModel venue)
         {
-            if (id != venueVm.Id)
+            if (id != venue.Id)
             {
                 return NotFound();
             }
 
             try
             {
-                await _service.UpdateAsync(venueVm);
+                await _service.UpdateAsync(await _converter.ConvertDestinationToSource(venue));
                 return Ok();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await VenueExists(venueVm.Id))
+                if (!await VenueExists(venue.Id))
                 {
                     return NotFound();
                 }
