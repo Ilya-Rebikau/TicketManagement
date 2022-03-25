@@ -11,10 +11,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using TicketManagement.UserAPI.Automapper;
 using TicketManagement.UserAPI.Infrastructure;
 using TicketManagement.UserAPI.Interfaces;
 using TicketManagement.UserAPI.Middlewares;
 using TicketManagement.UserAPI.Models;
+using TicketManagement.UserAPI.Models.Account;
 using TicketManagement.UserAPI.Services;
 
 namespace TicketManagement.UserAPI
@@ -38,6 +40,8 @@ namespace TicketManagement.UserAPI
                 .AddDefaultTokenProviders();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IUsersService, UsersService>();
+            services.AddScoped<IConverter<User, EditAccountModel>, ModelsConverter<User, EditAccountModel>>();
+            services.AddAutoMapper(typeof(AutoMapperProfile));
 
             var tokenSettings = Configuration.GetSection(nameof(JwtTokenSettings));
             services.AddAuthentication(options =>

@@ -31,18 +31,26 @@ namespace TicketManagement.UserAPI.Services
         private readonly SignInManager<User> _signInManager;
 
         /// <summary>
+        /// IConverter object.
+        /// </summary>
+        private readonly IConverter<User, EditAccountModel> _converter;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="AccountService"/> class.
         /// </summary>
         /// <param name="userManager">UserManager object.</param>
         /// <param name="signInManager">SignInManager object.</param>
         /// <param name="configuration">IConfiguration object.</param>
+        /// <param name="converter">IConverter object.</param>
         public AccountService(UserManager<User> userManager,
             SignInManager<User> signInManager,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IConverter<User, EditAccountModel> converter)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _baseRoleForNewUser = configuration.GetValue<string>("BaseRole");
+            _converter = converter;
         }
 
         public async Task<RegisterResultModel> RegisterUser(RegisterModel model)
@@ -92,7 +100,7 @@ namespace TicketManagement.UserAPI.Services
         public async Task<EditAccountModel> GetEditAccountViewModelForEdit(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            return user;
+            return await _converter.ConvertSourceToDestination(user);
         }
 
         public async Task<IdentityResult> UpdateUserInEdit(EditAccountModel model)
