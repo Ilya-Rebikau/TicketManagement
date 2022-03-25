@@ -22,7 +22,7 @@ namespace TicketManagement.Web.Models.Events
         {
             get
             {
-                return EventSeats.Count > 0 ? EventSeats.Max(x => x.Row) : 0;
+                return EventSeats.Count > 0 && EventSeats is not null ? EventSeats.Max(x => x.Row) : 0;
             }
         }
 
@@ -34,7 +34,7 @@ namespace TicketManagement.Web.Models.Events
         {
             get
             {
-                return EventSeats.Count > 0 ? EventSeats.Max(x => x.Number) : 0;
+                return EventSeats.Count > 0 && EventSeats is not null ? EventSeats.Max(x => x.Number) : 0;
             }
         }
 

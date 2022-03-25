@@ -31,33 +31,5 @@ namespace TicketManagement.Web.Models.Tickets
         /// Gets or sets price for ticket.
         /// </summary>
         public double Price { get; set; }
-
-        /// <summary>
-        /// Convert ticket dto to ticket view model.
-        /// </summary>
-        /// <param name="ticket">ticket dto.</param>
-        public static implicit operator TicketViewModel(TicketDto ticket)
-        {
-            return new TicketViewModel
-            {
-                Id = ticket.Id,
-                EventSeatId = ticket.EventSeatId,
-                UserId = ticket.UserId,
-            };
-        }
-
-        /// <summary>
-        /// Convert ticket view model to ticket dto.
-        /// </summary>
-        /// <param name="ticketVm">ticket view model.</param>
-        public static implicit operator TicketDto(TicketViewModel ticketVm)
-        {
-            return new TicketDto
-            {
-                Id = ticketVm.Id,
-                EventSeatId = ticketVm.EventSeatId,
-                UserId = ticketVm.UserId,
-            };
-        }
     }
 }

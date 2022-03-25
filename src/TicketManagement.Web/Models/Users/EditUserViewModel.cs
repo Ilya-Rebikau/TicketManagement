@@ -57,7 +57,7 @@ namespace TicketManagement.Web.Models.Users
         /// <returns>List with time zones.</returns>
         private static List<string> GetStandartTimeZones()
         {
-            List<string> stringTimeZones = new List<string>();
+            var stringTimeZones = new List<string>();
             var list = TimeZoneInfo.GetSystemTimeZones();
             foreach (var item in list)
             {

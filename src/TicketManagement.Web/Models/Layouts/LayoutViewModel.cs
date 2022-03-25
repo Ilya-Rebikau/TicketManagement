@@ -33,35 +33,5 @@ namespace TicketManagement.Web.Models.Layouts
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "Name")]
         public string Name { get; set; }
-
-        /// <summary>
-        /// Convert layout dto to layout view model.
-        /// </summary>
-        /// <param name="layout">Layout dto.</param>
-        public static implicit operator LayoutViewModel(LayoutDto layout)
-        {
-            return new LayoutViewModel
-            {
-                Id = layout.Id,
-                Name = layout.Name,
-                Description = layout.Description,
-                VenueId = layout.VenueId,
-            };
-        }
-
-        /// <summary>
-        /// Convert layout view model to layout dto.
-        /// </summary>
-        /// <param name="layoutVm">Layout view model.</param>
-        public static implicit operator LayoutDto(LayoutViewModel layoutVm)
-        {
-            return new LayoutDto
-            {
-                Id = layoutVm.Id,
-                Name = layoutVm.Name,
-                Description = layoutVm.Description,
-                VenueId = layoutVm.VenueId,
-            };
-        }
     }
 }

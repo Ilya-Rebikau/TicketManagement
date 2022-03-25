@@ -64,7 +64,7 @@ namespace TicketManagement.EventManagerAPI.Models.Events
         {
             get
             {
-                return EventAreas.Count > 0 || EventAreas is not null ? EventAreas.Max(x => x.EventArea.CoordX) : 0;
+                return EventAreas.Count > 0 && EventAreas is not null ? EventAreas.Max(x => x.EventArea.CoordX) : 0;
             }
         }
 
@@ -76,7 +76,7 @@ namespace TicketManagement.EventManagerAPI.Models.Events
         {
             get
             {
-                return EventAreas.Count > 0 || EventAreas is not null ? EventAreas.Max(x => x.EventArea.CoordY) : 0;
+                return EventAreas.Count > 0 && EventAreas is not null ? EventAreas.Max(x => x.EventArea.CoordY) : 0;
             }
         }
 

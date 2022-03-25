@@ -78,8 +78,7 @@ namespace TicketManagement.Web.Controllers
                 return View(eventSeatVm);
             }
 
-            EventSeatDto eventSeat = eventSeatVm;
-            await _eventManagerClient.CreateEventSeat(HttpContext.GetJwtToken(), eventSeat);
+            await _eventManagerClient.CreateEventSeat(HttpContext.GetJwtToken(), eventSeatVm);
             return RedirectToAction(nameof(Index));
         }
 

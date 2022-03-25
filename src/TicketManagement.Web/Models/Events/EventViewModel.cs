@@ -77,12 +77,7 @@ namespace TicketManagement.Web.Models.Events
         {
             get
             {
-                if (EventAreas is null)
-                {
-                    return 0;
-                }
-
-                return EventAreas.Count > 0 || EventAreas is not null ? EventAreas.Max(x => x.EventArea.CoordX) : 0;
+                return EventAreas.Count > 0 && EventAreas is not null ? EventAreas.Max(x => x.EventArea.CoordX) : 0;
             }
         }
 
@@ -94,49 +89,8 @@ namespace TicketManagement.Web.Models.Events
         {
             get
             {
-                if (EventAreas is null)
-                {
-                    return 0;
-                }
-
-                return EventAreas.Count > 0 || EventAreas is not null ? EventAreas.Max(x => x.EventArea.CoordY) : 0;
+                return EventAreas.Count > 0 && EventAreas is not null ? EventAreas.Max(x => x.EventArea.CoordY) : 0;
             }
-        }
-
-        /// <summary>
-        /// Convert event dto to event view model.
-        /// </summary>
-        /// <param name="event">Event dto.</param>
-        public static implicit operator EventViewModel(EventDto @event)
-        {
-            return new EventViewModel
-            {
-                Id = @event.Id,
-                Name = @event.Name,
-                Description = @event.Description,
-                LayoutId = @event.LayoutId,
-                TimeStart = @event.TimeStart,
-                TimeEnd = @event.TimeEnd,
-                ImageUrl = @event.ImageUrl,
-            };
-        }
-
-        /// <summary>
-        /// Convert event view model to event dto.
-        /// </summary>
-        /// <param name="eventVm">Event view model.</param>
-        public static implicit operator EventDto(EventViewModel eventVm)
-        {
-            return new EventDto
-            {
-                Id = eventVm.Id,
-                Name = eventVm.Name,
-                Description = eventVm.Description,
-                LayoutId = eventVm.LayoutId,
-                TimeStart = eventVm.TimeStart,
-                TimeEnd = eventVm.TimeEnd,
-                ImageUrl = eventVm.ImageUrl,
-            };
         }
 
         /// <summary>

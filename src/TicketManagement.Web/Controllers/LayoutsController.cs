@@ -113,10 +113,9 @@ namespace TicketManagement.Web.Controllers
                 return View(layoutVm);
             }
 
-            LayoutDto layout = layoutVm;
             try
             {
-                await _venueManagerClient.EditLayout(HttpContext.GetJwtToken(), id, layout);
+                await _venueManagerClient.EditLayout(HttpContext.GetJwtToken(), id, layoutVm);
             }
             catch (DbUpdateConcurrencyException)
             {
