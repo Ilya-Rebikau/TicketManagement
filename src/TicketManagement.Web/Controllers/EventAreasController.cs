@@ -35,18 +35,13 @@ namespace TicketManagement.Web.Controllers
         /// <summary>
         /// All event areas.
         /// </summary>
+        /// <param name="pageNumber">Page number.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pageNumber = 1)
         {
-            var eventAreas = await _eventManagerClient.GetEventAreaViewModels(HttpContext.GetJwtToken());
-            var eventAreasVm = new List<EventAreaViewModel>();
-            foreach (var eventArea in eventAreas)
-            {
-                eventAreasVm.Add(eventArea);
-            }
-
-            return View(eventAreasVm);
+            var eventAreas = await _eventManagerClient.GetEventAreaViewModels(HttpContext.GetJwtToken(), pageNumber);
+            return View(eventAreas);
         }
 
         /// <summary>

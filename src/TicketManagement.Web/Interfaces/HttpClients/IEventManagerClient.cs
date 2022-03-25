@@ -22,7 +22,7 @@ namespace TicketManagement.Web.Interfaces.HttpClients
         private const string AuthorizationKey = "Authorization";
 
         [Get("eventareas/getareas")]
-        public Task<IEnumerable<EventAreaViewModel>> GetEventAreaViewModels([Header(AuthorizationKey)] string token, CancellationToken cancellationToken = default);
+        public Task<IEnumerable<EventAreaViewModel>> GetEventAreaViewModels([Header(AuthorizationKey)] string token, [Body] int pageNumber, CancellationToken cancellationToken = default);
 
         [Get("eventareas/details/{id}")]
         public Task<EventAreaViewModel> EventAreaDetails([Header(AuthorizationKey)] string token, [Path] int id, CancellationToken cancellationToken = default);
@@ -43,7 +43,7 @@ namespace TicketManagement.Web.Interfaces.HttpClients
         public Task DeleteEventArea([Header(AuthorizationKey)] string token, [Path] int id, CancellationToken cancellationToken = default);
 
         [Get("eventseats/geteventseats")]
-        public Task<IEnumerable<EventSeatViewModel>> GetEventSeatsViewModels([Header(AuthorizationKey)] string token, CancellationToken cancellationToken = default);
+        public Task<IEnumerable<EventSeatViewModel>> GetEventSeatsViewModels([Header(AuthorizationKey)] string token, [Body] int pageNumber, CancellationToken cancellationToken = default);
 
         [Get("eventseats/details/{id}")]
         public Task<EventSeatViewModel> EventSeatDetails([Header(AuthorizationKey)] string token, [Path] int id, CancellationToken cancellationToken = default);
@@ -64,7 +64,7 @@ namespace TicketManagement.Web.Interfaces.HttpClients
         public Task DeleteEventSeat([Header(AuthorizationKey)] string token, [Path] int id, CancellationToken cancellationToken = default);
 
         [Get("events/getevents")]
-        public Task<IEnumerable<EventViewModel>> GetEventViewModels([Header(AuthorizationKey)] string token, CancellationToken cancellationToken = default);
+        public Task<IEnumerable<EventViewModel>> GetEventViewModels([Header(AuthorizationKey)] string token, [Body] int pageNumber, CancellationToken cancellationToken = default);
 
         [Get("events/details/{id}")]
         public Task<EventViewModel> EventDetails([Header(AuthorizationKey)] string token, [Path] int id, CancellationToken cancellationToken = default);
@@ -85,7 +85,7 @@ namespace TicketManagement.Web.Interfaces.HttpClients
         public Task DeleteEvent([Header(AuthorizationKey)] string token, [Path] int id, CancellationToken cancellationToken = default);
 
         [Get("tickets/gettickets")]
-        public Task<IEnumerable<TicketViewModel>> GetTicketViewModels([Header(AuthorizationKey)] string token, CancellationToken cancellationToken = default);
+        public Task<IEnumerable<TicketViewModel>> GetTicketViewModels([Header(AuthorizationKey)] string token, [Body] int pageNumber, CancellationToken cancellationToken = default);
 
         [Get("tickets/details/{id}")]
         public Task<TicketViewModel> TicketDetails([Header(AuthorizationKey)] string token, [Path] int id, CancellationToken cancellationToken = default);

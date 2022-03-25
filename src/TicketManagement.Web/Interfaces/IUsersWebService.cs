@@ -16,8 +16,9 @@ namespace TicketManagement.Web.Interfaces
         /// Get all users.
         /// </summary>
         /// <param name="httpContext">HttpContext object.</param>
+        /// <param name="pageNumber">Page number.</param>
         /// <returns>All users.</returns>
-        Task<IEnumerable<User>> GetUsers(HttpContext httpContext);
+        Task<IEnumerable<User>> GetUsers(HttpContext httpContext, int pageNumber);
 
         /// <summary>
         /// Create user.

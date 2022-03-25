@@ -44,7 +44,7 @@ namespace TicketManagement.Web.Interfaces.HttpClients
         public Task<string> GetUserId([Header(AuthorizationKey)] string token, CancellationToken cancellationToken = default);
 
         [Get("users/getusers")]
-        public Task<IEnumerable<User>> GetUsers([Header(AuthorizationKey)] string token, CancellationToken cancellationToken = default);
+        public Task<IEnumerable<User>> GetUsers([Header(AuthorizationKey)] string token, [Body] int pageNumber, CancellationToken cancellationToken = default);
 
         [Post("users/create")]
         public Task<IdentityResult> CreateUser([Header(AuthorizationKey)] string token, [Body] CreateUserViewModel model, CancellationToken cancellationToken = default);

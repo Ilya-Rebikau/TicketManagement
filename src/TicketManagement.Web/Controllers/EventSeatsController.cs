@@ -35,11 +35,12 @@ namespace TicketManagement.Web.Controllers
         /// <summary>
         /// Get all event seats.
         /// </summary>
+        /// <param name="pageNumber">Page number.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pageNumber = 1)
         {
-            var eventSeatsVm = await _eventManagerClient.GetEventSeatsViewModels(HttpContext.GetJwtToken());
+            var eventSeatsVm = await _eventManagerClient.GetEventSeatsViewModels(HttpContext.GetJwtToken(), pageNumber);
             return View(eventSeatsVm);
         }
 

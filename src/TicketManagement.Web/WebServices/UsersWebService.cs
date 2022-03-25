@@ -29,9 +29,9 @@ namespace TicketManagement.Web.WebServices
             _client = client;
         }
 
-        public async Task<IEnumerable<User>> GetUsers(HttpContext httpContext)
+        public async Task<IEnumerable<User>> GetUsers(HttpContext httpContext, int pageNumber)
         {
-            return await _client.GetUsers(httpContext.GetJwtToken());
+            return await _client.GetUsers(httpContext.GetJwtToken(), pageNumber);
         }
 
         public async Task<IdentityResult> CreateUser(HttpContext httpContext, CreateUserViewModel model)

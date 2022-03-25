@@ -32,11 +32,12 @@ namespace TicketManagement.Web.Controllers
         /// <summary>
         /// Get all users.
         /// </summary>
+        /// <param name="pageNumber">Page number.</param>
         /// <returns>IActionResult.</returns>
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pageNumber = 1)
         {
-            return View(await _service.GetUsers(HttpContext));
+            return View(await _service.GetUsers(HttpContext, pageNumber));
         }
 
         /// <summary>

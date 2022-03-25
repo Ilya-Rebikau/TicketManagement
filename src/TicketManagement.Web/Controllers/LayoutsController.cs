@@ -35,11 +35,12 @@ namespace TicketManagement.Web.Controllers
         /// <summary>
         /// Get all layouts.
         /// </summary>
+        /// <param name="pageNumber">Page number.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pageNumber = 1)
         {
-            var layouts = await _venueManagerClient.GetLayoutViewModels(HttpContext.GetJwtToken());
+            var layouts = await _venueManagerClient.GetLayoutViewModels(HttpContext.GetJwtToken(), pageNumber);
             return View(layouts);
         }
 

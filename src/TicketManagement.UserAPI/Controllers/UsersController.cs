@@ -31,11 +31,12 @@ namespace TicketManagement.UserAPI.Controllers
         /// <summary>
         /// Get all users.
         /// </summary>
+        /// <param name="pageNumber">Page number.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpGet("getusers")]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetUsers([FromBody] int pageNumber)
         {
-            return Ok(await _service.GetUsers());
+            return Ok(await _service.GetUsers(pageNumber));
         }
 
         /// <summary>

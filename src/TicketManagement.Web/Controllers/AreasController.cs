@@ -34,11 +34,12 @@ namespace TicketManagement.Web.Controllers
         /// <summary>
         /// All areas.
         /// </summary>
+        /// <param name="pageNumber">Page number.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pageNumber = 1)
         {
-            var areas = await _venueManagerClient.GetAreaViewModels(HttpContext.GetJwtToken());
+            var areas = await _venueManagerClient.GetAreaViewModels(HttpContext.GetJwtToken(), pageNumber);
             return View(areas);
         }
 

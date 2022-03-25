@@ -15,8 +15,9 @@ namespace TicketManagement.UserAPI.Interfaces
         /// <summary>
         /// Get all users.
         /// </summary>
+        /// <param name="pageNumber">Page number.</param>
         /// <returns>All users.</returns>
-        Task<IEnumerable<User>> GetUsers();
+        Task<IEnumerable<User>> GetUsers(int pageNumber);
 
         /// <summary>
         /// Create user.

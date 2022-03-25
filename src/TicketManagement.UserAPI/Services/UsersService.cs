@@ -32,6 +32,11 @@ namespace TicketManagement.UserAPI.Services
         private readonly RoleManager<IdentityRole> _roleManager;
 
         /// <summary>
+        /// How many users take.
+        /// </summary>
+        private readonly int _countOnPage;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="UsersService"/> class.
         /// </summary>
         /// <param name="userManager">UserManager object.</param>
@@ -42,6 +47,7 @@ namespace TicketManagement.UserAPI.Services
             _userManager = userManager;
             _roleManager = roleManager;
             _baseUserRole = configuration.GetValue<string>("BaseRole");
+            _countOnPage = configuration.GetValue<int>("CountOnPage");
         }
 
         public async Task<IdentityResult> UpdateUserInEditAsync(EditUserModel model)
@@ -102,9 +108,10 @@ namespace TicketManagement.UserAPI.Services
             await _userManager.RemoveFromRolesAsync(user, removedRoles);
         }
 
-        public Task<IEnumerable<User>> GetUsers()
+        public Task<IEnumerable<User>> GetUsers(int pageNumber)
         {
-            return Task.FromResult(_userManager.Users.AsEnumerable());
+            return Task.FromResult(_userManager.Users.AsEnumerable().OrderBy(u => u.Email)
+                .Skip((pageNumber - 1) * _countOnPage).Take(pageNumber * _countOnPage));
         }
 
         public async Task<IdentityResult> CreateUser(CreateUserModel model)
