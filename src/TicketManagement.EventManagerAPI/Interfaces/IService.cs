@@ -13,10 +13,11 @@ namespace TicketManagement.EventManagerAPI.Interfaces
     public interface IService<TDto>
     {
         /// <summary>
-        /// Get all objects from database.
+        /// Get objects from database for page.
         /// </summary>
-        /// <returns>All objects.</returns>
-        Task<IEnumerable<TDto>> GetAllAsync();
+        /// <param name="pageNumber">Page number.</param>
+        /// <returns>Objects for page.</returns>
+        Task<IEnumerable<TDto>> GetAllAsync(int pageNumber);
 
         /// <summary>
         /// Get one object from database by his id.

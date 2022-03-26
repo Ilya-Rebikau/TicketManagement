@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
 using TicketManagement.EventManagerAPI.Interfaces;
@@ -23,8 +24,12 @@ namespace TicketManagement.EventManagerAPI.Services
         /// <param name="repository">TicketRepository object.</param>
         /// <param name="converter">Converter object.</param>
         /// <param name="eventSeatRepository">EventSeatRepository object.</param>
-        public TicketService(IRepository<Ticket> repository, IConverter<Ticket, TicketDto> converter, IRepository<EventSeat> eventSeatRepository)
-            : base(repository, converter)
+        /// <param name="configuration">IConfiguration object.</param>
+        public TicketService(IRepository<Ticket> repository,
+            IConverter<Ticket, TicketDto> converter,
+            IRepository<EventSeat> eventSeatRepository,
+            IConfiguration configuration)
+            : base(repository, converter, configuration)
         {
             _eventSeatRepository = eventSeatRepository;
         }

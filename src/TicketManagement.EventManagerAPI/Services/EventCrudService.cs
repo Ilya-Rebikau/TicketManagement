@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
 using TicketManagement.EventManagerAPI.Interfaces;
@@ -15,29 +16,30 @@ namespace TicketManagement.EventManagerAPI.Services
     internal class EventCrudService : BaseService<Event, EventDto>, IService<EventDto>
     {
         /// <summary>
-        /// EventAreaRepository object.
-        /// </summary>
-        private readonly IRepository<EventArea> _eventAreaRepository;
-
-        /// <summary>
-        /// EventSeatRepository object.
-        /// </summary>
-        private readonly IRepository<EventSeat> _eventSeatRepository;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="EventCrudService"/> class.
         /// </summary>
         /// <param name="repository">EventRepository object.</param>
         /// <param name="converter">Converter object for events.</param>
         /// <param name="eventAreaRepository">EventAreaRepository object.</param>
         /// <param name="eventSeatRepository">EventSeatRepository object.</param>
+        /// <param name="configuration">IConfiguration object.</param>
         public EventCrudService(IRepository<Event> repository, IConverter<Event, EventDto> converter,
-            IRepository<EventArea> eventAreaRepository, IRepository<EventSeat> eventSeatRepository)
-            : base(repository, converter)
+            IRepository<EventArea> eventAreaRepository, IRepository<EventSeat> eventSeatRepository, IConfiguration configuration)
+            : base(repository, converter, configuration)
         {
-            _eventAreaRepository = eventAreaRepository;
-            _eventSeatRepository = eventSeatRepository;
+            EventAreaRepository = eventAreaRepository;
+            EventSeatRepository = eventSeatRepository;
         }
+
+        /// <summary>
+        /// Gets or sets EventAreaRepository object.
+        /// </summary>
+        protected IRepository<EventArea> EventAreaRepository { get; set; }
+
+        /// <summary>
+        /// Gets or sets EventSeatRepository object.
+        /// </summary>
+        protected IRepository<EventSeat> EventSeatRepository { get; set; }
 
         public async override Task<EventDto> CreateAsync(EventDto obj)
         {
@@ -110,11 +112,11 @@ namespace TicketManagement.EventManagerAPI.Services
         private async Task CheckForTickets(EventDto obj)
         {
             var eventSeats = new List<EventSeat>();
-            var eventAreas = await _eventAreaRepository.GetAllAsync();
+            var eventAreas = await EventAreaRepository.GetAllAsync();
             var eventAreasInEvent = eventAreas.Where(a => a.EventId == obj.Id).ToList();
             foreach (var eventArea in eventAreasInEvent)
             {
-                var allEventSeats = await _eventSeatRepository.GetAllAsync();
+                var allEventSeats = await EventSeatRepository.GetAllAsync();
                 eventSeats = allEventSeats.Where(s => s.EventAreaId == eventArea.Id).Where(s => s.State == (int)PlaceStatus.Occupied).ToList();
             }
 
@@ -147,7 +149,7 @@ namespace TicketManagement.EventManagerAPI.Services
         /// <exception cref="ArgumentException">Generates exception in case event areas haven't price.</exception>
         private async Task CheckForPrices(EventDto obj)
         {
-            var eventAreas = await _eventAreaRepository.GetAllAsync();
+            var eventAreas = await EventAreaRepository.GetAllAsync();
             var eventAreasInEvent = eventAreas.Where(a => a.EventId == obj.Id);
             foreach (var eventArea in eventAreasInEvent)
             {

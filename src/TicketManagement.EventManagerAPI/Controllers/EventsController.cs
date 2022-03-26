@@ -34,11 +34,12 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// <summary>
         /// Get all events.
         /// </summary>
+        /// <param name="pageNumber">Page number.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpGet("getevents")]
-        public async Task<IActionResult> GetEvents()
+        public async Task<IActionResult> GetEvents([FromBody] int pageNumber)
         {
-            return Ok(await _eventService.GetAllEventViewModelsAsync());
+            return Ok(await _eventService.GetAllEventViewModelsAsync(pageNumber));
         }
 
         /// <summary>

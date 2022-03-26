@@ -41,11 +41,12 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// <summary>
         /// Get all event seats.
         /// </summary>
+        /// <param name="pageNumber">Page number.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpGet("geteventseats")]
-        public async Task<IActionResult> GetEventSeats()
+        public async Task<IActionResult> GetEventSeats([FromBody] int pageNumber)
         {
-            var eventSeats = await _service.GetAllAsync();
+            var eventSeats = await _service.GetAllAsync(pageNumber);
             return Ok(await _converter.ConvertSourceModelRangeToDestinationModelRange(eventSeats));
         }
 

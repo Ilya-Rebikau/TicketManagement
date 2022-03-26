@@ -27,8 +27,9 @@ namespace TicketManagement.EventManagerAPI.Interfaces
         /// <summary>
         /// Get all event view models.
         /// </summary>
+        /// <param name="pageNumber">Page number.</param>
         /// <returns>Collection of event view models.</returns>
-        Task<IEnumerable<EventModel>> GetAllEventViewModelsAsync();
+        Task<IEnumerable<EventModel>> GetAllEventViewModelsAsync(int pageNumber);
 
         /// <summary>
         /// Get event view model for details method.
