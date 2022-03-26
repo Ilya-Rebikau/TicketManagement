@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
 using TicketManagement.VenueManagerAPI.Interfaces;
@@ -37,9 +38,11 @@ namespace TicketManagement.VenueManagerAPI.Services
         /// <param name="eventRepository">EventRepository object.</param>
         /// <param name="eventAreaRepository">EventAreaRepository object.</param>
         /// <param name="eventSeatRepository">EventSeatRepository object.</param>
+        /// <param name="confgiratuon">IConfiguration object.</param>
         public LayoutService(IRepository<Layout> repository, IConverter<Layout, LayoutDto> converter,
-            IRepository<Event> eventRepository, IRepository<EventArea> eventAreaRepository, IRepository<EventSeat> eventSeatRepository)
-            : base(repository, converter)
+            IRepository<Event> eventRepository, IRepository<EventArea> eventAreaRepository, IRepository<EventSeat> eventSeatRepository,
+            IConfiguration confgiratuon)
+            : base(repository, converter, confgiratuon)
         {
             _eventRepository = eventRepository;
             _eventAreaRepository = eventAreaRepository;

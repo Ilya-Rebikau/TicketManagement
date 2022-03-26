@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
 using TicketManagement.VenueManagerAPI.Interfaces;
@@ -18,8 +19,9 @@ namespace TicketManagement.VenueManagerAPI.Services
         /// </summary>
         /// <param name="repository">SeatRepository object.</param>
         /// <param name="converter">Converter object.</param>
-        public SeatService(IRepository<Seat> repository, IConverter<Seat, SeatDto> converter)
-            : base(repository, converter)
+        /// <param name="confgiratuon">IConfiguration object.</param>
+        public SeatService(IRepository<Seat> repository, IConverter<Seat, SeatDto> converter, IConfiguration confgiratuon)
+            : base(repository, converter, confgiratuon)
         {
         }
 

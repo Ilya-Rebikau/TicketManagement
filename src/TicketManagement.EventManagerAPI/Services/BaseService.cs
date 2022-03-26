@@ -47,7 +47,7 @@ namespace TicketManagement.EventManagerAPI.Services
         public async virtual Task<IEnumerable<TDto>> GetAllAsync(int pageNumber)
         {
             var models = await Repository.GetAllAsync();
-            models = models.Skip((pageNumber - 1) * CountOnPage).Take(pageNumber * CountOnPage);
+            models = models.OrderBy(m => m.Id).Skip((pageNumber - 1) * CountOnPage).Take(pageNumber * CountOnPage);
             return await Converter.ConvertSourceModelRangeToDestinationModelRange(models);
         }
 

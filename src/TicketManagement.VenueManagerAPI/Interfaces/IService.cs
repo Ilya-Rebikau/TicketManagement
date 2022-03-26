@@ -15,8 +15,9 @@ namespace TicketManagement.VenueManagerAPI.Interfaces
         /// <summary>
         /// Get all objects from database.
         /// </summary>
+        /// <param name="pageNumber">Page number.</param>
         /// <returns>All objects.</returns>
-        Task<IEnumerable<TDto>> GetAllAsync();
+        Task<IEnumerable<TDto>> GetAllAsync(int pageNumber);
 
         /// <summary>
         /// Get one object from database by his id.

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.VenueManagerAPI.Interfaces;
 
@@ -19,11 +21,18 @@ namespace TicketManagement.VenueManagerAPI.Services
         /// </summary>
         /// <param name="repository">IRepository object with CRUD operations.</param>
         /// <param name="converter">IConverter object.</param>
-        protected BaseService(IRepository<TModel> repository, IConverter<TModel, TDto> converter)
+        /// <param name="configuration">IConfiguration object.</param>
+        protected BaseService(IRepository<TModel> repository, IConverter<TModel, TDto> converter, IConfiguration configuration)
         {
             Repository = repository;
             Converter = converter;
+            CountOnPage = configuration.GetValue<int>("CountOnPage");
         }
+
+        /// <summary>
+        /// Gets or privately sets count of models on one page.
+        /// </summary>
+        protected int CountOnPage { get; private set; }
 
         /// <summary>
         /// Gets or privatly sets IRepository object for CRUD operations in database.
@@ -35,9 +44,10 @@ namespace TicketManagement.VenueManagerAPI.Services
         /// </summary>
         protected IConverter<TModel, TDto> Converter { get; private set; }
 
-        public async virtual Task<IEnumerable<TDto>> GetAllAsync()
+        public async virtual Task<IEnumerable<TDto>> GetAllAsync(int pageNumber)
         {
             var models = await Repository.GetAllAsync();
+            models = models.OrderBy(m => m.Id).Skip((pageNumber - 1) * CountOnPage).Take(pageNumber * CountOnPage);
             return await Converter.ConvertSourceModelRangeToDestinationModelRange(models);
         }
 

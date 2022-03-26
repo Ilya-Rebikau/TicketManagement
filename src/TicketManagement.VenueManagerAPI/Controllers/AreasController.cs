@@ -41,11 +41,12 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         /// <summary>
         /// All areas.
         /// </summary>
+        /// <param name="pageNumber">Page number.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpGet("getareas")]
-        public async Task<IActionResult> GetAreas()
+        public async Task<IActionResult> GetAreas([FromBody] int pageNumber)
         {
-            var areas = await _service.GetAllAsync();
+            var areas = await _service.GetAllAsync(pageNumber);
             return Ok(await _converter.ConvertSourceModelRangeToDestinationModelRange(areas));
         }
 

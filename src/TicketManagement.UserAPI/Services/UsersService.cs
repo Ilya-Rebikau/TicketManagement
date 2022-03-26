@@ -110,8 +110,9 @@ namespace TicketManagement.UserAPI.Services
 
         public Task<IEnumerable<User>> GetUsers(int pageNumber)
         {
-            return Task.FromResult(_userManager.Users.AsEnumerable().OrderBy(u => u.Email)
-                .Skip((pageNumber - 1) * _countOnPage).Take(pageNumber * _countOnPage));
+            var users = _userManager.Users;
+            return Task.FromResult(users.OrderBy(u => u.Id)
+                .Skip((pageNumber - 1) * _countOnPage).Take(pageNumber * _countOnPage).AsEnumerable());
         }
 
         public async Task<IdentityResult> CreateUser(CreateUserModel model)
