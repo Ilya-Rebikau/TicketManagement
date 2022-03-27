@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using NUnit.Framework;
 using TicketManagement.DataAccess.Interfaces;
@@ -21,10 +22,18 @@ namespace TicketManagement.UnitTests
         {
             var areaRepositoryMock = new Mock<IRepository<Area>>();
             var areaConverterMock = new Mock<IConverter<Area, AreaDto>>();
+            var inMemorySettings = new Dictionary<string, string>
+            {
+                { "CountOnPage", "20" },
+            };
+
+            IConfiguration configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
             areaRepositoryMock.Setup(rep => rep.GetAllAsync());
             var areas = await areaRepositoryMock.Object.GetAllAsync();
-            areaConverterMock.Setup(rep => rep.ConvertModelsRangeToDtos(areas)).ReturnsAsync(GetTestAreaDtos());
-            _service = new AreaService(areaRepositoryMock.Object, areaConverterMock.Object);
+            areaConverterMock.Setup(rep => rep.ConvertSourceModelRangeToDestinationModelRange(areas)).ReturnsAsync(GetTestAreaDtos());
+            _service = new AreaService(areaRepositoryMock.Object, areaConverterMock.Object, configuration);
         }
 
         private static IEnumerable<AreaDto> GetTestAreaDtos()

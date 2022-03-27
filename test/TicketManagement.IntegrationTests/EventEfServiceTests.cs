@@ -5,6 +5,7 @@ using AutoMapper;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using TicketManagement.DataAccess;
@@ -47,15 +48,17 @@ namespace TicketManagement.IntegrationTests
                 cfg.AddProfile(new AutoMapperProfile());
             });
             var mapperEvent = configEvent.CreateMapper();
+            var configuration = new ConfigurationManager();
+            configuration.AddJsonFile("appsettings.json");
             var context = new TicketManagementContext(builder.Options);
             var eventRepository = new EventEfRepository(context);
             var converter = new ModelsConverter<Event, EventDto>(mapperEvent);
             var eventAreaRepository = new EventAreaEfRepository(context);
             var eventSeatRepository = new EfRepository<EventSeat>(context);
             var areaRepository = new AreaEfRepository(context);
-            _areaService = new AreaService(areaRepository, new VenueManagerAPI.Automapper.ModelsConverter<Area, AreaDto>(mapperVenue));
-            _eventAreaService = new EventAreaService(eventAreaRepository, new ModelsConverter<EventArea, EventAreaDto>(mapperEvent), eventSeatRepository);
-            _service = new EventCrudService(eventRepository, converter, eventAreaRepository, eventSeatRepository);
+            _areaService = new AreaService(areaRepository, new VenueManagerAPI.Automapper.ModelsConverter<Area, AreaDto>(mapperVenue), configuration);
+            _eventAreaService = new EventAreaService(eventAreaRepository, new ModelsConverter<EventArea, EventAreaDto>(mapperEvent), eventSeatRepository, configuration);
+            _service = new EventCrudService(eventRepository, converter, eventAreaRepository, eventSeatRepository, configuration);
         }
 
         [Test]
@@ -263,10 +266,10 @@ namespace TicketManagement.IntegrationTests
                 TimeEnd = new DateTime(2051, 1, 1),
             };
 
-            var areasInLayout = await _areaService.GetAllAsync();
+            var areasInLayout = await _areaService.GetAllAsync(1);
             var areasCount = areasInLayout.Count(a => a.LayoutId == eventModel.LayoutId);
             var addedEvent = await _service.CreateAsync(eventModel);
-            var eventAreas = await _eventAreaService.GetAllAsync();
+            var eventAreas = await _eventAreaService.GetAllAsync(1);
             int eventAreasCount = eventAreas.Count(e => e.EventId == addedEvent.Id);
             EventAreaDto eventArea = new ()
             {
@@ -280,7 +283,7 @@ namespace TicketManagement.IntegrationTests
 
             // Act
             await _service.DeleteAsync(addedEvent);
-            var newEventAreas = await _eventAreaService.GetAllAsync();
+            var newEventAreas = await _eventAreaService.GetAllAsync(1);
             int newEventAreasCount = newEventAreas.Count(e => e.Id == addedEvent.Id);
 
             // Assert

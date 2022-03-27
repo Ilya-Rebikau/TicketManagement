@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using NUnit.Framework;
 using TicketManagement.DataAccess.Interfaces;
@@ -20,20 +21,25 @@ namespace TicketManagement.UnitTests
         [SetUp]
         public async Task SetupAsync()
         {
-            var usersClientMock = new Mock<IUsersClient>();
             var eventRepositoryMock = new Mock<IRepository<Event>>();
             var eventSeatRepositoryMock = new Mock<IRepository<EventSeat>>();
             var eventAreaRepositoryMock = new Mock<IRepository<EventArea>>();
             var eventConverterMock = new Mock<IConverter<Event, EventDto>>();
-            var eventSeatServiceMock = new Mock<IService<EventSeatDto>>();
-            var eventAreaServiceMock = new Mock<IService<EventAreaDto>>();
+            var inMemorySettings = new Dictionary<string, string>
+            {
+                { "CountOnPage", "20" },
+            };
+
+            IConfiguration configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
             eventRepositoryMock.Setup(rep => rep.GetAllAsync());
             eventSeatRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventSeats());
             eventAreaRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventAreas());
             var events = await eventRepositoryMock.Object.GetAllAsync();
-            eventConverterMock.Setup(rep => rep.ConvertModelsRangeToDtos(events)).ReturnsAsync(GetTestEventDtos());
-            _service = new EventService(eventRepositoryMock.Object, eventConverterMock.Object, eventAreaRepositoryMock.Object,
-                eventSeatRepositoryMock.Object, eventAreaServiceMock.Object, eventSeatServiceMock.Object, usersClientMock.Object);
+            eventConverterMock.Setup(rep => rep.ConvertSourceModelRangeToDestinationModelRange(events)).ReturnsAsync(GetTestEventDtos());
+            _service = new EventCrudService(eventRepositoryMock.Object, eventConverterMock.Object, eventAreaRepositoryMock.Object,
+                eventSeatRepositoryMock.Object, configuration);
         }
 
         private static IQueryable<EventArea> GetTestEventAreas()

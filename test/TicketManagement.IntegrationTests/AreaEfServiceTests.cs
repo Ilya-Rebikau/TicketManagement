@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using TicketManagement.DataAccess;
@@ -40,10 +41,12 @@ namespace TicketManagement.IntegrationTests
             var context = new TicketManagementContext(builder.Options);
             var areaRepository = new AreaEfRepository(context);
             var areaConverter = new ModelsConverter<Area, AreaDto>(mapper);
-            _service = new AreaService(areaRepository, areaConverter);
+            var configuration = new ConfigurationManager();
+            configuration.AddJsonFile("appsettings.json");
+            _service = new AreaService(areaRepository, areaConverter, configuration);
             var seatRepository = new EfRepository<Seat>(context);
             var seatConverter = new ModelsConverter<Seat, SeatDto>(mapper);
-            _seatService = new SeatService(seatRepository, seatConverter);
+            _seatService = new SeatService(seatRepository, seatConverter, configuration);
         }
 
         [Test]
@@ -203,7 +206,7 @@ namespace TicketManagement.IntegrationTests
                 Description = "New description",
             };
             var addedArea = await _service.CreateAsync(area);
-            var allSeats = await _seatService.GetAllAsync();
+            var allSeats = await _seatService.GetAllAsync(1);
             int allSeatsCount = allSeats.Count();
             SeatDto seat = new ()
             {
@@ -215,7 +218,7 @@ namespace TicketManagement.IntegrationTests
 
             // Act
             await _service.DeleteAsync(addedArea);
-            var allNewSeats = await _seatService.GetAllAsync();
+            var allNewSeats = await _seatService.GetAllAsync(1);
             int allNewSeatsCount = allNewSeats.Count();
 
             // Assert

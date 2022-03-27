@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using TicketManagement.DataAccess;
@@ -37,6 +38,8 @@ namespace TicketManagement.IntegrationTests
                 cfg.AddProfile(new AutoMapperProfile());
             });
             var mapper = config.CreateMapper();
+            var configuration = new ConfigurationManager();
+            configuration.AddJsonFile("appsettings.json");
             var context = new TicketManagementContext(builder.Options);
             var layoutRepository = new LayoutEfRepository(context);
             var eventRepository = new EventEfRepository(context);
@@ -46,8 +49,9 @@ namespace TicketManagement.IntegrationTests
             var venueConverter = new ModelsConverter<Venue, VenueDto>(mapper);
             var layoutConverter = new ModelsConverter<Layout, LayoutDto>(mapper);
             _service = new VenueService(venueRepository, venueConverter, layoutRepository, eventRepository,
-                eventAreaRepository, eventSeatRepository);
-            _layoutService = new LayoutService(layoutRepository, layoutConverter, eventRepository, eventAreaRepository, eventSeatRepository);
+                eventAreaRepository, eventSeatRepository, configuration);
+            _layoutService = new LayoutService(layoutRepository, layoutConverter, eventRepository, eventAreaRepository,
+                eventSeatRepository, configuration);
         }
 
         [Test]
@@ -257,7 +261,7 @@ namespace TicketManagement.IntegrationTests
                 Description = "Description",
             };
             var addedVenue = await _service.CreateAsync(venue);
-            var allLayouts = await _layoutService.GetAllAsync();
+            var allLayouts = await _layoutService.GetAllAsync(1);
             int layoutsCount = allLayouts.Count();
             LayoutDto layout = new ()
             {
@@ -269,7 +273,7 @@ namespace TicketManagement.IntegrationTests
 
             // Act
             await _service.DeleteAsync(addedVenue);
-            var allNewLayouts = await _layoutService.GetAllAsync();
+            var allNewLayouts = await _layoutService.GetAllAsync(1);
             var newLayoutsCount = allNewLayouts.Count();
 
             // Assert

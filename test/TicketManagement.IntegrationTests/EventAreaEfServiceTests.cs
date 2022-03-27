@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using TicketManagement.DataAccess;
@@ -37,12 +38,14 @@ namespace TicketManagement.IntegrationTests
                 cfg.AddProfile(new AutoMapperProfile());
             });
             var mapper = config.CreateMapper();
+            var configuration = new ConfigurationManager();
+            configuration.AddJsonFile("appsettings.json");
             var context = new TicketManagementContext(builder.Options);
             var eventAreaRepository = new EventAreaEfRepository(context);
             var converter = new ModelsConverter<EventArea, EventAreaDto>(mapper);
             var eventSeatRepository = new EfRepository<EventSeat>(context);
-            _eventSeatService = new EventSeatService(eventSeatRepository, new ModelsConverter<EventSeat, EventSeatDto>(mapper));
-            _service = new EventAreaService(eventAreaRepository, converter, eventSeatRepository);
+            _eventSeatService = new EventSeatService(eventSeatRepository, new ModelsConverter<EventSeat, EventSeatDto>(mapper), configuration);
+            _service = new EventAreaService(eventAreaRepository, converter, eventSeatRepository, configuration);
         }
 
         [Test]
@@ -202,7 +205,7 @@ namespace TicketManagement.IntegrationTests
                 Price = 11,
             };
             var addedEventArea = await _service.CreateAsync(eventArea);
-            var eventSeats = await _eventSeatService.GetAllAsync();
+            var eventSeats = await _eventSeatService.GetAllAsync(1);
             int eventsSeatsCount = eventSeats.Count();
             EventSeatDto eventSeat = new ()
             {
@@ -215,7 +218,7 @@ namespace TicketManagement.IntegrationTests
 
             // Act
             await _service.DeleteAsync(addedEventArea);
-            var newEventSeats = await _eventSeatService.GetAllAsync();
+            var newEventSeats = await _eventSeatService.GetAllAsync(1);
             int newEventSeatsCount = newEventSeats.Count();
 
             // Assert

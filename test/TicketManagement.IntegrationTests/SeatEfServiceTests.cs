@@ -2,6 +2,7 @@
 using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using TicketManagement.DataAccess;
@@ -35,10 +36,12 @@ namespace TicketManagement.IntegrationTests
                 cfg.AddProfile(new AutoMapperProfile());
             });
             var mapper = config.CreateMapper();
+            var configuration = new ConfigurationManager();
+            configuration.AddJsonFile("appsettings.json");
             var context = new TicketManagementContext(builder.Options);
             var seatRepository = new EfRepository<Seat>(context);
             var seatConverter = new ModelsConverter<Seat, SeatDto>(mapper);
-            _service = new SeatService(seatRepository, seatConverter);
+            _service = new SeatService(seatRepository, seatConverter, configuration);
         }
 
         [Test]

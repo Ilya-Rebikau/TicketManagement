@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using NUnit.Framework;
 using TicketManagement.DataAccess.Interfaces;
@@ -22,8 +23,16 @@ namespace TicketManagement.UnitTests
             var eventAreaRepositoryMock = new Mock<IRepository<EventArea>>();
             var eventSeatRepositoryMock = new Mock<IRepository<EventSeat>>();
             var eventAreaConverterMock = new Mock<IConverter<EventArea, EventAreaDto>>();
+            var inMemorySettings = new Dictionary<string, string>
+            {
+                { "CountOnPage", "20" },
+            };
+
+            IConfiguration configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
             eventSeatRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventSeats());
-            _service = new EventAreaService(eventAreaRepositoryMock.Object, eventAreaConverterMock.Object, eventSeatRepositoryMock.Object);
+            _service = new EventAreaService(eventAreaRepositoryMock.Object, eventAreaConverterMock.Object, eventSeatRepositoryMock.Object, configuration);
         }
 
         private static IQueryable<EventSeat> GetTestEventSeats()

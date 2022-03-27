@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using NUnit.Framework;
 using TicketManagement.DataAccess.Interfaces;
@@ -23,15 +24,23 @@ namespace TicketManagement.UnitTests
             var layoutConverterMock = new Mock<IConverter<Layout, LayoutDto>>();
             layoutRepositoryMock.Setup(rep => rep.GetAllAsync());
             var layouts = await layoutRepositoryMock.Object.GetAllAsync();
-            layoutConverterMock.Setup(rep => rep.ConvertModelsRangeToDtos(layouts)).ReturnsAsync(GetTestLayoutDtos());
+            layoutConverterMock.Setup(rep => rep.ConvertSourceModelRangeToDestinationModelRange(layouts)).ReturnsAsync(GetTestLayoutDtos());
             var eventRepositoryMock = new Mock<IRepository<Event>>();
             var eventAreaRepositoryMock = new Mock<IRepository<EventArea>>();
             var eventSeatRepositoryMock = new Mock<IRepository<EventSeat>>();
+            var inMemorySettings = new Dictionary<string, string>
+            {
+                { "CountOnPage", "20" },
+            };
+
+            IConfiguration configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
             eventRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEvents());
             eventAreaRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventAreas());
             eventSeatRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventSeats());
             _service = new LayoutService(layoutRepositoryMock.Object, layoutConverterMock.Object, eventRepositoryMock.Object,
-                eventAreaRepositoryMock.Object, eventSeatRepositoryMock.Object);
+                eventAreaRepositoryMock.Object, eventSeatRepositoryMock.Object, configuration);
         }
 
         private static IEnumerable<LayoutDto> GetTestLayoutDtos()
