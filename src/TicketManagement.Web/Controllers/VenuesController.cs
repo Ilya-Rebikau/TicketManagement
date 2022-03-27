@@ -1,10 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TicketManagement.Web.Extensions;
 using TicketManagement.Web.Infrastructure;
 using TicketManagement.Web.Interfaces.HttpClients;
+using TicketManagement.Web.Models;
 using TicketManagement.Web.Models.Venues;
 
 namespace TicketManagement.Web.Controllers
@@ -39,8 +41,11 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(int pageNumber = 1)
         {
-            var venuesVm = await _venueManagerClient.GetVenueViewModels(HttpContext.GetJwtToken(), pageNumber);
-            return View(venuesVm);
+            var venues = await _venueManagerClient.GetVenueViewModels(HttpContext.GetJwtToken(), pageNumber);
+            var nextVenues = await _venueManagerClient.GetVenueViewModels(HttpContext.GetJwtToken(), pageNumber + 1);
+            PageViewModel.NextPage = nextVenues is not null && nextVenues.Any();
+            PageViewModel.PageNumber = pageNumber;
+            return View(venues);
         }
 
         /// <summary>

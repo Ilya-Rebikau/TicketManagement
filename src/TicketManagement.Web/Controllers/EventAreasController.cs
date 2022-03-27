@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using TicketManagement.Web.Extensions;
 using TicketManagement.Web.Infrastructure;
 using TicketManagement.Web.Interfaces.HttpClients;
+using TicketManagement.Web.Models;
 using TicketManagement.Web.Models.EventAreas;
 using TicketManagement.Web.ModelsDTO;
 
@@ -41,6 +43,9 @@ namespace TicketManagement.Web.Controllers
         public async Task<IActionResult> Index(int pageNumber = 1)
         {
             var eventAreas = await _eventManagerClient.GetEventAreaViewModels(HttpContext.GetJwtToken(), pageNumber);
+            var nextEventAreas = await _eventManagerClient.GetEventAreaViewModels(HttpContext.GetJwtToken(), pageNumber + 1);
+            PageViewModel.NextPage = nextEventAreas is not null && nextEventAreas.Any();
+            PageViewModel.PageNumber = pageNumber;
             return View(eventAreas);
         }
 

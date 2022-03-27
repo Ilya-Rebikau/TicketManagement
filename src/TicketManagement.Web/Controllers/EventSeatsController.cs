@@ -1,10 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TicketManagement.Web.Extensions;
 using TicketManagement.Web.Infrastructure;
 using TicketManagement.Web.Interfaces.HttpClients;
+using TicketManagement.Web.Models;
 using TicketManagement.Web.Models.EventSeats;
 using TicketManagement.Web.ModelsDTO;
 
@@ -40,8 +42,11 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(int pageNumber = 1)
         {
-            var eventSeatsVm = await _eventManagerClient.GetEventSeatsViewModels(HttpContext.GetJwtToken(), pageNumber);
-            return View(eventSeatsVm);
+            var eventSeats = await _eventManagerClient.GetEventSeatsViewModels(HttpContext.GetJwtToken(), pageNumber);
+            var nextEventSeats = await _eventManagerClient.GetEventSeatsViewModels(HttpContext.GetJwtToken(), pageNumber + 1);
+            PageViewModel.NextPage = nextEventSeats is not null && nextEventSeats.Any();
+            PageViewModel.PageNumber = pageNumber;
+            return View(eventSeats);
         }
 
         /// <summary>

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TicketManagement.Web.Infrastructure;
 using TicketManagement.Web.Interfaces;
+using TicketManagement.Web.Models;
 using TicketManagement.Web.Models.Users;
 
 namespace TicketManagement.Web.Controllers
@@ -37,7 +38,11 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(int pageNumber = 1)
         {
-            return View(await _service.GetUsers(HttpContext, pageNumber));
+            var users = await _service.GetUsers(HttpContext, pageNumber);
+            var nextUsers = await _service.GetUsers(HttpContext, pageNumber + 1);
+            PageViewModel.NextPage = nextUsers is not null && nextUsers.Any();
+            PageViewModel.PageNumber = pageNumber;
+            return View(users);
         }
 
         /// <summary>

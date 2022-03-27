@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using TicketManagement.Web.ModelsDTO;
 
 namespace TicketManagement.Web.Models.Seats
 {
