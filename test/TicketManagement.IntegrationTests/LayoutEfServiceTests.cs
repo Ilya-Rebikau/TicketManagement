@@ -1,23 +1,31 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using NUnit.Framework;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.ModelsDTO;
-using TicketManagement.BusinessLogic.Services;
+using RestEase;
 using TicketManagement.DataAccess;
 using TicketManagement.DataAccess.Models;
 using TicketManagement.DataAccess.RepositoriesEf;
+using TicketManagement.EventManagerAPI.ModelsDTO;
+using TicketManagement.EventManagerAPI.Services;
+using TicketManagement.VenueManagerAPI.Automapper;
+using TicketManagement.VenueManagerAPI.Interfaces;
+using TicketManagement.VenueManagerAPI.ModelsDTO;
+using TicketManagement.VenueManagerAPI.Services;
+using TicketManagement.Web.Interfaces.HttpClients;
 
 namespace TicketManagement.IntegrationTests
 {
     [TestFixture]
     internal class LayoutEfServiceTests
     {
-        private IService<EventDto> _eventService;
+        private EventManagerAPI.Interfaces.IService<EventDto> _eventService;
         private IService<LayoutDto> _service;
 
         [SetUp]
@@ -31,15 +39,27 @@ namespace TicketManagement.IntegrationTests
 
             builder.UseSqlServer(DbConnection.GetStringConnection())
                     .UseInternalServiceProvider(serviceProvider);
-
+            var configVenue = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new AutoMapperProfile());
+            });
+            var mapperVenue = configVenue.CreateMapper();
+            var configEvent = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new EventManagerAPI.Automapper.AutoMapperProfile());
+            });
+            var mapperEvent = configEvent.CreateMapper();
+            var configuration = new ConfigurationManager();
+            configuration.AddJsonFile("appsettings.json");
             var context = new TicketManagementContext(builder.Options);
             var layoutRepository = new LayoutEfRepository(context);
             var eventRepository = new EventEfRepository(context);
             var eventAreaRepository = new EventAreaEfRepository(context);
             var eventSeatRepository = new EfRepository<EventSeat>(context);
-            var converter = new BaseConverter<Layout, LayoutDto>();
-            _service = new LayoutService(layoutRepository, converter, eventRepository, eventAreaRepository, eventSeatRepository);
-            _eventService = new EventService(eventRepository, new BaseConverter<Event, EventDto>(), eventAreaRepository, eventSeatRepository);
+            var converter = new ModelsConverter<Layout, LayoutDto>(mapperVenue);
+            _service = new LayoutService(layoutRepository, converter, eventRepository, eventAreaRepository, eventSeatRepository, configuration);
+            _eventService = new EventCrudService(eventRepository,
+                new EventManagerAPI.Automapper.ModelsConverter<Event, EventDto>(mapperEvent), eventAreaRepository, eventSeatRepository, configuration);
         }
 
         [Test]
@@ -222,7 +242,7 @@ namespace TicketManagement.IntegrationTests
                 Name = "Name",
             };
             var addedLayout = await _service.CreateAsync(layout);
-            var events = await _eventService.GetAllAsync();
+            var events = await _eventService.GetAllAsync(1);
             int eventsCount = events.Count();
             EventDto @event = new ()
             {
@@ -237,7 +257,7 @@ namespace TicketManagement.IntegrationTests
 
             // Act
             await _service.DeleteAsync(addedLayout);
-            var newEvents = await _eventService.GetAllAsync();
+            var newEvents = await _eventService.GetAllAsync(1);
             int newEventsCount = newEvents.Count();
 
             // Assert

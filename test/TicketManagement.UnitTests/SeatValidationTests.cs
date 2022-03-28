@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using NUnit.Framework;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.ModelsDTO;
-using TicketManagement.BusinessLogic.Services;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.VenueManagerAPI.Interfaces;
+using TicketManagement.VenueManagerAPI.ModelsDTO;
+using TicketManagement.VenueManagerAPI.Services;
 
 namespace TicketManagement.UnitTests
 {
@@ -22,10 +22,18 @@ namespace TicketManagement.UnitTests
         {
             var seatRepositoryMock = new Mock<IRepository<Seat>>();
             var seatConverterMock = new Mock<IConverter<Seat, SeatDto>>();
+            var inMemorySettings = new Dictionary<string, string>
+            {
+                { "CountOnPage", "20" },
+            };
+
+            IConfiguration configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
             seatRepositoryMock.Setup(rep => rep.GetAllAsync());
             var seats = await seatRepositoryMock.Object.GetAllAsync();
-            seatConverterMock.Setup(rep => rep.ConvertModelsRangeToDtos(seats)).ReturnsAsync(GetTestSeatDtos());
-            _service = new SeatService(seatRepositoryMock.Object, seatConverterMock.Object);
+            seatConverterMock.Setup(rep => rep.ConvertSourceModelRangeToDestinationModelRange(seats)).ReturnsAsync(GetTestSeatDtos());
+            _service = new SeatService(seatRepositoryMock.Object, seatConverterMock.Object, configuration);
         }
 
         private static IEnumerable<SeatDto> GetTestSeatDtos()

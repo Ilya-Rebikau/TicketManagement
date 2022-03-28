@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.ModelsDTO;
+using TicketManagement.Web.Extensions;
 using TicketManagement.Web.Infrastructure;
+using TicketManagement.Web.Interfaces.HttpClients;
+using TicketManagement.Web.Models;
 using TicketManagement.Web.Models.EventAreas;
+using TicketManagement.Web.ModelsDTO;
 
 namespace TicketManagement.Web.Controllers
 {
@@ -14,39 +17,36 @@ namespace TicketManagement.Web.Controllers
     /// Controller for event areas.
     /// </summary>
     [Authorize(Roles = "admin, event manager")]
-    [ResponseCache(CacheProfileName = "Caching")]
     [ExceptionFilter]
     public class EventAreasController : Controller
     {
         /// <summary>
-        /// EventAreaService object.
+        /// IEventManagerClient object.
         /// </summary>
-        private readonly IService<EventAreaDto> _service;
+        private readonly IEventManagerClient _eventManagerClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EventAreasController"/> class.
         /// </summary>
-        /// <param name="service">EventAreaService object.</param>
-        public EventAreasController(IService<EventAreaDto> service)
+        /// <param name="eventManagerClient">IEventManagerClient object.</param>
+        public EventAreasController(IEventManagerClient eventManagerClient)
         {
-            _service = service;
+            _eventManagerClient = eventManagerClient;
         }
 
         /// <summary>
         /// All event areas.
         /// </summary>
+        /// <param name="pageNumber">Page number.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pageNumber = 1)
         {
-            var eventAreas = await _service.GetAllAsync();
-            var eventAreasVm = new List<EventAreaViewModel>();
-            foreach (var eventArea in eventAreas)
-            {
-                eventAreasVm.Add(eventArea);
-            }
-
-            return View(eventAreasVm);
+            var eventAreas = await _eventManagerClient.GetEventAreaViewModels(HttpContext.GetJwtToken(), pageNumber);
+            var nextEventAreas = await _eventManagerClient.GetEventAreaViewModels(HttpContext.GetJwtToken(), pageNumber + 1);
+            PageViewModel.NextPage = nextEventAreas is not null && nextEventAreas.Any();
+            PageViewModel.PageNumber = pageNumber;
+            return View(eventAreas);
         }
 
         /// <summary>
@@ -57,19 +57,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var eventArea = await _service.GetByIdAsync((int)id);
-            if (eventArea == null)
-            {
-                return NotFound();
-            }
-
-            EventAreaViewModel eventAreaVm = eventArea;
-            return View(eventAreaVm);
+            return id is null ? NotFound() : View(await _eventManagerClient.EventAreaDetails(HttpContext.GetJwtToken(), (int)id));
         }
 
         /// <summary>
@@ -96,8 +84,7 @@ namespace TicketManagement.Web.Controllers
                 return View(eventAreaVm);
             }
 
-            EventAreaDto eventArea = eventAreaVm;
-            await _service.CreateAsync(eventArea);
+            await _eventManagerClient.CreateEventArea(HttpContext.GetJwtToken(), eventAreaVm);
             return RedirectToAction(nameof(Index));
         }
 
@@ -109,19 +96,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var updatingEventArea = await _service.GetByIdAsync((int)id);
-            if (updatingEventArea == null)
-            {
-                return NotFound();
-            }
-
-            EventAreaViewModel eventAreaVm = updatingEventArea;
-            return View(eventAreaVm);
+            return id is null ? NotFound() : View(await _eventManagerClient.GetEventAreaViewModelForEdit(HttpContext.GetJwtToken(), (int)id));
         }
 
         /// <summary>
@@ -144,21 +119,13 @@ namespace TicketManagement.Web.Controllers
                 return View(eventAreaVm);
             }
 
-            EventAreaDto eventArea = eventAreaVm;
             try
             {
-                await _service.UpdateAsync(eventArea);
+                await _eventManagerClient.EditEventArea(HttpContext.GetJwtToken(), id, eventAreaVm);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await EventAreaExists(eventArea.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return Conflict();
             }
 
             return RedirectToAction(nameof(Index));
@@ -172,19 +139,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var deletingEventArea = await _service.GetByIdAsync((int)id);
-            if (deletingEventArea == null)
-            {
-                return NotFound();
-            }
-
-            EventAreaViewModel eventAreaVm = deletingEventArea;
-            return View(eventAreaVm);
+            return id is null ? NotFound() : View(await _eventManagerClient.GetEventAreaViewModelForDelete(HttpContext.GetJwtToken(), (int)id));
         }
 
         /// <summary>
@@ -197,18 +152,8 @@ namespace TicketManagement.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _service.DeleteById(id);
+            await _eventManagerClient.DeleteEventArea(HttpContext.GetJwtToken(), id);
             return RedirectToAction(nameof(Index));
-        }
-
-        /// <summary>
-        /// Check that event area exist.
-        /// </summary>
-        /// <param name="id">Id of event area.</param>
-        /// <returns>True if exist and false if not.</returns>
-        private async Task<bool> EventAreaExists(int id)
-        {
-            return await _service.GetByIdAsync(id) is not null;
         }
     }
 }

@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using NUnit.Framework;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.ModelsDTO;
-using TicketManagement.BusinessLogic.Services;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.EventManagerAPI.Interfaces;
+using TicketManagement.EventManagerAPI.ModelsDTO;
+using TicketManagement.EventManagerAPI.Services;
 
 namespace TicketManagement.UnitTests
 {
@@ -24,17 +25,26 @@ namespace TicketManagement.UnitTests
             var eventSeatRepositoryMock = new Mock<IRepository<EventSeat>>();
             var eventAreaRepositoryMock = new Mock<IRepository<EventArea>>();
             var eventConverterMock = new Mock<IConverter<Event, EventDto>>();
+            var inMemorySettings = new Dictionary<string, string>
+            {
+                { "CountOnPage", "20" },
+            };
+
+            IConfiguration configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
             eventRepositoryMock.Setup(rep => rep.GetAllAsync());
             eventSeatRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventSeats());
             eventAreaRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventAreas());
             var events = await eventRepositoryMock.Object.GetAllAsync();
-            eventConverterMock.Setup(rep => rep.ConvertModelsRangeToDtos(events)).ReturnsAsync(GetTestEventDtos());
-            _service = new EventService(eventRepositoryMock.Object, eventConverterMock.Object, eventAreaRepositoryMock.Object, eventSeatRepositoryMock.Object);
+            eventConverterMock.Setup(rep => rep.ConvertSourceModelRangeToDestinationModelRange(events)).ReturnsAsync(GetTestEventDtos());
+            _service = new EventCrudService(eventRepositoryMock.Object, eventConverterMock.Object, eventAreaRepositoryMock.Object,
+                eventSeatRepositoryMock.Object, configuration);
         }
 
         private static IQueryable<EventArea> GetTestEventAreas()
         {
-            IEnumerable<EventArea> eventAreas = new List<EventArea>
+            var eventAreas = new List<EventArea>
             {
                 new EventArea { Id = 1, EventId = 1 },
             };
@@ -43,7 +53,7 @@ namespace TicketManagement.UnitTests
 
         private static IQueryable<EventSeat> GetTestEventSeats()
         {
-            IEnumerable<EventSeat> seats = new List<EventSeat>
+            var seats = new List<EventSeat>
             {
                 new EventSeat { Id = 1, EventAreaId = 1, State = 1 },
             };
@@ -52,7 +62,7 @@ namespace TicketManagement.UnitTests
 
         private static IEnumerable<EventDto> GetTestEventDtos()
         {
-            IEnumerable<EventDto> events = new List<EventDto>
+            var events = new List<EventDto>
             {
                 new EventDto
                 {

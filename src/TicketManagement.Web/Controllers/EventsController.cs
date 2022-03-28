@@ -1,13 +1,13 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.ModelsDTO;
+using TicketManagement.Web.Extensions;
 using TicketManagement.Web.Infrastructure;
-using TicketManagement.Web.Interfaces;
+using TicketManagement.Web.Interfaces.HttpClients;
+using TicketManagement.Web.Models;
 using TicketManagement.Web.Models.Events;
 using TicketManagement.Web.Models.Tickets;
 
@@ -21,46 +21,39 @@ namespace TicketManagement.Web.Controllers
     public class EventsController : Controller
     {
         /// <summary>
-        /// Const for showing error with low balance for buying ticket from resource file.
+        /// IEventManagerClient object.
         /// </summary>
-        private const string NoBalance = "NoBalance";
+        private readonly IEventManagerClient _eventManagerClient;
 
         /// <summary>
-        /// EventService object.
+        /// IPurchaseClient object.
         /// </summary>
-        private readonly IService<EventDto> _eventService;
-
-        /// <summary>
-        /// EventWebService object.
-        /// </summary>
-        private readonly IEventWebService _eventWebService;
-
-        /// <summary>
-        /// Localizer object.
-        /// </summary>
-        private readonly IStringLocalizer<EventsController> _localizer;
+        private readonly IPurchaseFlowClient _purchaseClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EventsController"/> class.
         /// </summary>
-        /// <param name="eventService">EventService object.</param>
-        /// <param name="eventWebService">EventWebService object.</param>
-        /// <param name="localizer">Localizer object.</param>
-        public EventsController(IService<EventDto> eventService, IEventWebService eventWebService, IStringLocalizer<EventsController> localizer)
+        /// <param name="eventManagerClient">IEventManagerClient object.</param>
+        /// <param name="purchaseClient">IPurchaseClient object.</param>
+        public EventsController(IEventManagerClient eventManagerClient, IPurchaseFlowClient purchaseClient)
         {
-            _eventService = eventService;
-            _eventWebService = eventWebService;
-            _localizer = localizer;
+            _eventManagerClient = eventManagerClient;
+            _purchaseClient = purchaseClient;
         }
 
         /// <summary>
         /// Get all events.
         /// </summary>
+        /// <param name="pageNumber">Page number.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pageNumber = 1)
         {
-            return View(await _eventWebService.GetAllEventViewModelsAsync());
+            var events = await _eventManagerClient.GetEventViewModels(HttpContext.GetJwtToken(), pageNumber);
+            var nextEvents = await _eventManagerClient.GetEventViewModels(HttpContext.GetJwtToken(), pageNumber + 1);
+            PageViewModel.NextPage = nextEvents is not null && nextEvents.Any();
+            PageViewModel.PageNumber = pageNumber;
+            return View(events);
         }
 
         /// <summary>
@@ -71,18 +64,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var @event = await _eventService.GetByIdAsync((int)id);
-            if (@event == null)
-            {
-                return NotFound();
-            }
-
-            return View(await _eventWebService.GetEventViewModelForDetailsAsync(@event, HttpContext));
+            return id is null ? NotFound() : View(await _eventManagerClient.EventDetails(HttpContext.GetJwtToken(), (int)id));
         }
 
         /// <summary>
@@ -111,8 +93,7 @@ namespace TicketManagement.Web.Controllers
                 return View(eventVm);
             }
 
-            EventDto @event = eventVm;
-            await _eventService.CreateAsync(@event);
+            await _eventManagerClient.CreateEvent(HttpContext.GetJwtToken(), eventVm);
             return RedirectToAction(nameof(Index));
         }
 
@@ -125,18 +106,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var updatingEvent = await _eventService.GetByIdAsync((int)id);
-            if (updatingEvent == null)
-            {
-                return NotFound();
-            }
-
-            return View(await _eventWebService.GetEventViewModelForEditAndDeleteAsync(updatingEvent, HttpContext));
+            return id is null ? NotFound() : View(await _eventManagerClient.GetEventViewModelForEdit(HttpContext.GetJwtToken(), (int)id));
         }
 
         /// <summary>
@@ -160,21 +130,13 @@ namespace TicketManagement.Web.Controllers
                 return View(eventVm);
             }
 
-            EventDto @event = eventVm;
             try
             {
-                await _eventService.UpdateAsync(@event);
+                await _eventManagerClient.EditEvent(HttpContext.GetJwtToken(), id, eventVm);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await EventExists(@event.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return Conflict();
             }
 
             return RedirectToAction(nameof(Index));
@@ -189,18 +151,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var deletingEvent = await _eventService.GetByIdAsync((int)id);
-            if (deletingEvent == null)
-            {
-                return NotFound();
-            }
-
-            return View(await _eventWebService.GetEventViewModelForEditAndDeleteAsync(deletingEvent, HttpContext));
+            return id is null ? NotFound() : View(await _eventManagerClient.GetEventViewModelForDelete(HttpContext.GetJwtToken(), (int)id));
         }
 
         /// <summary>
@@ -214,54 +165,36 @@ namespace TicketManagement.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _eventService.DeleteById(id);
+            await _eventManagerClient.DeleteEvent(HttpContext.GetJwtToken(), id);
             return RedirectToAction(nameof(Index));
         }
 
         /// <summary>
         /// Buy ticket.
         /// </summary>
-        /// <param name="eventSeatId">EventSeat id.</param>
-        /// <param name="price">Price for ticket.</param>
-        /// <returns>Task with IActionResult.</returns>
-        [Authorize(Roles = "admin, user, event manager, venue manager")]
-        [HttpGet]
-        public async Task<IActionResult> Buy(int? eventSeatId, double? price)
+        /// <param name="eventSeatId">Event seat id.</param>
+        /// <param name="price">Price for place.</param>
+        /// <returns>TicketViewModel.</returns>
+        [HttpGet("events/buy")]
+        public async Task<IActionResult> Buy(int eventSeatId, double price)
         {
-            if (eventSeatId == null || price == null)
+            var eventSeatIdAndPrice = new Dictionary<int, double>
             {
-                return NotFound();
-            }
-
-            return View(await _eventWebService.GetTicketViewModelForBuyAsync(eventSeatId, price, HttpContext));
+                { eventSeatId, price },
+            };
+            return View(await _purchaseClient.GetTicketViewModelForBuy(HttpContext.GetJwtToken(), eventSeatIdAndPrice));
         }
 
         /// <summary>
-        /// Buy confirmation.
+        /// Buy ticket.
         /// </summary>
-        /// <param name="ticketVm">TicketViewModel object.</param>
-        /// <returns>Task with IActionResult.</returns>
-        [Authorize(Roles = "admin, user, event manager, venue manager")]
-        [HttpPost]
-        [ActionName("Buy")]
-        public async Task<IActionResult> BuyConfirmed(TicketViewModel ticketVm)
+        /// <param name="ticketVm">Ticket view model.</param>
+        /// <returns>IActionResult.</returns>
+        [HttpPost("events/buy")]
+        public async Task<IActionResult> Buy(TicketViewModel ticketVm)
         {
-            if (await _eventWebService.UpdateEventSeatStateAfterBuyingTicket(ticketVm))
-            {
-                return RedirectToAction(nameof(Index));
-            }
-
-            throw new InvalidOperationException(_localizer[NoBalance]);
-        }
-
-        /// <summary>
-        /// Check that event exist.
-        /// </summary>
-        /// <param name="id">Id of event.</param>
-        /// <returns>True if exist and false if not.</returns>
-        private async Task<bool> EventExists(int id)
-        {
-            return await _eventService.GetByIdAsync(id) is not null;
+            await _purchaseClient.UpdateEventSeatStateAfterBuyingTicket(HttpContext.GetJwtToken(), ticketVm);
+            return RedirectToAction(nameof(Index), typeof(EventsController).GetControllerName());
         }
     }
 }

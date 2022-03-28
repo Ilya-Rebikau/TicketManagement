@@ -15,7 +15,6 @@ namespace TicketManagement.ControllersIntegrationTests
         }
 
         [Theory]
-        [InlineData("/")]
         [InlineData("/ThirdPartyEvents/Index")]
         public async Task Get_EndpointsReturnSuccessAndCorrectContentType(string url)
         {

@@ -6,13 +6,15 @@
 }
 
 <h1 class="d-flex justify-content-center">@Localizer["Title"]</h1>
-
-<p class="d-flex justify-content-center">
-    <a class="btn btn-success" asp-action="Create">@Localizer["AddNew"]</a>
-</p>
-<p class="d-flex justify-content-center">
-    <a class="btn btn-success" asp-controller="ThirdPartyEvents" asp-action="Index">@Localizer["AddThirdPartyEvents"]</a>
-</p>
+@if (User.IsInRole("admin") || User.IsInRole("event manager"))
+{
+    <p class="d-flex justify-content-center">
+        <a class="btn btn-success" asp-action="Create">@Localizer["AddNew"]</a>
+    </p>
+    <p class="d-flex justify-content-center">
+        <a class="btn btn-success" asp-controller="ThirdPartyEvents" asp-action="Index">@Localizer["AddThirdPartyEvents"]</a>
+    </p>
+}
 <hr />
 <div class="container">
     @for (int i = 0; i < Model.Count(); i += 3)
@@ -43,3 +45,26 @@
         </div>
     }
 </div>
+@{
+    int previousPage;
+    int nextPage;
+}
+@if (PageViewModel.PageNumber > 1)
+{
+    <a class="btn btn-primary" asp-action="Index" asp-route-pageNumber="1">1</a>
+    {
+        previousPage = PageViewModel.PageNumber - 1;
+    }
+    <a class="btn btn-primary" asp-action="Index" asp-route-pageNumber="@previousPage">
+        &lt;
+    </a>
+}
+@if (PageViewModel.NextPage)
+{
+    {
+        nextPage = PageViewModel.PageNumber + 1;
+    }
+    <a class="btn btn-primary" asp-action="Index" asp-route-pageNumber="@nextPage">
+        >
+    </a>
+}

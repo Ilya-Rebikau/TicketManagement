@@ -28,3 +28,26 @@
         </tr>
     }
 </table>
+@{
+    int previousPage;
+    int nextPage;
+}
+@if (PageViewModel.PageNumber > 1)
+{
+    <a class="btn btn-primary" asp-action="Index" asp-route-pageNumber="1">1</a>
+    {
+        previousPage = PageViewModel.PageNumber - 1;
+    }
+    <a class="btn btn-primary" asp-action="Index" asp-route-pageNumber="@previousPage">
+        &lt;
+    </a>
+}
+@if (PageViewModel.NextPage)
+{
+    {
+        nextPage = PageViewModel.PageNumber + 1;
+    }
+    <a class="btn btn-primary" asp-action="Index" asp-route-pageNumber="@nextPage">
+        >
+    </a>
+}

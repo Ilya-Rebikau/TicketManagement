@@ -76,8 +76,10 @@ namespace TicketManagement.DataAccess.Repositories
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             await connection.OpenAsync();
             string sql = "sp_CreateEvent";
-            SqlCommand command = new SqlCommand(sql, connection);
-            command.CommandType = CommandType.StoredProcedure;
+            SqlCommand command = new SqlCommand(sql, connection)
+            {
+                CommandType = CommandType.StoredProcedure,
+            };
             SqlParameter nameParam = new SqlParameter("@name", obj.Name);
             SqlParameter descriptionParam = new SqlParameter("@description", obj.Description);
             SqlParameter layoutIdParam = new SqlParameter("@layoutId", obj.LayoutId);
@@ -97,8 +99,10 @@ namespace TicketManagement.DataAccess.Repositories
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             await connection.OpenAsync();
             string sql = "sp_UpdateEvent";
-            SqlCommand command = new SqlCommand(sql, connection);
-            command.CommandType = CommandType.StoredProcedure;
+            SqlCommand command = new SqlCommand(sql, connection)
+            {
+                CommandType = CommandType.StoredProcedure,
+            };
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
             SqlParameter nameParam = new SqlParameter("@name", obj.Name);
             SqlParameter descriptionParam = new SqlParameter("@description", obj.Description);
@@ -120,8 +124,10 @@ namespace TicketManagement.DataAccess.Repositories
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
             await connection.OpenAsync();
             string sql = "sp_DeleteEvent";
-            SqlCommand command = new SqlCommand(sql, connection);
-            command.CommandType = CommandType.StoredProcedure;
+            SqlCommand command = new SqlCommand(sql, connection)
+            {
+                CommandType = CommandType.StoredProcedure,
+            };
             SqlParameter idParam = new SqlParameter("@id", obj.Id);
             command.Parameters.Add(idParam);
             await command.ExecuteNonQueryAsync();

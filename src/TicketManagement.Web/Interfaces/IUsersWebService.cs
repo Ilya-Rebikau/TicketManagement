@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using TicketManagement.Web.Models;
-using TicketManagement.Web.Models.Roles;
 using TicketManagement.Web.Models.Users;
 
 namespace TicketManagement.Web.Interfaces
@@ -14,41 +13,75 @@ namespace TicketManagement.Web.Interfaces
     public interface IUsersWebService
     {
         /// <summary>
-        /// Update user in edit method.
+        /// Get all users.
         /// </summary>
+        /// <param name="httpContext">HttpContext object.</param>
+        /// <param name="pageNumber">Page number.</param>
+        /// <returns>All users.</returns>
+        Task<IEnumerable<User>> GetUsers(HttpContext httpContext, int pageNumber);
+
+        /// <summary>
+        /// Create user.
+        /// </summary>
+        /// <param name="httpContext">HttpContext object.</param>
+        /// <param name="model">CreateUserViewModel object.</param>
+        /// <returns>IdentityResult.</returns>
+        Task<IdentityResult> CreateUser(HttpContext httpContext, CreateUserViewModel model);
+
+        /// <summary>
+        /// Get EditUserViewModel object.
+        /// </summary>
+        /// <param name="httpContext">HttpContext object.</param>
+        /// <param name="id">Id of user.</param>
+        /// <returns>EditUserViewModel.</returns>
+        Task<EditUserViewModel> GetEditUserViewModel(HttpContext httpContext, string id);
+
+        /// <summary>
+        /// Edit user.
+        /// </summary>
+        /// <param name="httpContext">HttpContext object.</param>
         /// <param name="model">EditUserViewModel object.</param>
-        /// <returns>IdentityResult object.</returns>
-        Task<IdentityResult> UpdateUserInEditAsync(EditUserViewModel model);
+        /// <returns>EditUserViewModel.</returns>
+        Task<IdentityResult> EditUser(HttpContext httpContext, EditUserViewModel model);
 
         /// <summary>
         /// Delete user.
         /// </summary>
+        /// <param name="httpContext">HttpContext object.</param>
         /// <param name="id">Id of deleting user.</param>
-        /// <returns>Task with id of deleted user.</returns>
-        Task<string> DeleteUserAsync(string id);
+        /// <returns>Id of deleted user.</returns>
+        Task<string> DeleteUser(HttpContext httpContext, string id);
+
+        /// <summary>
+        /// Get ChangePasswordViewModel object.
+        /// </summary>
+        /// <param name="httpContext">HttpContext object.</param>
+        /// <param name="id">User id.</param>
+        /// <returns>ChangePasswordViewModel object.</returns>
+        Task<ChangePasswordViewModel> GetChangePasswordViewModel(HttpContext httpContext, string id);
 
         /// <summary>
         /// Change password for user.
         /// </summary>
-        /// <param name="model">ChangePasswordViewModel object.</param>
-        /// <param name="user">User.</param>
         /// <param name="httpContext">HttpContext object.</param>
+        /// <param name="model">ChangePasswordViewModel object.</param>
         /// <returns>IdentityResult object.</returns>
-        Task<IdentityResult> ChangePasswordAsync(ChangePasswordViewModel model, User user, HttpContext httpContext);
+        Task<IdentityResult> ChangePassowrd(HttpContext httpContext, ChangePasswordViewModel model);
 
         /// <summary>
-        /// Get change role view model.
+        /// Change roles for user.
         /// </summary>
-        /// <param name="user">User.</param>
+        /// <param name="httpContext">HttpContext object.</param>
+        /// <param name="id">User id.</param>
         /// <returns>ChangeRoleViewModel object.</returns>
-        Task<ChangeRoleViewModel> GetChangeRoleViewModel(User user);
+        Task<ChangeRoleViewModel> GetChangeRoleViewModel(HttpContext httpContext, string id);
 
         /// <summary>
-        /// Edit roles for user.
+        /// Change roles for user.
         /// </summary>
-        /// <param name="roles">List of all roles.</param>
-        /// <param name="user">User.</param>
+        /// <param name="httpContext">HttpContext object.</param>
+        /// <param name="model">ChangeRoleViewModel object.</param>
         /// <returns>Task.</returns>
-        Task EditRolesAsync(List<string> roles, User user);
+        Task ChangeRoles(HttpContext httpContext, ChangeRoleViewModel model);
     }
 }

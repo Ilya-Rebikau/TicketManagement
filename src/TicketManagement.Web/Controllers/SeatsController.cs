@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TicketManagement.BusinessLogic.Interfaces;
-using TicketManagement.BusinessLogic.ModelsDTO;
+using TicketManagement.Web.Extensions;
 using TicketManagement.Web.Infrastructure;
+using TicketManagement.Web.Interfaces.HttpClients;
+using TicketManagement.Web.Models;
 using TicketManagement.Web.Models.Seats;
 
 namespace TicketManagement.Web.Controllers
@@ -19,34 +20,32 @@ namespace TicketManagement.Web.Controllers
     public class SeatsController : Controller
     {
         /// <summary>
-        /// SeatService object.
+        /// IVenueManagerClient object.
         /// </summary>
-        private readonly IService<SeatDto> _service;
+        private readonly IVenueManagerClient _venueManagerClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SeatsController"/> class.
         /// </summary>
-        /// <param name="service">SeatService object.</param>
-        public SeatsController(IService<SeatDto> service)
+        /// <param name="venueManagerClient">IVenueManagerClient object.</param>
+        public SeatsController(IVenueManagerClient venueManagerClient)
         {
-            _service = service;
+            _venueManagerClient = venueManagerClient;
         }
 
         /// <summary>
         /// Get all sets.
         /// </summary>
+        /// <param name="pageNumber">Page number.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pageNumber = 1)
         {
-            var seats = await _service.GetAllAsync();
-            var seatsVm = new List<SeatViewModel>();
-            foreach (var seat in seats)
-            {
-                seatsVm.Add(seat);
-            }
-
-            return View(seatsVm);
+            var seats = await _venueManagerClient.GetSeatViewModels(HttpContext.GetJwtToken(), pageNumber);
+            var nextSeats = await _venueManagerClient.GetSeatViewModels(HttpContext.GetJwtToken(), pageNumber + 1);
+            PageViewModel.NextPage = nextSeats is not null && nextSeats.Any();
+            PageViewModel.PageNumber = pageNumber;
+            return View(seats);
         }
 
         /// <summary>
@@ -57,19 +56,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var seat = await _service.GetByIdAsync((int)id);
-            if (seat == null)
-            {
-                return NotFound();
-            }
-
-            SeatViewModel seatVm = seat;
-            return View(seatVm);
+            return id is null ? NotFound() : View(await _venueManagerClient.SeatDetails(HttpContext.GetJwtToken(), (int)id));
         }
 
         /// <summary>
@@ -96,8 +83,7 @@ namespace TicketManagement.Web.Controllers
                 return View(seatVm);
             }
 
-            SeatDto seat = seatVm;
-            await _service.CreateAsync(seat);
+            await _venueManagerClient.CreateSeat(HttpContext.GetJwtToken(), seatVm);
             return RedirectToAction(nameof(Index));
         }
 
@@ -109,19 +95,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var updatingSeat = await _service.GetByIdAsync((int)id);
-            if (updatingSeat == null)
-            {
-                return NotFound();
-            }
-
-            SeatViewModel seatVm = updatingSeat;
-            return View(seatVm);
+            return id is null ? NotFound() : View(await _venueManagerClient.GetSeatViewModelForEdit(HttpContext.GetJwtToken(), (int)id));
         }
 
         /// <summary>
@@ -144,21 +118,13 @@ namespace TicketManagement.Web.Controllers
                 return View(seatVm);
             }
 
-            SeatDto seat = seatVm;
             try
             {
-                await _service.UpdateAsync(seat);
+                await _venueManagerClient.EditSeat(HttpContext.GetJwtToken(), id, seatVm);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await SeatExists(seat.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return Conflict();
             }
 
             return RedirectToAction(nameof(Index));
@@ -172,19 +138,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var deletingSeat = await _service.GetByIdAsync((int)id);
-            if (deletingSeat == null)
-            {
-                return NotFound();
-            }
-
-            SeatViewModel seatVm = deletingSeat;
-            return View(seatVm);
+            return id is null ? NotFound() : View(await _venueManagerClient.GetSeatViewModelForDelete(HttpContext.GetJwtToken(), (int)id));
         }
 
         /// <summary>
@@ -197,18 +151,8 @@ namespace TicketManagement.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _service.DeleteById(id);
+            await _venueManagerClient.DeleteSeat(HttpContext.GetJwtToken(), id);
             return RedirectToAction(nameof(Index));
-        }
-
-        /// <summary>
-        /// Check that seat exists.
-        /// </summary>
-        /// <param name="id">Id of seat.</param>
-        /// <returns>True if exists and false if not.</returns>
-        private async Task<bool> SeatExists(int id)
-        {
-            return await _service.GetByIdAsync(id) is not null;
         }
     }
 }

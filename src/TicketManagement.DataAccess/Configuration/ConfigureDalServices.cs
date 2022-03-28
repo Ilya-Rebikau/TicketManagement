@@ -22,14 +22,14 @@ namespace TicketManagement.DataAccess.Configuration
         {
             services.AddDbContext<TicketManagementContext>(options =>
                 options.UseSqlServer(connection));
-            services.AddScoped(typeof(DbContext), typeof(TicketManagementContext));
+            services.AddScoped<DbContext, TicketManagementContext>();
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
-            services.AddScoped(typeof(IRepository<Event>), typeof(EventEfRepository));
-            services.AddScoped(typeof(IRepository<Area>), typeof(AreaEfRepository));
-            services.AddScoped(typeof(IRepository<Layout>), typeof(LayoutEfRepository));
-            services.AddScoped(typeof(IRepository<Venue>), typeof(VenueEfRepository));
-            services.AddScoped(typeof(IRepository<EventArea>), typeof(EventAreaEfRepository));
-            services.AddScoped(typeof(IReaderJson<ThirdPartyEvent>), typeof(ThirdPartyEventRepositoryJson));
+            services.AddScoped<IRepository<Event>, EventEfRepository>();
+            services.AddScoped<IRepository<Area>, AreaEfRepository>();
+            services.AddScoped<IRepository<Layout>, LayoutEfRepository>();
+            services.AddScoped<IRepository<Venue>, VenueEfRepository>();
+            services.AddScoped<IRepository<EventArea>, EventAreaEfRepository>();
+            services.AddScoped<IReaderJson<ThirdPartyEvent>, ThirdPartyEventRepositoryJson>();
             return services;
         }
     }

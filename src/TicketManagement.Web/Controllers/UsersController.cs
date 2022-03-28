@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using TicketManagement.Web.Infrastructure;
 using TicketManagement.Web.Interfaces;
 using TicketManagement.Web.Models;
@@ -16,51 +13,37 @@ namespace TicketManagement.Web.Controllers
     /// Controller for users.
     /// </summary>
     [Authorize(Roles = "admin")]
-    [ResponseCache(CacheProfileName = "Caching")]
     [ExceptionFilter]
     public class UsersController : Controller
     {
-        /// <summary>
-        /// Const for showing error that user wasn't found from resource file.
-        /// </summary>
-        private const string UserNotFound = "UserNotFound";
-
         /// <summary>
         /// UsersWebService object.
         /// </summary>
         private readonly IUsersWebService _service;
 
         /// <summary>
-        /// UserManager object.
-        /// </summary>
-        private readonly UserManager<User> _userManager;
-
-        /// <summary>
-        /// Localizer object.
-        /// </summary>
-        private readonly IStringLocalizer<UsersController> _localizer;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="UsersController"/> class.
         /// </summary>
         /// <param name="service">UsersWebService object.</param>
-        /// <param name="userManager">UserManager object.</param>
-        /// <param name="localizer">Localizer object.</param>
-        public UsersController(IUsersWebService service,
-            UserManager<User> userManager,
-            IStringLocalizer<UsersController> localizer)
+        public UsersController(IUsersWebService service)
         {
             _service = service;
-            _userManager = userManager;
-            _localizer = localizer;
         }
 
         /// <summary>
         /// Get all users.
         /// </summary>
+        /// <param name="pageNumber">Page number.</param>
         /// <returns>IActionResult.</returns>
         [HttpGet]
-        public IActionResult Index() => View(_userManager.Users.ToList());
+        public async Task<IActionResult> Index(int pageNumber = 1)
+        {
+            var users = await _service.GetUsers(HttpContext, pageNumber);
+            var nextUsers = await _service.GetUsers(HttpContext, pageNumber + 1);
+            PageViewModel.NextPage = nextUsers is not null && nextUsers.Any();
+            PageViewModel.PageNumber = pageNumber;
+            return View(users);
+        }
 
         /// <summary>
         /// Create user.
@@ -82,11 +65,9 @@ namespace TicketManagement.Web.Controllers
                 return View(model);
             }
 
-            var user = new User { Email = model.Email, UserName = model.Email };
-            var result = await _userManager.CreateAsync(user, model.Password);
-            if (result.Succeeded)
+            var result = await _service.CreateUser(HttpContext, model);
+            if (!result.Errors.Any())
             {
-                await _userManager.AddToRoleAsync(user, "user");
                 return RedirectToAction(nameof(Index));
             }
             else
@@ -108,14 +89,7 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            EditUserViewModel model = new () { Id = user.Id, Email = user.Email, FirstName = user.FirstName, Surname = user.Surname, Balance = user.Balance, TimeZone = user.TimeZone };
-            return View(model);
+            return View(await _service.GetEditUserViewModel(HttpContext, id));
         }
 
         /// <summary>
@@ -131,8 +105,8 @@ namespace TicketManagement.Web.Controllers
                 return View(model);
             }
 
-            var result = await _service.UpdateUserInEditAsync(model);
-            if (result.Succeeded)
+            var result = await _service.EditUser(HttpContext, model);
+            if (!result.Errors.Any())
             {
                 return RedirectToAction(nameof(Index));
             }
@@ -153,7 +127,7 @@ namespace TicketManagement.Web.Controllers
         [HttpPost]
         public async Task<ActionResult> Delete(string id)
         {
-            await _service.DeleteUserAsync(id);
+            await _service.DeleteUser(HttpContext, id);
             return RedirectToAction(nameof(Index));
         }
 
@@ -166,14 +140,7 @@ namespace TicketManagement.Web.Controllers
 
         public async Task<IActionResult> ChangePassword(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            ChangePasswordViewModel model = new () { Id = user.Id, Email = user.Email };
-            return View(model);
+            return View(await _service.GetChangePasswordViewModel(HttpContext, id));
         }
 
         /// <summary>
@@ -189,23 +156,15 @@ namespace TicketManagement.Web.Controllers
                 return View(model);
             }
 
-            var user = await _userManager.FindByIdAsync(model.Id);
-            if (user != null)
+            var result = await _service.ChangePassowrd(HttpContext, model);
+            if (!result.Errors.Any())
             {
-                var result = await _service.ChangePasswordAsync(model, user, HttpContext);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+                return RedirectToAction(nameof(Index));
             }
-            else
+
+            foreach (var error in result.Errors)
             {
-                ModelState.AddModelError(string.Empty, _localizer[UserNotFound]);
+                ModelState.AddModelError(string.Empty, error.Description);
             }
 
             return View(model);
@@ -219,32 +178,19 @@ namespace TicketManagement.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> EditRoles(string userId)
         {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user != null)
-            {
-                return View(await _service.GetChangeRoleViewModel(user));
-            }
-
-            return NotFound();
+            return View(await _service.GetChangeRoleViewModel(HttpContext, userId));
         }
 
         /// <summary>
         /// Edit roles.
         /// </summary>
-        /// <param name="userId">User id.</param>
-        /// <param name="roles">All roles.</param>
+        /// <param name="model">ChangeRoleViewModel object.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpPost]
-        public async Task<IActionResult> EditRoles(string userId, List<string> roles)
+        public async Task<IActionResult> EditRoles(ChangeRoleViewModel model)
         {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user != null)
-            {
-                await _service.EditRolesAsync(roles, user);
-                return RedirectToAction(nameof(Index));
-            }
-
-            return NotFound();
+            await _service.ChangeRoles(HttpContext, model);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

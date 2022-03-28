@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using TicketManagement.BusinessLogic.ModelsDTO;
+using TicketManagement.Web.ModelsDTO;
 
 namespace TicketManagement.Web.Models.Events
 {
@@ -22,7 +22,7 @@ namespace TicketManagement.Web.Models.Events
         {
             get
             {
-                return EventSeats.Count > 0 ? EventSeats.Max(x => x.Row) : 0;
+                return EventSeats is null || EventSeats.Count <= 0 ? 0 : EventSeats.Max(x => x.Row);
             }
         }
 
@@ -34,7 +34,7 @@ namespace TicketManagement.Web.Models.Events
         {
             get
             {
-                return EventSeats.Count > 0 ? EventSeats.Max(x => x.Number) : 0;
+                return EventSeats is null || EventSeats.Count <= 0 ? 0 : EventSeats.Max(x => x.Number);
             }
         }
 

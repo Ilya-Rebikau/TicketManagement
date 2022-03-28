@@ -14,8 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\TicketManagement.BusinessLogic\TicketManagement.BusinessLogic.csproj" />
     <ProjectReference Include="..\..\src\TicketManagement.DataAccess\TicketManagement.DataAccess.csproj" />
+    <ProjectReference Include="..\..\src\TicketManagement.EventManagerAPI\TicketManagement.EventManagerAPI.csproj" />
+    <ProjectReference Include="..\..\src\TicketManagement.PurchaseFlowAPI\TicketManagement.PurchaseFlowAPI.csproj" />
+    <ProjectReference Include="..\..\src\TicketManagement.UserAPI\TicketManagement.UserAPI.csproj" />
+    <ProjectReference Include="..\..\src\TicketManagement.VenueManagerAPI\TicketManagement.VenueManagerAPI.csproj" />
+    <ProjectReference Include="..\..\src\TicketManagement.Web\TicketManagement.Web.csproj" />
   </ItemGroup>
 
 </Project>

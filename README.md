@@ -4,8 +4,15 @@
 ### How to use:
 1. To use this application you need to download this solution;
 2. Create database from project TicketManagement.Database;
-3. Change path to your SQL server in project TicketManagement.Web in file [appsettings.json](https://github.com/EPAM-Gomel-NET-Lab/IlyaRebikau/blob/develop/src/TicketManagement.Web/appsettings.json "Database config") (Server=.\\SQLEXPRESS change to Server=*path to your SQL server*);
-4. Graphical interface was created, use TicketManagement.Web project to run it.
+3. Change path to your SQL server in projects:
+    - TicketManagement.Web in file [appsettings.json](https://github.com/EPAM-Gomel-NET-Lab/IlyaRebikau/blob/develop/src/TicketManagement.Web/appsettings.json "Database config") (Server=.\\SQLEXPRESS change to Server=*path to your SQL server*);
+    - TicketManagement.UserAPI in file [appsettings.json](https://github.com/EPAM-Gomel-NET-Lab/IlyaRebikau/blob/develop/src/TicketManagement.UserAPI/appsettings.json "Database config") (Server=.\\SQLEXPRESS change to Server=*path to your SQL server*);
+    - TicketManagement.EventManagerAPI in file [appsettings.json](https://github.com/EPAM-Gomel-NET-Lab/IlyaRebikau/blob/develop/src/TicketManagement.EventManagerAPI/appsettings.json "Database config") (Server=.\\SQLEXPRESS change to Server=*path to your SQL server*);
+    - TicketManagement.VenueManagerAPI in file [appsettings.json](https://github.com/EPAM-Gomel-NET-Lab/IlyaRebikau/blob/develop/src/TicketManagement.VenueManagerAPI/appsettings.json "Database config") (Server=.\\SQLEXPRESS change to Server=*path to your SQL server*);
+    - TicketManagement.PurchaseFlowAPI in file [appsettings.json](https://github.com/EPAM-Gomel-NET-Lab/IlyaRebikau/blob/develop/src/TicketManagement.PurchaseFlowAPI/appsettings.json "Database config") (Server=.\\SQLEXPRESS change to Server=*path to your SQL server*);
+4. To run all needed projects and start working with them were created 2 batch files:
+    - [DebugStart.bat](https://github.com/EPAM-Gomel-NET-Lab/IlyaRebikau/blob/develop/DebugStart.bat "Run app in debug mode") to run application in debug mode.
+    - [ReleaseStart.bat](https://github.com/EPAM-Gomel-NET-Lab/IlyaRebikau/blob/develop/ReleaseStart.bat "Run app in release mode") to run application in release mode.
 
 ### Credentials:
 There are 4 roles in this application, you can use them.

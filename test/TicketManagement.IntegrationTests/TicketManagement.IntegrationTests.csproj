@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -7,7 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="11.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="FluentAssertions" Version="6.4.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Moq" Version="4.16.1" />
     <PackageReference Include="NUnit" Version="3.13.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
@@ -15,7 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\TicketManagement.BusinessLogic\TicketManagement.BusinessLogic.csproj" />
+    <ProjectReference Include="..\..\src\TicketManagement.EventManagerAPI\TicketManagement.EventManagerAPI.csproj" />
+    <ProjectReference Include="..\..\src\TicketManagement.PurchaseFlowAPI\TicketManagement.PurchaseFlowAPI.csproj" />
+    <ProjectReference Include="..\..\src\TicketManagement.UserAPI\TicketManagement.UserAPI.csproj" />
+    <ProjectReference Include="..\..\src\TicketManagement.VenueManagerAPI\TicketManagement.VenueManagerAPI.csproj" />
+    <ProjectReference Include="..\..\src\TicketManagement.Web\TicketManagement.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>
