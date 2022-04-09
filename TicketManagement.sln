@@ -35,8 +35,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicketManagement.PurchaseFl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicketManagement.VenueManagerAPI", "src\TicketManagement.VenueManagerAPI\TicketManagement.VenueManagerAPI.csproj", "{CA9A46D4-A60C-4062-8F94-D2C1E81E55FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicketManagement.ReactApp", "src\TicketManagement.ReactApp\TicketManagement.ReactApp.csproj", "{72E1ACDB-1093-4631-8B84-FFD2A047A50B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,10 +83,6 @@ Global
 		{CA9A46D4-A60C-4062-8F94-D2C1E81E55FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA9A46D4-A60C-4062-8F94-D2C1E81E55FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA9A46D4-A60C-4062-8F94-D2C1E81E55FF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{72E1ACDB-1093-4631-8B84-FFD2A047A50B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{72E1ACDB-1093-4631-8B84-FFD2A047A50B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{72E1ACDB-1093-4631-8B84-FFD2A047A50B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{72E1ACDB-1093-4631-8B84-FFD2A047A50B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,7 +98,6 @@ Global
 		{2C17EABF-2C59-447B-BDF3-1E09C14D827B} = {502C7BF9-0688-4EB0-ADDE-BE35C207FA89}
 		{5AFDE1F3-974A-4FDA-AA26-23F7BA49454F} = {502C7BF9-0688-4EB0-ADDE-BE35C207FA89}
 		{CA9A46D4-A60C-4062-8F94-D2C1E81E55FF} = {502C7BF9-0688-4EB0-ADDE-BE35C207FA89}
-		{72E1ACDB-1093-4631-8B84-FFD2A047A50B} = {502C7BF9-0688-4EB0-ADDE-BE35C207FA89}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8FCBA386-043C-4C32-82A6-14ABB78C7FEC}
