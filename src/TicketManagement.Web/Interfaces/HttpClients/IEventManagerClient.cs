@@ -43,7 +43,7 @@ namespace TicketManagement.Web.Interfaces.HttpClients
         public Task DeleteEventArea([Header(AuthorizationKey)] string token, [Path] int id, CancellationToken cancellationToken = default);
 
         [Get("eventseats/geteventseats")]
-        public Task<IEnumerable<EventSeatViewModel>> GetEventSeatsViewModels([Header(AuthorizationKey)] string token, [Body] int pageNumber, CancellationToken cancellationToken = default);
+        public Task<IEnumerable<EventSeatViewModel>> GetEventSeatsViewModels([Header(AuthorizationKey)] string token, [Query] int pageNumber, CancellationToken cancellationToken = default);
 
         [Get("eventseats/details/{id}")]
         public Task<EventSeatViewModel> EventSeatDetails([Header(AuthorizationKey)] string token, [Path] int id, CancellationToken cancellationToken = default);

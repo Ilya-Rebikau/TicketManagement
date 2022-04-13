@@ -69,7 +69,7 @@ namespace TicketManagement.UserAPI
             services.AddTransient<JwtTokenService>();
             services.AddScoped<ConverterForTime>();
             services.AddControllers();
-
+            services.AddCors();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "UsersAPI", Version = "v1" });
@@ -110,7 +110,7 @@ namespace TicketManagement.UserAPI
             app.UseSerilogRequestLogging();
 
             app.UseRouting();
-
+            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader());
             app.UseMiddleware<JwtMiddleware>();
 
             app.UseAuthentication();
