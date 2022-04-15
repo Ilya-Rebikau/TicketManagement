@@ -76,7 +76,7 @@ namespace TicketManagement.EventManagerAPI
             app.UseSerilogRequestLogging();
 
             app.UseRouting();
-            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader());
+            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             app.UseMiddleware<JwtMiddleware>();
 
             app.UseAuthentication();

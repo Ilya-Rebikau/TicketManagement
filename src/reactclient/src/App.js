@@ -4,7 +4,6 @@ import {EventAreas} from './components/EventAreas/EventAreas';
 import {EventSeats} from './components/EventSeats/EventSeats';
 import {Tickets} from './components/Tickets/Tickets';
 import {BrowserRouter, Route, Routes, NavLink} from 'react-router-dom';
-import {CreateEventSeat} from './components/EventSeats/CreateEventSeat';
 
 function App() {
   return (
@@ -41,7 +40,6 @@ function App() {
             <Routes>
               <Route path='/' element={<Events/>} />
               <Route path="/eventseats" element={<EventSeats/>} />
-              <Route path="/eventseats/create" element={<CreateEventSeat/>} />
               <Route path="/eventareas" element={<EventAreas/>} />
               <Route path="/tickets" element={<Tickets/>} />
             </Routes>
