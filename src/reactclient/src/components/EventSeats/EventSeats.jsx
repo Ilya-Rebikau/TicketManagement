@@ -7,23 +7,46 @@ export class EventSeats extends Component{
         super(props);
         this.state = {
             eventSeats:[],
-            pageNumber: 1,
             modalTitle:"",
             Id:0,
             EventAreaId:0,
             Row:0,
             number:0,
-            State:""
+            State:"",
+            nextEventSeats:[]
         }
     }
 
+    static pageNumber = 1;
+
+    nextPageExist(){
+        var nextPageNumber = EventSeats.pageNumber;
+        nextPageNumber++;
+        var urlNext = new URL(appsettings.EventManagerApiAddress + 'eventseats/geteventseats'),
+        paramsNext = {pageNumber:nextPageNumber}
+        Object.keys(paramsNext).forEach(key => urlNext.searchParams.append(key, paramsNext[key]))
+        fetch(urlNext, {
+            method:"GET",
+            headers:{
+                'Accept':'application/json',
+                'Content-Type':'application/json',
+                'authorization': Cookies.get('JwtTokenCookie')
+            }
+        }).then(response => response.json()).then(data => this.setState({ nextEventSeats: data }));
+    }
+
     nextPage(){
-        this.setState({ pageNumber: this.state.pageNumber+1});
+        EventSeats.pageNumber++;
+        this.refreshList();
+    }
+
+    firstPage(){
+        EventSeats.pageNumber = 1;
         this.refreshList();
     }
 
     previousPage(){
-        this.setState({ pageNumber: this.state.pageNumber-1});
+        EventSeats.pageNumber--;
         this.refreshList();
     }
 
@@ -53,7 +76,7 @@ export class EventSeats extends Component{
 
     refreshList(){
         var url = new URL(appsettings.EventManagerApiAddress + 'eventseats/geteventseats'),
-            params = {pageNumber:this.state.pageNumber}
+            params = {pageNumber:EventSeats.pageNumber}
         Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
         fetch(url, {
             method:"GET",
@@ -62,7 +85,7 @@ export class EventSeats extends Component{
                 'Content-Type':'application/json',
                 'authorization': Cookies.get('JwtTokenCookie')
             }
-        }).then(response => response.json()).then(data => this.setState({ eventSeats: data}))
+        }).then(response => response.json()).then(data => this.setState({ eventSeats: data}));
     }
 
     componentDidMount(){
@@ -163,6 +186,7 @@ export class EventSeats extends Component{
             Row,
             number,
             State,
+            nextEventSeats
         }=this.state;
 
         return(
@@ -225,10 +249,13 @@ export class EventSeats extends Component{
                 </table>
 
                 <div>
-                    {this.state.pageNumber > 1?
+                    {EventSeats.pageNumber!==1?
+                        <button type="button" className="btn btn-primary" onClick={() => this.firstPage()}>1</button>:null}
+                    {EventSeats.pageNumber > 1?
                         <button type="button" className="btn btn-primary" onClick={() => this.previousPage()}>&lt;</button>:null}
-                    <button type="button" className="btn btn-primary" onClick={() => this.nextPage()}>&gt;</button>
-                    
+                        {console.log(this.nextPageExist())}
+                    {nextEventSeats.length !== 0?
+                        <button type="button" className="btn btn-primary" onClick={() => this.nextPage()}>&gt;</button>:null}
                 </div>
 
                 <div className="modal fade" id="modalWindow" tabIndex="-1" aria-hidden="true">
