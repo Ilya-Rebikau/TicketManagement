@@ -1,7 +1,7 @@
-import {Events} from "./components/Events/Events";
-import {EventAreas} from './components/EventAreas/EventAreas';
-import {EventSeats} from './components/EventSeats/EventSeats';
-import {Tickets} from './components/Tickets/Tickets';
+import {Events} from "../components/Events/Events";
+import {EventAreas} from '../components/EventAreas/EventAreas';
+import {EventSeats} from '../components/EventSeats/EventSeats';
+import {Tickets} from '../components/Tickets/Tickets';
 import {BrowserRouter, Route, Routes, NavLink} from 'react-router-dom';
 import jwt from 'jwt-decode';
 import Cookies from 'js-cookie'

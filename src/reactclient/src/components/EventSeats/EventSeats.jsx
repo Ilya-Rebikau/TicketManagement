@@ -1,6 +1,7 @@
 import React, {Component} from "react";
-import {appsettings} from "../../appsettings"
+import {appsettings} from "../../App/appsettings"
 import Cookies from 'js-cookie'
+import { Page } from "../Page";
 
 export class EventSeats extends Component{
     constructor(props){
@@ -15,12 +16,11 @@ export class EventSeats extends Component{
             State:"",
             nextEventSeats:[]
         }
+        Page.number = 1;
     }
 
-    static pageNumber = 1;
-
-    nextPageExist(){
-        var nextPageNumber = EventSeats.pageNumber;
+    getNextPage(){
+        var nextPageNumber = Page.number;
         nextPageNumber++;
         var urlNext = new URL(appsettings.EventManagerApiAddress + 'eventseats/geteventseats'),
         paramsNext = {pageNumber:nextPageNumber}
@@ -36,17 +36,17 @@ export class EventSeats extends Component{
     }
 
     nextPage(){
-        EventSeats.pageNumber++;
+        Page.number++;
         this.refreshList();
     }
 
     firstPage(){
-        EventSeats.pageNumber = 1;
+        Page.number = 1;
         this.refreshList();
     }
 
     previousPage(){
-        EventSeats.pageNumber--;
+        Page.number--;
         this.refreshList();
     }
 
@@ -76,7 +76,7 @@ export class EventSeats extends Component{
 
     refreshList(){
         var url = new URL(appsettings.EventManagerApiAddress + 'eventseats/geteventseats'),
-            params = {pageNumber:EventSeats.pageNumber}
+            params = {pageNumber:Page.number}
         Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
         fetch(url, {
             method:"GET",
@@ -86,6 +86,7 @@ export class EventSeats extends Component{
                 'authorization': Cookies.get('JwtTokenCookie')
             }
         }).then(response => response.json()).then(data => this.setState({ eventSeats: data}));
+        this.getNextPage();
     }
 
     componentDidMount(){
@@ -249,11 +250,10 @@ export class EventSeats extends Component{
                 </table>
 
                 <div>
-                    {EventSeats.pageNumber!==1?
+                    {Page.number!==1?
                         <button type="button" className="btn btn-primary" onClick={() => this.firstPage()}>1</button>:null}
-                    {EventSeats.pageNumber > 1?
+                    {Page.number > 1?
                         <button type="button" className="btn btn-primary" onClick={() => this.previousPage()}>&lt;</button>:null}
-                        {console.log(this.nextPageExist())}
                     {nextEventSeats.length !== 0?
                         <button type="button" className="btn btn-primary" onClick={() => this.nextPage()}>&gt;</button>:null}
                 </div>

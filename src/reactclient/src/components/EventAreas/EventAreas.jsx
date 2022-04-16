@@ -1,6 +1,7 @@
 import React, {Component} from "react";
-import {appsettings} from "../../appsettings"
+import {appsettings} from "../../App/appsettings"
 import Cookies from 'js-cookie'
+import { Page } from "../Page";
 
 export class EventAreas extends Component{
     constructor(props){
@@ -16,12 +17,11 @@ export class EventAreas extends Component{
             Price:0,
             nextEventAreas:[]
         }
+        Page.number = 1;
     }
 
-    static pageNumber = 1;
-
-    nextPageExist(){
-        var nextPageNumber = EventAreas.pageNumber;
+    getNextPage(){
+        var nextPageNumber = Page.number;
         nextPageNumber++;
         var urlNext = new URL(appsettings.EventManagerApiAddress + 'eventareas/getareas'),
         paramsNext = {pageNumber:nextPageNumber}
@@ -37,17 +37,17 @@ export class EventAreas extends Component{
     }
 
     nextPage(){
-        EventAreas.pageNumber++;
+        Page.number++;
         this.refreshList();
     }
 
     firstPage(){
-        EventAreas.pageNumber = 1;
+        Page.number = 1;
         this.refreshList();
     }
 
     previousPage(){
-        EventAreas.pageNumber--;
+        Page.number--;
         this.refreshList();
     }
 
@@ -83,7 +83,7 @@ export class EventAreas extends Component{
 
     refreshList(){
         var url = new URL(appsettings.EventManagerApiAddress + 'eventareas/getareas'),
-            params = {pageNumber:EventAreas.pageNumber}
+            params = {pageNumber:Page.number}
         Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
         fetch(url, {
             method:"GET",
@@ -93,6 +93,7 @@ export class EventAreas extends Component{
                 'authorization': Cookies.get('JwtTokenCookie')
             }
         }).then(response => response.json()).then(data => this.setState({ eventAreas: data}));
+        this.getNextPage()
     }
 
     componentDidMount(){
@@ -267,11 +268,10 @@ export class EventAreas extends Component{
                 </table>
 
                 <div>
-                    {EventAreas.pageNumber!==1?
+                    {Page.number!==1?
                         <button type="button" className="btn btn-primary" onClick={() => this.firstPage()}>1</button>:null}
-                    {EventAreas.pageNumber > 1?
+                    {Page.number > 1?
                         <button type="button" className="btn btn-primary" onClick={() => this.previousPage()}>&lt;</button>:null}
-                        {console.log(this.nextPageExist())}
                     {nextEventAreas.length !== 0?
                         <button type="button" className="btn btn-primary" onClick={() => this.nextPage()}>&gt;</button>:null}
                 </div>
