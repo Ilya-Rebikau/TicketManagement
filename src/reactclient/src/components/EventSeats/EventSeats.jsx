@@ -116,7 +116,7 @@ export class EventSeats extends Component{
                 Number: this.state.number,
                 State: this.state.State
             })
-        }).then((result)=>{
+        }).then(()=>{
             this.refreshList();
         })
     }
@@ -136,7 +136,7 @@ export class EventSeats extends Component{
                 Number: this.state.number,
                 State: this.state.State
             })
-        }).then((result)=>{
+        }).then(()=>{
             this.refreshList();
         })
     }
@@ -171,7 +171,7 @@ export class EventSeats extends Component{
                     'Content-Type':'application/json',
                     'authorization': Cookies.get('JwtTokenCookie')
             }})
-            .then((result)=>{
+            .then(()=>{
                 this.refreshList();
             })
         }

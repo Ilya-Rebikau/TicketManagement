@@ -44,7 +44,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// <param name="pageNumber">Page number.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpGet("getareas")]
-        public async Task<IActionResult> GetEventAreaViewModels([FromBody] int pageNumber)
+        public async Task<IActionResult> GetEventAreaViewModels([FromQuery] int pageNumber)
         {
             var eventAreas = await _service.GetAllAsync(pageNumber);
             return Ok(await _converter.ConvertSourceModelRangeToDestinationModelRange(eventAreas));

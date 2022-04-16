@@ -1,11 +1,25 @@
-import './App.css';
 import {Events} from "./components/Events/Events";
 import {EventAreas} from './components/EventAreas/EventAreas';
 import {EventSeats} from './components/EventSeats/EventSeats';
 import {Tickets} from './components/Tickets/Tickets';
 import {BrowserRouter, Route, Routes, NavLink} from 'react-router-dom';
+import jwt from 'jwt-decode';
+import Cookies from 'js-cookie'
+
+function getRoles(){
+  const jwtToken = Cookies.get('JwtTokenCookie');
+  const user = jwt(jwtToken);
+  const userData = [];
+  const roles = [];
+  Object.keys(user).forEach(key => userData.push({name: key, value: user[key]}));
+  if(Array.isArray(userData[1].value)){
+    Object.keys(userData[1].value).forEach(key => roles.push(userData[1].value[key]));
+  }
+  return roles;
+}
 
 function App() {
+  const roles = getRoles();
   return (
     <BrowserRouter>
       <div className="App">
@@ -21,15 +35,21 @@ function App() {
                     <li className="nav-item">
                       <NavLink className="nav-link text-white" to="/">Events</NavLink>
                     </li>
-                    <li className="nav-item">
-                      <NavLink className="nav-link text-white" to="/eventseats">EventSeats</NavLink>
-                    </li>
-                    <li className="nav-item">
-                      <NavLink className="nav-link text-white" to="/eventareas">EventAreas</NavLink>
-                    </li>
-                    <li className="nav-item">
-                      <NavLink className="nav-link text-white" to="/tickets">Tickets</NavLink>
-                    </li>
+                    {roles.includes('admin') || roles.includes('event manager')?
+                      <li className="nav-item">
+                        <NavLink className="nav-link text-white" to="/eventseats">EventSeats</NavLink>
+                      </li>
+                     :null}
+                    {roles.includes('admin') || roles.includes('event manager')?
+                      <li className="nav-item">
+                        <NavLink className="nav-link text-white" to="/eventareas">EventAreas</NavLink>
+                      </li>
+                     :null}
+                    {roles.includes('admin') || roles.includes('event manager')?
+                      <li className="nav-item">
+                        <NavLink className="nav-link text-white" to="/tickets">Tickets</NavLink>
+                      </li>
+                     :null}
                   </ul>
               </div>
             </div>

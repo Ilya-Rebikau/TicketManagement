@@ -44,7 +44,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         /// <param name="pageNumber">Page number.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpGet("getvenues")]
-        public async Task<IActionResult> GetVenues([FromBody] int pageNumber)
+        public async Task<IActionResult> GetVenues([FromQuery] int pageNumber)
         {
             var venues = await _service.GetAllAsync(pageNumber);
             return Ok(await _converter.ConvertSourceModelRangeToDestinationModelRange(venues));
