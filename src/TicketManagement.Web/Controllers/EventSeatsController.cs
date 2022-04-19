@@ -8,7 +8,6 @@ using TicketManagement.Web.Infrastructure;
 using TicketManagement.Web.Interfaces.HttpClients;
 using TicketManagement.Web.Models;
 using TicketManagement.Web.Models.EventSeats;
-using TicketManagement.Web.ModelsDTO;
 
 namespace TicketManagement.Web.Controllers
 {
@@ -40,6 +39,7 @@ namespace TicketManagement.Web.Controllers
         /// <param name="pageNumber">Page number.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpGet]
+        [RedirectFilter("eventseats")]
         public async Task<IActionResult> Index(int pageNumber = 1)
         {
             var eventSeats = await _eventManagerClient.GetEventSeatsViewModels(HttpContext.GetJwtToken(), pageNumber);

@@ -12,7 +12,6 @@ namespace TicketManagement.EventManagerAPI.Controllers
     /// <summary>
     /// Controller for events.
     /// </summary>
-    [Authorize(Roles = "admin, event manager")]
     [Route("[controller]")]
     [ApiController]
     public class EventsController : Controller
@@ -37,7 +36,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// <param name="pageNumber">Page number.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpGet("getevents")]
-        public async Task<IActionResult> GetEvents([FromBody] int pageNumber)
+        public async Task<IActionResult> GetEvents([FromQuery] int pageNumber)
         {
             return Ok(await _eventService.GetAllEventViewModelsAsync(pageNumber));
         }

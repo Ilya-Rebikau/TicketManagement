@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.FeatureManagement;
 using Microsoft.OpenApi.Models;
 using RestEase;
 using TicketManagement.Web.Infrastructure;
@@ -33,8 +34,9 @@ namespace TicketManagement.Web.Configuration
         /// <returns>Added services.</returns>
         public static IServiceCollection AddWebServices(this IServiceCollection services, string connection, IConfiguration configuration)
         {
-            services.AddScoped(typeof(IAccountWebService), typeof(AccountWebService));
-            services.AddScoped(typeof(IUsersWebService), typeof(UsersWebService));
+            services.AddFeatureManagement();
+            services.AddScoped<IAccountWebService, AccountWebService>();
+            services.AddScoped<IUsersWebService, UsersWebService>();
             services.AddControllersWithViews(options =>
                 options.CacheProfiles.Add("Caching",
                 new CacheProfile

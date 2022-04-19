@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using RestEase;
 using TicketManagement.Web.Models.Account;
+using TicketManagement.Web.Models.Events;
 using TicketManagement.Web.Models.Tickets;
 
 namespace TicketManagement.Web.Interfaces.HttpClients
@@ -21,7 +22,7 @@ namespace TicketManagement.Web.Interfaces.HttpClients
         public Task<AccountViewModel> GetAccountViewModelForPersonalAccount([Header(AuthorizationKey)] string token, CancellationToken cancellationToken = default);
 
         [Get("events/buy")]
-        public Task<TicketViewModel> GetTicketViewModelForBuy([Header(AuthorizationKey)] string token, [Body] Dictionary<int, double> eventSeatIdAndPrice,
+        public Task<TicketViewModel> GetTicketViewModelForBuy([Header(AuthorizationKey)] string token, [Query] int eventSeatId, [Query] double price,
             CancellationToken cancellationToken = default);
 
         [Put("events/buy")]
