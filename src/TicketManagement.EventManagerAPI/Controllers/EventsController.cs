@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using TicketManagement.EventManagerAPI.Extensions;
 using TicketManagement.EventManagerAPI.Interfaces;
 using TicketManagement.EventManagerAPI.Models.Events;
-using TicketManagement.EventManagerAPI.ModelsDTO;
 
 namespace TicketManagement.EventManagerAPI.Controllers
 {

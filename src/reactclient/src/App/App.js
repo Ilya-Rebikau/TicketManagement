@@ -3,19 +3,25 @@ import {EventAreas} from '../components/EventAreas/EventAreas';
 import {EventSeats} from '../components/EventSeats/EventSeats';
 import {Tickets} from '../components/Tickets/Tickets';
 import {Account} from '../components/Account/Account';
+import { appsettings } from "./appsettings";
 import {BrowserRouter, Route, Routes, NavLink} from 'react-router-dom';
 import jwt from 'jwt-decode';
 import Cookies from 'js-cookie'
 import React  from 'react';
 
 function getRoles(){
-  const jwtToken = Cookies.get('JwtTokenCookie');
-  const user = jwt(jwtToken);
-  const userData = [];
   const roles = [];
-  Object.keys(user).forEach(key => userData.push({name: key, value: user[key]}));
-  if(Array.isArray(userData[1].value)){
-    Object.keys(userData[1].value).forEach(key => roles.push(userData[1].value[key]));
+  if (Cookies.get('JwtTokenCookie') !== undefined){
+    const jwtToken = Cookies.get('JwtTokenCookie');
+    const user = jwt(jwtToken);
+    const userData = [];
+    Object.keys(user).forEach(key => userData.push({name: key, value: user[key]}));
+    if(Array.isArray(userData[1].value)){
+      Object.keys(userData[1].value).forEach(key => roles.push(userData[1].value[key]));
+    }
+    else{
+      roles.push(userData[1].value);
+    }
   }
   return roles;
 }
@@ -37,6 +43,26 @@ function App() {
                     <li className="nav-item">
                       <NavLink className="nav-link text-white" to="/">Events</NavLink>
                     </li>
+                    {roles.includes('admin') || roles.includes('venue manager')?
+                      <li className="nav-item">
+                        <a className="nav-link text-white" href={appsettings.ApsWebApp + 'venues'}>Venues</a>
+                      </li>
+                     :null}
+                    {roles.includes('admin') || roles.includes('venue manager')?
+                      <li className="nav-item">
+                        <a className="nav-link text-white" href={appsettings.ApsWebApp + 'layouts'}>Layouts</a>
+                      </li>
+                     :null}
+                    {roles.includes('admin') || roles.includes('venue manager')?
+                      <li className="nav-item">
+                        <a className="nav-link text-white" href={appsettings.ApsWebApp + 'areas'}>Areas</a>
+                      </li>
+                     :null}
+                    {roles.includes('admin') || roles.includes('venue manager')?
+                      <li className="nav-item">
+                        <a className="nav-link text-white" href={appsettings.ApsWebApp + 'seats'}>Seats</a>
+                      </li>
+                     :null}
                     {roles.includes('admin') || roles.includes('event manager')?
                       <li className="nav-item">
                         <NavLink className="nav-link text-white" to="/eventseats">EventSeats</NavLink>
@@ -50,6 +76,11 @@ function App() {
                     {roles.includes('admin') || roles.includes('event manager')?
                       <li className="nav-item">
                         <NavLink className="nav-link text-white" to="/tickets">Tickets</NavLink>
+                      </li>
+                     :null}
+                    {roles.includes('admin')?
+                      <li className="nav-item">
+                        <a className="nav-link text-white" href={appsettings.ApsWebApp + 'users'}>Users</a>
                       </li>
                      :null}
                   </ul>

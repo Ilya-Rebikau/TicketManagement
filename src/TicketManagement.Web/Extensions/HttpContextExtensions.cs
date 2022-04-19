@@ -33,8 +33,17 @@ namespace TicketManagement.Web.Extensions
             httpContext.Response.Cookies.Append(CookiesKey, token, new CookieOptions
             {
                 HttpOnly = false,
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.Lax,
             });
+        }
+
+        /// <summary>
+        /// Delete jwt token from cookies.
+        /// </summary>
+        /// <param name="httpContext">HttpContext object.</param>
+        public static void DeleteCookies(this HttpContext httpContext)
+        {
+            httpContext.Response.Cookies.Delete(CookiesKey);
         }
     }
 }

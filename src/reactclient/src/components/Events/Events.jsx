@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {appsettings} from "../../App/appsettings"
 import Cookies from 'js-cookie'
 import { Page } from "../Page";
-import Select from 'react-select'
+import Select from 'react-select';
 
 export class Events extends Component{
     constructor(props){
@@ -37,9 +37,17 @@ export class Events extends Component{
             headers:{
                 'Accept':'application/json',
                 'Content-Type':'application/json',
-                'authorization': Cookies.get('JwtTokenCookie')
+                'authorization': this.checkForCookie()
             }
         }).then(response => response.json()).then(data => this.setState({ nextEvents: data }));
+    }
+
+    checkForCookie(){
+        var jwtToken = Cookies.get('JwtTokenCookie');
+        if(jwtToken !== undefined){
+            return jwtToken;
+        }
+        return '';
     }
 
     nextPage(){
@@ -108,7 +116,7 @@ export class Events extends Component{
             headers:{
                 'Accept':'application/json',
                 'Content-Type':'application/json',
-                'authorization': Cookies.get('JwtTokenCookie')
+                'authorization': this.checkForCookie()
             }
         }).then(response => response.json()).then(data => this.setState({ events: data}));
         this.getNextPage();
@@ -293,12 +301,13 @@ export class Events extends Component{
 
         return(
             <div className="container">
+                {roles.includes("admin") || roles.includes("event manager")?
                 <p>
                     <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalWindow"
                         onClick={()=>this.createClick()}>
                             Add event
                     </button>
-                </p>
+                </p>:null}
 
                 {events.map(event =>
                     <div className="col" key={event.id}>

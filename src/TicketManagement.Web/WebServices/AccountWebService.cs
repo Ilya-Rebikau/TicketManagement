@@ -62,6 +62,7 @@ namespace TicketManagement.Web.WebServices
         {
             await _userClient.Logout(httpContext.GetJwtToken());
             await _signInManager.SignOutAsync();
+            httpContext.DeleteCookies();
         }
 
         public async Task<EditAccountViewModel> GetEditAccountViewModelForEdit(HttpContext httpContext, string id)

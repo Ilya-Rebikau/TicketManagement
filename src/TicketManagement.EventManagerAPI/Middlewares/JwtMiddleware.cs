@@ -45,7 +45,7 @@ namespace TicketManagement.EventManagerAPI.Middlewares
         public async Task Invoke(HttpContext context)
         {
             context.Request.Headers.TryGetValue(AuthorizationKey, out var token);
-            if (await _usersClient.ValidateToken(token))
+            if (!string.IsNullOrWhiteSpace(token) && token.Count != 0 && await _usersClient.ValidateToken(token))
             {
                 var handler = new JwtSecurityTokenHandler();
                 var jwtSecurityToken = handler.ReadJwtToken(token);
