@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using TicketManagement.Web.Extensions;
 using TicketManagement.Web.Infrastructure;
 using TicketManagement.Web.Interfaces;
@@ -203,6 +204,7 @@ namespace TicketManagement.Web.Controllers
         /// <returns>Task with IActionResult.</returns>
         [Authorize(Roles = "admin, user, event manager, venue manager")]
         [HttpGet]
+        [RedirectFilter("account/personalaccount")]
         public async Task<IActionResult> Index()
         {
             var accountVm = await _purchaseClient.GetAccountViewModelForPersonalAccount(HttpContext.GetJwtToken());

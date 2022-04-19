@@ -224,7 +224,7 @@ export class Account extends Component{
                             </thead>
                             <tbody>
                             {accountModel.tickets.map(ticket =>
-                                <tr key={ticket.event}>
+                                <tr key={ticket}>
                                     <td>{ticket.event.name}</td>
                                     <td>{ticket.event.timeStart}</td>
                                     <td>{ticket.event.timeEnd}</td>

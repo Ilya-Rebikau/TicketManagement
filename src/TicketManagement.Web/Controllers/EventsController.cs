@@ -47,6 +47,7 @@ namespace TicketManagement.Web.Controllers
         /// <param name="pageNumber">Page number.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpGet]
+        [RedirectFilter("")]
         public async Task<IActionResult> Index(int pageNumber = 1)
         {
             var events = await _eventManagerClient.GetEventViewModels(HttpContext.GetJwtToken(), pageNumber);
