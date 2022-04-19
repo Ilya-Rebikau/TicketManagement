@@ -40,7 +40,8 @@ namespace TicketManagement.IntegrationTests
             var context = new TicketManagementContext(builder.Options);
             var eventSeatRepository = new EfRepository<EventSeat>(context);
             var converter = new ModelsConverter<EventSeat, EventSeatDto>(mapper);
-            _service = new EventSeatService(eventSeatRepository, converter, configuration);
+            var eventAreaRepository = new EventAreaEfRepository(context);
+            _service = new EventSeatService(eventSeatRepository, converter, configuration, eventAreaRepository);
         }
 
         [Test]

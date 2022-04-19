@@ -31,9 +31,10 @@ namespace TicketManagement.UnitTests
                 .AddInMemoryCollection(inMemorySettings)
                 .Build();
             eventSeatRepositoryMock.Setup(rep => rep.GetAllAsync());
+            var eventAreaRepositoryMock = new Mock<IRepository<EventArea>>();
             var eventSeats = await eventSeatRepositoryMock.Object.GetAllAsync();
             eventSeatConverterMock.Setup(rep => rep.ConvertSourceModelRangeToDestinationModelRange(eventSeats)).ReturnsAsync(GetTestEventSeatDtos());
-            _service = new EventSeatService(eventSeatRepositoryMock.Object, eventSeatConverterMock.Object, configuration);
+            _service = new EventSeatService(eventSeatRepositoryMock.Object, eventSeatConverterMock.Object, configuration, eventAreaRepositoryMock.Object);
         }
 
         private static IEnumerable<EventSeatDto> GetTestEventSeatDtos()
