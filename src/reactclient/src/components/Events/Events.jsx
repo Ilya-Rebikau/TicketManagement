@@ -327,6 +327,7 @@ export class Events extends Component{
                             </div>:null}
                         </div>
                     </figure>
+                    <hr/>
                 </div>
                 )}
 
@@ -349,7 +350,7 @@ export class Events extends Component{
 
                             <div className="modal-body">
                                 <div className="input-group mb-3">
-                                <span className="input-group-text">Name</span>
+                                    <span className="input-group-text">Name</span>
                                     <input type="text" className="form-control" value={Name} onChange={this.changeName}/>
                                 </div>
                                 <div className="input-group mb-3">

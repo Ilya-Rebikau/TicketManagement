@@ -151,6 +151,11 @@ namespace TicketManagement.UserAPI.Services
             return false;
         }
 
+        public async Task<User> GetUser(string jwtToken)
+        {
+            return await _userManager.FindByEmailAsync(GetUserEmail(jwtToken));
+        }
+
         /// <summary>
         /// Get user email from jwt token.
         /// </summary>

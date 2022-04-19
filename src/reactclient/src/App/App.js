@@ -2,6 +2,7 @@ import {Events} from "../components/Events/Events";
 import {EventAreas} from '../components/EventAreas/EventAreas';
 import {EventSeats} from '../components/EventSeats/EventSeats';
 import {Tickets} from '../components/Tickets/Tickets';
+import {Account} from '../components/Account/Account';
 import {BrowserRouter, Route, Routes, NavLink} from 'react-router-dom';
 import jwt from 'jwt-decode';
 import Cookies from 'js-cookie'
@@ -52,6 +53,12 @@ function App() {
                       </li>
                      :null}
                   </ul>
+                  {roles.includes("admin") || roles.includes("event manager") || roles.includes("user") || roles.includes("venue manager")?
+                    <ul className="navbar-nav flex-grow-1 justify-content-end">
+                      <li className="nav-item justify-content-end">
+                        <NavLink className="nav-link text-white" to="/account/personalaccount">Personal account</NavLink>
+                      </li>
+                    </ul>:null}
               </div>
             </div>
           </nav>
@@ -63,12 +70,13 @@ function App() {
               <Route path="/eventseats" element={<EventSeats/>} />
               <Route path="/eventareas" element={<EventAreas/>} />
               <Route path="/tickets" element={<Tickets/>} />
+              <Route path="account/personalaccount" element={<Account roles={roles}/>} />
             </Routes>
           </main>
         </div>
         <footer className="border-top footer text-muted">
           <div className="container">
-              &copy; 2022 - Footer
+              &copy; 2022 - Playbill
           </div>
         </footer>
       </div>
