@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
@@ -12,17 +13,27 @@ namespace TicketManagement.EventManagerAPI.Services
     /// <summary>
     /// Service with CRUD operations and validations for event seat.
     /// </summary>
-    internal class EventSeatService : BaseService<EventSeat, EventSeatDto>, IService<EventSeatDto>
+    internal class EventSeatService : BaseService<EventSeat, EventSeatDto>, IEventSeatService
     {
+        /// <summary>
+        /// EventAreaRepository object.
+        /// </summary>
+        private readonly IRepository<EventArea> _eventAreaRepository;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="EventSeatService"/> class.
         /// </summary>
         /// <param name="repository">EventSeatRepository object.</param>
         /// <param name="converter">Converter object.</param>
         /// <param name="configuration">IConfiguration object.</param>
-        public EventSeatService(IRepository<EventSeat> repository, IConverter<EventSeat, EventSeatDto> converter, IConfiguration configuration)
+        /// <param name="eventAreaRepository">EventAreaRepository object.</param>
+        public EventSeatService(IRepository<EventSeat> repository,
+            IConverter<EventSeat, EventSeatDto> converter,
+            IConfiguration configuration,
+            IRepository<EventArea> eventAreaRepository)
             : base(repository, converter, configuration)
         {
+            _eventAreaRepository = eventAreaRepository;
         }
 
         public async override Task<EventSeatDto> CreateAsync(EventSeatDto obj)
@@ -43,6 +54,26 @@ namespace TicketManagement.EventManagerAPI.Services
         {
             CheckForTickets(obj);
             return await base.DeleteAsync(obj);
+        }
+
+        public async Task<IEnumerable<EventSeatDto>> GetFreeEventSeatsByEvent(int eventId)
+        {
+            var eventAreas = await _eventAreaRepository.GetAllAsync();
+            var eventAreasInEvent = eventAreas.Where(ea => ea.EventId == eventId).ToList();
+            var eventSeats = await Repository.GetAllAsync();
+            var freeEventSeatsInEvent = new List<EventSeatDto>();
+            foreach (var eventArea in eventAreasInEvent)
+            {
+                foreach (var eventSeat in eventSeats.ToList())
+                {
+                    if (eventSeat.EventAreaId == eventArea.Id && eventSeat.State == (int)PlaceStatus.Free)
+                    {
+                        freeEventSeatsInEvent.Add(await Converter.ConvertSourceToDestination(eventSeat));
+                    }
+                }
+            }
+
+            return freeEventSeatsInEvent;
         }
 
         /// <summary>

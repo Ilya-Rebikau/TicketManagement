@@ -35,6 +35,7 @@ namespace TicketManagement.PurchaseFlowAPI
                 var baseUrl = Configuration["UsersApiAddress"];
                 return RestClient.For<IUsersClient>(baseUrl);
             });
+            services.AddCors();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "PurchaseFlowAPI", Version = "v1" });
@@ -76,8 +77,8 @@ namespace TicketManagement.PurchaseFlowAPI
 
             app.UseRouting();
 
+            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             app.UseMiddleware<JwtMiddleware>();
-
             app.UseAuthentication();
             app.UseAuthorization();
 

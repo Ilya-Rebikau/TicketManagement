@@ -20,7 +20,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// <summary>
         /// EventSeatService object.
         /// </summary>
-        private readonly IService<EventSeatDto> _service;
+        private readonly IEventSeatService _service;
 
         /// <summary>
         /// IConverter object.
@@ -32,7 +32,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// </summary>
         /// <param name="service">EventSeatService object.</param>
         /// <param name="converter">IConverter object.</param>
-        public EventSeatsController(IService<EventSeatDto> service, IConverter<EventSeatDto, EventSeatModel> converter)
+        public EventSeatsController(IEventSeatService service, IConverter<EventSeatDto, EventSeatModel> converter)
         {
             _service = service;
             _converter = converter;
@@ -141,6 +141,17 @@ namespace TicketManagement.EventManagerAPI.Controllers
         {
             await _service.DeleteById(id);
             return Ok();
+        }
+
+        /// <summary>
+        /// Get free event seats in event.
+        /// </summary>
+        /// <param name="eventId">Event id.</param>
+        /// <returns>Free seats.</returns>
+        [HttpGet("getfreeseats")]
+        public async Task<IActionResult> GetFreeEventSeatsInEvent([FromQuery] int eventId)
+        {
+            return Ok(await _service.GetFreeEventSeatsByEvent(eventId));
         }
 
         /// <summary>

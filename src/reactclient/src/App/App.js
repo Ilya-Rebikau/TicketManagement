@@ -5,6 +5,7 @@ import {Tickets} from '../components/Tickets/Tickets';
 import {BrowserRouter, Route, Routes, NavLink} from 'react-router-dom';
 import jwt from 'jwt-decode';
 import Cookies from 'js-cookie'
+import React  from 'react';
 
 function getRoles(){
   const jwtToken = Cookies.get('JwtTokenCookie');
@@ -58,7 +59,7 @@ function App() {
         <div className="container">
           <main role="main" className="pb-3">
             <Routes>
-              <Route path='/' element={<Events/>} />
+              <Route path='/' element={<Events roles={roles}/>} />
               <Route path="/eventseats" element={<EventSeats/>} />
               <Route path="/eventareas" element={<EventAreas/>} />
               <Route path="/tickets" element={<Tickets/>} />

@@ -26,6 +26,7 @@ namespace TicketManagement.EventManagerAPI.Configuration
             services.AddScoped<IService<EventSeatDto>, EventSeatService>();
             services.AddScoped<IService<EventDto>, EventCrudService>();
             services.AddScoped<IService<TicketDto>, TicketService>();
+            services.AddScoped<IEventSeatService, EventSeatService>();
             services.AddScoped<IEventService, EventService>();
             services.AddScoped<IThirdPartyEventService, ThirdPartyEventService>();
             services.AddScoped<IReaderService<EventDto>, BaseReaderService<ThirdPartyEvent, EventDto>>();

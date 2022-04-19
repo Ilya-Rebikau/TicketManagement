@@ -178,11 +178,8 @@ namespace TicketManagement.Web.Controllers
         [HttpGet("events/buy")]
         public async Task<IActionResult> Buy(int eventSeatId, double price)
         {
-            var eventSeatIdAndPrice = new Dictionary<int, double>
-            {
-                { eventSeatId, price },
-            };
-            return View(await _purchaseClient.GetTicketViewModelForBuy(HttpContext.GetJwtToken(), eventSeatIdAndPrice));
+            var model = await _purchaseClient.GetTicketViewModelForBuy(HttpContext.GetJwtToken(), eventSeatId, price);
+            return View(model);
         }
 
         /// <summary>

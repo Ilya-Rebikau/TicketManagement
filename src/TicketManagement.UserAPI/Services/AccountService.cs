@@ -144,6 +144,7 @@ namespace TicketManagement.UserAPI.Services
             if (user.Balance >= price)
             {
                 user.Balance -= price;
+                await _userManager.UpdateAsync(user);
                 return true;
             }
 
