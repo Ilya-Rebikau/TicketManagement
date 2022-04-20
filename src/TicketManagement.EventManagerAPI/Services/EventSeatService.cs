@@ -59,21 +59,9 @@ namespace TicketManagement.EventManagerAPI.Services
         public async Task<IEnumerable<EventSeatDto>> GetFreeEventSeatsByEvent(int eventId)
         {
             var eventAreas = await _eventAreaRepository.GetAllAsync();
-            var eventAreasInEvent = eventAreas.Where(ea => ea.EventId == eventId).ToList();
-            var eventSeats = await Repository.GetAllAsync();
-            var freeEventSeatsInEvent = new List<EventSeatDto>();
-            foreach (var eventArea in eventAreasInEvent)
-            {
-                foreach (var eventSeat in eventSeats.ToList())
-                {
-                    if (eventSeat.EventAreaId == eventArea.Id && eventSeat.State == (int)PlaceStatus.Free)
-                    {
-                        freeEventSeatsInEvent.Add(await Converter.ConvertSourceToDestination(eventSeat));
-                    }
-                }
-            }
-
-            return freeEventSeatsInEvent;
+            var eventSeats = await Converter.ConvertSourceModelRangeToDestinationModelRange(await Repository.GetAllAsync());
+            return eventAreas.Where(ea => ea.EventId == eventId).SelectMany(eventArea => eventSeats
+            .Where(eventSeat => eventSeat.EventAreaId == eventArea.Id && eventSeat.State == (int)PlaceStatus.Free)).ToList();
         }
 
         /// <summary>
