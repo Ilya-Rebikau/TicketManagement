@@ -102,6 +102,10 @@ export class Tickets extends Component{
                 UserId: this.state.UserId,
                 Price: 0,
             })
+        }).then(response => {
+            if (response.status === 400){
+                alert('Http 400 error')
+            }
         }).then(()=>{
             this.refreshList();
         })
@@ -120,6 +124,10 @@ export class Tickets extends Component{
                 EventSeatId: this.state.EventSeatId,
                 UserId: this.state.UserId
             })
+        }).then(response => {
+            if (response.status === 400){
+                alert('Http 400 error')
+            }
         }).then(()=>{
             this.refreshList();
         })
@@ -129,7 +137,8 @@ export class Tickets extends Component{
         this.setState({
             modalTitle:"Add event seat",
             EventSeatId:0,
-            UserId:""
+            UserId:"",
+            Id: 0
         });
     }
 
@@ -150,7 +159,11 @@ export class Tickets extends Component{
                     'Accept':'application/json',
                     'Content-Type':'application/json',
                     'authorization': Cookies.get('JwtTokenCookie')
-            }})
+            }}).then(response => {
+                if (response.status === 400){
+                    alert('Http 400 error')
+                }
+            })
             .then(()=>{
                 this.refreshList();
             })

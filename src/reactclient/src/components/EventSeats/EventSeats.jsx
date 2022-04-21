@@ -117,6 +117,10 @@ export class EventSeats extends Component{
                 Number: this.state.number,
                 State: this.state.State
             })
+        }).then(response => {
+            if (response.status === 400){
+                alert('Http 400 error')
+            }
         }).then(()=>{
             this.refreshList();
         })
@@ -137,6 +141,10 @@ export class EventSeats extends Component{
                 Number: this.state.number,
                 State: this.state.State
             })
+        }).then(response => {
+            if (response.status === 400){
+                alert('Http 400 error')
+            }
         }).then(()=>{
             this.refreshList();
         })
@@ -149,6 +157,7 @@ export class EventSeats extends Component{
             Row:0,
             number:0,
             State:"Free",
+            Id: 0
         });
     }
 
@@ -171,8 +180,11 @@ export class EventSeats extends Component{
                     'Accept':'application/json',
                     'Content-Type':'application/json',
                     'authorization': Cookies.get('JwtTokenCookie')
-            }})
-            .then(()=>{
+            }}).then(response => {
+                if (response.status === 400){
+                    alert('Http 400 error')
+                }
+            }).then(()=>{
                 this.refreshList();
             })
         }

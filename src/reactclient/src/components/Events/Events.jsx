@@ -143,6 +143,10 @@ export class Events extends Component{
                 TimeEnd:this.state.TimeEnd,
                 ImageUrl:this.state.ImageUrl,
             })
+        }).then(response => {
+            if (response.status === 400){
+                alert('Http 400 error')
+            }
         }).then(()=>{
             this.refreshList();
         })
@@ -165,6 +169,10 @@ export class Events extends Component{
                 TimeEnd:this.state.TimeEnd,
                 ImageUrl:this.state.ImageUrl,
             })
+        }).then(response => {
+            if (response.status === 400){
+                alert('Http 400 error')
+            }
         }).then(()=>{
             this.refreshList();
         })
@@ -179,6 +187,7 @@ export class Events extends Component{
             TimeStart:"",
             TimeEnd:"",
             ImageUrl:"",
+            Id:0
         });
     }
 
@@ -203,7 +212,11 @@ export class Events extends Component{
                     'Accept':'application/json',
                     'Content-Type':'application/json',
                     'authorization': Cookies.get('JwtTokenCookie')
-            }})
+            }}).then(response => {
+                if (response.status === 400){
+                    alert('Http 400 error')
+                }
+            })
             .then(()=>{
                 this.refreshList();
             })

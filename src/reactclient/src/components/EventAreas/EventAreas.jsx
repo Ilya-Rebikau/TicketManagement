@@ -125,6 +125,10 @@ export class EventAreas extends Component{
                 CoordY:this.state.CoordY,
                 Price:this.state.Price
             })
+        }).then(response => {
+            if (response.status === 400){
+                alert('Http 400 error')
+            }
         }).then(()=>{
             this.refreshList();
         })
@@ -146,6 +150,10 @@ export class EventAreas extends Component{
                 CoordY:this.state.CoordY,
                 Price:this.state.Price
             })
+        }).then(response => {
+            if (response.status === 400){
+                alert('Http 400 error')
+            }
         }).then(()=>{
             this.refreshList();
         })
@@ -158,7 +166,8 @@ export class EventAreas extends Component{
             Description:"",
             CoordX:0,
             CoordY:0,
-            Price:0
+            Price:0,
+            Id:0
         });
     }
 
@@ -182,8 +191,11 @@ export class EventAreas extends Component{
                     'Accept':'application/json',
                     'Content-Type':'application/json',
                     'authorization': Cookies.get('JwtTokenCookie')
-            }})
-            .then(()=>{
+            }}).then(response => {
+                if (response.status === 400){
+                    alert('Http 400 error')
+                }
+            }).then(()=>{
                 this.refreshList();
             })
         }
