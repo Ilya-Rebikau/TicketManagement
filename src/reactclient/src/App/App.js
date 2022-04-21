@@ -89,7 +89,15 @@ function App() {
                       <li className="nav-item justify-content-end">
                         <NavLink className="nav-link text-white" to="/account/personalaccount">Personal account</NavLink>
                       </li>
-                    </ul>:null}
+                    </ul>:
+                    <ul className="navbar-nav flex-grow-1 justify-content-end">
+                      <li className="nav-item justify-content-end">
+                        <a className="nav-link text-white" href={appsettings.ApsWebApp + 'account/login'}>Login</a>
+                      </li>
+                      <li className="nav-item justify-content-end">
+                        <a className="nav-link text-white" href={appsettings.ApsWebApp + 'account/register'}>Register</a>
+                      </li>
+                    </ul>}
               </div>
             </div>
           </nav>
