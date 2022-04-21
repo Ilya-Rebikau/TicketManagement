@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TicketManagement.EventManagerAPI.Extensions;
+using TicketManagement.EventManagerAPI.Infrastructure;
 using TicketManagement.EventManagerAPI.Interfaces;
 using TicketManagement.EventManagerAPI.Models.Events;
 
@@ -13,6 +14,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
     /// </summary>
     [Route("[controller]")]
     [ApiController]
+    [ExceptionFilter]
     public class EventsController : Controller
     {
         /// <summary>

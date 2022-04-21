@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TicketManagement.VenueManagerAPI.Infrastructure;
 using TicketManagement.VenueManagerAPI.Interfaces;
 using TicketManagement.VenueManagerAPI.Models.Venues;
 using TicketManagement.VenueManagerAPI.ModelsDTO;
@@ -15,6 +16,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
     [Authorize(Roles = "admin, venue manager")]
     [Route("[controller]")]
     [ApiController]
+    [ExceptionFilter]
     public class VenuesController : Controller
     {
         /// <summary>

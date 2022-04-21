@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TicketManagement.EventManagerAPI.Infrastructure;
 using TicketManagement.EventManagerAPI.Interfaces;
 using TicketManagement.EventManagerAPI.Models.EventSeats;
 using TicketManagement.EventManagerAPI.ModelsDTO;
@@ -15,6 +16,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
     [Route("[controller]")]
     [ApiController]
     [Authorize(Roles = "admin, event manager")]
+    [ExceptionFilter]
     public class EventSeatsController : Controller
     {
         /// <summary>

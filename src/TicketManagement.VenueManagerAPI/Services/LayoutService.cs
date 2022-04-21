@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.VenueManagerAPI.Infrastructure;
 using TicketManagement.VenueManagerAPI.Interfaces;
 using TicketManagement.VenueManagerAPI.ModelsDTO;
 
@@ -71,14 +72,14 @@ namespace TicketManagement.VenueManagerAPI.Services
         /// Checking that all layouts in venue have unique name.
         /// </summary>
         /// <param name="obj">Adding or updating layout.</param>
-        /// <exception cref="ArgumentException">Generates exception in case there are layouts in venue with such name.</exception>
+        /// <exception cref="ValidationException">Generates exception in case there are layouts in venue with such name.</exception>
         private async Task CheckForUniqueNameInVenue(LayoutDto obj)
         {
-            var layouts = await Converter.ConvertSourceModelRangeToDestinationModelRange(await Repository.GetAllAsync());
+            var layouts = await Repository.GetAllAsync();
             var layoutsInVenue = layouts.Where(layout => layout.Name == obj.Name && layout.VenueId == obj.VenueId && layout.Id != obj.Id);
             if (layoutsInVenue.Any())
             {
-                throw new ArgumentException("One of layouts in this venue already has such name!");
+                throw new ValidationException("One of layouts in this venue already has such name!");
             }
         }
 
@@ -87,7 +88,7 @@ namespace TicketManagement.VenueManagerAPI.Services
         /// </summary>
         /// <param name="obj">Deleting layout.</param>
         /// <returns>Task.</returns>
-        /// <exception cref="InvalidOperationException">Generates exception in case there are tickets in this layout.</exception>
+        /// <exception cref="ValidationException">Generates exception in case there are tickets in this layout.</exception>
         private async Task CheckForTickets(LayoutDto obj)
         {
             var eventSeats = new List<EventSeat>();
@@ -106,7 +107,7 @@ namespace TicketManagement.VenueManagerAPI.Services
 
             if (eventSeats.Any())
             {
-                throw new InvalidOperationException("Someone bought tickets in this layout already!");
+                throw new ValidationException("Someone bought tickets in this layout already!");
             }
         }
     }

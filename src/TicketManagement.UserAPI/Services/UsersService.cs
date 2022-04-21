@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using TicketManagement.UserAPI.Infrastructure;
 using TicketManagement.UserAPI.Interfaces;
 using TicketManagement.UserAPI.Models;
 using TicketManagement.UserAPI.Models.Users;
@@ -75,7 +76,7 @@ namespace TicketManagement.UserAPI.Services
             var userRoles = await _userManager.GetRolesAsync(user);
             if (userRoles.Contains("admin"))
             {
-                throw new InvalidOperationException("You can't delete admin account.");
+                throw new ValidationException("You can't delete admin account.");
             }
 
             await _userManager.DeleteAsync(user);
@@ -158,7 +159,7 @@ namespace TicketManagement.UserAPI.Services
             var user = await _userManager.FindByIdAsync(model.Id);
             if (user is null)
             {
-                throw new InvalidOperationException("User not found");
+                throw new ValidationException("User not found");
             }
 
             var passwordValidator = httpContext.RequestServices.GetService(typeof(IPasswordValidator<User>)) as IPasswordValidator<User>;

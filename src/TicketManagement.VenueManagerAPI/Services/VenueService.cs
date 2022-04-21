@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.VenueManagerAPI.Infrastructure;
 using TicketManagement.VenueManagerAPI.Interfaces;
 using TicketManagement.VenueManagerAPI.ModelsDTO;
 
@@ -67,7 +68,7 @@ namespace TicketManagement.VenueManagerAPI.Services
         /// </summary>
         /// <param name="obj">Deleting venue.</param>
         /// <returns>Task.</returns>
-        /// <exception cref="InvalidOperationException">Generates exception in case there are tickets in this venue.</exception>
+        /// <exception cref="ValidationException">Generates exception in case there are tickets in this venue.</exception>
         private async Task CheckForTickets(VenueDto obj)
         {
             var occupiedEventSeats = new List<EventSeat>();
@@ -91,7 +92,7 @@ namespace TicketManagement.VenueManagerAPI.Services
 
             if (occupiedEventSeats.Any())
             {
-                throw new InvalidOperationException("Someone bought tickets in this venue already!");
+                throw new ValidationException("Someone bought tickets in this venue already!");
             }
         }
     }

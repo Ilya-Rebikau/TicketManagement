@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.EventManagerAPI.Infrastructure;
 using TicketManagement.EventManagerAPI.Interfaces;
 using TicketManagement.EventManagerAPI.ModelsDTO;
 
@@ -59,21 +60,22 @@ namespace TicketManagement.EventManagerAPI.Services
         public async Task<IEnumerable<EventSeatDto>> GetFreeEventSeatsByEvent(int eventId)
         {
             var eventAreas = await _eventAreaRepository.GetAllAsync();
-            var eventSeats = await Converter.ConvertSourceModelRangeToDestinationModelRange(await Repository.GetAllAsync());
-            return eventAreas.Where(ea => ea.EventId == eventId).SelectMany(eventArea => eventSeats
+            var eventSeats = await Repository.GetAllAsync();
+            var eventSeatsInAreas = eventAreas.Where(ea => ea.EventId == eventId).SelectMany(eventArea => eventSeats
             .Where(eventSeat => eventSeat.EventAreaId == eventArea.Id && eventSeat.State == (int)PlaceStatus.Free)).ToList();
+            return await Converter.ConvertSourceModelRangeToDestinationModelRange(eventSeatsInAreas);
         }
 
         /// <summary>
         /// Checking that seat has positive row and number.
         /// </summary>
         /// <param name="obj">Adding or updating seat.</param>
-        /// <exception cref="ArgumentException">Generates exception in case row or number are not positive.</exception>
+        /// <exception cref="ValidationException">Generates exception in case row or number are not positive.</exception>
         private static void CheckForPositiveRowAndNumber(EventSeatDto obj)
         {
             if (obj.Row <= 0 || obj.Number <= 0)
             {
-                throw new ArgumentException("Row and number must be positive!");
+                throw new ValidationException("Row and number must be positive!");
             }
         }
 
@@ -81,12 +83,12 @@ namespace TicketManagement.EventManagerAPI.Services
         /// Checking that there is no ticket in this event seat.
         /// </summary>
         /// <param name="obj">Deleting event seat.</param>
-        /// <exception cref="InvalidOperationException">Generates exception in case there is ticket in this event seat.</exception>
+        /// <exception cref="ValidationException">Generates exception in case there is ticket in this event seat.</exception>
         private static void CheckForTickets(EventSeatDto obj)
         {
             if (obj.State == PlaceStatus.Occupied)
             {
-                throw new InvalidOperationException("Someone bought tickets for this event seat already!");
+                throw new ValidationException("Someone bought tickets for this event seat already!");
             }
         }
 
@@ -94,14 +96,14 @@ namespace TicketManagement.EventManagerAPI.Services
         /// Checking that all event seats in event area have unique row and number.
         /// </summary>
         /// <param name="obj">Adding or updating seat.</param>
-        /// <exception cref="ArgumentException">Generates exception in case row and number are not unique.</exception>
+        /// <exception cref="ValidationException">Generates exception in case row and number are not unique.</exception>
         private async Task CheckForUniqueRowAndNumber(EventSeatDto obj)
         {
-            var eventSeats = await Converter.ConvertSourceModelRangeToDestinationModelRange(await Repository.GetAllAsync());
+            var eventSeats = await Repository.GetAllAsync();
             var eventSeatsInArea = eventSeats.Where(seat => seat.EventAreaId == obj.EventAreaId && seat.Row == obj.Row && seat.Number == obj.Number && seat.Id != obj.Id);
             if (eventSeatsInArea.Any())
             {
-                throw new ArgumentException("One of seats in this area already has such row and number!");
+                throw new ValidationException("One of seats in this area already has such row and number!");
             }
         }
     }
