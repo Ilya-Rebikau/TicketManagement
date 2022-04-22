@@ -381,7 +381,7 @@ export class Events extends Component{
                                 </div>
                                 <div className="input-group mb-3">
                                     <span className="input-group-text">LayoutId</span>
-                                    <input type="number" className="form-control" value={LayoutId} onChange={this.changeLayoutId}/>
+                                    <input type="number" className="form-control" value={LayoutId} min={1} onChange={this.changeLayoutId}/>
                                 </div>
                                 <div className="input-group mb-3">
                                     <span className="input-group-text">TimeStart</span>
@@ -396,10 +396,12 @@ export class Events extends Component{
                                     <input type="text" className="form-control" value={ImageUrl} onChange={this.changeImageUrl}/>
                                 </div>
                                 {Id===0?
-                                <button type="button" className="btn btn-primary float-start"onClick={()=>this.onCreateClick()}>
+                                <button type="button" className="btn btn-primary float-start"onClick={()=>this.onCreateClick()}
+                                    data-bs-dismiss="modal" aria-label="Close">
                                     Create</button>:null}
                                 {Id!==0?
-                                <button type="button" className="btn btn-primary float-start" onClick={()=>this.onEditClick(Id)}>
+                                <button type="button" className="btn btn-primary float-start" onClick={()=>this.onEditClick(Id)}
+                                    data-bs-dismiss="modal" aria-label="Close">
                                     Update</button>:null}
                             </div>
                         </div>
@@ -419,7 +421,8 @@ export class Events extends Component{
                                     <span className="input-group-text">EventSeatId</span>
                                     <Select className="form-control" options={options} onChange={this.changeEventSeatId} />
                                 </div>
-                                <button type="button" className="btn btn-primary float-start"onClick={()=>this.onBuyClick(Id)}>
+                                <button type="button" className="btn btn-primary float-start"onClick={()=>this.onBuyClick(Id)}
+                                    data-bs-dismiss="modal" aria-label="Close">
                                     Buy
                                 </button>
                             </div>

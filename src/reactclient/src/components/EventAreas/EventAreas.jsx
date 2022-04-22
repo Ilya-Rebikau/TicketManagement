@@ -10,7 +10,7 @@ export class EventAreas extends Component{
             eventAreas:[],
             modalTitle:"",
             Id:0,
-            EventId:0,
+            EventId:1,
             Description:"",
             CoordX:0,
             CoordY:0,
@@ -299,21 +299,23 @@ export class EventAreas extends Component{
                             <div className="modal-body">
                                 <div className="input-group mb-3">
                                     <span className="input-group-text">EventId</span>
-                                    <input type="number" className="form-control" value={EventId} onChange={this.changeEventId}/>
+                                    <input type="number" className="form-control" value={EventId} min={1} onChange={this.changeEventId}/>
                                     <span className="input-group-text">Description</span>
                                     <input type="text" className="form-control" value={Description} onChange={this.changeDescription}/>
                                     <span className="input-group-text">CoordX</span>
-                                    <input type="number" className="form-control" value={CoordX} onChange={this.changeCoordX}/>
+                                    <input type="number" className="form-control" value={CoordX} min={0} onChange={this.changeCoordX}/>
                                     <span className="input-group-text">CoordY</span>
-                                    <input type="number" className="form-control" value={CoordY} onChange={this.changeCoordY}/>
+                                    <input type="number" className="form-control" value={CoordY} min={0} onChange={this.changeCoordY}/>
                                     <span className="input-group-text">Price</span>
-                                    <input type="number" className="form-control" value={Price} onChange={this.changePrice}/>
+                                    <input type="number" className="form-control" value={Price} min={0} onChange={this.changePrice}/>
                                 </div>
                                 {Id===0?
-                                <button type="button" className="btn btn-primary float-start"onClick={()=>this.onCreateClick()}>
+                                <button type="button" className="btn btn-primary float-start"onClick={()=>this.onCreateClick()}
+                                    data-bs-dismiss="modal" aria-label="Close">
                                     Create</button>:null}
                                 {Id!==0?
-                                <button type="button" className="btn btn-primary float-start" onClick={()=>this.onEditClick(Id)}>
+                                <button type="button" className="btn btn-primary float-start" onClick={()=>this.onEditClick(Id)}
+                                    data-bs-dismiss="modal" aria-label="Close">
                                     Update</button>:null}
                             </div>
                         </div>

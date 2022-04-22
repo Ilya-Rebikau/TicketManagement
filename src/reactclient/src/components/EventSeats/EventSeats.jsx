@@ -281,19 +281,21 @@ export class EventSeats extends Component{
                             <div className="modal-body">
                                 <div className="input-group mb-3">
                                     <span className="input-group-text">EventAreaId</span>
-                                    <input type="number" className="form-control" value={EventAreaId} onChange={this.changeEventAreaId}/>
+                                    <input type="number" className="form-control" value={EventAreaId} min={1} onChange={this.changeEventAreaId}/>
                                     <span className="input-group-text">Row</span>
-                                    <input type="number" className="form-control" value={Row} onChange={this.changeRow}/>
+                                    <input type="number" className="form-control" value={Row} min={0} onChange={this.changeRow}/>
                                     <span className="input-group-text">Number</span>
-                                    <input type="number" className="form-control" value={number} onChange={this.changeNumber}/>
+                                    <input type="number" className="form-control" value={number} min={0} onChange={this.changeNumber}/>
                                     <span className="input-group-text">State</span>
                                     <input type="text" className="form-control" value={State} onChange={this.changeState}/>
                                 </div>
                                 {Id===0?
-                                <button type="button" className="btn btn-primary float-start"onClick={()=>this.onCreateClick()}>
+                                <button type="button" className="btn btn-primary float-start"onClick={()=>this.onCreateClick()}
+                                    data-bs-dismiss="modal" aria-label="Close">
                                     Create</button>:null}
                                 {Id!==0?
-                                <button type="button" className="btn btn-primary float-start" onClick={()=>this.onEditClick(Id)}>
+                                <button type="button" className="btn btn-primary float-start" onClick={()=>this.onEditClick(Id)}
+                                    data-bs-dismiss="modal" aria-label="Close">
                                     Update</button>:null}
                             </div>
                         </div>

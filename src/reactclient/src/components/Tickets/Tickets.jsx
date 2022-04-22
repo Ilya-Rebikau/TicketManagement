@@ -247,15 +247,17 @@ export class Tickets extends Component{
                             <div className="modal-body">
                                 <div className="input-group mb-3">
                                     <span className="input-group-text">EventSeatId</span>
-                                    <input type="number" className="form-control" value={EventSeatId} onChange={this.changeEventSeatId}/>
+                                    <input type="number" className="form-control" value={EventSeatId} min={1} onChange={this.changeEventSeatId}/>
                                     <span className="input-group-text">UserId</span>
                                     <input type="text" className="form-control" value={UserId} onChange={this.changeUserId}/>
                                 </div>
                                 {Id===0?
-                                <button type="button" className="btn btn-primary float-start"onClick={()=>this.onCreateClick()}>
+                                <button type="button" className="btn btn-primary float-start"onClick={()=>this.onCreateClick()}
+                                    data-bs-dismiss="modal" aria-label="Close">
                                     Create</button>:null}
                                 {Id!==0?
-                                <button type="button" className="btn btn-primary float-start" onClick={()=>this.onEditClick(Id)}>
+                                <button type="button" className="btn btn-primary float-start" onClick={()=>this.onEditClick(Id)}
+                                    data-bs-dismiss="modal" aria-label="Close">
                                     Update</button>:null}
                             </div>
                         </div>

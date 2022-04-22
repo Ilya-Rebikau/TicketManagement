@@ -135,8 +135,10 @@ export class Account extends Component{
                     Id: data.id,
                     Balance: this.state.Balance
                 })
+            }).then(()=>{
+                this.refresh();
             });
-        }).then(() => this.refresh())
+        });
     }
 
     refresh(){
@@ -246,9 +248,10 @@ export class Account extends Component{
                             <div className="modal-body">
                                 <div className="input-group mb-3">
                                     <span className="input-group-text">Balance</span>
-                                    <input type="number" className="form-control" value={Balance} onChange={this.changeBalance}/>
+                                    <input type="number" className="form-control" value={Balance} min={0} onChange={this.changeBalance}/>
                                 </div>
-                                <button type="button" className="btn btn-primary float-start" onClick={()=>this.onAddBalanceClick()}>
+                                <button type="button" className="btn btn-primary float-start" onClick={()=>this.onAddBalanceClick()}
+                                    data-bs-dismiss="modal" aria-label="Close">
                                     Add</button>
                             </div>
                         </div>
@@ -280,7 +283,8 @@ export class Account extends Component{
                                     <span className="input-group-text col">TimeZone</span>
                                     <Select className="form-control" defaultValue={{ value: TimeZone, label: TimeZone }} options={options} onChange={this.changeTimeZone} />
                                 </div>
-                                <button type="button" className="btn btn-primary float-start" onClick={()=>this.onEditClick()}>
+                                <button type="button" className="btn btn-primary float-start" onClick={()=>this.onEditClick()}
+                                    data-bs-dismiss="modal" aria-label="Close">
                                     Edit</button>
                             </div>
                         </div>
