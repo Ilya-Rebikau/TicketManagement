@@ -6,6 +6,7 @@ using Moq;
 using NUnit.Framework;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.EventManagerAPI.Infrastructure;
 using TicketManagement.EventManagerAPI.Interfaces;
 using TicketManagement.EventManagerAPI.ModelsDTO;
 using TicketManagement.EventManagerAPI.Services;
@@ -45,7 +46,7 @@ namespace TicketManagement.UnitTests
         }
 
         [Test]
-        public void DeleteEventArea_WhenThereAreTicketsInIt_ShouldReturnInvalidOperationException()
+        public void DeleteEventArea_WhenThereAreTicketsInIt_ShouldReturnValidationException()
         {
             // Arrange
             EventAreaDto eventArea = new ()
@@ -57,11 +58,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.DeleteAsync(eventArea);
 
             // Assert
-            Assert.ThrowsAsync<InvalidOperationException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void CreateEventArea_WhenCoordsArentPositive_ShouldReturnArgumentException()
+        public void CreateEventArea_WhenCoordsArentPositive_ShouldReturnValidationException()
         {
             // Arrange
             EventAreaDto eventArea = new ()
@@ -74,11 +75,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventArea);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void UpdateEventArea_WhenCoordsArentPositive_ShouldReturnArgumentException()
+        public void UpdateEventArea_WhenCoordsArentPositive_ShouldReturnValidationException()
         {
             // Arrange
             EventAreaDto eventArea = new ()
@@ -91,11 +92,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventArea);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void CreateEventArea_WhenPriceArentPositive_ShouldReturnArgumentException()
+        public void CreateEventArea_WhenPriceArentPositive_ShouldReturnValidationException()
         {
             // Arrange
             EventAreaDto eventArea = new ()
@@ -107,11 +108,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventArea);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void UpdateEventArea_WhenPriceArentPositive_ShouldReturnArgumentException()
+        public void UpdateEventArea_WhenPriceArentPositive_ShouldReturnValidationException()
         {
             // Arrange
             EventAreaDto eventArea = new ()
@@ -123,7 +124,7 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventArea);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
     }
 }

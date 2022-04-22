@@ -6,6 +6,7 @@ using Moq;
 using NUnit.Framework;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.VenueManagerAPI.Infrastructure;
 using TicketManagement.VenueManagerAPI.Interfaces;
 using TicketManagement.VenueManagerAPI.ModelsDTO;
 using TicketManagement.VenueManagerAPI.Services;
@@ -48,7 +49,7 @@ namespace TicketManagement.UnitTests
         }
 
         [Test]
-        public void CreateArea_WhenCoordsArentPositive_ShouldReturnArgumentException()
+        public void CreateArea_WhenCoordsArentPositive_ShouldReturnValidationException()
         {
             // Arrange
             AreaDto area = new ()
@@ -61,11 +62,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(area);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void CreateArea_WhenBasePriceIsntPositive_ShouldReturnArgumentException()
+        public void CreateArea_WhenBasePriceIsntPositive_ShouldReturnValidationException()
         {
             // Arrange
             AreaDto area = new ()
@@ -77,11 +78,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(area);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void UpdateArea_WhenCoordsArentPositive_ShouldReturnArgumentException()
+        public void UpdateArea_WhenCoordsArentPositive_ShouldReturnValidationException()
         {
             // Arrange
             AreaDto area = new ()
@@ -94,11 +95,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(area);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void UpdateArea_WhenBasePriceIsntPositive_ShouldReturnArgumentException()
+        public void UpdateArea_WhenBasePriceIsntPositive_ShouldReturnValidationException()
         {
             // Arrange
             AreaDto area = new ()
@@ -110,11 +111,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(area);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void CreateArea_WhenDescriptionIsntUnique_ShouldReturnArgumentException()
+        public void CreateArea_WhenDescriptionIsntUnique_ShouldReturnValidationException()
         {
             // Arrange
             AreaDto area = new ()
@@ -127,11 +128,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(area);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void CreateArea_WhenCoordsArentUnique_ShouldReturnArgumentException()
+        public void CreateArea_WhenCoordsArentUnique_ShouldReturnValidationException()
         {
             // Arrange
             AreaDto area = new ()
@@ -145,11 +146,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(area);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void UpdateArea_WhenDescriptionIsntUnique_ShouldReturnArgumentException()
+        public void UpdateArea_WhenDescriptionIsntUnique_ShouldReturnValidationException()
         {
             // Arrange
             AreaDto area = new ()
@@ -162,11 +163,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(area);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void UpdateArea_WhenCoordsArentUnique_ShouldReturnArgumentException()
+        public void UpdateArea_WhenCoordsArentUnique_ShouldReturnValidationException()
         {
             // Arrange
             AreaDto area = new ()
@@ -180,7 +181,7 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(area);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
     }
 }

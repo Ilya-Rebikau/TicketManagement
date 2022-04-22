@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using NUnit.Framework;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.VenueManagerAPI.Infrastructure;
 using TicketManagement.VenueManagerAPI.Interfaces;
 using TicketManagement.VenueManagerAPI.ModelsDTO;
 using TicketManagement.VenueManagerAPI.Services;
@@ -30,15 +32,25 @@ namespace TicketManagement.UnitTests
             IConfiguration configuration = new ConfigurationBuilder()
                 .AddInMemoryCollection(inMemorySettings)
                 .Build();
-            seatRepositoryMock.Setup(rep => rep.GetAllAsync());
+            seatRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestSeats());
             var seats = await seatRepositoryMock.Object.GetAllAsync();
             seatConverterMock.Setup(rep => rep.ConvertSourceModelRangeToDestinationModelRange(seats)).ReturnsAsync(GetTestSeatDtos());
             _service = new SeatService(seatRepositoryMock.Object, seatConverterMock.Object, configuration);
         }
 
+        private static IQueryable<Seat> GetTestSeats()
+        {
+            var seats = new List<Seat>
+            {
+                new Seat { Id = 1, AreaId = 1, Row = 1, Number = 1 },
+                new Seat { Id = 2, AreaId = 1, Row = 1, Number = 2 },
+            };
+            return seats.AsQueryable();
+        }
+
         private static IEnumerable<SeatDto> GetTestSeatDtos()
         {
-            IEnumerable<SeatDto> seats = new List<SeatDto>
+            var seats = new List<SeatDto>
             {
                 new SeatDto { Id = 1, AreaId = 1, Row = 1, Number = 1 },
                 new SeatDto { Id = 2, AreaId = 1, Row = 1, Number = 2 },
@@ -47,7 +59,7 @@ namespace TicketManagement.UnitTests
         }
 
         [Test]
-        public void CreateSeat_WhenRowAndNumberArentUnique_ShouldReturnArgumentException()
+        public void CreateSeat_WhenRowAndNumberArentUnique_ShouldReturnValidationException()
         {
             // Arrange
             SeatDto seat = new ()
@@ -61,11 +73,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(seat);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void UpdateSeat_WhenRowAndNumberArentUnique_ShouldReturnArgumentException()
+        public void UpdateSeat_WhenRowAndNumberArentUnique_ShouldReturnValidationException()
         {
             // Arrange
             SeatDto seat = new ()
@@ -80,11 +92,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(seat);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void CreateSeat_WhenRowAndNumberArentPositive_ShouldReturnArgumentException()
+        public void CreateSeat_WhenRowAndNumberArentPositive_ShouldReturnValidationException()
         {
             // Arrange
             SeatDto seat = new ()
@@ -98,11 +110,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(seat);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void UpdateSeat_WhenRowAndNumberArentPositive_ShouldReturnArgumentException()
+        public void UpdateSeat_WhenRowAndNumberArentPositive_ShouldReturnValidationException()
         {
             // Arrange
             SeatDto seat = new ()
@@ -117,7 +129,7 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(seat);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
     }
 }
