@@ -18,6 +18,7 @@ namespace TicketManagement.Web.Models.EventAreas
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "EventId")]
+        [Range(0, int.MaxValue)]
         public int EventId { get; set; }
 
         /// <summary>
@@ -32,6 +33,7 @@ namespace TicketManagement.Web.Models.EventAreas
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "CoordXInLayout")]
+        [Range(0, int.MaxValue)]
         public int CoordX { get; set; }
 
         /// <summary>
@@ -39,6 +41,7 @@ namespace TicketManagement.Web.Models.EventAreas
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "CoordYInLayout")]
+        [Range(0, int.MaxValue)]
         public int CoordY { get; set; }
 
         /// <summary>
@@ -46,6 +49,7 @@ namespace TicketManagement.Web.Models.EventAreas
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "Price")]
+        [Range(0, double.MaxValue)]
         public double Price { get; set; }
     }
 }
