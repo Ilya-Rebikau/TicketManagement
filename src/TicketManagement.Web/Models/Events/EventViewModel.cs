@@ -35,7 +35,7 @@ namespace TicketManagement.Web.Models.Events
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "LayoutId")]
-        [Range(0, int.MaxValue)]
+        [Range(1, int.MaxValue)]
         public int LayoutId { get; set; }
 
         /// <summary>

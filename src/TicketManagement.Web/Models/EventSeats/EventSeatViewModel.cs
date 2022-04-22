@@ -18,7 +18,7 @@ namespace TicketManagement.Web.Models.EventSeats
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "EventAreaId")]
-        [Range(0, int.MaxValue)]
+        [Range(1, int.MaxValue)]
         public int EventAreaId { get; set; }
 
         /// <summary>

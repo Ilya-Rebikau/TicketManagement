@@ -17,7 +17,7 @@ namespace TicketManagement.Web.Models.Seats
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "AreaId")]
-        [Range(0, int.MaxValue)]
+        [Range(1, int.MaxValue)]
         public int AreaId { get; set; }
 
         /// <summary>
