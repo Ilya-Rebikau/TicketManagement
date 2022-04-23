@@ -79,7 +79,7 @@ namespace TicketManagement.EventManagerAPI.Services
         /// <exception cref="ValidationException">Generates exception in case string fields are empty or white space.</exception>
         private static void CheckForStringFileds(EventDto obj)
         {
-            if (string.IsNullOrWhiteSpace(obj.Description) || string.IsNullOrWhiteSpace(obj.Name))
+            if (string.IsNullOrWhiteSpace(obj.Description) || string.IsNullOrWhiteSpace(obj.Name) || string.IsNullOrWhiteSpace(obj.ImageUrl))
             {
                 throw new ValidationException("Fields can't be empty or white space!");
             }

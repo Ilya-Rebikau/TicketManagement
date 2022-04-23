@@ -112,6 +112,7 @@ namespace TicketManagement.UserAPI.Services
         public Task<IEnumerable<User>> GetUsers(int pageNumber)
         {
             var users = _userManager.Users;
+            CheckForPageNumber(pageNumber);
             return Task.FromResult(users.OrderBy(u => u.Id)
                 .Skip((pageNumber - 1) * _countOnPage).Take(_countOnPage).AsEnumerable());
         }
@@ -172,6 +173,26 @@ namespace TicketManagement.UserAPI.Services
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Check that page number is positive.
+        /// </summary>
+        /// <param name="pageNumber">Page number.</param>
+        /// <exception cref="ValidationException">Generates exception in case page number isn't positive.</exception>
+        private void CheckForPageNumber(int pageNumber)
+        {
+            if (pageNumber <= 0)
+            {
+                throw new ValidationException("Page number must be positive!");
+            }
+
+            var allModels = _userManager.Users;
+            var modelsOnPage = allModels.OrderBy(m => m.Id).Skip((pageNumber - 1) * _countOnPage).Take(_countOnPage);
+            if (modelsOnPage is null || !modelsOnPage.Any())
+            {
+                throw new ValidationException("This page doesn't contain data.");
+            }
         }
     }
 }

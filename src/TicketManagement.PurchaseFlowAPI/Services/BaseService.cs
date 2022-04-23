@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.PurchaseFlowAPI.Infrastructure;
@@ -80,11 +81,17 @@ namespace TicketManagement.PurchaseFlowAPI.Services
         /// </summary>
         /// <param name="id">Id.</param>
         /// <exception cref="ValidationException">Generates exception in case id isn't positive.</exception>
-        private static void CheckForId(int id)
+        private async void CheckForId(int id)
         {
+            var allModels = await Repository.GetAllAsync();
             if (id <= 0)
             {
                 throw new ValidationException("Id must be positive!");
+            }
+
+            if (!allModels.Any(m => m.Id == id))
+            {
+                throw new ValidationException("There is no such id!");
             }
         }
     }

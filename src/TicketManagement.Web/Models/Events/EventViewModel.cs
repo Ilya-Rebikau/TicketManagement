@@ -57,6 +57,7 @@ namespace TicketManagement.Web.Models.Events
         /// </summary>
         [Url(ErrorMessage = "WrongUrl")]
         [Display(Name = "ImageUrl")]
+        [Required(ErrorMessage = "FieldRequired")]
         public string ImageUrl { get; set; }
 
         /// <summary>
