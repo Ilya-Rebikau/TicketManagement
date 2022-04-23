@@ -126,8 +126,8 @@ export class EventAreas extends Component{
                 Price:this.state.Price
             })
         }).then(response => {
-            if (response.status === 400){
-                alert('Http 400 error')
+            if (!response.ok){
+                response.text().then(data => alert(data))
             }
         }).then(()=>{
             this.refreshList();
@@ -151,8 +151,8 @@ export class EventAreas extends Component{
                 Price:this.state.Price
             })
         }).then(response => {
-            if (response.status === 400){
-                alert('Http 400 error')
+            if (!response.ok){
+                response.text().then(data => alert(data))
             }
         }).then(()=>{
             this.refreshList();
@@ -192,8 +192,8 @@ export class EventAreas extends Component{
                     'Content-Type':'application/json',
                     'authorization': Cookies.get('JwtTokenCookie')
             }}).then(response => {
-                if (response.status === 400){
-                    alert('Http 400 error')
+                if (!response.ok){
+                    response.text().then(data => alert(data))
                 }
             }).then(()=>{
                 this.refreshList();

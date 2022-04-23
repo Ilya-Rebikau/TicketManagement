@@ -103,8 +103,8 @@ export class Tickets extends Component{
                 Price: 0,
             })
         }).then(response => {
-            if (response.status === 400){
-                alert('Http 400 error')
+            if (!response.ok){
+                response.text().then(data => alert(data))
             }
         }).then(()=>{
             this.refreshList();
@@ -125,8 +125,8 @@ export class Tickets extends Component{
                 UserId: this.state.UserId
             })
         }).then(response => {
-            if (response.status === 400){
-                alert('Http 400 error')
+            if (!response.ok){
+                response.text().then(data => alert(data))
             }
         }).then(()=>{
             this.refreshList();
@@ -160,8 +160,8 @@ export class Tickets extends Component{
                     'Content-Type':'application/json',
                     'authorization': Cookies.get('JwtTokenCookie')
             }}).then(response => {
-                if (response.status === 400){
-                    alert('Http 400 error')
+                if (!response.ok){
+                    response.text().then(data => alert(data))
                 }
             })
             .then(()=>{
