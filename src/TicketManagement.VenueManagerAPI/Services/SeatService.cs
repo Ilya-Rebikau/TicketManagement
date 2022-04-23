@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using TicketManagement.DataAccess.Interfaces;
@@ -28,6 +27,7 @@ namespace TicketManagement.VenueManagerAPI.Services
 
         public async override Task<SeatDto> CreateAsync(SeatDto obj)
         {
+            CheckForEventAreaId(obj);
             CheckForPositiveRowAndNumber(obj);
             await CheckForUniqueRowAndNumber(obj);
             return await base.CreateAsync(obj);
@@ -35,9 +35,23 @@ namespace TicketManagement.VenueManagerAPI.Services
 
         public async override Task<SeatDto> UpdateAsync(SeatDto obj)
         {
+            CheckForEventAreaId(obj);
             CheckForPositiveRowAndNumber(obj);
             await CheckForUniqueRowAndNumber(obj);
             return await base.UpdateAsync(obj);
+        }
+
+        /// <summary>
+        /// Check that area id is positive.
+        /// </summary>
+        /// <param name="obj">Seat.</param>
+        /// <exception cref="ValidationException">Generates exception in case area id isn't positive.</exception>
+        private static void CheckForEventAreaId(SeatDto obj)
+        {
+            if (obj.AreaId <= 0)
+            {
+                throw new ValidationException("Area id must be positive");
+            }
         }
 
         /// <summary>

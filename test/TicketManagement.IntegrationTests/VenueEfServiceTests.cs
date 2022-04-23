@@ -10,6 +10,7 @@ using TicketManagement.DataAccess;
 using TicketManagement.DataAccess.Models;
 using TicketManagement.DataAccess.RepositoriesEf;
 using TicketManagement.VenueManagerAPI.Automapper;
+using TicketManagement.VenueManagerAPI.Infrastructure;
 using TicketManagement.VenueManagerAPI.Interfaces;
 using TicketManagement.VenueManagerAPI.ModelsDTO;
 using TicketManagement.VenueManagerAPI.Services;
@@ -55,7 +56,7 @@ namespace TicketManagement.IntegrationTests
         }
 
         [Test]
-        public void CreateVenue_WhenDescriptionIsNull_ShouldReturnDbUpdateException()
+        public void CreateVenue_WhenDescriptionIsNull_ShouldReturnValidationException()
         {
             // Arrange
             VenueDto venue = new ()
@@ -70,11 +71,11 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(venue);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void CreateVenue_WhenAddressIsNull_ShouldReturnDbUpdateException()
+        public void CreateVenue_WhenAddressIsNull_ShouldReturnValidationException()
         {
             // Arrange
             VenueDto venue = new ()
@@ -89,11 +90,11 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(venue);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void CreateVenue_WhenNameIsNull_ShouldReturnDbUpdateException()
+        public void CreateVenue_WhenNameIsNull_ShouldReturnValidationException()
         {
             // Arrange
             VenueDto venue = new ()
@@ -108,11 +109,11 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(venue);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void CreateVenue_WhenNameIsntUnique_ShouldReturnDbUpdateException()
+        public void CreateVenue_WhenNameIsntUnique_ShouldReturnValidationException()
         {
             // Arrange
             VenueDto venue = new ()
@@ -127,7 +128,7 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(venue);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
@@ -154,7 +155,7 @@ namespace TicketManagement.IntegrationTests
         }
 
         [Test]
-        public void UpdateVenue_WhenDescriptionIsNull_ShouldReturnDbUpdateException()
+        public void UpdateVenue_WhenDescriptionIsNull_ShouldReturnValidationException()
         {
             // Arrange
             VenueDto venue = new ()
@@ -170,11 +171,11 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(venue);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void UpdateVenue_WhenAddressIsNull_ShouldReturnDbUpdateException()
+        public void UpdateVenue_WhenAddressIsNull_ShouldReturnValidationException()
         {
             // Arrange
             VenueDto venue = new ()
@@ -190,11 +191,11 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(venue);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void UpdateVenue_WhenNameIsNull_ShouldReturnDbUpdateException()
+        public void UpdateVenue_WhenNameIsNull_ShouldReturnValidationException()
         {
             // Arrange
             VenueDto venue = new ()
@@ -210,7 +211,7 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(venue);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]

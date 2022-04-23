@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
@@ -26,6 +25,7 @@ namespace TicketManagement.PurchaseFlowAPI.Services
 
         public async override Task<EventSeatDto> CreateAsync(EventSeatDto obj)
         {
+            CheckForEventAreaId(obj);
             await CheckForUniqueRowAndNumber(obj);
             CheckForPositiveRowAndNumber(obj);
             return await base.CreateAsync(obj);
@@ -33,6 +33,7 @@ namespace TicketManagement.PurchaseFlowAPI.Services
 
         public async override Task<EventSeatDto> UpdateAsync(EventSeatDto obj)
         {
+            CheckForEventAreaId(obj);
             await CheckForUniqueRowAndNumber(obj);
             CheckForPositiveRowAndNumber(obj);
             return await base.UpdateAsync(obj);
@@ -42,6 +43,19 @@ namespace TicketManagement.PurchaseFlowAPI.Services
         {
             CheckForTickets(obj);
             return await base.DeleteAsync(obj);
+        }
+
+        /// <summary>
+        /// Check that event event area id is positive.
+        /// </summary>
+        /// <param name="obj">Event seat.</param>
+        /// <exception cref="ValidationException">Generates exception in case event area id isn't positive.</exception>
+        private static void CheckForEventAreaId(EventSeatDto obj)
+        {
+            if (obj.EventAreaId <= 0)
+            {
+                throw new ValidationException("Event area id must be positive");
+            }
         }
 
         /// <summary>

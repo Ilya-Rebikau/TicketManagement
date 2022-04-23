@@ -52,12 +52,16 @@ namespace TicketManagement.VenueManagerAPI.Services
 
         public async override Task<LayoutDto> CreateAsync(LayoutDto obj)
         {
+            CheckForStringFileds(obj);
+            CheckForLayoutId(obj);
             await CheckForUniqueNameInVenue(obj);
             return await base.CreateAsync(obj);
         }
 
         public async override Task<LayoutDto> UpdateAsync(LayoutDto obj)
         {
+            CheckForStringFileds(obj);
+            CheckForLayoutId(obj);
             await CheckForUniqueNameInVenue(obj);
             return await base.UpdateAsync(obj);
         }
@@ -66,6 +70,32 @@ namespace TicketManagement.VenueManagerAPI.Services
         {
             await CheckForTickets(obj);
             return await base.DeleteAsync(obj);
+        }
+
+        /// <summary>
+        /// Check that string fields aren't empty or white space.
+        /// </summary>
+        /// <param name="obj">Layoud.</param>
+        /// <exception cref="ValidationException">Generates exception in case string fields are empty or white space.</exception>
+        private static void CheckForStringFileds(LayoutDto obj)
+        {
+            if (string.IsNullOrWhiteSpace(obj.Description) || string.IsNullOrWhiteSpace(obj.Name))
+            {
+                throw new ValidationException("Fields can't be empty or white space!");
+            }
+        }
+
+        /// <summary>
+        /// Check that venue id is positive.
+        /// </summary>
+        /// <param name="obj">Layout.</param>
+        /// <exception cref="ValidationException">Generates exception in case venue id isn't positive.</exception>
+        private static void CheckForLayoutId(LayoutDto obj)
+        {
+            if (obj.VenueId <= 0)
+            {
+                throw new ValidationException("Venue id must be positive");
+            }
         }
 
         /// <summary>

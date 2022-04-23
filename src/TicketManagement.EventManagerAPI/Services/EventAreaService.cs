@@ -34,6 +34,8 @@ namespace TicketManagement.EventManagerAPI.Services
 
         public async override Task<EventAreaDto> CreateAsync(EventAreaDto obj)
         {
+            CheckForStringFileds(obj);
+            CheckForEventId(obj);
             CheckForPositiveCoords(obj);
             CheckForPositivePrice(obj);
             return await base.CreateAsync(obj);
@@ -41,6 +43,8 @@ namespace TicketManagement.EventManagerAPI.Services
 
         public async override Task<EventAreaDto> UpdateAsync(EventAreaDto obj)
         {
+            CheckForStringFileds(obj);
+            CheckForEventId(obj);
             CheckForPositiveCoords(obj);
             CheckForPositivePrice(obj);
             return await base.UpdateAsync(obj);
@@ -50,6 +54,19 @@ namespace TicketManagement.EventManagerAPI.Services
         {
             await CheckForTickets(obj);
             return await base.DeleteAsync(obj);
+        }
+
+        /// <summary>
+        /// Check that string fields aren't empty or white space.
+        /// </summary>
+        /// <param name="obj">Event area.</param>
+        /// <exception cref="ValidationException">Generates exception in case string fields are empty or white space.</exception>
+        private static void CheckForStringFileds(EventAreaDto obj)
+        {
+            if (string.IsNullOrWhiteSpace(obj.Description))
+            {
+                throw new ValidationException("Fields can't be empty or white space!");
+            }
         }
 
         /// <summary>
@@ -69,11 +86,25 @@ namespace TicketManagement.EventManagerAPI.Services
         /// Checking that event area has positive price.
         /// </summary>
         /// <param name="obj">Adding or updating event area.</param>
+        /// <exception cref="ValidationException">Generates exception in case price isn't positive.</exception>
         private static void CheckForPositivePrice(EventAreaDto obj)
         {
             if (obj.Price <= 0)
             {
                 throw new ValidationException("Price can be only positive number!");
+            }
+        }
+
+        /// <summary>
+        /// Check that event id is positive.
+        /// </summary>
+        /// <param name="obj">Event area.</param>
+        /// <exception cref="ValidationException">Generates exception in case event id isn't positive.</exception>
+        private static void CheckForEventId(EventAreaDto obj)
+        {
+            if (obj.EventId <= 0)
+            {
+                throw new ValidationException("Event id must be positive");
             }
         }
 

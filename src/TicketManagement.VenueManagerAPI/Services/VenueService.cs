@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
@@ -57,10 +56,52 @@ namespace TicketManagement.VenueManagerAPI.Services
             _eventSeatRepository = eventSeatRepository;
         }
 
+        public async override Task<VenueDto> CreateAsync(VenueDto obj)
+        {
+            await CheckForUniqueName(obj);
+            CheckForStringFileds(obj);
+            return await base.CreateAsync(obj);
+        }
+
+        public async override Task<VenueDto> UpdateAsync(VenueDto obj)
+        {
+            await CheckForUniqueName(obj);
+            CheckForStringFileds(obj);
+            return await base.UpdateAsync(obj);
+        }
+
         public async override Task<VenueDto> DeleteAsync(VenueDto obj)
         {
             await CheckForTickets(obj);
             return await base.DeleteAsync(obj);
+        }
+
+        /// <summary>
+        /// Check that string fields aren't empty or white space.
+        /// </summary>
+        /// <param name="obj">Venue.</param>
+        /// <exception cref="ValidationException">Generates exception in case string fields are empty or white space.</exception>
+        private static void CheckForStringFileds(VenueDto obj)
+        {
+            if (string.IsNullOrWhiteSpace(obj.Description) || string.IsNullOrWhiteSpace(obj.Name) || string.IsNullOrWhiteSpace(obj.Address))
+            {
+                throw new ValidationException("Fields can't be empty or white space!");
+            }
+        }
+
+        /// <summary>
+        /// Check that venue name is unique.
+        /// </summary>
+        /// <param name="obj">Venue.</param>
+        /// <exception cref="ValidationException">Generates exception in case name is not unique.</exception>
+        private async Task CheckForUniqueName(VenueDto obj)
+        {
+            var venues = await Repository.GetAllAsync();
+            var venuesWithSuchName = venues.Where(venue => venue.Name == obj.Name && venue.Id != obj.Id);
+            if (venuesWithSuchName.Any())
+            {
+                throw new ValidationException("One of venues already has such name!");
+            }
         }
 
         /// <summary>

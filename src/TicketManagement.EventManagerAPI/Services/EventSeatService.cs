@@ -39,6 +39,7 @@ namespace TicketManagement.EventManagerAPI.Services
 
         public async override Task<EventSeatDto> CreateAsync(EventSeatDto obj)
         {
+            CheckForEventAreaId(obj);
             await CheckForUniqueRowAndNumber(obj);
             CheckForPositiveRowAndNumber(obj);
             return await base.CreateAsync(obj);
@@ -46,6 +47,7 @@ namespace TicketManagement.EventManagerAPI.Services
 
         public async override Task<EventSeatDto> UpdateAsync(EventSeatDto obj)
         {
+            CheckForEventAreaId(obj);
             await CheckForUniqueRowAndNumber(obj);
             CheckForPositiveRowAndNumber(obj);
             return await base.UpdateAsync(obj);
@@ -64,6 +66,19 @@ namespace TicketManagement.EventManagerAPI.Services
             var eventSeatsInAreas = eventAreas.Where(ea => ea.EventId == eventId).SelectMany(eventArea => eventSeats
             .Where(eventSeat => eventSeat.EventAreaId == eventArea.Id && eventSeat.State == (int)PlaceStatus.Free)).ToList();
             return await Converter.ConvertSourceModelRangeToDestinationModelRange(eventSeatsInAreas);
+        }
+
+        /// <summary>
+        /// Check that event area id is positive.
+        /// </summary>
+        /// <param name="obj">Event seat.</param>
+        /// <exception cref="ValidationException">Generates exception in case event area id isn't positive.</exception>
+        private static void CheckForEventAreaId(EventSeatDto obj)
+        {
+            if (obj.EventAreaId <= 0)
+            {
+                throw new ValidationException("Event area id must be positive");
+            }
         }
 
         /// <summary>

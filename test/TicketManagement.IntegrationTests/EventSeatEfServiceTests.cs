@@ -9,6 +9,7 @@ using TicketManagement.DataAccess;
 using TicketManagement.DataAccess.Models;
 using TicketManagement.DataAccess.RepositoriesEf;
 using TicketManagement.EventManagerAPI.Automapper;
+using TicketManagement.EventManagerAPI.Infrastructure;
 using TicketManagement.EventManagerAPI.Interfaces;
 using TicketManagement.EventManagerAPI.ModelsDTO;
 using TicketManagement.EventManagerAPI.Services;
@@ -45,7 +46,7 @@ namespace TicketManagement.IntegrationTests
         }
 
         [Test]
-        public void CreateEventSeat_WhenEventAreaIdDoesntExist_ShouldReturnDbUpdateException()
+        public void CreateEventSeat_WhenEventAreaIdDoesntExist_ShouldReturnValidationException()
         {
             // Arrange
             EventSeatDto eventSeat = new ()
@@ -60,7 +61,7 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventSeat);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
@@ -87,7 +88,7 @@ namespace TicketManagement.IntegrationTests
         }
 
         [Test]
-        public void UpdateEventSeat_WhenEventAreaIdDoesntExist_ShouldReturnSqlException()
+        public void UpdateEventSeat_WhenEventAreaIdDoesntExist_ShouldReturnValidationException()
         {
             // Arrange
             EventSeatDto eventSeat = new ()
@@ -103,7 +104,7 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventSeat);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]

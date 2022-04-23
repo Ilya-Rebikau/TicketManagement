@@ -44,6 +44,8 @@ namespace TicketManagement.EventManagerAPI.Services
 
         public async override Task<EventDto> CreateAsync(EventDto obj)
         {
+            CheckForStringFileds(obj);
+            CheckForLayoutId(obj);
             ConvertTimeToUtc(obj);
             await CheckForPrices(obj);
             CheckEventForPastTime(obj);
@@ -54,6 +56,8 @@ namespace TicketManagement.EventManagerAPI.Services
 
         public async override Task<EventDto> UpdateAsync(EventDto obj)
         {
+            CheckForStringFileds(obj);
+            CheckForLayoutId(obj);
             ConvertTimeToUtc(obj);
             await CheckForPrices(obj);
             CheckEventForPastTime(obj);
@@ -66,6 +70,32 @@ namespace TicketManagement.EventManagerAPI.Services
         {
             await CheckForTickets(obj);
             return await base.DeleteAsync(obj);
+        }
+
+        /// <summary>
+        /// Check that string fields aren't empty or white space.
+        /// </summary>
+        /// <param name="obj">Event.</param>
+        /// <exception cref="ValidationException">Generates exception in case string fields are empty or white space.</exception>
+        private static void CheckForStringFileds(EventDto obj)
+        {
+            if (string.IsNullOrWhiteSpace(obj.Description) || string.IsNullOrWhiteSpace(obj.Name))
+            {
+                throw new ValidationException("Fields can't be empty or white space!");
+            }
+        }
+
+        /// <summary>
+        /// Check that event layout id is positive.
+        /// </summary>
+        /// <param name="obj">Event.</param>
+        /// <exception cref="ValidationException">Generates exception in case layout id isn't positive.</exception>
+        private static void CheckForLayoutId(EventDto obj)
+        {
+            if (obj.LayoutId <= 0)
+            {
+                throw new ValidationException("Layout id must be positive");
+            }
         }
 
         /// <summary>

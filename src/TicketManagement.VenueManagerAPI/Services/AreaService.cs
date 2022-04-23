@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using TicketManagement.DataAccess.Interfaces;
@@ -28,6 +27,8 @@ namespace TicketManagement.VenueManagerAPI.Services
 
         public async override Task<AreaDto> CreateAsync(AreaDto obj)
         {
+            CheckForStringFileds(obj);
+            CheckForLayoutId(obj);
             CheckForPositivePrice(obj);
             CheckForPositiveCoords(obj);
             await CheckForUniqueDescription(obj);
@@ -37,11 +38,39 @@ namespace TicketManagement.VenueManagerAPI.Services
 
         public async override Task<AreaDto> UpdateAsync(AreaDto obj)
         {
+            CheckForStringFileds(obj);
+            CheckForLayoutId(obj);
             CheckForPositivePrice(obj);
             CheckForPositiveCoords(obj);
             await CheckForUniqueDescription(obj);
             await CheckForUniqueCoordsInLayout(obj);
             return await base.UpdateAsync(obj);
+        }
+
+        /// <summary>
+        /// Check that string fields aren't empty or white space.
+        /// </summary>
+        /// <param name="obj">Area.</param>
+        /// <exception cref="ValidationException">Generates exception in case string fields are empty or white space.</exception>
+        private static void CheckForStringFileds(AreaDto obj)
+        {
+            if (string.IsNullOrWhiteSpace(obj.Description))
+            {
+                throw new ValidationException("Fields can't be empty or white space!");
+            }
+        }
+
+        /// <summary>
+        /// Check that layout id is positive.
+        /// </summary>
+        /// <param name="obj">Area.</param>
+        /// <exception cref="ValidationException">Generates exception in case layout id isn't positive.</exception>
+        private static void CheckForLayoutId(AreaDto obj)
+        {
+            if (obj.LayoutId <= 0)
+            {
+                throw new ValidationException("Layout id must be positive");
+            }
         }
 
         /// <summary>
