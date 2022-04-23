@@ -45,8 +45,7 @@ namespace TicketManagement.PurchaseFlowAPI.Services
 
         public async virtual Task<TDto> GetByIdAsync(int id)
         {
-            CheckForId(id);
-            var model = await Repository.GetByIdAsync(id);
+            var model = await CheckForIdAndGetModel(id);
             return await Converter.ConvertSourceToDestination(model);
         }
 
@@ -70,9 +69,8 @@ namespace TicketManagement.PurchaseFlowAPI.Services
 
         public async virtual Task<int> DeleteById(int id)
         {
-            CheckForId(id);
-            var model = await GetByIdAsync(id);
-            await DeleteAsync(model);
+            var model = await CheckForIdAndGetModel(id);
+            await DeleteAsync(await Converter.ConvertSourceToDestination(model));
             return id;
         }
 
@@ -81,18 +79,20 @@ namespace TicketManagement.PurchaseFlowAPI.Services
         /// </summary>
         /// <param name="id">Id.</param>
         /// <exception cref="ValidationException">Generates exception in case id isn't positive.</exception>
-        private async void CheckForId(int id)
+        private async Task<TModel> CheckForIdAndGetModel(int id)
         {
-            var allModels = await Repository.GetAllAsync();
             if (id <= 0)
             {
                 throw new ValidationException("Id must be positive!");
             }
 
-            if (!allModels.Any(m => m.Id == id))
+            var model = await Repository.GetByIdAsync(id);
+            if (model is null)
             {
                 throw new ValidationException("There is no such id!");
             }
+
+            return model;
         }
     }
 }

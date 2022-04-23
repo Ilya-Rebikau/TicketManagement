@@ -36,12 +36,12 @@ namespace TicketManagement.VenueManagerAPI.Services
         protected int CountOnPage { get; private set; }
 
         /// <summary>
-        /// Gets or privatly sets IRepository object for CRUD operations in database.
+        /// Gets or privately sets IRepository object for CRUD operations in database.
         /// </summary>
         protected IRepository<TModel> Repository { get; private set; }
 
         /// <summary>
-        /// Gets or privatly sets IConverter object.
+        /// Gets or privately sets IConverter object.
         /// </summary>
         protected IConverter<TModel, TDto> Converter { get; private set; }
 
@@ -55,8 +55,7 @@ namespace TicketManagement.VenueManagerAPI.Services
 
         public async virtual Task<TDto> GetByIdAsync(int id)
         {
-            CheckForId(id);
-            var model = await Repository.GetByIdAsync(id);
+            var model = await CheckForIdAndGetModel(id);
             return await Converter.ConvertSourceToDestination(model);
         }
 
@@ -80,9 +79,8 @@ namespace TicketManagement.VenueManagerAPI.Services
 
         public async virtual Task<int> DeleteById(int id)
         {
-            CheckForId(id);
-            var model = await GetByIdAsync(id);
-            await DeleteAsync(model);
+            var model = await CheckForIdAndGetModel(id);
+            await DeleteAsync(await Converter.ConvertSourceToDestination(model));
             return id;
         }
 
@@ -104,18 +102,20 @@ namespace TicketManagement.VenueManagerAPI.Services
         /// </summary>
         /// <param name="id">Id.</param>
         /// <exception cref="ValidationException">Generates exception in case id isn't positive.</exception>
-        private async void CheckForId(int id)
+        private async Task<TModel> CheckForIdAndGetModel(int id)
         {
-            var allModels = await Repository.GetAllAsync();
             if (id <= 0)
             {
                 throw new ValidationException("Id must be positive!");
             }
 
-            if (!allModels.Any(m => m.Id == id))
+            var model = await Repository.GetByIdAsync(id);
+            if (model is null)
             {
                 throw new ValidationException("There is no such id!");
             }
+
+            return model;
         }
     }
 }
