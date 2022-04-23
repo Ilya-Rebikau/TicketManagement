@@ -87,6 +87,19 @@ namespace TicketManagement.EventManagerAPI.Services
         }
 
         /// <summary>
+        /// Check that page number is positive.
+        /// </summary>
+        /// <param name="pageNumber">Page number.</param>
+        /// <exception cref="ValidationException">Generates exception in case page number isn't positive.</exception>
+        private static void CheckForPageNumber(int pageNumber)
+        {
+            if (pageNumber <= 0)
+            {
+                throw new ValidationException("Page number must be positive!");
+            }
+        }
+
+        /// <summary>
         /// Check that id is positive.
         /// </summary>
         /// <param name="id">Id.</param>
@@ -102,26 +115,6 @@ namespace TicketManagement.EventManagerAPI.Services
             if (!allModels.Any(m => m.Id == id))
             {
                 throw new ValidationException("There is no such id!");
-            }
-        }
-
-        /// <summary>
-        /// Check that page number is positive.
-        /// </summary>
-        /// <param name="pageNumber">Page number.</param>
-        /// <exception cref="ValidationException">Generates exception in case page number isn't positive.</exception>
-        private async void CheckForPageNumber(int pageNumber)
-        {
-            if (pageNumber <= 0)
-            {
-                throw new ValidationException("Page number must be positive!");
-            }
-
-            var allModels = await Repository.GetAllAsync();
-            var modelsOnPage = allModels.OrderBy(m => m.Id).Skip((pageNumber - 1) * CountOnPage).Take(CountOnPage);
-            if (modelsOnPage is null || !modelsOnPage.Any())
-            {
-                throw new ValidationException("This page doesn't contain data.");
             }
         }
     }

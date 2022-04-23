@@ -180,18 +180,11 @@ namespace TicketManagement.UserAPI.Services
         /// </summary>
         /// <param name="pageNumber">Page number.</param>
         /// <exception cref="ValidationException">Generates exception in case page number isn't positive.</exception>
-        private void CheckForPageNumber(int pageNumber)
+        private static void CheckForPageNumber(int pageNumber)
         {
             if (pageNumber <= 0)
             {
                 throw new ValidationException("Page number must be positive!");
-            }
-
-            var allModels = _userManager.Users;
-            var modelsOnPage = allModels.OrderBy(m => m.Id).Skip((pageNumber - 1) * _countOnPage).Take(_countOnPage);
-            if (modelsOnPage is null || !modelsOnPage.Any())
-            {
-                throw new ValidationException("This page doesn't contain data.");
             }
         }
     }
