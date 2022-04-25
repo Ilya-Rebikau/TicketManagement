@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TicketManagement.UserAPI.Infrastructure;
 using TicketManagement.UserAPI.Interfaces;
 using TicketManagement.UserAPI.Models.Users;
 
@@ -12,6 +13,7 @@ namespace TicketManagement.UserAPI.Controllers
     [Authorize(Roles = "admin")]
     [Route("[controller]")]
     [ApiController]
+    [ExceptionFilter]
     public class UsersController : ControllerBase
     {
         /// <summary>

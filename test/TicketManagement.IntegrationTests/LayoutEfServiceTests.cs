@@ -15,6 +15,7 @@ using TicketManagement.DataAccess.RepositoriesEf;
 using TicketManagement.EventManagerAPI.ModelsDTO;
 using TicketManagement.EventManagerAPI.Services;
 using TicketManagement.VenueManagerAPI.Automapper;
+using TicketManagement.VenueManagerAPI.Infrastructure;
 using TicketManagement.VenueManagerAPI.Interfaces;
 using TicketManagement.VenueManagerAPI.ModelsDTO;
 using TicketManagement.VenueManagerAPI.Services;
@@ -63,7 +64,7 @@ namespace TicketManagement.IntegrationTests
         }
 
         [Test]
-        public void CreateLayout_WhenVenueIdDoesntExist_ShouldReturnDbUpdateException()
+        public void CreateLayout_WhenVenueIdDoesntExist_ShouldReturnValidationException()
         {
             // Arrange
             LayoutDto layout = new ()
@@ -77,11 +78,11 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(layout);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void CreateLayout_WhenDescriptionIsNull_ShouldReturnDbUpdateException()
+        public void CreateLayout_WhenDescriptionIsNull_ShouldReturnValidationException()
         {
             // Arrange
             LayoutDto layout = new ()
@@ -95,11 +96,11 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(layout);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void CreateLayout_WhenNameIsNull_ShouldReturnDbUpdateException()
+        public void CreateLayout_WhenNameIsNull_ShouldReturnValidationException()
         {
             // Arrange
             LayoutDto layout = new ()
@@ -113,7 +114,7 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(layout);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
@@ -139,7 +140,7 @@ namespace TicketManagement.IntegrationTests
         }
 
         [Test]
-        public void UpdateLayout_WhenVenueIdDoesntExist_ShouldReturnDbUpdateException()
+        public void UpdateLayout_WhenVenueIdDoesntExist_ShouldReturnValidationException()
         {
             // Arrange
             LayoutDto layout = new ()
@@ -154,11 +155,11 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(layout);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void UpdateLayout_WhenDescriptionIsNull_ShouldReturnDbUpdateException()
+        public void UpdateLayout_WhenDescriptionIsNull_ShouldReturnValidationException()
         {
             // Arrange
             LayoutDto layout = new ()
@@ -173,11 +174,11 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(layout);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void UpdateLayout_WhenNameIsNull_ShouldReturnDbUpdateException()
+        public void UpdateLayout_WhenNameIsNull_ShouldReturnValidationException()
         {
             // Arrange
             LayoutDto layout = new ()
@@ -192,7 +193,7 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(layout);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]

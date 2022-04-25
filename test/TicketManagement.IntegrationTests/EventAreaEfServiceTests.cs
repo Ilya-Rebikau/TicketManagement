@@ -10,6 +10,7 @@ using TicketManagement.DataAccess;
 using TicketManagement.DataAccess.Models;
 using TicketManagement.DataAccess.RepositoriesEf;
 using TicketManagement.EventManagerAPI.Automapper;
+using TicketManagement.EventManagerAPI.Infrastructure;
 using TicketManagement.EventManagerAPI.Interfaces;
 using TicketManagement.EventManagerAPI.ModelsDTO;
 using TicketManagement.EventManagerAPI.Services;
@@ -44,12 +45,12 @@ namespace TicketManagement.IntegrationTests
             var eventAreaRepository = new EventAreaEfRepository(context);
             var converter = new ModelsConverter<EventArea, EventAreaDto>(mapper);
             var eventSeatRepository = new EfRepository<EventSeat>(context);
-            _eventSeatService = new EventSeatService(eventSeatRepository, new ModelsConverter<EventSeat, EventSeatDto>(mapper), configuration);
+            _eventSeatService = new EventSeatService(eventSeatRepository, new ModelsConverter<EventSeat, EventSeatDto>(mapper), configuration, eventAreaRepository);
             _service = new EventAreaService(eventAreaRepository, converter, eventSeatRepository, configuration);
         }
 
         [Test]
-        public void CreateEventArea_WhenEventIdDoesntExist_ShouldReturnDbUpdateException()
+        public void CreateEventArea_WhenEventIdDoesntExist_ShouldReturnValidationException()
         {
             // Arrange
             EventAreaDto eventArea = new ()
@@ -65,11 +66,11 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventArea);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void CreateEventArea_WhenDescriptionIsNull_ShouldReturnDbUpdateException()
+        public void CreateEventArea_WhenDescriptionIsNull_ShouldReturnValidationException()
         {
             // Arrange
             EventAreaDto eventArea = new ()
@@ -85,7 +86,7 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventArea);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
@@ -113,7 +114,7 @@ namespace TicketManagement.IntegrationTests
         }
 
         [Test]
-        public void UpdateEventArea_WhenLayoutIdDoesntExist_ShouldReturnDbUpdateException()
+        public void UpdateEventArea_WhenLayoutIdDoesntExist_ShouldReturnValidationException()
         {
             // Arrange
             EventAreaDto eventArea = new ()
@@ -130,11 +131,11 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventArea);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void UpdateEventArea_WhenDescriptionIsNull_ShouldReturnDbUpdateException()
+        public void UpdateEventArea_WhenDescriptionIsNull_ShouldReturnValidationException()
         {
             // Arrange
             EventAreaDto eventArea = new ()
@@ -151,7 +152,7 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventArea);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]

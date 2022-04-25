@@ -10,6 +10,7 @@ using TicketManagement.DataAccess;
 using TicketManagement.DataAccess.Models;
 using TicketManagement.DataAccess.RepositoriesEf;
 using TicketManagement.VenueManagerAPI.Automapper;
+using TicketManagement.VenueManagerAPI.Infrastructure;
 using TicketManagement.VenueManagerAPI.Interfaces;
 using TicketManagement.VenueManagerAPI.ModelsDTO;
 using TicketManagement.VenueManagerAPI.Services;
@@ -50,7 +51,7 @@ namespace TicketManagement.IntegrationTests
         }
 
         [Test]
-        public void CreateArea_WhenLayoutIdDoesntExist_ShouldReturnDbUpdateException()
+        public void CreateArea_WhenLayoutIdDoesntExist_ShouldReturnValidationException()
         {
             // Arrange
             AreaDto area = new ()
@@ -66,11 +67,11 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(area);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void CreateArea_WhenDescriptionIsNull_ShouldReturnDbUpdateException()
+        public void CreateArea_WhenDescriptionIsNull_ShouldReturnValidationException()
         {
             // Arrange
             AreaDto area = new ()
@@ -86,7 +87,7 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(area);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
@@ -114,7 +115,7 @@ namespace TicketManagement.IntegrationTests
         }
 
         [Test]
-        public void UpdateArea_WhenLayoutIdDoesntExist_ShouldReturnDbUpdateException()
+        public void UpdateArea_WhenLayoutIdDoesntExist_ShouldReturnValidationException()
         {
             // Arrange
             AreaDto area = new ()
@@ -131,11 +132,11 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(area);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void UpdateArea_WhenDescriptionIsNull_ShouldReturnDbUpdateException()
+        public void UpdateArea_WhenDescriptionIsNull_ShouldReturnValidationException()
         {
             // Arrange
             AreaDto area = new ()
@@ -152,7 +153,7 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(area);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]

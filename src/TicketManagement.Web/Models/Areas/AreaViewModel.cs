@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using TicketManagement.Web.ModelsDTO;
 
 namespace TicketManagement.Web.Models.Areas
 {
@@ -18,6 +17,7 @@ namespace TicketManagement.Web.Models.Areas
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "LayoutId")]
+        [Range(1, int.MaxValue)]
         public int LayoutId { get; set; }
 
         /// <summary>
@@ -32,6 +32,7 @@ namespace TicketManagement.Web.Models.Areas
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "CoordXInLayout")]
+        [Range(0, int.MaxValue)]
         public int CoordX { get; set; }
 
         /// <summary>
@@ -39,6 +40,7 @@ namespace TicketManagement.Web.Models.Areas
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "CoordYInLayout")]
+        [Range(0, int.MaxValue)]
         public int CoordY { get; set; }
 
         /// <summary>
@@ -46,6 +48,7 @@ namespace TicketManagement.Web.Models.Areas
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "Price")]
+        [Range(0, double.MaxValue)]
         public double BasePrice { get; set; }
     }
 }

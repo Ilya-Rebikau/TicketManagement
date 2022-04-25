@@ -7,6 +7,7 @@ using Moq;
 using NUnit.Framework;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.EventManagerAPI.Infrastructure;
 using TicketManagement.EventManagerAPI.Interfaces;
 using TicketManagement.EventManagerAPI.ModelsDTO;
 using TicketManagement.EventManagerAPI.Services;
@@ -33,13 +34,28 @@ namespace TicketManagement.UnitTests
             IConfiguration configuration = new ConfigurationBuilder()
                 .AddInMemoryCollection(inMemorySettings)
                 .Build();
-            eventRepositoryMock.Setup(rep => rep.GetAllAsync());
+            eventRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEvents());
             eventSeatRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventSeats());
             eventAreaRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventAreas());
             var events = await eventRepositoryMock.Object.GetAllAsync();
             eventConverterMock.Setup(rep => rep.ConvertSourceModelRangeToDestinationModelRange(events)).ReturnsAsync(GetTestEventDtos());
             _service = new EventCrudService(eventRepositoryMock.Object, eventConverterMock.Object, eventAreaRepositoryMock.Object,
                 eventSeatRepositoryMock.Object, configuration);
+        }
+
+        private static IQueryable<Event> GetTestEvents()
+        {
+            var events = new List<Event>
+            {
+                new Event
+                {
+                    Id = 1, Name = "First event name", Description = "First event description", LayoutId = 1,
+                    TimeStart = new DateTime(2030, 12, 21, 15, 0, 0), TimeEnd = new DateTime(2030, 12, 21, 17, 0, 0),
+                    ImageUrl = "https://w-dog.ru/wallpapers/5/16/428743654433638/kotyata-serye-zhivotnye-trava-gazon.jpg",
+                },
+            };
+
+            return events.AsQueryable();
         }
 
         private static IQueryable<EventArea> GetTestEventAreas()
@@ -75,7 +91,7 @@ namespace TicketManagement.UnitTests
         }
 
         [Test]
-        public void CreateEvent_WhenEventAreasWithoutPrice_ShouldReturnInvalidOperationException()
+        public void CreateEvent_WhenEventAreasWithoutPrice_ShouldReturnValidationException()
         {
             // Arrange
             EventDto @event = new ()
@@ -87,11 +103,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(@event);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void DeleteEvent_WhenThereAreTicketsInIt_ShouldReturnInvalidOperationException()
+        public void DeleteEvent_WhenThereAreTicketsInIt_ShouldReturnValidationException()
         {
             // Arrange
             EventDto @event = new ()
@@ -103,11 +119,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.DeleteAsync(@event);
 
             // Assert
-            Assert.ThrowsAsync<InvalidOperationException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void CreateEvent_WhenTimeIsBusy_ShouldReturnArgumentException()
+        public void CreateEvent_WhenTimeIsBusy_ShouldReturnValidationException()
         {
             // Arrange
             EventDto eventModel = new ()
@@ -122,11 +138,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventModel);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void CreateEvent_WhenDatesInPast_ShouldReturnArgumentException()
+        public void CreateEvent_WhenDatesInPast_ShouldReturnValidationException()
         {
             // Arrange
             EventDto eventModel = new ()
@@ -139,11 +155,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventModel);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void CreateEvent_WhenWrongDates_ShouldReturnArgumentException()
+        public void CreateEvent_WhenWrongDates_ShouldReturnValidationException()
         {
             // Arrange
             EventDto eventModel = new ()
@@ -156,11 +172,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventModel);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void UpdateEvent_WhenDatesInPast_ShouldReturnArgumentException()
+        public void UpdateEvent_WhenDatesInPast_ShouldReturnValidationException()
         {
             // Arrange
             EventDto eventModel = new ()
@@ -173,11 +189,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventModel);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void UpdateEvent_WhenWrongDates_ShouldReturnArgumentException()
+        public void UpdateEvent_WhenWrongDates_ShouldReturnValidationException()
         {
             // Arrange
             EventDto eventModel = new ()
@@ -190,7 +206,7 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventModel);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
     }
 }

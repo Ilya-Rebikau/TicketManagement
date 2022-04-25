@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using TicketManagement.EventManagerAPI.ModelsDTO;
-
-namespace TicketManagement.EventManagerAPI.Models.Tickets
+﻿namespace TicketManagement.EventManagerAPI.Models.Tickets
 {
     /// <summary>
     /// Ticket model for events.
@@ -16,15 +13,11 @@ namespace TicketManagement.EventManagerAPI.Models.Tickets
         /// <summary>
         /// Gets or sets event seat's id.
         /// </summary>
-        [Required(ErrorMessage = "FieldRequired")]
-        [Display(Name = "EventSeatId")]
         public int EventSeatId { get; set; }
 
         /// <summary>
         /// Gets or sets user's id.
         /// </summary>
-        [Required(ErrorMessage = "FieldRequired")]
-        [Display(Name = "UserId")]
         public string UserId { get; set; }
 
         /// <summary>

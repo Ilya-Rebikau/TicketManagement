@@ -18,6 +18,7 @@ namespace TicketManagement.Web.Models.Layouts
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "VenueId")]
+        [Range(1, int.MaxValue)]
         public int VenueId { get; set; }
 
         /// <summary>

@@ -47,6 +47,7 @@ namespace TicketManagement.Web.Controllers
         /// <param name="pageNumber">Page number.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpGet]
+        [RedirectFilter("")]
         public async Task<IActionResult> Index(int pageNumber = 1)
         {
             var events = await _eventManagerClient.GetEventViewModels(HttpContext.GetJwtToken(), pageNumber);
@@ -178,11 +179,8 @@ namespace TicketManagement.Web.Controllers
         [HttpGet("events/buy")]
         public async Task<IActionResult> Buy(int eventSeatId, double price)
         {
-            var eventSeatIdAndPrice = new Dictionary<int, double>
-            {
-                { eventSeatId, price },
-            };
-            return View(await _purchaseClient.GetTicketViewModelForBuy(HttpContext.GetJwtToken(), eventSeatIdAndPrice));
+            var model = await _purchaseClient.GetTicketViewModelForBuy(HttpContext.GetJwtToken(), eventSeatId, price);
+            return View(model);
         }
 
         /// <summary>

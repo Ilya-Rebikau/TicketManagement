@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TicketManagement.DataAccess.Interfaces;
+using TicketManagement.PurchaseFlowAPI.Infrastructure;
 using TicketManagement.PurchaseFlowAPI.Interfaces;
 
 namespace TicketManagement.PurchaseFlowAPI.Services
@@ -43,7 +45,7 @@ namespace TicketManagement.PurchaseFlowAPI.Services
 
         public async virtual Task<TDto> GetByIdAsync(int id)
         {
-            var model = await Repository.GetByIdAsync(id);
+            var model = await CheckForIdAndGetModel(id);
             return await Converter.ConvertSourceToDestination(model);
         }
 
@@ -67,9 +69,30 @@ namespace TicketManagement.PurchaseFlowAPI.Services
 
         public async virtual Task<int> DeleteById(int id)
         {
-            var model = await GetByIdAsync(id);
-            await DeleteAsync(model);
+            var model = await CheckForIdAndGetModel(id);
+            await DeleteAsync(await Converter.ConvertSourceToDestination(model));
             return id;
+        }
+
+        /// <summary>
+        /// Check that id is positive.
+        /// </summary>
+        /// <param name="id">Id.</param>
+        /// <exception cref="ValidationException">Generates exception in case id isn't positive.</exception>
+        private async Task<TModel> CheckForIdAndGetModel(int id)
+        {
+            if (id <= 0)
+            {
+                throw new ValidationException("Id must be positive!");
+            }
+
+            var model = await Repository.GetByIdAsync(id);
+            if (model is null)
+            {
+                throw new ValidationException("There is no such id!");
+            }
+
+            return model;
         }
     }
 }

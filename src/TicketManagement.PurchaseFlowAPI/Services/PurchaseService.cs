@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TicketManagement.PurchaseFlowAPI.Infrastructure;
 using TicketManagement.PurchaseFlowAPI.Interfaces;
 using TicketManagement.PurchaseFlowAPI.Models;
 using TicketManagement.PurchaseFlowAPI.ModelsDTO;
@@ -104,6 +106,12 @@ namespace TicketManagement.PurchaseFlowAPI.Services
                 UserId = userId,
                 EventSeatId = eventSeatId,
             };
+
+            var tickets = await _ticketService.GetAllAsync();
+            if (tickets.FirstOrDefault(t => t.EventSeatId == eventSeatId) is not null)
+            {
+                throw new ValidationException("This place is busy!");
+            }
 
             var ticketVm = await _converter.ConvertSourceToDestination(ticket);
             ticketVm.Price = price;

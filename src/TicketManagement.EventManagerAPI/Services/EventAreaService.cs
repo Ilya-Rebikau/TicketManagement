@@ -1,9 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.EventManagerAPI.Infrastructure;
 using TicketManagement.EventManagerAPI.Interfaces;
 using TicketManagement.EventManagerAPI.ModelsDTO;
 
@@ -34,6 +34,8 @@ namespace TicketManagement.EventManagerAPI.Services
 
         public async override Task<EventAreaDto> CreateAsync(EventAreaDto obj)
         {
+            CheckForStringFileds(obj);
+            CheckForEventId(obj);
             CheckForPositiveCoords(obj);
             CheckForPositivePrice(obj);
             return await base.CreateAsync(obj);
@@ -41,6 +43,8 @@ namespace TicketManagement.EventManagerAPI.Services
 
         public async override Task<EventAreaDto> UpdateAsync(EventAreaDto obj)
         {
+            CheckForStringFileds(obj);
+            CheckForEventId(obj);
             CheckForPositiveCoords(obj);
             CheckForPositivePrice(obj);
             return await base.UpdateAsync(obj);
@@ -53,15 +57,28 @@ namespace TicketManagement.EventManagerAPI.Services
         }
 
         /// <summary>
+        /// Check that string fields aren't empty or white space.
+        /// </summary>
+        /// <param name="obj">Event area.</param>
+        /// <exception cref="ValidationException">Generates exception in case string fields are empty or white space.</exception>
+        private static void CheckForStringFileds(EventAreaDto obj)
+        {
+            if (string.IsNullOrWhiteSpace(obj.Description))
+            {
+                throw new ValidationException("Fields can't be empty or white space!");
+            }
+        }
+
+        /// <summary>
         /// Checking that event area has positive coords.
         /// </summary>
         /// <param name="obj">Adding or updating event area.</param>
-        /// <exception cref="ArgumentException">Generates exception in case coords aren't positive.</exception>
+        /// <exception cref="ValidationException">Generates exception in case coords aren't positive.</exception>
         private static void CheckForPositiveCoords(EventAreaDto obj)
         {
             if (obj.CoordX <= 0 || obj.CoordY <= 0)
             {
-                throw new ArgumentException("Coords can be only positive numbers!");
+                throw new ValidationException("Coords can be only positive numbers!");
             }
         }
 
@@ -69,11 +86,25 @@ namespace TicketManagement.EventManagerAPI.Services
         /// Checking that event area has positive price.
         /// </summary>
         /// <param name="obj">Adding or updating event area.</param>
+        /// <exception cref="ValidationException">Generates exception in case price isn't positive.</exception>
         private static void CheckForPositivePrice(EventAreaDto obj)
         {
             if (obj.Price <= 0)
             {
-                throw new ArgumentException("Price can be only positive number!");
+                throw new ValidationException("Price can be only positive number!");
+            }
+        }
+
+        /// <summary>
+        /// Check that event id is positive.
+        /// </summary>
+        /// <param name="obj">Event area.</param>
+        /// <exception cref="ValidationException">Generates exception in case event id isn't positive.</exception>
+        private static void CheckForEventId(EventAreaDto obj)
+        {
+            if (obj.EventId <= 0)
+            {
+                throw new ValidationException("Event id must be positive");
             }
         }
 
@@ -82,14 +113,14 @@ namespace TicketManagement.EventManagerAPI.Services
         /// </summary>
         /// <param name="obj">Deleting event area.</param>
         /// <returns>Task.</returns>
-        /// <exception cref="InvalidOperationException">Generates exception in case there are tickets in this event area.</exception>
+        /// <exception cref="ValidationException">Generates exception in case there are tickets in this event area.</exception>
         private async Task CheckForTickets(EventAreaDto obj)
         {
             var allEventSeats = await _eventSeatRepository.GetAllAsync();
             var eventSeats = allEventSeats.Where(s => s.EventAreaId == obj.Id).Where(s => s.State == (int)PlaceStatus.Occupied).ToList();
             if (eventSeats.Any())
             {
-                throw new InvalidOperationException("Someone bought tickets in this event area already!");
+                throw new ValidationException("Someone bought tickets in this event area already!");
             }
         }
     }

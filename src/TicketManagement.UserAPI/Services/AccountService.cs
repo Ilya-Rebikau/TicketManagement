@@ -144,10 +144,16 @@ namespace TicketManagement.UserAPI.Services
             if (user.Balance >= price)
             {
                 user.Balance -= price;
+                await _userManager.UpdateAsync(user);
                 return true;
             }
 
             return false;
+        }
+
+        public async Task<User> GetUser(string jwtToken)
+        {
+            return await _userManager.FindByEmailAsync(GetUserEmail(jwtToken));
         }
 
         /// <summary>

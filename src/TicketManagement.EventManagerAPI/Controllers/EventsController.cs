@@ -3,18 +3,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TicketManagement.EventManagerAPI.Extensions;
+using TicketManagement.EventManagerAPI.Infrastructure;
 using TicketManagement.EventManagerAPI.Interfaces;
 using TicketManagement.EventManagerAPI.Models.Events;
-using TicketManagement.EventManagerAPI.ModelsDTO;
 
 namespace TicketManagement.EventManagerAPI.Controllers
 {
     /// <summary>
     /// Controller for events.
     /// </summary>
-    [Authorize(Roles = "admin, event manager")]
     [Route("[controller]")]
     [ApiController]
+    [ExceptionFilter]
     public class EventsController : Controller
     {
         /// <summary>
@@ -37,7 +37,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// <param name="pageNumber">Page number.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpGet("getevents")]
-        public async Task<IActionResult> GetEvents([FromBody] int pageNumber)
+        public async Task<IActionResult> GetEvents([FromQuery] int pageNumber)
         {
             return Ok(await _eventService.GetAllEventViewModelsAsync(pageNumber));
         }

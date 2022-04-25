@@ -9,6 +9,7 @@ using TicketManagement.DataAccess;
 using TicketManagement.DataAccess.Models;
 using TicketManagement.DataAccess.RepositoriesEf;
 using TicketManagement.EventManagerAPI.Automapper;
+using TicketManagement.EventManagerAPI.Infrastructure;
 using TicketManagement.EventManagerAPI.Interfaces;
 using TicketManagement.EventManagerAPI.ModelsDTO;
 using TicketManagement.EventManagerAPI.Services;
@@ -40,11 +41,12 @@ namespace TicketManagement.IntegrationTests
             var context = new TicketManagementContext(builder.Options);
             var eventSeatRepository = new EfRepository<EventSeat>(context);
             var converter = new ModelsConverter<EventSeat, EventSeatDto>(mapper);
-            _service = new EventSeatService(eventSeatRepository, converter, configuration);
+            var eventAreaRepository = new EventAreaEfRepository(context);
+            _service = new EventSeatService(eventSeatRepository, converter, configuration, eventAreaRepository);
         }
 
         [Test]
-        public void CreateEventSeat_WhenEventAreaIdDoesntExist_ShouldReturnDbUpdateException()
+        public void CreateEventSeat_WhenEventAreaIdDoesntExist_ShouldReturnValidationException()
         {
             // Arrange
             EventSeatDto eventSeat = new ()
@@ -59,7 +61,7 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventSeat);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
@@ -86,7 +88,7 @@ namespace TicketManagement.IntegrationTests
         }
 
         [Test]
-        public void UpdateEventSeat_WhenEventAreaIdDoesntExist_ShouldReturnSqlException()
+        public void UpdateEventSeat_WhenEventAreaIdDoesntExist_ShouldReturnValidationException()
         {
             // Arrange
             EventSeatDto eventSeat = new ()
@@ -102,7 +104,7 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventSeat);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]

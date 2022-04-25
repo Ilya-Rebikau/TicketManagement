@@ -35,6 +35,7 @@ namespace TicketManagement.EventManagerAPI
                 var baseUrl = Configuration["UsersApiAddress"];
                 return RestClient.For<IUsersClient>(baseUrl);
             });
+            services.AddCors();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EventManagerAPI", Version = "v1" });
@@ -75,7 +76,7 @@ namespace TicketManagement.EventManagerAPI
             app.UseSerilogRequestLogging();
 
             app.UseRouting();
-
+            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             app.UseMiddleware<JwtMiddleware>();
 
             app.UseAuthentication();

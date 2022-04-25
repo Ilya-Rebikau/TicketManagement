@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using TicketManagement.DataAccess.Interfaces;
+using TicketManagement.EventManagerAPI.Infrastructure;
 using TicketManagement.EventManagerAPI.Interfaces;
 
 namespace TicketManagement.EventManagerAPI.Services
@@ -46,6 +47,7 @@ namespace TicketManagement.EventManagerAPI.Services
 
         public async virtual Task<IEnumerable<TDto>> GetAllAsync(int pageNumber)
         {
+            CheckForPageNumber(pageNumber);
             var models = await Repository.GetAllAsync();
             models = models.OrderBy(m => m.Id).Skip((pageNumber - 1) * CountOnPage).Take(CountOnPage);
             return await Converter.ConvertSourceModelRangeToDestinationModelRange(models);
@@ -53,7 +55,7 @@ namespace TicketManagement.EventManagerAPI.Services
 
         public async virtual Task<TDto> GetByIdAsync(int id)
         {
-            var model = await Repository.GetByIdAsync(id);
+            var model = await CheckForIdAndGetModel(id);
             return await Converter.ConvertSourceToDestination(model);
         }
 
@@ -77,9 +79,43 @@ namespace TicketManagement.EventManagerAPI.Services
 
         public async virtual Task<int> DeleteById(int id)
         {
-            var model = await GetByIdAsync(id);
-            await DeleteAsync(model);
+            var model = await CheckForIdAndGetModel(id);
+            await DeleteAsync(await Converter.ConvertSourceToDestination(model));
             return id;
+        }
+
+        /// <summary>
+        /// Check that page number is positive.
+        /// </summary>
+        /// <param name="pageNumber">Page number.</param>
+        /// <exception cref="ValidationException">Generates exception in case page number isn't positive.</exception>
+        private static void CheckForPageNumber(int pageNumber)
+        {
+            if (pageNumber <= 0)
+            {
+                throw new ValidationException("Page number must be positive!");
+            }
+        }
+
+        /// <summary>
+        /// Check that id is positive.
+        /// </summary>
+        /// <param name="id">Id.</param>
+        /// <exception cref="ValidationException">Generates exception in case id isn't positive.</exception>
+        private async Task<TModel> CheckForIdAndGetModel(int id)
+        {
+            if (id <= 0)
+            {
+                throw new ValidationException("Id must be positive!");
+            }
+
+            var model = await Repository.GetByIdAsync(id);
+            if (model is null)
+            {
+                throw new ValidationException("There is no such id!");
+            }
+
+            return model;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.PurchaseFlowAPI.Infrastructure;
 using TicketManagement.PurchaseFlowAPI.Interfaces;
 using TicketManagement.PurchaseFlowAPI.ModelsDTO;
 
@@ -41,6 +42,8 @@ namespace TicketManagement.PurchaseFlowAPI.Services
 
         public async override Task<EventDto> CreateAsync(EventDto obj)
         {
+            CheckForStringFileds(obj);
+            CheckForLayoutId(obj);
             ConvertTimeToUtc(obj);
             await CheckForPrices(obj);
             CheckEventForPastTime(obj);
@@ -51,6 +54,8 @@ namespace TicketManagement.PurchaseFlowAPI.Services
 
         public async override Task<EventDto> UpdateAsync(EventDto obj)
         {
+            CheckForStringFileds(obj);
+            CheckForLayoutId(obj);
             ConvertTimeToUtc(obj);
             await CheckForPrices(obj);
             CheckEventForPastTime(obj);
@@ -63,6 +68,32 @@ namespace TicketManagement.PurchaseFlowAPI.Services
         {
             await CheckForTickets(obj);
             return await base.DeleteAsync(obj);
+        }
+
+        /// <summary>
+        /// Check that string fields aren't empty or white space.
+        /// </summary>
+        /// <param name="obj">Event.</param>
+        /// <exception cref="ValidationException">Generates exception in case string fields are empty or white space.</exception>
+        private static void CheckForStringFileds(EventDto obj)
+        {
+            if (string.IsNullOrWhiteSpace(obj.Description) || string.IsNullOrWhiteSpace(obj.Name) || string.IsNullOrWhiteSpace(obj.ImageUrl))
+            {
+                throw new ValidationException("Fields can't be empty or white space!");
+            }
+        }
+
+        /// <summary>
+        /// Check that event layout id is positive.
+        /// </summary>
+        /// <param name="obj">Event.</param>
+        /// <exception cref="ValidationException">Generates exception in case layout id isn't positive.</exception>
+        private static void CheckForLayoutId(EventDto obj)
+        {
+            if (obj.LayoutId <= 0)
+            {
+                throw new ValidationException("Layout id must be positive");
+            }
         }
 
         /// <summary>
@@ -79,12 +110,12 @@ namespace TicketManagement.PurchaseFlowAPI.Services
         /// Checking that event's time of end and time of start is not in past.
         /// </summary>
         /// <param name="obj">Adding or updating event.</param>
-        /// <exception cref="ArgumentException">Generates exception in case TimeStart or TimeEnd in past time.</exception>
+        /// <exception cref="ValidationException">Generates exception in case TimeStart or TimeEnd in past time.</exception>
         private static void CheckEventForPastTime(EventDto obj)
         {
             if (obj.TimeStart <= DateTime.Now || obj.TimeEnd <= DateTime.Now)
             {
-                throw new ArgumentException("You can't create event in past!");
+                throw new ValidationException("You can't create event in past!");
             }
         }
 
@@ -92,12 +123,12 @@ namespace TicketManagement.PurchaseFlowAPI.Services
         /// Checking that event's time of end after time of start.
         /// </summary>
         /// <param name="obj">Adding or updating event.</param>
-        /// <exception cref="ArgumentException">Generates exception in case TimeStart after TimeEnd.</exception>
+        /// <exception cref="ValidationException">Generates exception in case TimeStart after TimeEnd.</exception>
         private static void CheckForTimeBorders(EventDto obj)
         {
             if (obj.TimeStart >= obj.TimeEnd)
             {
-                throw new ArgumentException("Time of start event can't be after event's time of end");
+                throw new ValidationException("Time of start event can't be after event's time of end");
             }
         }
 
@@ -106,7 +137,7 @@ namespace TicketManagement.PurchaseFlowAPI.Services
         /// </summary>
         /// <param name="obj">Deleting event.</param>
         /// <returns>Task.</returns>
-        /// <exception cref="InvalidOperationException">Generates exception in case there are tickets in this event.</exception>
+        /// <exception cref="ValidationException">Generates exception in case there are tickets in this event.</exception>
         private async Task CheckForTickets(EventDto obj)
         {
             var eventSeats = new List<EventSeat>();
@@ -120,7 +151,7 @@ namespace TicketManagement.PurchaseFlowAPI.Services
 
             if (eventSeats.Any())
             {
-                throw new InvalidOperationException("Someone bought tickets in this event already!");
+                throw new ValidationException("Someone bought tickets in this event already!");
             }
         }
 
@@ -128,14 +159,14 @@ namespace TicketManagement.PurchaseFlowAPI.Services
         /// Checking that event can't be created in one time in one layout.
         /// </summary>
         /// <param name="obj">Adding or updating event.</param>
-        /// <exception cref="ArgumentException">Generates exception in case event in this layout and time already exists.</exception>
+        /// <exception cref="ValidationException">Generates exception in case event in this layout and time already exists.</exception>
         private async Task CheckForSameLayoutInOneTime(EventDto obj)
         {
-            var events = await Converter.ConvertSourceModelRangeToDestinationModelRange(await Repository.GetAllAsync());
+            var events = await Repository.GetAllAsync();
             var eventsInLayout = events.Where(ev => ev.LayoutId == obj.LayoutId && obj.TimeStart <= ev.TimeStart && obj.TimeEnd >= ev.TimeEnd && ev.Id != obj.Id);
             if (eventsInLayout.Any())
             {
-                throw new ArgumentException("You can't create event in one time in one layout!");
+                throw new ValidationException("You can't create event in one time in one layout!");
             }
         }
 
@@ -144,7 +175,7 @@ namespace TicketManagement.PurchaseFlowAPI.Services
         /// </summary>
         /// <param name="obj">Adding or updating event.</param>
         /// <returns>Task.</returns>
-        /// <exception cref="ArgumentException">Generates exception in case event areas haven't price.</exception>
+        /// <exception cref="ValidationException">Generates exception in case event areas haven't price.</exception>
         private async Task CheckForPrices(EventDto obj)
         {
             var eventAreas = await _eventAreaRepository.GetAllAsync();
@@ -153,7 +184,7 @@ namespace TicketManagement.PurchaseFlowAPI.Services
             {
                 if (eventArea.Price <= 0)
                 {
-                    throw new ArgumentException("You can't create event without prices in event areas!");
+                    throw new ValidationException("You can't create event without prices in event areas!");
                 }
             }
         }

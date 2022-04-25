@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TicketManagement.VenueManagerAPI.Infrastructure;
 using TicketManagement.VenueManagerAPI.Interfaces;
 using TicketManagement.VenueManagerAPI.Models.Seats;
 using TicketManagement.VenueManagerAPI.ModelsDTO;
@@ -15,6 +16,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
     [Authorize(Roles = "admin, venue manager")]
     [Route("[controller]")]
     [ApiController]
+    [ExceptionFilter]
     public class SeatsController : Controller
     {
         /// <summary>
@@ -44,7 +46,7 @@ namespace TicketManagement.VenueManagerAPI.Controllers
         /// <param name="pageNumber">Page number.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpGet("getseats")]
-        public async Task<IActionResult> GetSeats([FromBody] int pageNumber)
+        public async Task<IActionResult> GetSeats([FromQuery] int pageNumber)
         {
             var seats = await _service.GetAllAsync(pageNumber);
             return Ok(await _converter.ConvertSourceModelRangeToDestinationModelRange(seats));

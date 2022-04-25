@@ -9,6 +9,7 @@ using TicketManagement.DataAccess;
 using TicketManagement.DataAccess.Models;
 using TicketManagement.DataAccess.RepositoriesEf;
 using TicketManagement.VenueManagerAPI.Automapper;
+using TicketManagement.VenueManagerAPI.Infrastructure;
 using TicketManagement.VenueManagerAPI.Interfaces;
 using TicketManagement.VenueManagerAPI.ModelsDTO;
 using TicketManagement.VenueManagerAPI.Services;
@@ -45,7 +46,7 @@ namespace TicketManagement.IntegrationTests
         }
 
         [Test]
-        public void CreateSeat_WhenAreaIdDoesntExist_ShouldReturnDbUpdateException()
+        public void CreateSeat_WhenAreaIdDoesntExist_ShouldReturnValidationException()
         {
             // Arrange
             SeatDto seat = new ()
@@ -59,7 +60,7 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(seat);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
@@ -85,7 +86,7 @@ namespace TicketManagement.IntegrationTests
         }
 
         [Test]
-        public void UpdateSeat_WhenAreaIdDoesntExist_ShouldReturnDbUpdateException()
+        public void UpdateSeat_WhenAreaIdDoesntExist_ShouldReturnValidationException()
         {
             // Arrange
             SeatDto seat = new ()
@@ -100,7 +101,7 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(seat);
 
             // Assert
-            Assert.ThrowsAsync<DbUpdateException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]

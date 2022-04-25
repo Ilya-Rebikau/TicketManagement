@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TicketManagement.PurchaseFlowAPI.Infrastructure;
 using TicketManagement.PurchaseFlowAPI.Interfaces;
 using TicketManagement.PurchaseFlowAPI.Models;
 
@@ -13,6 +12,7 @@ namespace TicketManagement.PurchaseFlowAPI.Controllers
     /// </summary>
     [ApiController]
     [Authorize(Roles = "admin, user, event manager, venue manager")]
+    [ExceptionFilter]
     public class PurchaseController : ControllerBase
     {
         /// <summary>
@@ -49,12 +49,13 @@ namespace TicketManagement.PurchaseFlowAPI.Controllers
         /// Get ticket view model for buy method.
         /// </summary>
         /// <param name="token">Jwt token.</param>
-        /// <param name="dictionary">Dictionary with event seat id and price for it.</param>
+        /// <param name="eventSeatId">Event seat id.</param>
+        /// <param name="price">Price for seat.</param>
         /// <returns>Ticket view model.</returns>
         [HttpGet("events/buy")]
-        public async Task<IActionResult> GetTicketViewModelForBuy([FromHeader(Name = AuthorizationKey)] string token, [FromBody] Dictionary<int, double> dictionary)
+        public async Task<IActionResult> GetTicketViewModelForBuy([FromHeader(Name = AuthorizationKey)] string token, [FromQuery] int eventSeatId, [FromQuery] double price)
         {
-            return Ok(await _service.GetTicketViewModelForBuyAsync(dictionary.Keys.First(), dictionary.Values.First(), token));
+            return Ok(await _service.GetTicketViewModelForBuyAsync(eventSeatId, price, token));
         }
 
         /// <summary>

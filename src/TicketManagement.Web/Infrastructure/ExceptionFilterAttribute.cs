@@ -1,6 +1,9 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using TicketManagement.Web.Models;
 
 namespace TicketManagement.Web.Infrastructure
 {
@@ -9,17 +12,21 @@ namespace TicketManagement.Web.Infrastructure
     /// </summary>
     public class ExceptionFilterAttribute : Attribute, IExceptionFilter
     {
-        /// <summary>
-        /// Action when you get exception.
-        /// </summary>
-        /// <param name="context">ExceptionContext object.</param>
         public void OnException(ExceptionContext context)
         {
-            string exceptionMessage = context.Exception.Message;
-            context.Result = new ContentResult
+            var exceptionType = context.Exception.GetType();
+            var content = exceptionType.GetProperty("Content");
+            string exceptionMessage = content.GetValue(context.Exception).ToString();
+            var viewData = new ViewDataDictionary(new EmptyModelMetadataProvider(), context.ModelState)
             {
-                Content = exceptionMessage,
+                Model = new ErrorViewModel { Message = exceptionMessage },
             };
+            context.Result = new ViewResult
+            {
+                ViewName = "Error",
+                ViewData = viewData,
+            };
+
             context.ExceptionHandled = true;
         }
     }

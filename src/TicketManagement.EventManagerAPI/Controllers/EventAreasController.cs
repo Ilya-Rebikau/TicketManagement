@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TicketManagement.EventManagerAPI.Infrastructure;
 using TicketManagement.EventManagerAPI.Interfaces;
 using TicketManagement.EventManagerAPI.Models.EventAreas;
 using TicketManagement.EventManagerAPI.ModelsDTO;
@@ -15,6 +16,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
     [Authorize(Roles = "admin, event manager")]
     [Route("[controller]")]
     [ApiController]
+    [ExceptionFilter]
     public class EventAreasController : ControllerBase
     {
         /// <summary>
@@ -44,7 +46,7 @@ namespace TicketManagement.EventManagerAPI.Controllers
         /// <param name="pageNumber">Page number.</param>
         /// <returns>Task with IActionResult.</returns>
         [HttpGet("getareas")]
-        public async Task<IActionResult> GetEventAreaViewModels([FromBody] int pageNumber)
+        public async Task<IActionResult> GetEventAreaViewModels([FromQuery] int pageNumber)
         {
             var eventAreas = await _service.GetAllAsync(pageNumber);
             return Ok(await _converter.ConvertSourceModelRangeToDestinationModelRange(eventAreas));

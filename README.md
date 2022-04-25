@@ -13,6 +13,7 @@
 4. To run all needed projects and start working with them were created 2 batch files:
     - [DebugStart.bat](https://github.com/EPAM-Gomel-NET-Lab/IlyaRebikau/blob/develop/DebugStart.bat "Run app in debug mode") to run application in debug mode.
     - [ReleaseStart.bat](https://github.com/EPAM-Gomel-NET-Lab/IlyaRebikau/blob/develop/ReleaseStart.bat "Run app in release mode") to run application in release mode.
+5. If you want to enable redirects from ASP Web app to React app, then go to file [appsettings.json](https://github.com/EPAM-Gomel-NET-Lab/IlyaRebikau/blob/develop/src/TicketManagement.Web/appsettings.json "Config") and in section "FeatureManagement" set "Redirect" to "true", else set to "false".
 
 ### Credentials:
 There are 4 roles in this application, you can use them.

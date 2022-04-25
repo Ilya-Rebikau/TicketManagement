@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.VenueManagerAPI.Infrastructure;
 using TicketManagement.VenueManagerAPI.Interfaces;
 using TicketManagement.VenueManagerAPI.ModelsDTO;
 
@@ -56,6 +56,20 @@ namespace TicketManagement.VenueManagerAPI.Services
             _eventSeatRepository = eventSeatRepository;
         }
 
+        public async override Task<VenueDto> CreateAsync(VenueDto obj)
+        {
+            await CheckForUniqueName(obj);
+            CheckForStringFileds(obj);
+            return await base.CreateAsync(obj);
+        }
+
+        public async override Task<VenueDto> UpdateAsync(VenueDto obj)
+        {
+            await CheckForUniqueName(obj);
+            CheckForStringFileds(obj);
+            return await base.UpdateAsync(obj);
+        }
+
         public async override Task<VenueDto> DeleteAsync(VenueDto obj)
         {
             await CheckForTickets(obj);
@@ -63,11 +77,39 @@ namespace TicketManagement.VenueManagerAPI.Services
         }
 
         /// <summary>
+        /// Check that string fields aren't empty or white space.
+        /// </summary>
+        /// <param name="obj">Venue.</param>
+        /// <exception cref="ValidationException">Generates exception in case string fields are empty or white space.</exception>
+        private static void CheckForStringFileds(VenueDto obj)
+        {
+            if (string.IsNullOrWhiteSpace(obj.Description) || string.IsNullOrWhiteSpace(obj.Name) || string.IsNullOrWhiteSpace(obj.Address))
+            {
+                throw new ValidationException("Fields can't be empty or white space!");
+            }
+        }
+
+        /// <summary>
+        /// Check that venue name is unique.
+        /// </summary>
+        /// <param name="obj">Venue.</param>
+        /// <exception cref="ValidationException">Generates exception in case name is not unique.</exception>
+        private async Task CheckForUniqueName(VenueDto obj)
+        {
+            var venues = await Repository.GetAllAsync();
+            var venuesWithSuchName = venues.Where(venue => venue.Name == obj.Name && venue.Id != obj.Id);
+            if (venuesWithSuchName.Any())
+            {
+                throw new ValidationException("One of venues already has such name!");
+            }
+        }
+
+        /// <summary>
         /// Checking that there are no tickets in this venue.
         /// </summary>
         /// <param name="obj">Deleting venue.</param>
         /// <returns>Task.</returns>
-        /// <exception cref="InvalidOperationException">Generates exception in case there are tickets in this venue.</exception>
+        /// <exception cref="ValidationException">Generates exception in case there are tickets in this venue.</exception>
         private async Task CheckForTickets(VenueDto obj)
         {
             var occupiedEventSeats = new List<EventSeat>();
@@ -91,7 +133,7 @@ namespace TicketManagement.VenueManagerAPI.Services
 
             if (occupiedEventSeats.Any())
             {
-                throw new InvalidOperationException("Someone bought tickets in this venue already!");
+                throw new ValidationException("Someone bought tickets in this venue already!");
             }
         }
     }

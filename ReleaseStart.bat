@@ -9,5 +9,7 @@ start "Run TicketManagement.UserAPI" /D"%~dp0src\TicketManagement.UserAPI" dotne
 start "Run TicketManagement.EventManagerAPI" /D"%~dp0src\TicketManagement.EventManagerAPI" dotnet run --launch-profile "TicketManagement.EventManagerAPI.Release"
 start "Run TicketManagement.VenueManagerAPI" /D"%~dp0src\TicketManagement.VenueManagerAPI" dotnet run --launch-profile "TicketManagement.VenueManagerAPI.Release"
 start "Run TicketManagement.PurchaseFlowAPI" /D"%~dp0src\TicketManagement.PurchaseFlowAPI" dotnet run --launch-profile "TicketManagement.PurchaseFlowAPI.Release"
+cd "src\reactclient"
+start "Run ReactApp" call npm start pause
 TIMEOUT 5
 explorer "https://localhost:5000"

@@ -18,6 +18,7 @@ namespace TicketManagement.Web.Models.EventSeats
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "EventAreaId")]
+        [Range(1, int.MaxValue)]
         public int EventAreaId { get; set; }
 
         /// <summary>
@@ -25,6 +26,7 @@ namespace TicketManagement.Web.Models.EventSeats
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "Row")]
+        [Range(0, int.MaxValue)]
         public int Row { get; set; }
 
         /// <summary>
@@ -32,6 +34,7 @@ namespace TicketManagement.Web.Models.EventSeats
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "Number")]
+        [Range(0, int.MaxValue)]
         public int Number { get; set; }
 
         /// <summary>

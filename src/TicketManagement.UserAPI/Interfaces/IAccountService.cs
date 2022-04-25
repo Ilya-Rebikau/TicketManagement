@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using TicketManagement.UserAPI.Models;
 using TicketManagement.UserAPI.Models.Account;
 
 namespace TicketManagement.UserAPI.Interfaces
@@ -9,6 +10,13 @@ namespace TicketManagement.UserAPI.Interfaces
     /// </summary>
     public interface IAccountService
     {
+        /// <summary>
+        /// Get user by jwt token.
+        /// </summary>
+        /// <param name="jwtToken">Jwt token.</param>
+        /// <returns>User.</returns>
+        Task<User> GetUser(string jwtToken);
+
         /// <summary>
         /// Add balance to account.
         /// </summary>

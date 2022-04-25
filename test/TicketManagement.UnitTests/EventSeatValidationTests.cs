@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using NUnit.Framework;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.EventManagerAPI.Infrastructure;
 using TicketManagement.EventManagerAPI.Interfaces;
 using TicketManagement.EventManagerAPI.ModelsDTO;
 using TicketManagement.EventManagerAPI.Services;
@@ -31,9 +33,20 @@ namespace TicketManagement.UnitTests
                 .AddInMemoryCollection(inMemorySettings)
                 .Build();
             eventSeatRepositoryMock.Setup(rep => rep.GetAllAsync());
+            var eventAreaRepositoryMock = new Mock<IRepository<EventArea>>();
             var eventSeats = await eventSeatRepositoryMock.Object.GetAllAsync();
             eventSeatConverterMock.Setup(rep => rep.ConvertSourceModelRangeToDestinationModelRange(eventSeats)).ReturnsAsync(GetTestEventSeatDtos());
-            _service = new EventSeatService(eventSeatRepositoryMock.Object, eventSeatConverterMock.Object, configuration);
+            eventSeatRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventSeat());
+            _service = new EventSeatService(eventSeatRepositoryMock.Object, eventSeatConverterMock.Object, configuration, eventAreaRepositoryMock.Object);
+        }
+
+        private static IQueryable<EventSeat> GetTestEventSeat()
+        {
+            IEnumerable<EventSeat> seats = new List<EventSeat>
+            {
+                new EventSeat { Id = 1, EventAreaId = 1, Row = 1, Number = 1 },
+            };
+            return seats.AsQueryable();
         }
 
         private static IEnumerable<EventSeatDto> GetTestEventSeatDtos()
@@ -46,7 +59,7 @@ namespace TicketManagement.UnitTests
         }
 
         [Test]
-        public void DeleteEventSeat_WhenItIsntFree_ShouldReturnInvalidOperationException()
+        public void DeleteEventSeat_WhenItIsntFree_ShouldReturnValidationException()
         {
             // Arrange
             EventSeatDto eventSeat = new ()
@@ -58,11 +71,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.DeleteAsync(eventSeat);
 
             // Assert
-            Assert.ThrowsAsync<InvalidOperationException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void CreateEventSeat_WhenRowAndNumberArentPositive_ShouldReturnArgumentException()
+        public void CreateEventSeat_WhenRowAndNumberArentPositive_ShouldReturnValidationException()
         {
             // Arrange
             EventSeatDto eventSeat = new ()
@@ -75,11 +88,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventSeat);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void UpdateEventSeat_WhenRowAndNumberArentPositive_ShouldReturnArgumentException()
+        public void UpdateEventSeat_WhenRowAndNumberArentPositive_ShouldReturnValidationException()
         {
             // Arrange
             EventSeatDto eventSeat = new ()
@@ -92,11 +105,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventSeat);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void CreateEventSeat_WhenRowAndNumberArentUnique_ShouldReturnArgumentException()
+        public void CreateEventSeat_WhenRowAndNumberArentUnique_ShouldReturnValidationException()
         {
             // Arrange
             EventSeatDto eventSeat = new ()
@@ -111,11 +124,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventSeat);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void UpdateEventSeat_WhenRowAndNumberArentUnique_ShouldReturnArgumentException()
+        public void UpdateEventSeat_WhenRowAndNumberArentUnique_ShouldReturnValidationException()
         {
             // Arrange
             EventSeatDto eventSeat = new ()
@@ -130,7 +143,7 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventSeat);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
     }
 }

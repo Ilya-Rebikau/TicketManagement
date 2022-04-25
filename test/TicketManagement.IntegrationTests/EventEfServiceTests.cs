@@ -12,6 +12,7 @@ using TicketManagement.DataAccess;
 using TicketManagement.DataAccess.Models;
 using TicketManagement.DataAccess.RepositoriesEf;
 using TicketManagement.EventManagerAPI.Automapper;
+using TicketManagement.EventManagerAPI.Infrastructure;
 using TicketManagement.EventManagerAPI.Interfaces;
 using TicketManagement.EventManagerAPI.ModelsDTO;
 using TicketManagement.EventManagerAPI.Services;
@@ -62,7 +63,7 @@ namespace TicketManagement.IntegrationTests
         }
 
         [Test]
-        public void CreateEvent_WhenNameIsNull_ShouldReturnSqlException()
+        public void CreateEvent_WhenNameIsNull_ShouldReturnValidationException()
         {
             // Arrange
             EventDto eventModel = new ()
@@ -79,11 +80,11 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventModel);
 
             // Assert
-            Assert.ThrowsAsync<SqlException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void CreateEvent_WhenDescriptionIsNull_ShouldReturnSqlException()
+        public void CreateEvent_WhenDescriptionIsNull_ShouldReturnValidationException()
         {
             // Arrange
             EventDto eventModel = new ()
@@ -100,11 +101,11 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventModel);
 
             // Assert
-            Assert.ThrowsAsync<SqlException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void CreateEvent_WhenLayoudIdDoesntExist_ShouldReturnSqlException()
+        public void CreateEvent_WhenLayoudIdDoesntExist_ShouldReturnValidationException()
         {
             // Arrange
             EventDto eventModel = new ()
@@ -120,7 +121,7 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(eventModel);
 
             // Assert
-            Assert.ThrowsAsync<SqlException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
@@ -149,7 +150,7 @@ namespace TicketManagement.IntegrationTests
         }
 
         [Test]
-        public void UpdateEvent_WhenNameIsNull_ShouldReturnSqlException()
+        public void UpdateEvent_WhenNameIsNull_ShouldReturnValidationException()
         {
             // Arrange
             EventDto eventModel = new ()
@@ -167,11 +168,11 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventModel);
 
             // Assert
-            Assert.ThrowsAsync<SqlException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void UpdateEvent_WhenDescriptionIsNull_ShouldReturnSqlException()
+        public void UpdateEvent_WhenDescriptionIsNull_ShouldReturnValidationException()
         {
             // Arrange
             EventDto eventModel = new ()
@@ -189,11 +190,11 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventModel);
 
             // Assert
-            Assert.ThrowsAsync<SqlException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void UpdateEvent_WhenLayoudIdDoesntExist_ShouldReturnSqlException()
+        public void UpdateEvent_WhenLayoudIdDoesntExist_ShouldReturnValidationException()
         {
             // Arrange
             EventDto eventModel = new ()
@@ -210,7 +211,7 @@ namespace TicketManagement.IntegrationTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(eventModel);
 
             // Assert
-            Assert.ThrowsAsync<SqlException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TicketManagement.UserAPI.Infrastructure;
 using TicketManagement.UserAPI.Interfaces;
 using TicketManagement.UserAPI.Models;
 using TicketManagement.UserAPI.Models.Account;
@@ -13,6 +14,7 @@ namespace TicketManagement.UserAPI.Controllers
     /// </summary>
     [Route("[controller]")]
     [ApiController]
+    [ExceptionFilter]
     public class AccountController : ControllerBase
     {
         /// <summary>
@@ -168,6 +170,18 @@ namespace TicketManagement.UserAPI.Controllers
         public async Task<IActionResult> ChangeBalanceForUser([FromHeader(Name = AuthorizationKey)] string token, [FromBody] double price)
         {
             return Ok(await _service.ChangeBalanceForUser(token, price));
+        }
+
+        /// <summary>
+        /// Get user by jwt token.
+        /// </summary>
+        /// <param name="token">Jwt token.</param>
+        /// <returns>User.</returns>
+        [Authorize(Roles = "admin, user, event manager, venue manager")]
+        [HttpGet("getuser")]
+        public async Task<IActionResult> GetUser([FromHeader(Name = AuthorizationKey)] string token)
+        {
+            return Ok(await _service.GetUser(token));
         }
     }
 }

@@ -10,7 +10,7 @@ namespace TicketManagement.Web.Extensions
         /// <summary>
         /// Cookies name.
         /// </summary>
-        private const string CookiesKey = "Cookies";
+        private const string CookiesKey = "JwtTokenCookie";
 
         /// <summary>
         /// Get jwt token from http context.
@@ -32,9 +32,18 @@ namespace TicketManagement.Web.Extensions
         {
             httpContext.Response.Cookies.Append(CookiesKey, token, new CookieOptions
             {
-                HttpOnly = true,
-                SameSite = SameSiteMode.Strict,
+                HttpOnly = false,
+                SameSite = SameSiteMode.Lax,
             });
+        }
+
+        /// <summary>
+        /// Delete jwt token from cookies.
+        /// </summary>
+        /// <param name="httpContext">HttpContext object.</param>
+        public static void DeleteCookies(this HttpContext httpContext)
+        {
+            httpContext.Response.Cookies.Delete(CookiesKey);
         }
     }
 }

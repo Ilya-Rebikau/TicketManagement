@@ -7,6 +7,7 @@ using Moq;
 using NUnit.Framework;
 using TicketManagement.DataAccess.Interfaces;
 using TicketManagement.DataAccess.Models;
+using TicketManagement.VenueManagerAPI.Infrastructure;
 using TicketManagement.VenueManagerAPI.Interfaces;
 using TicketManagement.VenueManagerAPI.ModelsDTO;
 using TicketManagement.VenueManagerAPI.Services;
@@ -22,7 +23,7 @@ namespace TicketManagement.UnitTests
         {
             var layoutRepositoryMock = new Mock<IRepository<Layout>>();
             var layoutConverterMock = new Mock<IConverter<Layout, LayoutDto>>();
-            layoutRepositoryMock.Setup(rep => rep.GetAllAsync());
+            layoutRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestLayouts());
             var layouts = await layoutRepositoryMock.Object.GetAllAsync();
             layoutConverterMock.Setup(rep => rep.ConvertSourceModelRangeToDestinationModelRange(layouts)).ReturnsAsync(GetTestLayoutDtos());
             var eventRepositoryMock = new Mock<IRepository<Event>>();
@@ -43,9 +44,19 @@ namespace TicketManagement.UnitTests
                 eventAreaRepositoryMock.Object, eventSeatRepositoryMock.Object, configuration);
         }
 
+        private static IQueryable<Layout> GetTestLayouts()
+        {
+            var layouts = new List<Layout>
+            {
+                new Layout { Id = 1, VenueId = 1, Name = "First layout", Description = "First layout description" },
+                new Layout { Id = 2, VenueId = 1, Name = "Second layout", Description = "Second layout description" },
+            };
+            return layouts.AsQueryable();
+        }
+
         private static IEnumerable<LayoutDto> GetTestLayoutDtos()
         {
-            IEnumerable<LayoutDto> layouts = new List<LayoutDto>
+            var layouts = new List<LayoutDto>
             {
                 new LayoutDto { Id = 1, VenueId = 1, Name = "First layout", Description = "First layout description" },
                 new LayoutDto { Id = 2, VenueId = 1, Name = "Second layout", Description = "Second layout description" },
@@ -55,7 +66,7 @@ namespace TicketManagement.UnitTests
 
         private static IQueryable<Event> GetTestEvents()
         {
-            IEnumerable<Event> events = new List<Event>
+            var events = new List<Event>
             {
                 new Event { Id = 1, LayoutId = 1 },
             };
@@ -64,7 +75,7 @@ namespace TicketManagement.UnitTests
 
         private static IQueryable<EventArea> GetTestEventAreas()
         {
-            IEnumerable<EventArea> eventAreas = new List<EventArea>
+            var eventAreas = new List<EventArea>
             {
                 new EventArea { Id = 1, EventId = 1 },
             };
@@ -73,7 +84,7 @@ namespace TicketManagement.UnitTests
 
         private static IQueryable<EventSeat> GetTestEventSeats()
         {
-            IEnumerable<EventSeat> seats = new List<EventSeat>
+            var seats = new List<EventSeat>
             {
                 new EventSeat { Id = 1, EventAreaId = 1, State = 1 },
             };
@@ -81,7 +92,7 @@ namespace TicketManagement.UnitTests
         }
 
         [Test]
-        public void DeleteLayout_WhenThereAreTicketsInIt_ShouldReturnInvalidOperationException()
+        public void DeleteLayout_WhenThereAreTicketsInIt_ShouldReturnValidationException()
         {
             // Arrange
             LayoutDto layout = new ()
@@ -93,11 +104,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.DeleteAsync(layout);
 
             // Assert
-            Assert.ThrowsAsync<InvalidOperationException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void CreateLayout_WhenNameIsntUnique_ShouldReturnArgumentException()
+        public void CreateLayout_WhenNameIsntUnique_ShouldReturnValidationException()
         {
             // Arrange
             LayoutDto layout = new ()
@@ -110,11 +121,11 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.CreateAsync(layout);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
 
         [Test]
-        public void UpdateLayout_WhenNameIsntUnique_ShouldReturnArgumentException()
+        public void UpdateLayout_WhenNameIsntUnique_ShouldReturnValidationException()
         {
             // Arrange
             LayoutDto layout = new ()
@@ -128,7 +139,7 @@ namespace TicketManagement.UnitTests
             AsyncTestDelegate testAction = async () => await _service.UpdateAsync(layout);
 
             // Assert
-            Assert.ThrowsAsync<ArgumentException>(testAction);
+            Assert.ThrowsAsync<ValidationException>(testAction);
         }
     }
 }

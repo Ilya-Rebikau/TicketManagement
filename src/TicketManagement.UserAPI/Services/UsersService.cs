@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using TicketManagement.UserAPI.Infrastructure;
 using TicketManagement.UserAPI.Interfaces;
 using TicketManagement.UserAPI.Models;
 using TicketManagement.UserAPI.Models.Users;
@@ -75,7 +76,7 @@ namespace TicketManagement.UserAPI.Services
             var userRoles = await _userManager.GetRolesAsync(user);
             if (userRoles.Contains("admin"))
             {
-                throw new InvalidOperationException("You can't delete admin account.");
+                throw new ValidationException("You can't delete admin account.");
             }
 
             await _userManager.DeleteAsync(user);
@@ -111,6 +112,7 @@ namespace TicketManagement.UserAPI.Services
         public Task<IEnumerable<User>> GetUsers(int pageNumber)
         {
             var users = _userManager.Users;
+            CheckForPageNumber(pageNumber);
             return Task.FromResult(users.OrderBy(u => u.Id)
                 .Skip((pageNumber - 1) * _countOnPage).Take(_countOnPage).AsEnumerable());
         }
@@ -158,7 +160,7 @@ namespace TicketManagement.UserAPI.Services
             var user = await _userManager.FindByIdAsync(model.Id);
             if (user is null)
             {
-                throw new InvalidOperationException("User not found");
+                throw new ValidationException("User not found");
             }
 
             var passwordValidator = httpContext.RequestServices.GetService(typeof(IPasswordValidator<User>)) as IPasswordValidator<User>;
@@ -171,6 +173,19 @@ namespace TicketManagement.UserAPI.Services
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Check that page number is positive.
+        /// </summary>
+        /// <param name="pageNumber">Page number.</param>
+        /// <exception cref="ValidationException">Generates exception in case page number isn't positive.</exception>
+        private static void CheckForPageNumber(int pageNumber)
+        {
+            if (pageNumber <= 0)
+            {
+                throw new ValidationException("Page number must be positive!");
+            }
         }
     }
 }

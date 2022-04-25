@@ -35,6 +35,7 @@ namespace TicketManagement.Web.Models.Events
         /// </summary>
         [Required(ErrorMessage = "FieldRequired")]
         [Display(Name = "LayoutId")]
+        [Range(1, int.MaxValue)]
         public int LayoutId { get; set; }
 
         /// <summary>
@@ -56,6 +57,7 @@ namespace TicketManagement.Web.Models.Events
         /// </summary>
         [Url(ErrorMessage = "WrongUrl")]
         [Display(Name = "ImageUrl")]
+        [Required(ErrorMessage = "FieldRequired")]
         public string ImageUrl { get; set; }
 
         /// <summary>

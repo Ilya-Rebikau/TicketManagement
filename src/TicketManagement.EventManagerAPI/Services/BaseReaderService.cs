@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TicketManagement.DataAccess.Interfaces;
+using TicketManagement.EventManagerAPI.Infrastructure;
 using TicketManagement.EventManagerAPI.Interfaces;
 
 namespace TicketManagement.EventManagerAPI.Services
@@ -43,8 +45,29 @@ namespace TicketManagement.EventManagerAPI.Services
 
         public virtual async Task<TDto> GetByIdAsync(int id, string json)
         {
+            CheckForId(id, json);
             var model = await Reader.GetByIdAsync(id, json);
             return await Converter.ConvertSourceToDestination(model);
+        }
+
+        /// <summary>
+        /// Check that id is positive.
+        /// </summary>
+        /// <param name="id">Id.</param>
+        /// <param name="json">Content of json file.</param>
+        /// <exception cref="ValidationException">Generates exception in case id isn't positive.</exception>
+        private async void CheckForId(int id, string json)
+        {
+            var allModels = await Reader.GetAllAsync(json);
+            if (id <= 0)
+            {
+                throw new ValidationException("Id must be positive!");
+            }
+
+            if (!allModels.Any(m => m.Id == id))
+            {
+                throw new ValidationException("There is no such id!");
+            }
         }
     }
 }
