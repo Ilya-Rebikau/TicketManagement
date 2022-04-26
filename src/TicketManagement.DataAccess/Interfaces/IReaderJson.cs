@@ -15,7 +15,7 @@ namespace TicketManagement.DataAccess.Interfaces
         /// </summary>
         /// <param name="json">Content of json file.</param>
         /// <returns>All objects.</returns>
-        Task<IQueryable<T>> GetAllAsync(string json);
+        IQueryable<T> GetAll(string json);
 
         /// <summary>
         /// Get object from json file by his id.
@@ -23,6 +23,6 @@ namespace TicketManagement.DataAccess.Interfaces
         /// <param name="id">Id of object.</param>
         /// <param name="json">Content of json file.</param>
         /// <returns>Object.</returns>
-        Task<T> GetByIdAsync(int id, string json);
+        T GetById(int id, string json);
     }
 }

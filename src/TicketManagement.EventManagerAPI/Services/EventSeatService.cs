@@ -40,7 +40,7 @@ namespace TicketManagement.EventManagerAPI.Services
         public async override Task<EventSeatDto> CreateAsync(EventSeatDto obj)
         {
             CheckForEventAreaId(obj);
-            await CheckForUniqueRowAndNumber(obj);
+            CheckForUniqueRowAndNumber(obj);
             CheckForPositiveRowAndNumber(obj);
             return await base.CreateAsync(obj);
         }
@@ -48,7 +48,7 @@ namespace TicketManagement.EventManagerAPI.Services
         public async override Task<EventSeatDto> UpdateAsync(EventSeatDto obj)
         {
             CheckForEventAreaId(obj);
-            await CheckForUniqueRowAndNumber(obj);
+            CheckForUniqueRowAndNumber(obj);
             CheckForPositiveRowAndNumber(obj);
             return await base.UpdateAsync(obj);
         }
@@ -61,8 +61,8 @@ namespace TicketManagement.EventManagerAPI.Services
 
         public async Task<IEnumerable<EventSeatDto>> GetFreeEventSeatsByEvent(int eventId)
         {
-            var eventAreas = await _eventAreaRepository.GetAllAsync();
-            var eventSeats = await Repository.GetAllAsync();
+            var eventAreas = _eventAreaRepository.GetAll();
+            var eventSeats = Repository.GetAll();
             var eventSeatsInAreas = eventAreas.Where(ea => ea.EventId == eventId).SelectMany(eventArea => eventSeats
             .Where(eventSeat => eventSeat.EventAreaId == eventArea.Id && eventSeat.State == (int)PlaceStatus.Free)).ToList();
             return await Converter.ConvertSourceModelRangeToDestinationModelRange(eventSeatsInAreas);
@@ -112,9 +112,9 @@ namespace TicketManagement.EventManagerAPI.Services
         /// </summary>
         /// <param name="obj">Adding or updating seat.</param>
         /// <exception cref="ValidationException">Generates exception in case row and number are not unique.</exception>
-        private async Task CheckForUniqueRowAndNumber(EventSeatDto obj)
+        private void CheckForUniqueRowAndNumber(EventSeatDto obj)
         {
-            var eventSeats = await Repository.GetAllAsync();
+            var eventSeats = Repository.GetAll();
             var eventSeatsInArea = eventSeats.Where(seat => seat.EventAreaId == obj.EventAreaId && seat.Row == obj.Row && seat.Number == obj.Number && seat.Id != obj.Id);
             if (eventSeatsInArea.Any())
             {

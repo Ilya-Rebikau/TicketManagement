@@ -31,9 +31,9 @@ namespace TicketManagement.DataAccess.RepositoriesEf
             return await DbContext.Set<T>().AsNoTracking().SingleOrDefaultAsync(e => e.Id == id);
         }
 
-        public virtual async Task<IQueryable<T>> GetAllAsync()
+        public virtual IQueryable<T> GetAll()
         {
-            return await Task.Run(() => DbContext.Set<T>().AsNoTracking());
+            return DbContext.Set<T>().AsNoTracking();
         }
 
         public virtual async Task<T> CreateAsync(T obj)

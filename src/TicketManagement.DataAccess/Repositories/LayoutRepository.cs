@@ -12,17 +12,17 @@ namespace TicketManagement.DataAccess.Repositories
     /// </summary>
     internal class LayoutRepository : IRepository<Layout>
     {
-        public async Task<IQueryable<Layout>> GetAllAsync()
+        public IQueryable<Layout> GetAll()
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            await connection.OpenAsync();
+            connection.Open();
             IList<Layout> layouts = new List<Layout>();
             string sql = "Select Id, VenueId, Description, Name from layout";
             SqlCommand cmd = new SqlCommand(sql, connection);
-            SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            SqlDataReader reader = cmd.ExecuteReader();
             if (reader.HasRows)
             {
-                while (await reader.ReadAsync())
+                while (reader.Read())
                 {
                     layouts.Add(new Layout
                     {

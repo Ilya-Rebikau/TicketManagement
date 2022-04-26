@@ -39,7 +39,7 @@ namespace TicketManagement.PurchaseFlowAPI.Services
 
         public async virtual Task<IEnumerable<TDto>> GetAllAsync()
         {
-            var models = await Repository.GetAllAsync();
+            var models = Repository.GetAll();
             return await Converter.ConvertSourceModelRangeToDestinationModelRange(models);
         }
 

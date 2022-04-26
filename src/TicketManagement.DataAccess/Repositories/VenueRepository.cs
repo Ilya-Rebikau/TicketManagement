@@ -12,17 +12,17 @@ namespace TicketManagement.DataAccess.Repositories
     /// </summary>
     internal class VenueRepository : IRepository<Venue>
     {
-        public async Task<IQueryable<Venue>> GetAllAsync()
+        public IQueryable<Venue> GetAll()
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            await connection.OpenAsync();
-            IList<Venue> venues = new List<Venue>();
+            connection.Open();
+            var venues = new List<Venue>();
             string sql = "Select Id, Description, Address, Phone, Name from venue";
             SqlCommand cmd = new SqlCommand(sql, connection);
-            SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            SqlDataReader reader = cmd.ExecuteReader();
             if (reader.HasRows)
             {
-                while (await reader.ReadAsync())
+                while (reader.Read())
                 {
                     venues.Add(new Venue
                     {

@@ -19,12 +19,12 @@ namespace TicketManagement.UnitTests
         private IService<LayoutDto> _service;
 
         [SetUp]
-        public async Task SetupAsync()
+        public void Setup()
         {
             var layoutRepositoryMock = new Mock<IRepository<Layout>>();
             var layoutConverterMock = new Mock<IConverter<Layout, LayoutDto>>();
-            layoutRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestLayouts());
-            var layouts = await layoutRepositoryMock.Object.GetAllAsync();
+            layoutRepositoryMock.Setup(rep => rep.GetAll()).Returns(GetTestLayouts());
+            var layouts = layoutRepositoryMock.Object.GetAll();
             layoutConverterMock.Setup(rep => rep.ConvertSourceModelRangeToDestinationModelRange(layouts)).ReturnsAsync(GetTestLayoutDtos());
             var eventRepositoryMock = new Mock<IRepository<Event>>();
             var eventAreaRepositoryMock = new Mock<IRepository<EventArea>>();
@@ -37,9 +37,9 @@ namespace TicketManagement.UnitTests
             IConfiguration configuration = new ConfigurationBuilder()
                 .AddInMemoryCollection(inMemorySettings)
                 .Build();
-            eventRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEvents());
-            eventAreaRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventAreas());
-            eventSeatRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventSeats());
+            eventRepositoryMock.Setup(rep => rep.GetAll()).Returns(GetTestEvents());
+            eventAreaRepositoryMock.Setup(rep => rep.GetAll()).Returns(GetTestEventAreas());
+            eventSeatRepositoryMock.Setup(rep => rep.GetAll()).Returns(GetTestEventSeats());
             _service = new LayoutService(layoutRepositoryMock.Object, layoutConverterMock.Object, eventRepositoryMock.Object,
                 eventAreaRepositoryMock.Object, eventSeatRepositoryMock.Object, configuration);
         }

@@ -12,17 +12,17 @@ namespace TicketManagement.DataAccess.Repositories
     /// </summary>
     internal class AreaRepository : IRepository<Area>
     {
-        public async Task<IQueryable<Area>> GetAllAsync()
+        public IQueryable<Area> GetAll()
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            await connection.OpenAsync();
+            connection.Open();
             IList<Area> areas = new List<Area>();
             string sql = "Select Id, LayoutId, Description, CoordX, CoordY, BasePrice from areas";
             SqlCommand cmd = new SqlCommand(sql, connection);
-            SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            SqlDataReader reader = cmd.ExecuteReader();
             if (reader.HasRows)
             {
-                while (await reader.ReadAsync())
+                while (reader.Read())
                 {
                     areas.Add(new Area
                     {
@@ -36,7 +36,7 @@ namespace TicketManagement.DataAccess.Repositories
                 }
             }
 
-            await reader.CloseAsync();
+            reader.Close();
             return areas.AsQueryable();
         }
 

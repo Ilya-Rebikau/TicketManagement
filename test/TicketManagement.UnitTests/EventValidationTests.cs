@@ -20,7 +20,7 @@ namespace TicketManagement.UnitTests
         private IService<EventDto> _service;
 
         [SetUp]
-        public async Task SetupAsync()
+        public void Setup()
         {
             var eventRepositoryMock = new Mock<IRepository<Event>>();
             var eventSeatRepositoryMock = new Mock<IRepository<EventSeat>>();
@@ -34,10 +34,10 @@ namespace TicketManagement.UnitTests
             IConfiguration configuration = new ConfigurationBuilder()
                 .AddInMemoryCollection(inMemorySettings)
                 .Build();
-            eventRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEvents());
-            eventSeatRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventSeats());
-            eventAreaRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventAreas());
-            var events = await eventRepositoryMock.Object.GetAllAsync();
+            eventRepositoryMock.Setup(rep => rep.GetAll()).Returns(GetTestEvents());
+            eventSeatRepositoryMock.Setup(rep => rep.GetAll()).Returns(GetTestEventSeats());
+            eventAreaRepositoryMock.Setup(rep => rep.GetAll()).Returns(GetTestEventAreas());
+            var events = eventRepositoryMock.Object.GetAll();
             eventConverterMock.Setup(rep => rep.ConvertSourceModelRangeToDestinationModelRange(events)).ReturnsAsync(GetTestEventDtos());
             _service = new EventCrudService(eventRepositoryMock.Object, eventConverterMock.Object, eventAreaRepositoryMock.Object,
                 eventSeatRepositoryMock.Object, configuration);

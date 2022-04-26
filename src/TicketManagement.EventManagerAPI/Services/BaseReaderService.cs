@@ -39,14 +39,14 @@ namespace TicketManagement.EventManagerAPI.Services
 
         public virtual async Task<IEnumerable<TDto>> GetAllAsync(string json)
         {
-            var models = await Reader.GetAllAsync(json);
+            var models = Reader.GetAll(json);
             return await Converter.ConvertSourceModelRangeToDestinationModelRange(models);
         }
 
         public virtual async Task<TDto> GetByIdAsync(int id, string json)
         {
             CheckForId(id, json);
-            var model = await Reader.GetByIdAsync(id, json);
+            var model = Reader.GetById(id, json);
             return await Converter.ConvertSourceToDestination(model);
         }
 
@@ -56,9 +56,9 @@ namespace TicketManagement.EventManagerAPI.Services
         /// <param name="id">Id.</param>
         /// <param name="json">Content of json file.</param>
         /// <exception cref="ValidationException">Generates exception in case id isn't positive.</exception>
-        private async void CheckForId(int id, string json)
+        private void CheckForId(int id, string json)
         {
-            var allModels = await Reader.GetAllAsync(json);
+            var allModels = Reader.GetAll(json);
             if (id <= 0)
             {
                 throw new ValidationException("Id must be positive!");
