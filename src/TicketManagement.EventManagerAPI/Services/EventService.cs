@@ -86,9 +86,9 @@ namespace TicketManagement.EventManagerAPI.
         public async Task<EventModel> GetEventViewModelForDetailsAsync(EventDto @event, string token)
         {
             @event = await _usersClient.ConvertTimeFromUtcToUsers(token, @event);
-            var eventAreas = await EventAreaRepository.GetAllAsync();
+            var eventAreas = EventAreaRepository.GetAll();
             var eventAreasForEvent = eventAreas.Where(x => x.EventId == @event.Id).ToList();
-            var eventSeats = await EventSeatRepository.GetAllAsync();
+            var eventSeats = EventSeatRepository.GetAll();
             var eventAreaViewModels = new List<EventAreaModelInEvent>();
             foreach (var eventArea in eventAreasForEvent)
             {

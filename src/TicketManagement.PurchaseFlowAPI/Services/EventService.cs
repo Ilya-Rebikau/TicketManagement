@@ -45,10 +45,10 @@ namespace TicketManagement.PurchaseFlowAPI.Services
             CheckForStringFileds(obj);
             CheckForLayoutId(obj);
             ConvertTimeToUtc(obj);
-            await CheckForPrices(obj);
+            CheckForPrices(obj);
             CheckEventForPastTime(obj);
             CheckForTimeBorders(obj);
-            await CheckForSameLayoutInOneTime(obj);
+            CheckForSameLayoutInOneTime(obj);
             return await base.CreateAsync(obj);
         }
 
@@ -57,16 +57,16 @@ namespace TicketManagement.PurchaseFlowAPI.Services
             CheckForStringFileds(obj);
             CheckForLayoutId(obj);
             ConvertTimeToUtc(obj);
-            await CheckForPrices(obj);
+            CheckForPrices(obj);
             CheckEventForPastTime(obj);
             CheckForTimeBorders(obj);
-            await CheckForSameLayoutInOneTime(obj);
+            CheckForSameLayoutInOneTime(obj);
             return await base.UpdateAsync(obj);
         }
 
         public async override Task<EventDto> DeleteAsync(EventDto obj)
         {
-            await CheckForTickets(obj);
+            CheckForTickets(obj);
             return await base.DeleteAsync(obj);
         }
 
@@ -136,16 +136,15 @@ namespace TicketManagement.PurchaseFlowAPI.Services
         /// Checking that there are no tickets in this event.
         /// </summary>
         /// <param name="obj">Deleting event.</param>
-        /// <returns>Task.</returns>
         /// <exception cref="ValidationException">Generates exception in case there are tickets in this event.</exception>
-        private async Task CheckForTickets(EventDto obj)
+        private void CheckForTickets(EventDto obj)
         {
             var eventSeats = new List<EventSeat>();
-            var eventAreas = await _eventAreaRepository.GetAllAsync();
+            var eventAreas = _eventAreaRepository.GetAll();
             var eventAreasInEvent = eventAreas.Where(a => a.EventId == obj.Id).ToList();
             foreach (var eventArea in eventAreasInEvent)
             {
-                var allEventSeats = await _eventSeatRepository.GetAllAsync();
+                var allEventSeats = _eventSeatRepository.GetAll();
                 eventSeats = allEventSeats.Where(s => s.EventAreaId == eventArea.Id).Where(s => s.State == (int)PlaceStatus.Occupied).ToList();
             }
 
@@ -160,9 +159,9 @@ namespace TicketManagement.PurchaseFlowAPI.Services
         /// </summary>
         /// <param name="obj">Adding or updating event.</param>
         /// <exception cref="ValidationException">Generates exception in case event in this layout and time already exists.</exception>
-        private async Task CheckForSameLayoutInOneTime(EventDto obj)
+        private void CheckForSameLayoutInOneTime(EventDto obj)
         {
-            var events = await Repository.GetAllAsync();
+            var events = Repository.GetAll();
             var eventsInLayout = events.Where(ev => ev.LayoutId == obj.LayoutId && obj.TimeStart <= ev.TimeStart && obj.TimeEnd >= ev.TimeEnd && ev.Id != obj.Id);
             if (eventsInLayout.Any())
             {
@@ -174,11 +173,10 @@ namespace TicketManagement.PurchaseFlowAPI.Services
         /// Checking that all event areas have price for this event.
         /// </summary>
         /// <param name="obj">Adding or updating event.</param>
-        /// <returns>Task.</returns>
         /// <exception cref="ValidationException">Generates exception in case event areas haven't price.</exception>
-        private async Task CheckForPrices(EventDto obj)
+        private void CheckForPrices(EventDto obj)
         {
-            var eventAreas = await _eventAreaRepository.GetAllAsync();
+            var eventAreas = _eventAreaRepository.GetAll();
             var eventAreasInEvent = eventAreas.Where(a => a.EventId == obj.Id);
             foreach (var eventArea in eventAreasInEvent)
             {

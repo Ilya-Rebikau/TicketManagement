@@ -58,21 +58,21 @@ namespace TicketManagement.VenueManagerAPI.Services
 
         public async override Task<VenueDto> CreateAsync(VenueDto obj)
         {
-            await CheckForUniqueName(obj);
+            CheckForUniqueName(obj);
             CheckForStringFileds(obj);
             return await base.CreateAsync(obj);
         }
 
         public async override Task<VenueDto> UpdateAsync(VenueDto obj)
         {
-            await CheckForUniqueName(obj);
+            CheckForUniqueName(obj);
             CheckForStringFileds(obj);
             return await base.UpdateAsync(obj);
         }
 
         public async override Task<VenueDto> DeleteAsync(VenueDto obj)
         {
-            await CheckForTickets(obj);
+            CheckForTickets(obj);
             return await base.DeleteAsync(obj);
         }
 
@@ -94,9 +94,9 @@ namespace TicketManagement.VenueManagerAPI.Services
         /// </summary>
         /// <param name="obj">Venue.</param>
         /// <exception cref="ValidationException">Generates exception in case name is not unique.</exception>
-        private async Task CheckForUniqueName(VenueDto obj)
+        private void CheckForUniqueName(VenueDto obj)
         {
-            var venues = await Repository.GetAllAsync();
+            var venues = Repository.GetAll();
             var venuesWithSuchName = venues.Where(venue => venue.Name == obj.Name && venue.Id != obj.Id);
             if (venuesWithSuchName.Any())
             {
@@ -108,24 +108,23 @@ namespace TicketManagement.VenueManagerAPI.Services
         /// Checking that there are no tickets in this venue.
         /// </summary>
         /// <param name="obj">Deleting venue.</param>
-        /// <returns>Task.</returns>
         /// <exception cref="ValidationException">Generates exception in case there are tickets in this venue.</exception>
-        private async Task CheckForTickets(VenueDto obj)
+        private void CheckForTickets(VenueDto obj)
         {
             var occupiedEventSeats = new List<EventSeat>();
-            var layouts = await _layoutRepository.GetAllAsync();
+            var layouts = _layoutRepository.GetAll();
             var layoutsInVenue = layouts.Where(l => l.VenueId == obj.Id).ToList();
             foreach (var layout in layoutsInVenue)
             {
-                var events = await _eventRepository.GetAllAsync();
+                var events = _eventRepository.GetAll();
                 var eventsInLayout = events.Where(e => e.LayoutId == layout.Id).ToList();
                 foreach (var @event in eventsInLayout)
                 {
-                    var eventAreas = await _eventAreaRepository.GetAllAsync();
+                    var eventAreas = _eventAreaRepository.GetAll();
                     var eventAreasInEvent = eventAreas.Where(a => a.EventId == @event.Id).ToList();
                     foreach (var eventArea in eventAreasInEvent)
                     {
-                        var eventSeats = await _eventSeatRepository.GetAllAsync();
+                        var eventSeats = _eventSeatRepository.GetAll();
                         occupiedEventSeats = eventSeats.Where(s => s.EventAreaId == eventArea.Id).Where(s => s.State == (int)PlaceStatus.Occupied).ToList();
                     }
                 }

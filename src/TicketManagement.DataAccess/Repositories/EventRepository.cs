@@ -14,17 +14,17 @@ namespace TicketManagement.DataAccess.Repositories
     /// </summary>
     internal class EventRepository : IRepository<Event>
     {
-        public async Task<IQueryable<Event>> GetAllAsync()
+        public IQueryable<Event> GetAll()
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            await connection.OpenAsync();
+            connection.Open();
             IList<Event> events = new List<Event>();
             string sql = "Select Id, Name, Description, LayoutId, TimeStart, TimeEnd from event";
             SqlCommand cmd = new SqlCommand(sql, connection);
-            SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            SqlDataReader reader = cmd.ExecuteReader();
             if (reader.HasRows)
             {
-                while (await reader.ReadAsync())
+                while (reader.Read())
                 {
                     events.Add(new Event
                     {

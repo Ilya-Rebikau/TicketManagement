@@ -48,7 +48,7 @@ namespace TicketManagement.VenueManagerAPI.Services
         public async virtual Task<IEnumerable<TDto>> GetAllAsync(int pageNumber)
         {
             CheckForPageNumber(pageNumber);
-            var models = await Repository.GetAllAsync();
+            var models = Repository.GetAll();
             models = models.OrderBy(m => m.Id).Skip((pageNumber - 1) * CountOnPage).Take(CountOnPage);
             return await Converter.ConvertSourceModelRangeToDestinationModelRange(models);
         }

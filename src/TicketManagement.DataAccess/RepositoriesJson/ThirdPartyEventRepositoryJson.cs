@@ -12,22 +12,22 @@ namespace TicketManagement.DataAccess.RepositoriesJson
     /// </summary>
     internal class ThirdPartyEventRepositoryJson : IReaderJson<ThirdPartyEvent>
     {
-        public Task<IQueryable<ThirdPartyEvent>> GetAllAsync(string json)
+        public IQueryable<ThirdPartyEvent> GetAll(string json)
         {
             var events = new List<ThirdPartyEvent>();
             if (string.IsNullOrWhiteSpace(json))
             {
-                return Task.FromResult(events.AsQueryable());
+                return events.AsQueryable();
             }
 
             events = JsonConvert.DeserializeObject<List<ThirdPartyEvent>>(json);
 
-            return Task.FromResult(events.AsQueryable());
+            return events.AsQueryable();
         }
 
-        public async Task<ThirdPartyEvent> GetByIdAsync(int id, string json)
+        public ThirdPartyEvent GetById(int id, string json)
         {
-            var events = await GetAllAsync(json);
+            var events = GetAll(json);
             var @event = events.SingleOrDefault(e => e.Id == id);
             return @event;
         }

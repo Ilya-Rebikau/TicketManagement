@@ -16,7 +16,7 @@ namespace TicketManagement.DataAccess.Interfaces
         /// Get all objects from database.
         /// </summary>
         /// <returns>All objects.</returns>
-        Task<IQueryable<T>> GetAllAsync();
+        IQueryable<T> GetAll();
 
         /// <summary>
         /// Get one object from database by his id.

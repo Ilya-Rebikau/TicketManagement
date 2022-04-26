@@ -12,17 +12,17 @@ namespace TicketManagement.DataAccess.Repositories
     /// </summary>
     internal class EventAreaRepository : IRepository<EventArea>
     {
-        public async Task<IQueryable<EventArea>> GetAllAsync()
+        public IQueryable<EventArea> GetAll()
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            await connection.OpenAsync();
+            connection.Open();
             IList<EventArea> eventAreas = new List<EventArea>();
             string sql = "Select Id, EventId, Description, CoordX, CoordY, Price from eventarea";
             SqlCommand cmd = new SqlCommand(sql, connection);
-            SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            SqlDataReader reader = cmd.ExecuteReader();
             if (reader.HasRows)
             {
-                while (await reader.ReadAsync())
+                while (reader.Read())
                 {
                     eventAreas.Add(new EventArea
                     {
@@ -36,7 +36,7 @@ namespace TicketManagement.DataAccess.Repositories
                 }
             }
 
-            await reader.CloseAsync();
+            reader.Close();
             return eventAreas.AsQueryable();
         }
 

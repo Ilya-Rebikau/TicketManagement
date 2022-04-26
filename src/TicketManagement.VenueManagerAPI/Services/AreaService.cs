@@ -31,8 +31,8 @@ namespace TicketManagement.VenueManagerAPI.Services
             CheckForLayoutId(obj);
             CheckForPositivePrice(obj);
             CheckForPositiveCoords(obj);
-            await CheckForUniqueDescription(obj);
-            await CheckForUniqueCoordsInLayout(obj);
+            CheckForUniqueDescription(obj);
+            CheckForUniqueCoordsInLayout(obj);
             return await base.CreateAsync(obj);
         }
 
@@ -42,8 +42,8 @@ namespace TicketManagement.VenueManagerAPI.Services
             CheckForLayoutId(obj);
             CheckForPositivePrice(obj);
             CheckForPositiveCoords(obj);
-            await CheckForUniqueDescription(obj);
-            await CheckForUniqueCoordsInLayout(obj);
+            CheckForUniqueDescription(obj);
+            CheckForUniqueCoordsInLayout(obj);
             return await base.UpdateAsync(obj);
         }
 
@@ -104,9 +104,9 @@ namespace TicketManagement.VenueManagerAPI.Services
         /// </summary>
         /// <param name="obj">Adding or updating area.</param>
         /// <exception cref="ValidationException">Generates exception in case description is not unique.</exception>
-        private async Task CheckForUniqueDescription(AreaDto obj)
+        private void CheckForUniqueDescription(AreaDto obj)
         {
-            var areas = await Repository.GetAllAsync();
+            var areas = Repository.GetAll();
             var areasInLayout = areas.Where(area => area.Description == obj.Description && area.LayoutId == obj.LayoutId && area.Id != obj.Id);
             if (areasInLayout.Any())
             {
@@ -119,9 +119,9 @@ namespace TicketManagement.VenueManagerAPI.Services
         /// </summary>
         /// <param name="obj">Adding or updating area.</param>
         /// <exception cref="ValidationException">Generates exception in case coords aren't unique for layout.</exception>
-        private async Task CheckForUniqueCoordsInLayout(AreaDto obj)
+        private void CheckForUniqueCoordsInLayout(AreaDto obj)
         {
-            var areas = await Repository.GetAllAsync();
+            var areas = Repository.GetAll();
             var areasInLayout = areas.Where(area => area.LayoutId == obj.LayoutId && area.CoordX == obj.CoordX && area.CoordY == obj.CoordY && area.Id != obj.Id);
             if (areasInLayout.Any())
             {

@@ -12,17 +12,17 @@ namespace TicketManagement.DataAccess.Repositories
     /// </summary>
     internal class SeatRepository : IRepository<Seat>
     {
-        public async Task<IQueryable<Seat>> GetAllAsync()
+        public IQueryable<Seat> GetAll()
         {
             using SqlConnection connection = new SqlConnection(DbConnection.GetStringConnection());
-            await connection.OpenAsync();
+            connection.Open();
             IList<Seat> seats = new List<Seat>();
             string sql = "Select Id, AreaId, Row, Number from seats";
             SqlCommand cmd = new SqlCommand(sql, connection);
-            SqlDataReader reader = await cmd.ExecuteReaderAsync();
+            SqlDataReader reader = cmd.ExecuteReader();
             if (reader.HasRows)
             {
-                while (await reader.ReadAsync())
+                while (reader.Read())
                 {
                     seats.Add(new Seat
                     {

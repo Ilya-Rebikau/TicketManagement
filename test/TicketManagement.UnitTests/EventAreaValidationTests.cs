@@ -32,7 +32,7 @@ namespace TicketManagement.UnitTests
             IConfiguration configuration = new ConfigurationBuilder()
                 .AddInMemoryCollection(inMemorySettings)
                 .Build();
-            eventSeatRepositoryMock.Setup(rep => rep.GetAllAsync()).ReturnsAsync(GetTestEventSeats());
+            eventSeatRepositoryMock.Setup(rep => rep.GetAll()).Returns(GetTestEventSeats());
             _service = new EventAreaService(eventAreaRepositoryMock.Object, eventAreaConverterMock.Object, eventSeatRepositoryMock.Object, configuration);
         }
 

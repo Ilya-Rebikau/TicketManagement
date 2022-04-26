@@ -29,7 +29,7 @@ namespace TicketManagement.VenueManagerAPI.Services
         {
             CheckForEventAreaId(obj);
             CheckForPositiveRowAndNumber(obj);
-            await CheckForUniqueRowAndNumber(obj);
+            CheckForUniqueRowAndNumber(obj);
             return await base.CreateAsync(obj);
         }
 
@@ -37,7 +37,7 @@ namespace TicketManagement.VenueManagerAPI.Services
         {
             CheckForEventAreaId(obj);
             CheckForPositiveRowAndNumber(obj);
-            await CheckForUniqueRowAndNumber(obj);
+            CheckForUniqueRowAndNumber(obj);
             return await base.UpdateAsync(obj);
         }
 
@@ -72,9 +72,9 @@ namespace TicketManagement.VenueManagerAPI.Services
         /// </summary>
         /// <param name="obj">Adding or updating seat.</param>
         /// <exception cref="ValidationException">Generates exception in case row and number are not unique.</exception>
-        private async Task CheckForUniqueRowAndNumber(SeatDto obj)
+        private void CheckForUniqueRowAndNumber(SeatDto obj)
         {
-            var seats = await Repository.GetAllAsync();
+            var seats = Repository.GetAll();
             var seatsInArea = seats.Where(seat => seat.AreaId == obj.AreaId && seat.Row == obj.Row && seat.Number == obj.Number && seat.Id != obj.Id);
             if (seatsInArea.Any())
             {

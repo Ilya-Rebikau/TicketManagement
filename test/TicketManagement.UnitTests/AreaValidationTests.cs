@@ -19,7 +19,7 @@ namespace TicketManagement.UnitTests
         private IService<AreaDto> _service;
 
         [SetUp]
-        public async Task SetupAsync()
+        public void Setup()
         {
             var areaRepositoryMock = new Mock<IRepository<Area>>();
             var areaConverterMock = new Mock<IConverter<Area, AreaDto>>();
@@ -31,8 +31,8 @@ namespace TicketManagement.UnitTests
             IConfiguration configuration = new ConfigurationBuilder()
                 .AddInMemoryCollection(inMemorySettings)
                 .Build();
-            areaRepositoryMock.Setup(rep => rep.GetAllAsync());
-            var areas = await areaRepositoryMock.Object.GetAllAsync();
+            areaRepositoryMock.Setup(rep => rep.GetAll());
+            var areas = areaRepositoryMock.Object.GetAll();
             areaConverterMock.Setup(rep => rep.ConvertSourceModelRangeToDestinationModelRange(areas)).ReturnsAsync(GetTestAreaDtos());
             _service = new AreaService(areaRepositoryMock.Object, areaConverterMock.Object, configuration);
         }

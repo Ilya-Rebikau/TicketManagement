@@ -26,7 +26,7 @@ namespace TicketManagement.PurchaseFlowAPI.Services
         public async override Task<EventSeatDto> CreateAsync(EventSeatDto obj)
         {
             CheckForEventAreaId(obj);
-            await CheckForUniqueRowAndNumber(obj);
+            CheckForUniqueRowAndNumber(obj);
             CheckForPositiveRowAndNumber(obj);
             return await base.CreateAsync(obj);
         }
@@ -34,7 +34,7 @@ namespace TicketManagement.PurchaseFlowAPI.Services
         public async override Task<EventSeatDto> UpdateAsync(EventSeatDto obj)
         {
             CheckForEventAreaId(obj);
-            await CheckForUniqueRowAndNumber(obj);
+            CheckForUniqueRowAndNumber(obj);
             CheckForPositiveRowAndNumber(obj);
             return await base.UpdateAsync(obj);
         }
@@ -89,9 +89,9 @@ namespace TicketManagement.PurchaseFlowAPI.Services
         /// </summary>
         /// <param name="obj">Adding or updating seat.</param>
         /// <exception cref="ValidationException">Generates exception in case row and number are not unique.</exception>
-        private async Task CheckForUniqueRowAndNumber(EventSeatDto obj)
+        private void CheckForUniqueRowAndNumber(EventSeatDto obj)
         {
-            var eventSeats = await Repository.GetAllAsync();
+            var eventSeats = Repository.GetAll();
             var eventSeatsInArea = eventSeats.Where(seat => seat.EventAreaId == obj.EventAreaId && seat.Row == obj.Row && seat.Number == obj.Number && seat.Id != obj.Id);
             if (eventSeatsInArea.Any())
             {

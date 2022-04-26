@@ -47,7 +47,7 @@ namespace TicketManagement.EventManagerAPI.Services
         /// <returns>Task.</returns>
         private async Task DoPlaceFreeAsync(TicketDto obj)
         {
-            var eventSeats = await _eventSeatRepository.GetAllAsync();
+            var eventSeats = _eventSeatRepository.GetAll();
             var eventSeat = eventSeats.Where(s => s.Id == obj.EventSeatId).FirstOrDefault();
             eventSeat.State = (int)PlaceStatus.Free;
             await _eventSeatRepository.UpdateAsync(eventSeat);

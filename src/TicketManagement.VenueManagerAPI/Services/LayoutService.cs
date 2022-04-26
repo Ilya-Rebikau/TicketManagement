@@ -54,7 +54,7 @@ namespace TicketManagement.VenueManagerAPI.Services
         {
             CheckForStringFileds(obj);
             CheckForLayoutId(obj);
-            await CheckForUniqueNameInVenue(obj);
+            CheckForUniqueNameInVenue(obj);
             return await base.CreateAsync(obj);
         }
 
@@ -62,13 +62,13 @@ namespace TicketManagement.VenueManagerAPI.Services
         {
             CheckForStringFileds(obj);
             CheckForLayoutId(obj);
-            await CheckForUniqueNameInVenue(obj);
+            CheckForUniqueNameInVenue(obj);
             return await base.UpdateAsync(obj);
         }
 
         public async override Task<LayoutDto> DeleteAsync(LayoutDto obj)
         {
-            await CheckForTickets(obj);
+            CheckForTickets(obj);
             return await base.DeleteAsync(obj);
         }
 
@@ -103,9 +103,9 @@ namespace TicketManagement.VenueManagerAPI.Services
         /// </summary>
         /// <param name="obj">Adding or updating layout.</param>
         /// <exception cref="ValidationException">Generates exception in case there are layouts in venue with such name.</exception>
-        private async Task CheckForUniqueNameInVenue(LayoutDto obj)
+        private void CheckForUniqueNameInVenue(LayoutDto obj)
         {
-            var layouts = await Repository.GetAllAsync();
+            var layouts = Repository.GetAll();
             var layoutsInVenue = layouts.Where(layout => layout.Name == obj.Name && layout.VenueId == obj.VenueId && layout.Id != obj.Id);
             if (layoutsInVenue.Any())
             {
@@ -117,20 +117,19 @@ namespace TicketManagement.VenueManagerAPI.Services
         /// Checking that there are no tickets in this layout.
         /// </summary>
         /// <param name="obj">Deleting layout.</param>
-        /// <returns>Task.</returns>
         /// <exception cref="ValidationException">Generates exception in case there are tickets in this layout.</exception>
-        private async Task CheckForTickets(LayoutDto obj)
+        private void CheckForTickets(LayoutDto obj)
         {
             var eventSeats = new List<EventSeat>();
-            var events = await _eventRepository.GetAllAsync();
+            var events = _eventRepository.GetAll();
             var eventsInLayout = events.Where(e => e.LayoutId == obj.Id).ToList();
             foreach (var @event in eventsInLayout)
             {
-                var eventAreas = await _eventAreaRepository.GetAllAsync();
+                var eventAreas = _eventAreaRepository.GetAll();
                 var eventAreasInEvent = eventAreas.Where(a => a.EventId == @event.Id).ToList();
                 foreach (var eventArea in eventAreasInEvent)
                 {
-                    var allEventSeats = await _eventSeatRepository.GetAllAsync();
+                    var allEventSeats = _eventSeatRepository.GetAll();
                     eventSeats = allEventSeats.Where(s => s.EventAreaId == eventArea.Id).Where(s => s.State == (int)PlaceStatus.Occupied).ToList();
                 }
             }

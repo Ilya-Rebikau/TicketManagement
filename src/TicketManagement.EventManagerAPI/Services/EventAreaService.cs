@@ -52,7 +52,7 @@ namespace TicketManagement.EventManagerAPI.Services
 
         public async override Task<EventAreaDto> DeleteAsync(EventAreaDto obj)
         {
-            await CheckForTickets(obj);
+            CheckForTickets(obj);
             return await base.DeleteAsync(obj);
         }
 
@@ -112,11 +112,10 @@ namespace TicketManagement.EventManagerAPI.Services
         /// Checking that there are no tickets in this event area.
         /// </summary>
         /// <param name="obj">Deleting event area.</param>
-        /// <returns>Task.</returns>
         /// <exception cref="ValidationException">Generates exception in case there are tickets in this event area.</exception>
-        private async Task CheckForTickets(EventAreaDto obj)
+        private void CheckForTickets(EventAreaDto obj)
         {
-            var allEventSeats = await _eventSeatRepository.GetAllAsync();
+            var allEventSeats = _eventSeatRepository.GetAll();
             var eventSeats = allEventSeats.Where(s => s.EventAreaId == obj.Id).Where(s => s.State == (int)PlaceStatus.Occupied).ToList();
             if (eventSeats.Any())
             {
