@@ -55,7 +55,7 @@ jobs:
     - name: Build TicketManagement.IntegrationTests
       run: dotnet build ${{ env.INTEGRATION_TESTS_PATH }} --no-restore
     - name: Build TicketManagement.ControllersIntegrationTests
-      run: dotnet build ${{ env.CONTROLLERS_INTEGRATION_TESTS }}
+      run: dotnet build ${{ env.CONTROLLERS_INTEGRATION_TESTS_PATH }}
   Test:
     runs-on: self-hosted
     needs: Build
