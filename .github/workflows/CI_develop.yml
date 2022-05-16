@@ -2,9 +2,11 @@ name: .NET develop
 
 on:
   push:
-    branches: [ develop ]
+    branches-ignore:
+    - 'master'
   pull_request:
-    branches: [ develop ]
+    branches-ignore:
+    - 'master'
 env:
   DATA_ACCESS_PATH: 'src/TicketManagement.DataAccess'
   EVENT_MANAGER_API_PATH: 'src/TicketManagement.EventManagerAPI'
