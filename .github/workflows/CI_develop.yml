@@ -4,7 +4,8 @@ on:
   push:
     branches-ignore:
     - 'master'
-    
+  pull_request:
+  
 env:
   DATA_ACCESS_PATH: 'src/TicketManagement.DataAccess'
   EVENT_MANAGER_API_PATH: 'src/TicketManagement.EventManagerAPI'
