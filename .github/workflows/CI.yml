@@ -1,10 +1,9 @@
-name: .NET
+name: .NET master
 
 on:
   push:
-    branches: [ master, develop, Task-6 ]
-  pull_request:
-    branches: [ master, develop, Task-6 ]
+    branches: [ master ]
+
 env:
   DATA_ACCESS_PATH: 'src/TicketManagement.DataAccess'
   EVENT_MANAGER_API_PATH: 'src/TicketManagement.EventManagerAPI'
