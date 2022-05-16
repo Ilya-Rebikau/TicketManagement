@@ -1,0 +1,76 @@
+name: .NET
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+env:
+  DATA_ACCESS_PATH: 'src/TicketManagement.DataAccess'
+  EVENT_MANAGER_API_PATH: 'src/TicketManagement.EventManagerAPI'
+  PURCHASE_FLOW_API_PATH: 'src/TicketManagement.PurchaseFlowAPI'
+  USER_API_PATH: 'src/TicketManagement.UserAPI'
+  VENUE_MANAGER_API_PATH: 'src/TicketManagement.VenueManagerAPI'
+  WEB_PATH: 'src/TicketManagement.Web'
+  UNIT_TESTS_PATH: 'test/TicketManagement.UnitTests'
+  INTEGRATION_TESTS_PATH: 'test/TicketManagement.IntegrationTests'
+  CONTROLLERS_INTEGRATION_TESTS_PATH: 'test/TicketManagement.ControllersIntegrationTests'
+  ARTIFACTS_DIRECTORY: "artifacts"
+  EVENT_MANAGER_API_ARTIFACTS_DIRECTORY: "artifacts/TicketManagement.EventManagerAPI"
+  PURCHASE_FLOW_API_ARTIFACTS_DIRECTORY: "artifacts/TicketManagement.PurchaseFlowAPI"
+  USER_API_ARTIFACTS_DIRECTORY: "artifacts/TicketManagement.UserAPI"
+  VENUE_MANAGER_API_ARTIFACTS_DIRECTORY: "artifacts/TicketManagement.VenueManagerAPI"
+  WEB_ARTIFACTS_DIRECTORY: "artifacts/TicketManagement.Web"
+
+jobs:
+  Build:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 5.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build TicketManagement.DataAccess
+      run: dotnet build ${{ env.DATA_ACCESS_PATH }} --no-restore
+    - name: Build TicketManagement.EventManagerAPI
+      run: dotnet build ${{ env.EVENT_MANAGER_API_PATH }} --no-restore
+    - name: Build TicketManagement.PurchaseFlowAPI
+      run: dotnet build ${{ env.PURCHASE_FLOW_API_PATH }} --no-restore
+    - name: Build TicketManagement.UserAPI
+      run: dotnet build ${{ env.USER_API_PATH }} --no-restore
+    - name: Build TicketManagement.VenueManagerAPI
+      run: dotnet build ${{ env.VENUE_MANAGER_API_PATH }} --no-restore
+    - name: Build TicketManagement.Web
+      run: dotnet build ${{ env.WEB_PATH }} --no-restore
+    - name: Build TicketManagement.UnitTests
+      run: dotnet build ${{ env.UNIT_TESTS_PATH }} --no-restore
+    - name: Build TicketManagement.IntegrationTests
+      run: dotnet build ${{ env.INTEGRATION_TESTS_PATH }} --no-restore
+    - name: Build TicketManagement.ControllersIntegrationTests
+      run: dotnet build ${{ env.CONTROLLERS_INTEGRATION_TESTS_PATH }}
+  Test:
+    runs-on: self-hosted
+    needs: Build
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 5.0.x
+        
+    - name: Run unit tests
+      run: dotnet test ${{ env.UNIT_TESTS_PATH }} --no-restore --no-build
+    - name: Run controllers intergration tests
+      run: dotnet test ${{ env.INTEGRATION_TESTS_PATH }} --no-restore --no-build
+    - name: Run controllers intergration tests
+      run: dotnet test ${{ env.CONTROLLERS_INTEGRATION_TESTS_PATH }} --no-restore --no-build
