@@ -71,7 +71,7 @@ jobs:
         
     - name: Run unit tests
       run: dotnet test ${{ env.UNIT_TESTS_PATH }} --no-restore --no-build
-    - name: Run controllers intergration tests
+    - name: Run intergration tests
       run: dotnet test ${{ env.INTEGRATION_TESTS_PATH }} --no-restore --no-build
     - name: Run controllers intergration tests
       run: dotnet test ${{ env.CONTROLLERS_INTEGRATION_TESTS_PATH }} --no-restore --no-build
