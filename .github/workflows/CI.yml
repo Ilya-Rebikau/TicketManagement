@@ -1,9 +1,10 @@
-name: .NET master
+name: .NET
 
 on:
   push:
     branches: [ master ]
-
+  pull_request:
+    branches: [ master ]
 env:
   DATA_ACCESS_PATH: 'src/TicketManagement.DataAccess'
   EVENT_MANAGER_API_PATH: 'src/TicketManagement.EventManagerAPI'
@@ -73,63 +74,3 @@ jobs:
       run: dotnet test ${{ env.INTEGRATION_TESTS_PATH }} --no-restore --no-build
     - name: Run controllers intergration tests
       run: dotnet test ${{ env.CONTROLLERS_INTEGRATION_TESTS_PATH }} --no-restore --no-build
-      
-  Publish:
-    runs-on: self-hosted
-    needs: Test
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-      
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: 5.0.x
-    
-    - name: Install Octopus CLI
-      uses: OctopusDeploy/install-octopus-cli-action@v1.2.0
-      
-    - name: Create artifacts folder
-      run: |
-        mkdir ${{ env.ARTIFACTS_DIRECTORY }}
-        mkdir ${{ env.EVENT_MANAGER_API_ARTIFACTS_DIRECTORY }}
-        mkdir ${{ env.PURCHASE_FLOW_API_ARTIFACTS_DIRECTORY }}
-        mkdir ${{ env.USER_API_ARTIFACTS_DIRECTORY }}
-        mkdir ${{ env.VENUE_MANAGER_API_ARTIFACTS_DIRECTORY }}
-        mkdir ${{ env.WEB_ARTIFACTS_DIRECTORY }}
-    
-    - name: Publish TicketManagement.EventManagerAPI
-      run: dotnet publish ${{ env.EVENT_MANAGER_API_PATH }} --output ${{ env.EVENT_MANAGER_API_ARTIFACTS_DIRECTORY }}
-    - name: Publish TicketManagement.PurchaseFlowAPI
-      run: dotnet publish ${{ env.PURCHASE_FLOW_API_PATH }} --output ${{ env.PURCHASE_FLOW_API_ARTIFACTS_DIRECTORY }}
-    - name: Publish TicketManagement.UserAPI
-      run: dotnet publish ${{ env.USER_API_PATH }} --output ${{ env.USER_API_ARTIFACTS_DIRECTORY }}
-    - name: Publish TicketManagement.VenueManagerAPI
-      run: dotnet publish ${{ env.VENUE_MANAGER_API_PATH }} --output ${{ env.VENUE_MANAGER_API_ARTIFACTS_DIRECTORY }}
-    - name: Publish TicketManagement.Web
-      run: dotnet publish ${{ env.WEB_PATH }} --output ${{ env.WEB_ARTIFACTS_DIRECTORY }}
-
-
-    - name: Pack TicketManagement.EventManagerAPI
-      run: octo pack --id=TicketManagement.EventManagerAPI --format=zip --version=1.${{ github.run_number }} --basePath=${{ env.EVENT_MANAGER_API_ARTIFACTS_DIRECTORY }} --outFolder=${{ env.ARTIFACTS_DIRECTORY }}
-    - name: Pack TicketManagement.PurchaseFlowAPI
-      run: octo pack --id=TicketManagement.PurchaseFlowAPI --format=zip --version=1.${{ github.run_number }} --basePath=${{ env.PURCHASE_FLOW_API_ARTIFACTS_DIRECTORY }} --outFolder=${{ env.ARTIFACTS_DIRECTORY }}
-    - name: Pack TicketManagement.UserAPI
-      run: octo pack --id=TicketManagement.UserAPI --format=zip --version=1.${{ github.run_number }} --basePath=${{ env.USER_API_ARTIFACTS_DIRECTORY }} --outFolder=${{ env.ARTIFACTS_DIRECTORY }}
-    - name: Pack TicketManagement.VenueManagerAPI
-      run: octo pack --id=TicketManagement.VenueManagerAPI --format=zip --version=1.${{ github.run_number }} --basePath=${{ env.VENUE_MANAGER_API_ARTIFACTS_DIRECTORY }} --outFolder=${{ env.ARTIFACTS_DIRECTORY }}
-    - name: Pack TicketManagement.Web
-      run: octo pack --id=TicketManagement.Web --format=zip --version=1.${{ github.run_number }} --basePath=${{ env.WEB_ARTIFACTS_DIRECTORY }} --outFolder=${{ env.ARTIFACTS_DIRECTORY }}
-      
-    - name: Push Packages to Octopus Deploy
-      uses: OctopusDeploy/push-package-action@v1.1.2
-      with:
-        api_key: ${{ secrets.OCTOPUS_API_KEY }}
-        overwrite_mode: "OverwriteExisting"
-        packages: |
-          ${{ env.ARTIFACTS_DIRECTORY }}/TicketManagement.EventManagerAPI.1.${{ github.run_number }}.zip
-          ${{ env.ARTIFACTS_DIRECTORY }}/TicketManagement.PurchaseFlowAPI.1.${{ github.run_number }}.zip
-          ${{ env.ARTIFACTS_DIRECTORY }}/TicketManagement.UserAPI.1.${{ github.run_number }}.zip
-          ${{ env.ARTIFACTS_DIRECTORY }}/TicketManagement.VenueManagerAPI.1.${{ github.run_number }}.zip
-          ${{ env.ARTIFACTS_DIRECTORY }}/TicketManagement.Web.1.${{ github.run_number }}.zip
-        server: ${{ secrets.OCTOPUS_SERVER_URL }}
