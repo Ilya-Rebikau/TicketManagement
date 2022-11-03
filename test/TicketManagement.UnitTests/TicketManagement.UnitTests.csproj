@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Moq" Version="4.16.1" />
-    <PackageReference Include="NUnit" Version="3.13.1" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
+    <PackageReference Include="Moq" Version="4.18.2" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.3.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,6 +20,13 @@
     <ProjectReference Include="..\..\src\TicketManagement.UserAPI\TicketManagement.UserAPI.csproj" />
     <ProjectReference Include="..\..\src\TicketManagement.VenueManagerAPI\TicketManagement.VenueManagerAPI.csproj" />
     <ProjectReference Include="..\..\src\TicketManagement.Web\TicketManagement.Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="SonarAnalyzer.CSharp" Version="8.47.0.55603">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>none</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>
