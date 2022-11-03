@@ -43,7 +43,7 @@ namespace TicketManagement.PurchaseFlowAPI.Services
         private async Task DoPlaceFreeAsync(TicketDto obj)
         {
             var eventSeats = _eventSeatRepository.GetAll();
-            var eventSeat = eventSeats.Where(s => s.Id == obj.EventSeatId).FirstOrDefault();
+            var eventSeat = eventSeats.Where(s => s.Id == obj.EventSeatId).First();
             eventSeat.State = (int)PlaceStatus.Free;
             await _eventSeatRepository.UpdateAsync(eventSeat);
         }

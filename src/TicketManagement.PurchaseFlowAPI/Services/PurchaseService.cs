@@ -79,7 +79,7 @@ namespace TicketManagement.PurchaseFlowAPI.Services
             foreach (var ticket in usersTickets)
             {
                 var ticketEventSeat = eventSeats.FirstOrDefault(s => s.Id == ticket.EventSeatId);
-                var eventArea = eventAreas.FirstOrDefault(a => a.Id == ticketEventSeat.EventAreaId);
+                var eventArea = eventAreas.First(a => a.Id == ticketEventSeat.EventAreaId);
                 var @event = await _eventService.GetByIdAsync(eventArea.EventId);
                 @event = await _usersClient.ConvertTimeFromUtcToUsers(token, @event);
                 var ticketVm = new AccountTicketModel
